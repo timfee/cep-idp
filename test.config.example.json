@@ -1,0 +1,6 @@
+{
+  "googleAccessToken": "<YOUR_GOOGLE_TOKEN>",
+  "azureAccessToken": "<YOUR_AZURE_TOKEN>",
+  "customerId": "<CUSTOMER_ID>",
+  "domainName": "<DOMAIN_NAME>"
+}

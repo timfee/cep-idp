@@ -49,15 +49,22 @@ function WorkflowPageInner() {
     try {
       // Load workflow
       const workflowRes = await fetch('/api/workflow');
+      if (!workflowRes.ok) {
+        throw new Error('Workflow load failed');
+      }
       const workflowData = await workflowRes.json();
       setWorkflow(workflowData);
 
       // Load state
       const stateRes = await fetch('/api/workflow/state');
+      if (!stateRes.ok) {
+        throw new Error('Workflow state load failed');
+      }
       const stateData = await stateRes.json();
       setState(stateData);
     } catch {
       setError('Failed to load workflow');
+      setWorkflow(null);
     } finally {
       setLoading(false);
     }

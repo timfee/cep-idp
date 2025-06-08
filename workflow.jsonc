@@ -1,0 +1,560 @@
+{
+  /* ----------------------------------------------------------- *
+   * Federated-SSO Workflow 6.5  (template-ID + verify fixes)    *
+   * Docs checked 7 Jun 2025 – all URLs HTTP 200 & live content *
+   * ----------------------------------------------------------- */
+
+  /* ---------- Connection profiles ---------- */
+  "connections": {
+    "googleAdmin": {
+      "base": "https://admin.googleapis.com/admin/directory/v1",
+      "auth": "Bearer {googleAccessToken}",
+    },
+    "googleCI": {
+      "base": "https://cloudidentity.googleapis.com/v1",
+      "auth": "Bearer {googleAccessToken}",
+    },
+    "graphGA": {
+      "base": "https://graph.microsoft.com/v1.0",
+      "auth": "Bearer {azureAccessToken}",
+    },
+    "graphBeta": {
+      "base": "https://graph.microsoft.com/beta",
+      "auth": "Bearer {azureAccessToken}",
+    },
+  },
+
+  /* ---------- OAuth-scope bundles ---------- */
+  "roles": {
+    "dirDomainRW": ["admin.directory.domain", "siteverification"],
+    "dirOrgunitRW": ["admin.directory.orgunit"],
+    "dirUserRW": ["admin.directory.user"],
+    "dirRoleRW": ["admin.directory.rolemanagement"],
+    "ciInboundSso": [
+      "https://www.googleapis.com/auth/cloud-identity.inboundsso",
+    ],
+    "graphAppRW": ["Application.ReadWrite.All"],
+    "graphSyncRW": ["Synchronization.ReadWrite.All"],
+    "graphPolicyRW": ["Policy.ReadWrite.ApplicationConfiguration"],
+    "graphAppRole": ["AppRoleAssignment.ReadWrite.All"],
+  },
+
+  /* ---------- Endpoint registry ------------ */
+  "endpoints": {
+    /* Google Admin SDK – https://developers.google.com/admin-sdk/directory */
+    "admin.getDomain": {
+      "conn": "googleAdmin",
+      "method": "GET",
+      "path": "/customer/{customerId}/domains/{domainName}",
+    },
+    "admin.postDomain": {
+      "conn": "googleAdmin",
+      "method": "POST",
+      "path": "/customer/{customerId}/domains",
+    },
+
+    "admin.listOUAutomation": {
+      "conn": "googleAdmin",
+      "method": "GET",
+      "path": "/customer/{customerId}/orgunits",
+      "qs": { "orgUnitPath": "/Automation", "type": "children" },
+    },
+    "admin.postOU": {
+      "conn": "googleAdmin",
+      "method": "POST",
+      "path": "/customer/{customerId}/orgunits",
+    },
+
+    "admin.getUser": {
+      "conn": "googleAdmin",
+      "method": "GET",
+      "path": "/users/azuread-provisioning@{primaryDomain}",
+    },
+    "admin.postUser": {
+      "conn": "googleAdmin",
+      "method": "POST",
+      "path": "/users",
+    },
+
+    "admin.listRoles": {
+      "conn": "googleAdmin",
+      "method": "GET",
+      "path": "/customer/{customerId}/roles",
+    },
+    "admin.postRole": {
+      "conn": "googleAdmin",
+      "method": "POST",
+      "path": "/customer/{customerId}/roles",
+    },
+
+    /* NEW: proper GET to verify role assignment */
+    "admin.getRoleAssign": {
+      "conn": "googleAdmin",
+      "method": "GET",
+      "path": "/customer/{customerId}/roleassignments",
+      "qs": { "roleId": "{adminRoleId}", "assignedTo": "{provisioningUserId}" },
+    },
+    "admin.postRoleAssign": {
+      "conn": "googleAdmin",
+      "method": "POST",
+      "path": "/customer/{customerId}/roleassignments",
+    },
+
+    /* Cloud Identity v1 – https://cloud.google.com/identity/docs/reference/rest/v1 */
+    "ci.listSamlProfiles": {
+      "conn": "googleCI",
+      "method": "GET",
+      "path": "/inboundSamlSsoProfiles",
+      "qs": { "filter": "displayName=Azure AD" },
+    },
+    "ci.createSamlProfile": {
+      "conn": "googleCI",
+      "method": "POST",
+      "path": "/inboundSamlSsoProfiles",
+    },
+    /* NEW: GET idpCredentials list for pre-check */
+    "ci.getIdpCreds": {
+      "conn": "googleCI",
+      "method": "GET",
+      "path": "/inboundSamlSsoProfiles/{samlProfileId}/idpCredentials",
+    },
+    "ci.addIdpCert": {
+      "conn": "googleCI",
+      "method": "POST",
+      "path": "/inboundSamlSsoProfiles/{samlProfileId}/idpCredentials:add",
+    },
+    "ci.listSsoAssignments": {
+      "conn": "googleCI",
+      "method": "GET",
+      "path": "/inboundSsoAssignments",
+    },
+    "ci.postSsoAssignment": {
+      "conn": "googleCI",
+      "method": "POST",
+      "path": "/inboundSsoAssignments",
+    },
+
+    /* Microsoft Graph GA / β */
+    "graph.instantiateProv": {
+      "conn": "graphGA",
+      "method": "POST",
+      "path": "/applicationTemplates/{provTemplateId}/instantiate",
+    },
+    "graph.instantiateSSO": {
+      "conn": "graphGA",
+      "method": "POST",
+      "path": "/applicationTemplates/{ssoTemplateId}/instantiate",
+    },
+
+    "graph.appByTemplateProv": {
+      "conn": "graphGA",
+      "method": "GET",
+      "path": "/applications",
+      "qs": { "$filter": "applicationTemplateId eq '{provTemplateId}'" },
+    },
+    "graph.appByTemplateSSO": {
+      "conn": "graphGA",
+      "method": "GET",
+      "path": "/applications",
+      "qs": { "$filter": "applicationTemplateId eq '{ssoTemplateId}'" },
+    },
+
+    "graph.getSync": {
+      "conn": "graphGA",
+      "method": "GET",
+      "path": "/servicePrincipals/{provServicePrincipalId}/synchronization",
+    },
+    "graph.patchSync": {
+      "conn": "graphGA",
+      "method": "PATCH",
+      "path": "/servicePrincipals/{provServicePrincipalId}/synchronization",
+    },
+    "graph.startSyncJob": {
+      "conn": "graphGA",
+      "method": "POST",
+      "path": "/servicePrincipals/{provServicePrincipalId}/synchronization/jobs/{jobId}/start",
+    },
+
+    "graph.getSamlSettings": {
+      "conn": "graphBeta",
+      "method": "GET",
+      "path": "/servicePrincipals/{ssoServicePrincipalId}/samlSingleSignOnSettings",
+    },
+    "graph.patchSamlSettings": {
+      "conn": "graphBeta",
+      "method": "PATCH",
+      "path": "/servicePrincipals/{ssoServicePrincipalId}/samlSingleSignOnSettings",
+    },
+
+    "graph.listPolicies": {
+      "conn": "graphBeta",
+      "method": "GET",
+      "path": "/servicePrincipals/{ssoServicePrincipalId}/tokenIssuancePolicies",
+    },
+    /* FIX: plural path per doc https://learn.microsoft.com/graph/api/tokenissuancepolicy-post-tokenissuancepolicy */
+    "graph.createPolicy": {
+      "conn": "graphBeta",
+      "method": "POST",
+      "path": "/policies/tokenIssuancePolicies",
+    },
+    "graph.linkPolicy": {
+      "conn": "graphBeta",
+      "method": "POST",
+      "path": "/servicePrincipals/{ssoServicePrincipalId}/tokenIssuancePolicies/$ref",
+    },
+
+    "graph.getAppRoleAssign": {
+      "conn": "graphGA",
+      "method": "GET",
+      "path": "/servicePrincipals/{ssoServicePrincipalId}/appRoleAssignedTo",
+      "qs": { "$filter": "principalId eq {principalId}" },
+    },
+    "graph.postAppRoleAssign": {
+      "conn": "graphGA",
+      "method": "POST",
+      "path": "/servicePrincipals/{ssoServicePrincipalId}/appRoleAssignedTo",
+    },
+  },
+
+  /* ---------- Checkers (assert helpers) ---- */
+  "checkers": {
+    "exists": "$ != null",
+    "fieldTruthy": "$.{field} == true",
+    "eq": "$ == '{value}'",
+  },
+
+  /* ---------- Variables & defaults --------- */
+  "variables": {
+    "customerId": { "validator": "^C[0-9a-f]{10,}$|^my_customer$" },
+    "domainName": { "validator": "^([\\w-]+\\.)+[A-Za-z]{2,}$" },
+    "primaryDomain": {},
+    "googleAccessToken": {},
+    "azureAccessToken": {},
+    "generatedPassword": { "generator": "randomPassword(16)" },
+
+    "provisioningUserId": {},
+    "provisioningUserEmail": {},
+    "provisioningUserPassword": {},
+    "adminRoleId": {},
+    "samlProfileId": {},
+    "entityId": {},
+    "acsUrl": {},
+    "provTemplateId": { "default": "d0d8633b-4174-4d05-89c7-86d229f50f26" },
+    "ssoTemplateId": { "default": "8ba3d1d8-7c8c-4d2d-b179-04d4a68fba02" },
+    "provServicePrincipalId": {},
+    "ssoServicePrincipalId": {},
+    "jobId": { "default": "Initial" },
+    "claimsPolicyId": {},
+    "principalId": {},
+  },
+
+  /* ---------- Step list (idempotent) -------- */
+  "steps": [
+    {
+      "name": "Verify domain",
+      "verify": [
+        {
+          "use": "admin.getDomain",
+          "checker": "fieldTruthy",
+          "field": "verified",
+        },
+      ],
+      "execute": [
+        {
+          "use": "admin.postDomain",
+          "payload": { "domainName": "{domainName}" },
+        },
+      ],
+      "role": "dirDomainRW",
+    },
+
+    {
+      "name": "OU Automation",
+      "verify": [{ "use": "admin.listOUAutomation", "checker": "exists" }],
+      "execute": [
+        {
+          "use": "admin.postOU",
+          "payload": { "name": "Automation", "parentOrgUnitPath": "/" },
+        },
+      ],
+      "role": "dirOrgunitRW",
+      "depends_on": ["Verify domain"],
+    },
+
+    {
+      "name": "Service user",
+      "verify": [{ "use": "admin.getUser" }],
+      "execute": [
+        {
+          "use": "admin.postUser",
+          "payload": {
+            "primaryEmail": "azuread-provisioning@{primaryDomain}",
+            "name": { "givenName": "Microsoft", "familyName": "Provisioning" },
+            "password": "{generatedPassword}",
+            "orgUnitPath": "/Automation",
+          },
+          "outputs": {
+            "provisioningUserId": "$.id",
+            "provisioningUserEmail": "$.primaryEmail",
+            "provisioningUserPassword": "{generatedPassword}",
+          },
+        },
+      ],
+      "role": "dirUserRW",
+      "depends_on": ["OU Automation"],
+    },
+
+    {
+      "name": "Custom admin role",
+      "verify": [{ "use": "admin.listRoles", "checker": "exists" }],
+      "execute": [
+        {
+          "use": "admin.postRole",
+          "payload": {
+            "roleName": "Microsoft Entra Provisioning",
+            "privilegeIds": [
+              "USERS_ALL",
+              "GROUPS_ALL",
+              "ORGANIZATION_UNITS_READ",
+            ],
+          },
+          "outputs": { "adminRoleId": "$.roleId" },
+        },
+      ],
+      "role": "dirRoleRW",
+      "depends_on": ["Service user"],
+    },
+
+    {
+      "name": "Assign role to user",
+      "verify": [
+        { "use": "admin.getRoleAssign", "checker": "exists" },
+      ] /* FIX: uses GET */,
+      "execute": [
+        {
+          "use": "admin.postRoleAssign",
+          "payload": {
+            "roleId": "{adminRoleId}",
+            "assignedTo": "azuread-provisioning@{primaryDomain}",
+            "scopeType": "CUSTOMER",
+          },
+        },
+      ],
+      "role": "dirRoleRW",
+      "depends_on": ["Custom admin role"],
+    },
+
+    {
+      "name": "Inbound SAML profile",
+      "verify": [{ "use": "ci.listSamlProfiles", "checker": "exists" }],
+      "execute": [
+        {
+          "use": "ci.createSamlProfile",
+          "payload": {
+            "displayName": "Azure AD",
+            "idpConfig": {
+              "entityId": "https://sts.windows.net/{tenantId}/",
+              "singleSignOnServiceUri": "https://login.microsoftonline.com/{tenantId}/saml2",
+            },
+          },
+          "outputs": {
+            "samlProfileId": "$.name",
+            "entityId": "$.spConfig.entityId",
+            "acsUrl": "$.spConfig.acsUri",
+          },
+          "longRunning": true,
+        },
+      ],
+      "role": "ciInboundSso",
+      "depends_on": ["Assign role to user"],
+      "apiStatus": "beta",
+    },
+
+    {
+      "name": "Add IdP certificate",
+      "verify": [
+        { "use": "ci.getIdpCreds", "checker": "exists" },
+      ] /* FIX: GET creds list */,
+      "execute": [
+        {
+          "use": "ci.addIdpCert",
+          "payload": { "pemData": "-----BEGIN CERTIFICATE-----..." },
+          "longRunning": true,
+        },
+      ],
+      "role": "ciInboundSso",
+      "depends_on": ["Inbound SAML profile"],
+    },
+
+    {
+      "name": "Provisioning app SP",
+      "verify": [{ "use": "graph.appByTemplateProv", "checker": "exists" }],
+      "execute": [
+        {
+          "use": "graph.instantiateProv",
+          "payload": { "displayName": "Google Cloud (Provisioning)" },
+          "outputs": { "provServicePrincipalId": "$.servicePrincipal.id" },
+        },
+      ],
+      "role": "graphAppRW",
+      "depends_on": ["Add IdP certificate"],
+    },
+
+    {
+      "name": "Set provisioning credentials",
+      "verify": [{ "use": "graph.getSync", "checker": "exists" }],
+      "execute": [
+        {
+          "use": "graph.patchSync",
+          "payload": {
+            "credentials": {
+              "fields": [
+                { "name": "Username", "value": "{provisioningUserEmail}" },
+                { "name": "Password", "value": "{provisioningUserPassword}" },
+              ],
+            },
+            "schedule": { "interval": "PT40M" },
+            "templateId": "sync-schema-v2",
+          },
+        },
+      ],
+      "role": "graphSyncRW",
+      "depends_on": ["Provisioning app SP"],
+    },
+
+    {
+      "name": "Start provisioning sync",
+      "verify": [
+        {
+          "use": "graph.getSync",
+          "checker": "fieldTruthy",
+          "field": "state=='active'",
+        },
+      ],
+      "execute": [{ "use": "graph.startSyncJob" }],
+      "role": "graphSyncRW",
+      "depends_on": ["Set provisioning credentials"],
+    },
+
+    {
+      "name": "SSO app SP",
+      "verify": [{ "use": "graph.appByTemplateSSO", "checker": "exists" }],
+      "execute": [
+        {
+          "use": "graph.instantiateSSO",
+          "payload": { "displayName": "Google Cloud" },
+          "outputs": { "ssoServicePrincipalId": "$.servicePrincipal.id" },
+        },
+      ],
+      "role": "graphAppRW",
+      "depends_on": ["Add IdP certificate"],
+    },
+
+    {
+      "name": "Basic SAML settings",
+      "verify": [
+        {
+          "use": "graph.getSamlSettings",
+          "checker": "eq",
+          "value": "{entityId}",
+          "jsonPath": "$.identifierUris[0]",
+        },
+      ],
+      "execute": [
+        {
+          "use": "graph.patchSamlSettings",
+          "payload": {
+            "identifierUris": ["{entityId}"],
+            "replyUrls": ["{acsUrl}"],
+          },
+        },
+      ],
+      "role": "graphAppRW",
+      "depends_on": ["SSO app SP"],
+      "apiStatus": "beta",
+    },
+
+    {
+      "name": "Claims mapping policy",
+      "verify": [{ "use": "graph.listPolicies", "checker": "exists" }],
+      "execute": [
+        {
+          "use": "graph.createPolicy",
+          "payload": {
+            "displayName": "Google Claims",
+            "definition": [
+              "{ \\\"claimsMapping\\\": { \\\"user\\\": { \\\"given_name\\\": \\\"user.givenName\\\" } } }",
+            ],
+          },
+          "outputs": { "claimsPolicyId": "$.id" },
+        },
+        {
+          "use": "graph.linkPolicy",
+          "payload": {
+            "@odata.id": "https://graph.microsoft.com/beta/policies/tokenIssuancePolicies/{claimsPolicyId}",
+          },
+        },
+      ],
+      "role": "graphPolicyRW",
+      "depends_on": ["Basic SAML settings"],
+      "apiStatus": "beta",
+    },
+
+    {
+      "name": "Assign user/group to SSO app",
+      "verify": [{ "use": "graph.getAppRoleAssign", "checker": "exists" }],
+      "execute": [
+        {
+          "use": "graph.postAppRoleAssign",
+          "payload": {
+            "principalId": "{principalId}",
+            "resourceId": "{ssoServicePrincipalId}",
+            "appRoleId": "00000000-0000-0000-0000-000000000000",
+          },
+        },
+      ],
+      "role": "graphAppRole",
+      "depends_on": ["Claims mapping policy"],
+    },
+
+    {
+      "name": "Assign SAML profile to root OU",
+      "verify": [{ "use": "ci.listSsoAssignments", "checker": "exists" }],
+      "execute": [
+        {
+          "use": "ci.postSsoAssignment",
+          "payload": {
+            "samlSsoProfile": "{samlProfileId}",
+            "targetOrgUnit": "/",
+            "ssoMode": "SAML_SSO",
+          },
+        },
+      ],
+      "role": "ciInboundSso",
+      "depends_on": ["Assign user/group to SSO app"],
+    },
+
+    {
+      "name": "Disable SSO for /Automation OU",
+      "verify": [{ "use": "ci.listSsoAssignments", "checker": "exists" }],
+      "execute": [
+        {
+          "use": "ci.postSsoAssignment",
+          "payload": {
+            "samlSsoProfile": "{samlProfileId}",
+            "targetOrgUnit": "/Automation",
+            "ssoMode": "SSO_OFF",
+          },
+        },
+      ],
+      "role": "ciInboundSso",
+      "depends_on": ["Assign SAML profile to root OU"],
+    },
+
+    {
+      "name": "Manual SSO test",
+      "manual": true,
+      "depends_on": ["Disable SSO for /Automation OU"],
+    },
+  ],
+}

@@ -2,18 +2,18 @@
 
 export const dynamic = 'force-dynamic';
 
-import { Suspense, useEffect, useState } from 'react';
+import { Suspense, useEffect, useState, useCallback } from 'react';
 import { useRouter, useSearchParams } from 'next/navigation';
 import { Workflow, WorkflowState, StepStatus, Step } from './lib/workflow/types';
 import { AuthStatus } from './components/workflow/auth-status';
 import { StepCard } from './components/workflow/step-card';
 import { VariableViewer } from './components/workflow/variable-viewer';
-import { Alert, AlertTitle, AlertDescription } from './components/alert';
+import { StaticAlert, StaticAlertTitle, StaticAlertDescription } from './components/static-alert';
 import { Heading } from './components/heading';
 
 export default function WorkflowPage() {
   return (
-    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900"></div></div>}>
+    <Suspense fallback={<div className="flex items-center justify-center min-h-screen"><div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900 dark:border-zinc-100"></div></div>}>
       <WorkflowPageInner />
     </Suspense>
   );
@@ -31,21 +31,7 @@ function WorkflowPageInner() {
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // Load workflow and state
-  useEffect(() => {
-    loadWorkflowAndState();
-  }, []);
-
-  // Handle OAuth errors
-  useEffect(() => {
-    const error = searchParams.get('error');
-    if (error) {
-      setError(`Authentication error: ${error}`);
-      router.replace('/');
-    }
-  }, [searchParams, router]);
-
-  const loadWorkflowAndState = async () => {
+  const loadWorkflowAndState = useCallback(async () => {
     try {
       // Load workflow
       const workflowRes = await fetch('/api/workflow');
@@ -62,19 +48,35 @@ function WorkflowPageInner() {
       }
       const stateData = await stateRes.json();
       setState(stateData);
-    } catch {
-      setError('Failed to load workflow');
+    } catch (err) {
+      const message = err instanceof Error ? err.message : 'Failed to load workflow';
+      setError(message);
       setWorkflow(null);
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
-  const handleAuthenticate = (provider: 'google' | 'microsoft') => {
+  // Load workflow and state
+  useEffect(() => {
+    loadWorkflowAndState();
+  }, [loadWorkflowAndState]);
+
+  // Handle OAuth errors
+  useEffect(() => {
+    const error = searchParams.get('error');
+    if (error) {
+      setError(`Authentication error: ${error}`);
+      router.replace('/', { scroll: false });
+    }
+  }, [searchParams, router]);
+
+
+  const handleAuthenticate = useCallback((provider: 'google' | 'microsoft') => {
     window.location.href = `/api/auth/${provider}`;
-  };
+  }, []);
 
-  const executeStep = async (stepName: string) => {
+  const executeStep = useCallback(async (stepName: string) => {
     try {
       // Update UI to show running
       setState(prev => ({
@@ -107,7 +109,7 @@ function WorkflowPageInner() {
           },
         }));
       } else {
-        throw new Error(data.error);
+        throw new Error(data.error || 'Step execution failed');
       }
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Unknown error';
@@ -124,9 +126,9 @@ function WorkflowPageInner() {
         },
       }));
     }
-  };
+  }, []);
 
-  const skipStep = async (stepName: string) => {
+  const skipStep = useCallback(async (stepName: string) => {
     setState(prev => ({
       ...prev,
       stepStatus: {
@@ -138,12 +140,21 @@ function WorkflowPageInner() {
         },
       },
     }));
-  };
+  }, []);
+
+  const getRequiredScopes = useCallback(
+    (step: Step) => {
+      if (!step.role) return [];
+      return workflow?.roles[step.role] || [];
+    },
+    [workflow]
+  );
+
 
   if (loading) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900"></div>
+        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-zinc-900 dark:border-zinc-100"></div>
       </div>
     );
   }
@@ -151,10 +162,10 @@ function WorkflowPageInner() {
   if (!workflow) {
     return (
       <div className="flex items-center justify-center min-h-screen">
-        <Alert onClose={() => {}}>
-          <AlertTitle>Error</AlertTitle>
-          <AlertDescription>Failed to load workflow configuration</AlertDescription>
-        </Alert>
+        <StaticAlert variant="error">
+          <StaticAlertTitle>Error</StaticAlertTitle>
+          <StaticAlertDescription>Failed to load workflow configuration</StaticAlertDescription>
+        </StaticAlert>
       </div>
     );
   }
@@ -164,11 +175,6 @@ function WorkflowPageInner() {
       .filter(([, status]) => status.status === 'completed' || status.status === 'skipped')
       .map(([name]) => name)
   );
-
-  const getRequiredScopes = (step: Step) => {
-    if (!step.role) return [];
-    return workflow.roles[step.role] || [];
-  };
 
   const allRequiredGoogleScopes = Array.from(new Set(
     workflow.steps
@@ -192,10 +198,10 @@ function WorkflowPageInner() {
         </Heading>
 
         {error && (
-          <Alert onClose={() => {}} className="mb-6">
-            <AlertTitle>Error</AlertTitle>
-            <AlertDescription>{error}</AlertDescription>
-          </Alert>
+          <StaticAlert variant="error" className="mb-6">
+            <StaticAlertTitle>Error</StaticAlertTitle>
+            <StaticAlertDescription>{error}</StaticAlertDescription>
+          </StaticAlert>
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">

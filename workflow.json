@@ -18,10 +18,10 @@
     }
   },
   "roles": {
-    "dirDomainRW": ["admin.directory.domain", "siteverification"],
-    "dirOrgunitRW": ["admin.directory.orgunit"],
-    "dirUserRW": ["admin.directory.user"],
-    "dirRoleRW": ["admin.directory.rolemanagement"],
+    "dirDomainRW": ["https://www.googleapis.com/auth/admin.directory.domain", "https://www.googleapis.com/auth/siteverification"],
+    "dirOrgunitRW": ["https://www.googleapis.com/auth/admin.directory.orgunit"],
+    "dirUserRW": ["https://www.googleapis.com/auth/admin.directory.user"],
+    "dirRoleRW": ["https://www.googleapis.com/auth/admin.directory.rolemanagement"],
     "ciInboundSso": [
       "https://www.googleapis.com/auth/cloud-identity.inboundsso"
     ],
@@ -35,6 +35,11 @@
       "conn": "googleAdmin",
       "method": "GET",
       "path": "/customer/{customerId}/domains/{domainName}"
+    },
+    "admin.listDomains": {
+      "conn": "googleAdmin",
+      "method": "GET",
+      "path": "/customer/{customerId}/domains"
     },
     "admin.postDomain": {
       "conn": "googleAdmin",
@@ -209,12 +214,16 @@
   },
   "variables": {
     "customerId": {
-      "validator": "^C[0-9a-f]{10,}$|^my_customer$"
+      "validator": "^C[0-9a-f]{10,}$|^my_customer$",
+      "default": "my_customer"
     },
     "domainName": {
-      "validator": "^([\\w-]+\\.)+[A-Za-z]{2,}$"
+      "validator": "^([\\w-]+\\.)+[A-Za-z]{2,}$",
+      "_comment": "This should be the same as primaryDomain unless configuring a secondary domain"
     },
-    "primaryDomain": {},
+    "primaryDomain": {
+      "_comment": "This should be fetched from the Google Admin API on initialization"
+    },
     "googleAccessToken": {},
     "azureAccessToken": {},
     "generatedPassword": {
@@ -239,9 +248,24 @@
       "default": "Initial"
     },
     "claimsPolicyId": {},
-    "principalId": {}
+    "principalId": {},
+    "tenantId": {
+      "_comment": "Microsoft tenant ID from environment configuration"
+    }
   },
   "steps": [
+    {
+      "name": "Initialize workflow variables",
+      "_comment": "Fetches the primary domain from Google Workspace to use as default domainName",
+      "verify": [
+        {
+          "use": "admin.listDomains",
+          "checker": "exists",
+          "_extractVars": "Special handling in code extracts primaryDomain from domains array"
+        }
+      ],
+      "role": "dirDomainRW"
+    },
     {
       "name": "Verify domain",
       "verify": [
@@ -279,7 +303,7 @@
         }
       ],
       "role": "dirOrgunitRW",
-      "depends_on": ["Verify domain"]
+      "depends_on": ["Initialize workflow variables", "Verify domain"]
     },
     {
       "name": "Service user",

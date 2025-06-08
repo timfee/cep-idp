@@ -1,68 +1,34 @@
-import { NextRequest, NextResponse } from 'next/server';
-import { getToken, getWorkflowState, setWorkflowState } from '@/app/lib/auth/tokens';
-import { parseWorkflow } from '@/app/lib/workflow/parser';
-import { StepExecutor } from '@/app/lib/workflow/executor';
-import { evaluateGenerator } from '@/app/lib/workflow/variables';
-import { LogEntry } from '@/app/lib/workflow/types';
+import { NextRequest, NextResponse } from "next/server";
+import { executeWorkflowStep } from "@/app/actions/workflow";
 
 export async function POST(request: NextRequest) {
   try {
     const { stepName } = await request.json();
 
-    // Get current state
-    const state = await getWorkflowState();
-    const workflow = parseWorkflow();
-
-    // Get tokens
-    const googleToken = await getToken('google');
-    const microsoftToken = await getToken('microsoft');
-
-    const tokens = {
-      google: googleToken ?? undefined,
-      microsoft: microsoftToken ?? undefined,
-    };
-
-    // Find step
-    const step = workflow.steps.find(s => s.name === stepName);
-    if (!step) {
-      return NextResponse.json({ error: 'Step not found' }, { status: 404 });
+    if (!stepName) {
+      return NextResponse.json(
+        { error: "Step name is required" },
+        { status: 400 }
+      );
     }
 
-    // Initialize variables with defaults
-    for (const [name, varDef] of Object.entries(workflow.variables)) {
-      if (!(name in state.variables)) {
-        if (varDef.default) {
-          state.variables[name] = varDef.default;
-        } else if (varDef.generator) {
-          state.variables[name] = evaluateGenerator(varDef.generator);
-        }
-      }
+    // Delegate to server action
+    const result = await executeWorkflowStep(stepName);
+
+    if (result.success) {
+      return NextResponse.json({
+        status: result.status,
+        variables: result.variables,
+      });
+    } else {
+      return NextResponse.json(
+        { error: result.error || "Step execution failed" },
+        { status: 500 }
+      );
     }
-
-    // Create executor
-    const logs: LogEntry[] = [];
-    const executor = new StepExecutor(
-      workflow,
-      state.variables,
-      (log) => logs.push(log),
-      (name, value) => { state.variables[name] = value; }
-    );
-
-    // Execute step
-    const status = await executor.executeStep(step, tokens);
-    status.logs = logs;
-
-    // Update state
-    state.stepStatus[stepName] = status;
-    await setWorkflowState(state);
-
-    return NextResponse.json({ status, variables: state.variables });
   } catch (error: unknown) {
-    console.error('Step execution failed:', error);
-    const message = error instanceof Error ? error.message : 'Unknown error';
-    return NextResponse.json(
-      { error: message },
-      { status: 500 }
-    );
+    console.error("Step execution failed:", error);
+    const message = error instanceof Error ? error.message : "Unknown error";
+    return NextResponse.json({ error: message }, { status: 500 });
   }
 }

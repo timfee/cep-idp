@@ -1,7 +1,15 @@
-import { Workflow, Step, ExecuteAction, StepStatus, LogEntry, Token, Checker } from './types';
-import { substituteObject, extractValueFromPath } from './variables';
-import { evaluateChecker } from './checkers';
-import { apiClient } from '../api/client';
+import { apiClient } from "../api/client";
+import { evaluateChecker } from "./checkers";
+import {
+  Checker,
+  ExecuteAction,
+  LogEntry,
+  Step,
+  StepStatus,
+  Token,
+  Workflow,
+} from "./types";
+import { extractValueFromPath, substituteObject } from "./variables";
 
 export class StepExecutor {
   constructor(
@@ -11,7 +19,7 @@ export class StepExecutor {
     private onVariableUpdate: (name: string, value: string) => void
   ) {}
 
-  private log(level: LogEntry['level'], message: string, data?: unknown) {
+  private log(level: LogEntry["level"], message: string, data?: unknown) {
     this.onLog({
       timestamp: Date.now(),
       level,
@@ -20,31 +28,34 @@ export class StepExecutor {
     });
   }
 
-  async executeStep(step: Step, tokens: { google?: Token; microsoft?: Token }): Promise<StepStatus> {
+  async executeStep(
+    step: Step,
+    tokens: { google?: Token; microsoft?: Token }
+  ): Promise<StepStatus> {
     const status: StepStatus = {
-      status: 'running',
+      status: "running",
       logs: [],
       startedAt: Date.now(),
     };
 
     try {
-      this.log('info', `Starting step: ${step.name}`);
+      this.log("info", `Starting step: ${step.name}`);
 
       // Run verification checks
       if (step.verify && step.verify.length > 0) {
-        this.log('info', 'Running verification checks...');
+        this.log("info", "Running verification checks...");
 
         for (const check of step.verify) {
           const verified = await this.runVerification(check, tokens);
           if (verified) {
-            this.log('info', `Verification passed: ${check.use}`);
-            status.status = 'completed';
+            this.log("info", `Verification passed: ${check.use}`);
+            status.status = "completed";
             status.completedAt = Date.now();
             return status;
           }
         }
 
-        this.log('info', 'Verification failed, executing actions...');
+        this.log("info", "Verification failed, executing actions...");
       }
 
       // Execute actions
@@ -54,21 +65,23 @@ export class StepExecutor {
         }
       }
 
-      status.status = 'completed';
+      status.status = "completed";
       status.completedAt = Date.now();
-      this.log('info', `Step completed: ${step.name}`);
-
+      this.log("info", `Step completed: ${step.name}`);
     } catch (error: unknown) {
-      status.status = 'failed';
-      status.error = error instanceof Error ? error.message : 'Unknown error';
+      status.status = "failed";
+      status.error = error instanceof Error ? error.message : "Unknown error";
       status.completedAt = Date.now();
-      this.log('error', `Step failed: ${status.error}`, error);
+      this.log("error", `Step failed: ${status.error}`, error);
     }
 
     return status;
   }
 
-  private async runVerification(check: Checker, tokens: { google?: Token; microsoft?: Token }): Promise<boolean> {
+  private async runVerification(
+    check: Checker,
+    tokens: { google?: Token; microsoft?: Token }
+  ): Promise<boolean> {
     try {
       const endpoint = this.workflow.endpoints[check.use];
       if (!endpoint) {
@@ -79,7 +92,9 @@ export class StepExecutor {
         endpoint,
         this.workflow.connections,
         this.variables,
-        tokens
+        tokens,
+        undefined,
+        { throwOnMissingVars: false }
       );
 
       return evaluateChecker(check, response, this.variables);
@@ -89,17 +104,20 @@ export class StepExecutor {
     }
   }
 
-  private async executeAction(action: ExecuteAction, tokens: { google?: Token; microsoft?: Token }): Promise<void> {
+  private async executeAction(
+    action: ExecuteAction,
+    tokens: { google?: Token; microsoft?: Token }
+  ): Promise<void> {
     const endpoint = this.workflow.endpoints[action.use];
     if (!endpoint) {
       throw new Error(`Endpoint not found: ${action.use}`);
     }
 
-    this.log('info', `Executing: ${action.use}`);
+    this.log("info", `Executing: ${action.use}`);
 
     // Substitute variables in payload
     const payload = action.payload
-      ? substituteObject(action.payload, this.variables)
+      ? substituteObject(action.payload, this.variables, { throwOnMissing: true })
       : undefined;
 
     const response = await apiClient.request(
@@ -107,12 +125,13 @@ export class StepExecutor {
       this.workflow.connections,
       this.variables,
       tokens,
-      payload
+      payload,
+      { throwOnMissingVars: true }
     );
 
     // Handle long-running operations
     if (action.longRunning) {
-      this.log('info', 'Waiting for long-running operation...');
+      this.log("info", "Waiting for long-running operation...");
       await this.waitForOperation();
     }
 
@@ -121,7 +140,7 @@ export class StepExecutor {
       for (const [varName, path] of Object.entries(action.outputs)) {
         let value: unknown;
 
-        if (path.startsWith('{') && path.endsWith('}')) {
+        if (path.startsWith("{") && path.endsWith("}")) {
           // Direct variable reference
           value = this.variables[path.slice(1, -1)];
         } else {
@@ -130,7 +149,7 @@ export class StepExecutor {
         }
 
         if (value != null) {
-          this.log('info', `Setting variable: ${varName} = ${value}`);
+          this.log("info", `Setting variable: ${varName} = ${value}`);
           this.onVariableUpdate(varName, String(value));
         }
       }
@@ -143,7 +162,7 @@ export class StepExecutor {
     const maxAttempts = 60;
 
     for (let attempt = 0; attempt < maxAttempts; attempt++) {
-      await new Promise(resolve => setTimeout(resolve, 5000));
+      await new Promise((resolve) => setTimeout(resolve, 5000));
       // Check operation status (implementation depends on the API)
       // For now, we'll assume it completes
       break;

@@ -1,6 +1,6 @@
-import { Connection, Endpoint, Token } from '../workflow/types';
-import { substituteVariables } from '../workflow/variables';
-import { isTokenExpired, refreshAccessToken } from '../auth/oauth';
+import { isTokenExpired, refreshAccessToken } from "../auth/oauth";
+import { Connection, Endpoint, Token } from "../workflow/types";
+import { substituteVariables } from "../workflow/variables";
 
 class ApiClient {
   async request(
@@ -8,7 +8,8 @@ class ApiClient {
     connections: Record<string, Connection>,
     variables: Record<string, string>,
     tokens: { google?: Token; microsoft?: Token },
-    body?: unknown
+    body?: unknown,
+    options: { throwOnMissingVars?: boolean } = { throwOnMissingVars: true },
   ): Promise<unknown> {
     const connection = connections[endpoint.conn];
     if (!connection) {
@@ -17,14 +18,14 @@ class ApiClient {
 
     // Determine which token to use
     let token = null;
-    let provider: 'google' | 'microsoft' | null = null;
+    let provider: "google" | "microsoft" | null = null;
 
-    if (endpoint.conn.includes('google') || endpoint.conn.includes('CI')) {
+    if (endpoint.conn.includes("google") || endpoint.conn.includes("CI")) {
       token = tokens.google;
-      provider = 'google';
-    } else if (endpoint.conn.includes('graph')) {
+      provider = "google";
+    } else if (endpoint.conn.includes("graph")) {
       token = tokens.microsoft;
-      provider = 'microsoft';
+      provider = "microsoft";
     }
 
     if (!token) {
@@ -38,7 +39,9 @@ class ApiClient {
     }
 
     // Build URL
-    const path = substituteVariables(endpoint.path, variables);
+    const path = substituteVariables(endpoint.path, variables, {
+      throwOnMissing: options.throwOnMissingVars,
+    });
     let url = `${connection.base}${path}`;
 
     // Add query parameters
@@ -52,33 +55,45 @@ class ApiClient {
 
     // Build headers
     const headers: Record<string, string> = {
-      'Content-Type': 'application/json',
+      "Content-Type": "application/json",
     };
 
     // Add authorization
-    const authHeader = connection.auth.replace('{googleAccessToken}', token.accessToken)
-                                     .replace('{azureAccessToken}', token.accessToken);
-    headers['Authorization'] = authHeader;
+    const authHeader = connection.auth
+      .replace("{googleAccessToken}", token.accessToken)
+      .replace("{azureAccessToken}", token.accessToken);
+    headers["Authorization"] = authHeader;
 
     // Make request
-    const options: RequestInit = {
+    const requestOptions: RequestInit = {
       method: endpoint.method,
       headers,
     };
 
-    if (body && ['POST', 'PATCH', 'PUT'].includes(endpoint.method)) {
-      options.body = JSON.stringify(body);
+    if (body && ["POST", "PATCH", "PUT"].includes(endpoint.method)) {
+      requestOptions.body = JSON.stringify(body);
     }
 
-    const response = await fetch(url, options);
+    const response = await fetch(url, requestOptions);
+
+    // Handle 401 - Authentication error
+    if (response.status === 401) {
+      throw new Error(`Authentication failed: Token may be expired or invalid`);
+    }
+
+    // For verification requests, 404 is expected (resource doesn't exist yet)
+    // Return null to indicate "not found" rather than throwing
+    if (response.status === 404 && !options.throwOnMissingVars) {
+      return null;
+    }
 
     if (!response.ok) {
       const error = await response.text();
       throw new Error(`API request failed: ${response.status} - ${error}`);
     }
 
-    const contentType = response.headers.get('content-type');
-    if (contentType?.includes('application/json')) {
+    const contentType = response.headers.get("content-type");
+    if (contentType?.includes("application/json")) {
       return response.json();
     }
 

@@ -24,32 +24,41 @@ export function evaluateGenerator(generator: string): string {
 
 export function substituteVariables(
   template: string,
-  variables: Record<string, string>
+  variables: Record<string, string>,
+  options: { throwOnMissing?: boolean } = {}
 ): string {
   return template.replace(/\{([^}]+)\}/g, (match, varName) => {
     if (varName in variables) {
       return variables[varName];
     }
-    throw new Error(`Variable ${varName} not found`);
+    
+    if (options.throwOnMissing) {
+      throw new Error(`Variable ${varName} not found`);
+    }
+    
+    // Return the original placeholder if variable not found
+    console.warn(`Variable ${varName} not found, keeping placeholder`);
+    return match;
   });
 }
 
 export function substituteObject(
   obj: unknown,
-  variables: Record<string, string>
+  variables: Record<string, string>,
+  options: { throwOnMissing?: boolean } = {}
 ): unknown {
   if (typeof obj === 'string') {
-    return substituteVariables(obj, variables);
+    return substituteVariables(obj, variables, options);
   }
 
   if (Array.isArray(obj)) {
-    return obj.map(item => substituteObject(item, variables));
+    return obj.map(item => substituteObject(item, variables, options));
   }
 
   if (obj && typeof obj === 'object') {
     const result: Record<string, unknown> = {};
     for (const [key, value] of Object.entries(obj)) {
-      result[key] = substituteObject(value, variables);
+      result[key] = substituteObject(value, variables, options);
     }
     return result;
   }

@@ -1,4 +1,4 @@
-import { z } from 'zod';
+import { z } from "zod";
 
 // Workflow schema definitions
 export const VariableSchema = z.object({
@@ -34,7 +34,7 @@ export const StepSchema = z.object({
 
 export const EndpointSchema = z.object({
   conn: z.string(),
-  method: z.enum(['GET', 'POST', 'PATCH', 'PUT', 'DELETE']),
+  method: z.enum(["GET", "POST", "PATCH", "PUT", "DELETE"]),
   path: z.string(),
   qs: z.record(z.string()).optional(),
 });
@@ -77,14 +77,10 @@ export type Token = z.infer<typeof TokenSchema>;
 export interface WorkflowState {
   variables: Record<string, string>;
   stepStatus: Record<string, StepStatus>;
-  tokens: {
-    google?: Token;
-    microsoft?: Token;
-  };
 }
 
 export interface StepStatus {
-  status: 'pending' | 'running' | 'completed' | 'failed' | 'skipped';
+  status: "pending" | "running" | "completed" | "failed" | "skipped";
   error?: string;
   result?: unknown;
   logs: LogEntry[];
@@ -94,7 +90,7 @@ export interface StepStatus {
 
 export interface LogEntry {
   timestamp: number;
-  level: 'info' | 'warn' | 'error';
+  level: "info" | "warn" | "error";
   message: string;
   data?: unknown;
 }

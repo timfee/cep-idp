@@ -8,19 +8,19 @@
   "connections": {
     "googleAdmin": {
       "base": "https://admin.googleapis.com/admin/directory/v1",
-      "auth": "Bearer {googleAccessToken}",
+      "auth": "Bearer {googleAccessToken}"
     },
     "googleCI": {
       "base": "https://cloudidentity.googleapis.com/v1",
-      "auth": "Bearer {googleAccessToken}",
+      "auth": "Bearer {googleAccessToken}"
     },
     "graphGA": {
       "base": "https://graph.microsoft.com/v1.0",
-      "auth": "Bearer {azureAccessToken}",
+      "auth": "Bearer {azureAccessToken}"
     },
     "graphBeta": {
       "base": "https://graph.microsoft.com/beta",
-      "auth": "Bearer {azureAccessToken}",
+      "auth": "Bearer {azureAccessToken}"
     },
   },
 

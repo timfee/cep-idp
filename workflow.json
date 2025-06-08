@@ -2,13 +2,11 @@
   "connections": {
     "googleAdmin": {
       "base": "https://admin.googleapis.com/admin/directory/v1",
-      "auth": "Bearer {googleAccessToken}",
-      "apiReference": "https://developers.google.com/admin-sdk/directory"
+      "auth": "Bearer {googleAccessToken}"
     },
     "googleCI": {
       "base": "https://cloudidentity.googleapis.com/v1",
-      "auth": "Bearer {googleAccessToken}",
-      "apiReference": "https://cloud.google.com/identity/docs/reference/rest/v1"
+      "auth": "Bearer {googleAccessToken}"
     },
     "graphGA": {
       "base": "https://graph.microsoft.com/v1.0",
@@ -47,7 +45,10 @@
       "conn": "googleAdmin",
       "method": "GET",
       "path": "/customer/{customerId}/orgunits",
-      "qs": { "orgUnitPath": "/Automation", "type": "children" }
+      "qs": {
+        "orgUnitPath": "/Automation",
+        "type": "children"
+      }
     },
     "admin.postOU": {
       "conn": "googleAdmin",
@@ -78,7 +79,10 @@
       "conn": "googleAdmin",
       "method": "GET",
       "path": "/customer/{customerId}/roleassignments",
-      "qs": { "roleId": "{adminRoleId}", "assignedTo": "{provisioningUserId}" }
+      "qs": {
+        "roleId": "{adminRoleId}",
+        "assignedTo": "{provisioningUserId}"
+      }
     },
     "admin.postRoleAssign": {
       "conn": "googleAdmin",
@@ -89,7 +93,9 @@
       "conn": "googleCI",
       "method": "GET",
       "path": "/inboundSamlSsoProfiles",
-      "qs": { "filter": "displayName=Azure AD" }
+      "qs": {
+        "filter": "displayName=Azure AD"
+      }
     },
     "ci.createSamlProfile": {
       "conn": "googleCI",
@@ -130,13 +136,17 @@
       "conn": "graphGA",
       "method": "GET",
       "path": "/applications",
-      "qs": { "$filter": "applicationTemplateId eq '{provTemplateId}'" }
+      "qs": {
+        "$filter": "applicationTemplateId eq '{provTemplateId}'"
+      }
     },
     "graph.appByTemplateSSO": {
       "conn": "graphGA",
       "method": "GET",
       "path": "/applications",
-      "qs": { "$filter": "applicationTemplateId eq '{ssoTemplateId}'" }
+      "qs": {
+        "$filter": "applicationTemplateId eq '{ssoTemplateId}'"
+      }
     },
     "graph.getSync": {
       "conn": "graphGA",
@@ -171,8 +181,7 @@
     "graph.createPolicy": {
       "conn": "graphBeta",
       "method": "POST",
-      "path": "/policies/tokenIssuancePolicies",
-      "apiReference": "https://learn.microsoft.com/graph/api/tokenissuancepolicy-post-tokenissuancepolicy"
+      "path": "/policies/tokenIssuancePolicies"
     },
     "graph.linkPolicy": {
       "conn": "graphBeta",
@@ -183,7 +192,9 @@
       "conn": "graphGA",
       "method": "GET",
       "path": "/servicePrincipals/{ssoServicePrincipalId}/appRoleAssignedTo",
-      "qs": { "$filter": "principalId eq {principalId}" }
+      "qs": {
+        "$filter": "principalId eq {principalId}"
+      }
     },
     "graph.postAppRoleAssign": {
       "conn": "graphGA",
@@ -197,12 +208,18 @@
     "eq": "$ == '{value}'"
   },
   "variables": {
-    "customerId": { "validator": "^C[0-9a-f]{10,}$|^my_customer$" },
-    "domainName": { "validator": "^([\\w-]+\\.)+[A-Za-z]{2,}$" },
+    "customerId": {
+      "validator": "^C[0-9a-f]{10,}$|^my_customer$"
+    },
+    "domainName": {
+      "validator": "^([\\w-]+\\.)+[A-Za-z]{2,}$"
+    },
     "primaryDomain": {},
     "googleAccessToken": {},
     "azureAccessToken": {},
-    "generatedPassword": { "generator": "randomPassword(16)" },
+    "generatedPassword": {
+      "generator": "randomPassword(16)"
+    },
     "provisioningUserId": {},
     "provisioningUserEmail": {},
     "provisioningUserPassword": {},
@@ -210,11 +227,17 @@
     "samlProfileId": {},
     "entityId": {},
     "acsUrl": {},
-    "provTemplateId": { "default": "d0d8633b-4174-4d05-89c7-86d229f50f26" },
-    "ssoTemplateId": { "default": "8ba3d1d8-7c8c-4d2d-b179-04d4a68fba02" },
+    "provTemplateId": {
+      "default": "d0d8633b-4174-4d05-89c7-86d229f50f26"
+    },
+    "ssoTemplateId": {
+      "default": "8ba3d1d8-7c8c-4d2d-b179-04d4a68fba02"
+    },
     "provServicePrincipalId": {},
     "ssoServicePrincipalId": {},
-    "jobId": { "default": "Initial" },
+    "jobId": {
+      "default": "Initial"
+    },
     "claimsPolicyId": {},
     "principalId": {}
   },
@@ -231,18 +254,28 @@
       "execute": [
         {
           "use": "admin.postDomain",
-          "payload": { "domainName": "{domainName}" }
+          "payload": {
+            "domainName": "{domainName}"
+          }
         }
       ],
       "role": "dirDomainRW"
     },
     {
       "name": "OU Automation",
-      "verify": [{ "use": "admin.listOUAutomation", "checker": "exists" }],
+      "verify": [
+        {
+          "use": "admin.listOUAutomation",
+          "checker": "exists"
+        }
+      ],
       "execute": [
         {
           "use": "admin.postOU",
-          "payload": { "name": "Automation", "parentOrgUnitPath": "/" }
+          "payload": {
+            "name": "Automation",
+            "parentOrgUnitPath": "/"
+          }
         }
       ],
       "role": "dirOrgunitRW",
@@ -250,13 +283,20 @@
     },
     {
       "name": "Service user",
-      "verify": [{ "use": "admin.getUser" }],
+      "verify": [
+        {
+          "use": "admin.getUser"
+        }
+      ],
       "execute": [
         {
           "use": "admin.postUser",
           "payload": {
             "primaryEmail": "azuread-provisioning@{primaryDomain}",
-            "name": { "givenName": "Microsoft", "familyName": "Provisioning" },
+            "name": {
+              "givenName": "Microsoft",
+              "familyName": "Provisioning"
+            },
             "password": "{generatedPassword}",
             "orgUnitPath": "/Automation"
           },
@@ -272,7 +312,12 @@
     },
     {
       "name": "Custom admin role",
-      "verify": [{ "use": "admin.listRoles", "checker": "exists" }],
+      "verify": [
+        {
+          "use": "admin.listRoles",
+          "checker": "exists"
+        }
+      ],
       "execute": [
         {
           "use": "admin.postRole",
@@ -284,7 +329,9 @@
               "ORGANIZATION_UNITS_READ"
             ]
           },
-          "outputs": { "adminRoleId": "$.roleId" }
+          "outputs": {
+            "adminRoleId": "$.roleId"
+          }
         }
       ],
       "role": "dirRoleRW",
@@ -292,7 +339,12 @@
     },
     {
       "name": "Assign role to user",
-      "verify": [{ "use": "admin.getRoleAssign", "checker": "exists" }],
+      "verify": [
+        {
+          "use": "admin.getRoleAssign",
+          "checker": "exists"
+        }
+      ],
       "execute": [
         {
           "use": "admin.postRoleAssign",
@@ -308,7 +360,12 @@
     },
     {
       "name": "Inbound SAML profile",
-      "verify": [{ "use": "ci.listSamlProfiles", "checker": "exists" }],
+      "verify": [
+        {
+          "use": "ci.listSamlProfiles",
+          "checker": "exists"
+        }
+      ],
       "execute": [
         {
           "use": "ci.createSamlProfile",
@@ -333,11 +390,18 @@
     },
     {
       "name": "Add IdP certificate",
-      "verify": [{ "use": "ci.getIdpCreds", "checker": "exists" }],
+      "verify": [
+        {
+          "use": "ci.getIdpCreds",
+          "checker": "exists"
+        }
+      ],
       "execute": [
         {
           "use": "ci.addIdpCert",
-          "payload": { "pemData": "-----BEGIN CERTIFICATE-----..." },
+          "payload": {
+            "pemData": "-----BEGIN CERTIFICATE-----..."
+          },
           "longRunning": true
         }
       ],
@@ -346,12 +410,21 @@
     },
     {
       "name": "Provisioning app SP",
-      "verify": [{ "use": "graph.appByTemplateProv", "checker": "exists" }],
+      "verify": [
+        {
+          "use": "graph.appByTemplateProv",
+          "checker": "exists"
+        }
+      ],
       "execute": [
         {
           "use": "graph.instantiateProv",
-          "payload": { "displayName": "Google Cloud (Provisioning)" },
-          "outputs": { "provServicePrincipalId": "$.servicePrincipal.id" }
+          "payload": {
+            "displayName": "Google Cloud (Provisioning)"
+          },
+          "outputs": {
+            "provServicePrincipalId": "$.servicePrincipal.id"
+          }
         }
       ],
       "role": "graphAppRW",
@@ -359,18 +432,31 @@
     },
     {
       "name": "Set provisioning credentials",
-      "verify": [{ "use": "graph.getSync", "checker": "exists" }],
+      "verify": [
+        {
+          "use": "graph.getSync",
+          "checker": "exists"
+        }
+      ],
       "execute": [
         {
           "use": "graph.patchSync",
           "payload": {
             "credentials": {
               "fields": [
-                { "name": "Username", "value": "{provisioningUserEmail}" },
-                { "name": "Password", "value": "{provisioningUserPassword}" }
+                {
+                  "name": "Username",
+                  "value": "{provisioningUserEmail}"
+                },
+                {
+                  "name": "Password",
+                  "value": "{provisioningUserPassword}"
+                }
               ]
             },
-            "schedule": { "interval": "PT40M" },
+            "schedule": {
+              "interval": "PT40M"
+            },
             "templateId": "sync-schema-v2"
           }
         }
@@ -387,18 +473,31 @@
           "field": "state=='active'"
         }
       ],
-      "execute": [{ "use": "graph.startSyncJob" }],
+      "execute": [
+        {
+          "use": "graph.startSyncJob"
+        }
+      ],
       "role": "graphSyncRW",
       "depends_on": ["Set provisioning credentials"]
     },
     {
       "name": "SSO app SP",
-      "verify": [{ "use": "graph.appByTemplateSSO", "checker": "exists" }],
+      "verify": [
+        {
+          "use": "graph.appByTemplateSSO",
+          "checker": "exists"
+        }
+      ],
       "execute": [
         {
           "use": "graph.instantiateSSO",
-          "payload": { "displayName": "Google Cloud" },
-          "outputs": { "ssoServicePrincipalId": "$.servicePrincipal.id" }
+          "payload": {
+            "displayName": "Google Cloud"
+          },
+          "outputs": {
+            "ssoServicePrincipalId": "$.servicePrincipal.id"
+          }
         }
       ],
       "role": "graphAppRW",
@@ -429,7 +528,12 @@
     },
     {
       "name": "Claims mapping policy",
-      "verify": [{ "use": "graph.listPolicies", "checker": "exists" }],
+      "verify": [
+        {
+          "use": "graph.listPolicies",
+          "checker": "exists"
+        }
+      ],
       "execute": [
         {
           "use": "graph.createPolicy",
@@ -439,7 +543,9 @@
               "{ \\\"claimsMapping\\\": { \\\"user\\\": { \\\"given_name\\\": \\\"user.givenName\\\" } } }"
             ]
           },
-          "outputs": { "claimsPolicyId": "$.id" }
+          "outputs": {
+            "claimsPolicyId": "$.id"
+          }
         },
         {
           "use": "graph.linkPolicy",
@@ -454,7 +560,12 @@
     },
     {
       "name": "Assign user/group to SSO app",
-      "verify": [{ "use": "graph.getAppRoleAssign", "checker": "exists" }],
+      "verify": [
+        {
+          "use": "graph.getAppRoleAssign",
+          "checker": "exists"
+        }
+      ],
       "execute": [
         {
           "use": "graph.postAppRoleAssign",
@@ -470,7 +581,12 @@
     },
     {
       "name": "Assign SAML profile to root OU",
-      "verify": [{ "use": "ci.listSsoAssignments", "checker": "exists" }],
+      "verify": [
+        {
+          "use": "ci.listSsoAssignments",
+          "checker": "exists"
+        }
+      ],
       "execute": [
         {
           "use": "ci.postSsoAssignment",
@@ -486,7 +602,12 @@
     },
     {
       "name": "Disable SSO for /Automation OU",
-      "verify": [{ "use": "ci.listSsoAssignments", "checker": "exists" }],
+      "verify": [
+        {
+          "use": "ci.listSsoAssignments",
+          "checker": "exists"
+        }
+      ],
       "execute": [
         {
           "use": "ci.postSsoAssignment",

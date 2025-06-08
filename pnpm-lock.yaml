@@ -23,9 +23,6 @@ importers:
       react-dom:
         specifier: 19.1.0
         version: 19.1.0(react@19.1.0)
-      zod:
-        specifier: ^3.23.8
-        version: 3.25.56
     devDependencies:
       '@eslint/eslintrc':
         specifier: ^3.3.1
@@ -63,6 +60,9 @@ importers:
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
+      zod:
+        specifier: ^3.23.8
+        version: 3.25.56
 
 packages:
 

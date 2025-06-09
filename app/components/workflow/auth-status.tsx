@@ -14,7 +14,7 @@ interface AuthStatusProps {
 
 /**
  * Determines if a granted scope implies a required scope.
- * Handles common patterns: wildcard, readwrite > read/write, and exact match.
+ * Handles common patterns: wildcard, readwrite -\> read/write, and exact match.
  * Extend this function for more complex provider-specific rules.
  */
 function normalizeScope(scope: string): string {

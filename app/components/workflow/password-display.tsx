@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Button } from "../ui/button";
+import { COPY_FEEDBACK_DURATION_MS } from "@/app/lib/workflow/constants";
 import { Copy, Eye, EyeOff, ShieldAlert } from "lucide-react";
 
 interface PasswordDisplayProps {
@@ -20,7 +21,7 @@ export function PasswordDisplay({
   const copyToClipboard = async () => {
     await navigator.clipboard.writeText(password);
     setCopied(true);
-    setTimeout(() => setCopied(false), 2000);
+    setTimeout(() => setCopied(false), COPY_FEEDBACK_DURATION_MS);
   };
 
   return (

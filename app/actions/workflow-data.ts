@@ -415,7 +415,7 @@ export async function getWorkflowVariables(): Promise<{
       for (const action of step.actions) {
         if (action.payload) {
           const payloadStr = JSON.stringify(action.payload);
-          const matches = payloadStr.matchAll(/\{([^}]+)\}/g);
+          const matches = payloadStr.matchAll(/\{([^{}]+)\}/g);
           for (const match of matches) {
             requiredVars.add(match[1]);
           }

@@ -27,7 +27,6 @@ interface StepCardProps {
   status: StepStatus;
   canExecute: boolean;
   isAuthValid: boolean;
-  variables: Record<string, string>;
 }
 
 export function StepCard({
@@ -35,7 +34,6 @@ export function StepCard({
   status,
   canExecute,
   isAuthValid,
-  variables,
 }: StepCardProps) {
   const [isPending, startTransition] = useTransition();
   const [localExecutionResult, setLocalExecutionResult] = useState<{

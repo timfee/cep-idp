@@ -79,7 +79,6 @@ export function WorkflowSteps({
             status={status}
             canExecute={canExecute}
             isAuthValid={isAuthValid}
-            variables={variables}
           />
         );
       })}

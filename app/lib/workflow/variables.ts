@@ -25,7 +25,7 @@ export function evaluateGenerator(generator: string): string {
 export function substituteVariables(
   template: string,
   variables: Record<string, string>,
-  options: { throwOnMissing?: boolean } = {}
+  options: { throwOnMissing?: boolean } = {},
 ): string {
   return template.replace(/\{([^}]+)\}/g, (match, expression) => {
     if (expression.includes("(")) {
@@ -55,7 +55,7 @@ export function substituteVariables(
 
 function evaluateTemplateExpression(
   expression: string,
-  variables: Record<string, string>
+  variables: Record<string, string>,
 ): string {
   const match = expression.match(/^(\w+)\((.*)\)$/);
   if (!match) {
@@ -78,7 +78,9 @@ function evaluateTemplateExpression(
     }
     case "email": {
       if (args.length !== 2) {
-        throw new Error("email() requires exactly 2 arguments: username and domain");
+        throw new Error(
+          "email() requires exactly 2 arguments: username and domain",
+        );
       }
       return `${args[0]}@${args[1]}`;
     }
@@ -92,7 +94,9 @@ function evaluateTemplateExpression(
     }
     case "generatePassword": {
       if (args.length !== 1) {
-        throw new Error("generatePassword() requires exactly 1 argument: length");
+        throw new Error(
+          "generatePassword() requires exactly 1 argument: length",
+        );
       }
       const length = parseInt(args[0], 10);
       if (isNaN(length) || length <= 0) {
@@ -107,7 +111,7 @@ function evaluateTemplateExpression(
 
 function parseTemplateArgs(
   argsString: string,
-  variables: Record<string, string>
+  variables: Record<string, string>,
 ): string[] {
   if (!argsString.trim()) {
     return [];
@@ -144,10 +148,12 @@ function parseTemplateArgs(
 
 function resolveTemplateArg(
   arg: string,
-  variables: Record<string, string>
+  variables: Record<string, string>,
 ): string {
-  if ((arg.startsWith('"') && arg.endsWith('"')) ||
-      (arg.startsWith("'") && arg.endsWith("'"))) {
+  if (
+    (arg.startsWith('"') && arg.endsWith('"')) ||
+    (arg.startsWith("'") && arg.endsWith("'"))
+  ) {
     return arg.slice(1, -1);
   }
 
@@ -175,7 +181,7 @@ function formatString(template: string, values: string[]): string {
 export function substituteObject(
   obj: unknown,
   variables: Record<string, string>,
-  options: { throwOnMissing?: boolean } = {}
+  options: { throwOnMissing?: boolean } = {},
 ): unknown {
   if (typeof obj === "string") {
     return substituteVariables(obj, variables, options);
@@ -204,7 +210,11 @@ export function extractValueFromPath(obj: unknown, path: string): unknown {
       const results = JSONPath({ path, json: obj, wrap: false });
 
       if (Array.isArray(results)) {
-        if (results.length === 1 && !path.includes("[*]") && !path.includes("..")) {
+        if (
+          results.length === 1 &&
+          !path.includes("[*]") &&
+          !path.includes("..")
+        ) {
           return results[0];
         } else if (results.length === 0) {
           return undefined;
@@ -225,7 +235,9 @@ export function extractValueFromPath(obj: unknown, path: string): unknown {
     }
 
     if (path === "primaryDomain" && hasDomainsArray(obj)) {
-      const data = obj as { domains: Array<{ isPrimary?: boolean; domainName?: string }> };
+      const data = obj as {
+        domains: Array<{ isPrimary?: boolean; domainName?: string }>;
+      };
       const primaryDomain = data.domains.find((d) => d.isPrimary);
       return primaryDomain?.domainName;
     }
@@ -238,16 +250,21 @@ export function extractValueFromPath(obj: unknown, path: string): unknown {
 }
 
 function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
-  const findByMatch = expression.match(/findBy\(([^,]+),\s*'([^']+)',\s*([^)]+)\)\.?(.*)$/);
+  const findByMatch = expression.match(
+    /findBy\(([^,]+),\s*'([^']+)',\s*([^)]+)\)\.?(.*)$/,
+  );
 
   if (findByMatch) {
     const [, arrayPath, property, value, remainingPath] = findByMatch;
     const array = evaluateSimplePath(obj, arrayPath.trim());
 
     if (Array.isArray(array)) {
-      const targetValue = value.trim() === "true" ? true :
-                         value.trim() === "false" ? false :
-                         value.replace(/['"]/g, "");
+      const targetValue =
+        value.trim() === "true"
+          ? true
+          : value.trim() === "false"
+            ? false
+            : value.replace(/['"]/g, "");
 
       const found = array.find((item: unknown) => {
         return (
@@ -278,9 +295,12 @@ function evaluatePredicatePath(obj: unknown, path: string): unknown {
     const array = evaluateSimplePath(obj, arrayPath.trim());
 
     if (Array.isArray(array)) {
-      const targetValue = value.trim() === "true" ? true :
-                         value.trim() === "false" ? false :
-                         value.replace(/['"]/g, "");
+      const targetValue =
+        value.trim() === "true"
+          ? true
+          : value.trim() === "false"
+            ? false
+            : value.replace(/['"]/g, "");
 
       const found = array.find((item: unknown) => {
         const trimmedProperty = property.trim();
@@ -331,7 +351,7 @@ function evaluateSimplePath(obj: unknown, path: string): unknown {
 }
 
 function hasDomainsArray(
-  obj: unknown
+  obj: unknown,
 ): obj is { domains: Array<{ isPrimary?: boolean; domainName?: string }> } {
   return (
     obj != null &&
@@ -355,7 +375,7 @@ export function validateVariable(value: string, validator?: string): boolean {
 
 export function extractMissingVariables(
   template: string,
-  variables: Record<string, string>
+  variables: Record<string, string>,
 ): string[] {
   const missing: string[] = [];
 

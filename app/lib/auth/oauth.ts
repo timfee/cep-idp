@@ -49,7 +49,7 @@ export function getOAuthConfig(provider: "google" | "microsoft"): OAuthConfig {
 export function generateAuthUrl(
   provider: "google" | "microsoft",
   state: string,
-  baseUrl: string
+  baseUrl: string,
 ): string {
   const config = getOAuthConfig(provider);
   const params = new URLSearchParams();
@@ -72,7 +72,7 @@ export function generateAuthUrl(
 export async function exchangeCodeForToken(
   provider: "google" | "microsoft",
   code: string,
-  baseUrl: string
+  baseUrl: string,
 ): Promise<Token> {
   const config = getOAuthConfig(provider);
 
@@ -111,7 +111,7 @@ export async function exchangeCodeForToken(
 
 export async function refreshAccessToken(
   provider: "google" | "microsoft",
-  refreshToken: string
+  refreshToken: string,
 ): Promise<Token> {
   const config = getOAuthConfig(provider);
 
@@ -147,15 +147,14 @@ export async function refreshAccessToken(
 
 export function validateScopes(
   token: Token,
-  requiredScopes: string[]
+  requiredScopes: string[],
 ): boolean {
   return requiredScopes.every((scope) => token.scope.includes(scope));
 }
 
 export function isTokenExpired(token: Token): boolean {
   return (
-    Date.now() >=
-    token.expiresAt - WORKFLOW_CONSTANTS.TOKEN_REFRESH_BUFFER_MS
+    Date.now() >= token.expiresAt - WORKFLOW_CONSTANTS.TOKEN_REFRESH_BUFFER_MS
   );
 }
 

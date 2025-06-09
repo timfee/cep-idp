@@ -1,11 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { 
-  StepStatus, 
-  parseWorkflow
-} from "@/app/lib/workflow";
-
+import { StepStatus, parseWorkflow } from "@/app/lib/workflow";
 
 // Global variable state - persisted across requests (NOTE: This resets on server restart)
 let globalVariables: Record<string, string> = {};
@@ -16,14 +12,20 @@ let globalStepStatuses: Record<string, StepStatus> = {};
 /**
  * Update global variable state
  */
-export async function updateGlobalVariable(name: string, value: string): Promise<void> {
+export async function updateGlobalVariable(
+  name: string,
+  value: string,
+): Promise<void> {
   globalVariables[name] = value;
 }
 
 /**
  * Update global step status
  */
-export async function updateGlobalStepStatus(stepName: string, status: StepStatus): Promise<void> {
+export async function updateGlobalStepStatus(
+  stepName: string,
+  status: StepStatus,
+): Promise<void> {
   globalStepStatuses[stepName] = { ...status, variables: globalVariables };
 }
 
@@ -37,14 +39,18 @@ export async function getGlobalVariables(): Promise<Record<string, string>> {
 /**
  * Get global step status
  */
-export async function getGlobalStepStatus(stepName: string): Promise<StepStatus | undefined> {
+export async function getGlobalStepStatus(
+  stepName: string,
+): Promise<StepStatus | undefined> {
   return globalStepStatuses[stepName];
 }
 
 /**
  * Get all global step statuses
  */
-export async function getAllGlobalStepStatuses(): Promise<Record<string, StepStatus>> {
+export async function getAllGlobalStepStatuses(): Promise<
+  Record<string, StepStatus>
+> {
   return { ...globalStepStatuses };
 }
 
@@ -63,8 +69,6 @@ export async function clearGlobalState(): Promise<void> {
 export async function refreshWorkflowState(): Promise<void> {
   revalidatePath("/");
 }
-
-
 
 /**
  * Set a workflow variable with validation

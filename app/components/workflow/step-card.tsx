@@ -145,7 +145,9 @@ export function StepCard({
               <div className="flex items-center gap-2">
                 {step.manual && effectiveStatus.status === "pending" && (
                   <>
-                    <Button onClick={() => setShowManualModal(true)}>Configure Manually</Button>
+                    <Button onClick={() => setShowManualModal(true)}>
+                      Configure Manually
+                    </Button>
                     <ManualStepModal
                       step={step}
                       isOpen={showManualModal}
@@ -230,7 +232,7 @@ export function StepCard({
                   "text-sm",
                   effectiveStatus.status === "failed"
                     ? "text-red-600 dark:text-red-400 font-medium"
-                    : "text-zinc-500 dark:text-zinc-400"
+                    : "text-zinc-500 dark:text-zinc-400",
                 )}
               >
                 {effectiveStatus.status === "failed" && effectiveStatus.error
@@ -272,7 +274,7 @@ export function StepCard({
                           log.level === "error" &&
                             "text-red-600 dark:text-red-400",
                           log.level === "warn" &&
-                            "text-amber-600 dark:text-amber-400"
+                            "text-amber-600 dark:text-amber-400",
                         )}
                       >
                         {log.data &&

@@ -31,7 +31,7 @@ export async function runStepActions(
   variables: Record<string, string>,
   tokens: { google?: Token; microsoft?: Token },
   onLog: (entry: LogEntry) => void,
-  verificationOnly: boolean = false
+  verificationOnly: boolean = false,
 ): Promise<{
   success: boolean;
   extractedVariables: Record<string, string>;
@@ -64,7 +64,7 @@ export async function runStepActions(
 
       console.log(
         `[DEBUG] Variables available for ${action.use}:`,
-        Object.keys(variables)
+        Object.keys(variables),
       );
 
       // Skip action if required variables are missing (unless it's a fallback)
@@ -72,7 +72,7 @@ export async function runStepActions(
         const missingVars = extractMissingVariables(endpoint.path, variables);
         if (missingVars.length > 0) {
           console.log(
-            `Skipping action ${action.use} - missing variables: ${missingVars.join(", ")}`
+            `Skipping action ${action.use} - missing variables: ${missingVars.join(", ")}`,
           );
           continue;
         }
@@ -194,7 +194,7 @@ export async function runStepActions(
                     typeof item === "object" &&
                     "serviceName" in item &&
                     (item as Record<string, unknown>).serviceName ===
-                      "Admin Directory API"
+                      "Admin Directory API",
                 );
 
                 if (adminDirService) {
@@ -216,7 +216,7 @@ export async function runStepActions(
                     .map((item: unknown) =>
                       item && typeof item === "object" && "serviceName" in item
                         ? (item as Record<string, unknown>).serviceName
-                        : null
+                        : null,
                     )
                     .filter(Boolean);
                   onLog({
@@ -275,7 +275,7 @@ export async function runStepActions(
                       item && typeof item === "object" && "roleName" in item
                         ? (item as Record<string, unknown>).roleName ||
                           "undefined"
-                        : "undefined"
+                        : "undefined",
                     )
                     .join(", ");
                   onLog({
@@ -291,7 +291,7 @@ export async function runStepActions(
                       typeof item === "object" &&
                       "roleName" in item &&
                       (item as Record<string, unknown>).roleName ===
-                        "Microsoft Entra Provisioning"
+                        "Microsoft Entra Provisioning",
                   );
                   if (targetRole) {
                     onLog({
@@ -344,7 +344,7 @@ export async function runStepActions(
       // But also check if required outputs were extracted
       if (step.outputs && step.outputs.length > 0) {
         const missingOutputs = step.outputs.filter(
-          (output) => !extractedVariables[output]
+          (output) => !extractedVariables[output],
         );
         if (missingOutputs.length > 0) {
           onLog({
@@ -405,11 +405,11 @@ export async function runStepActions(
         throw new Error(
           `Authentication failed for "${step.name}". Please re-authenticate with ${
             endpoint.conn.includes("google") ? "Google" : "Microsoft"
-          }.`
+          }.`,
         );
       } else if (errorMessage.includes("404") && !verificationOnly) {
         throw new Error(
-          `Resource not found for "${step.name}". This usually means a previous step failed to create the required resource.`
+          `Resource not found for "${step.name}". This usually means a previous step failed to create the required resource.`,
         );
       } else if (errorMessage.includes("404")) {
         return { success: false, extractedVariables };
@@ -488,14 +488,14 @@ export async function executeWorkflowStep(stepName: string): Promise<{
       // Check if step has required inputs
       if (step.inputs && step.inputs.length > 0) {
         const missingInputs = step.inputs.filter(
-          (input) => !updatedVariables[input]
+          (input) => !updatedVariables[input],
         );
         if (missingInputs.length > 0) {
           console.log(
-            `[DEBUG] Missing inputs detected: ${missingInputs.join(", ")}`
+            `[DEBUG] Missing inputs detected: ${missingInputs.join(", ")}`,
           );
           throw new Error(
-            `Cannot execute "${step.name}". Missing required data: ${missingInputs.join(", ")}. Please complete the previous steps first.`
+            `Cannot execute "${step.name}". Missing required data: ${missingInputs.join(", ")}. Please complete the previous steps first.`,
           );
         }
       }
@@ -506,12 +506,12 @@ export async function executeWorkflowStep(stepName: string): Promise<{
         updatedVariables,
         tokens,
         onLog,
-        false // full execution mode
+        false, // full execution mode
       );
 
       if (!actionResult.success) {
         console.log(
-          `[DEBUG] Action result failed for ${stepName}, throwing error`
+          `[DEBUG] Action result failed for ${stepName}, throwing error`,
         );
         throw new Error("Step actions failed");
       }
@@ -521,7 +521,7 @@ export async function executeWorkflowStep(stepName: string): Promise<{
 
       // Persist variables globally
       for (const [key, value] of Object.entries(
-        actionResult.extractedVariables
+        actionResult.extractedVariables,
       )) {
         await updateGlobalVariable(key, value);
       }
@@ -529,7 +529,7 @@ export async function executeWorkflowStep(stepName: string): Promise<{
       status.result = actionResult.data;
 
       console.log(
-        `[DEBUG] Step actions succeeded for ${stepName}, marking as completed`
+        `[DEBUG] Step actions succeeded for ${stepName}, marking as completed`,
       );
       status.status = "completed";
       status.completedAt = Date.now();
@@ -546,7 +546,7 @@ export async function executeWorkflowStep(stepName: string): Promise<{
     } catch (error: unknown) {
       console.log(
         `[DEBUG] CAUGHT ERROR in executeWorkflowStep for ${stepName}:`,
-        error
+        error,
       );
 
       // Parse API error details

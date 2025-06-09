@@ -40,10 +40,10 @@ export interface WorkflowData {
  * Get complete workflow data by reconstructing state from verification checks
  */
 export async function getWorkflowData(
-  forceRefresh = false
+  forceRefresh = false,
 ): Promise<WorkflowData> {
   console.log(
-    `[Initial Load] Starting getWorkflowData (forceRefresh: ${forceRefresh})`
+    `[Initial Load] Starting getWorkflowData (forceRefresh: ${forceRefresh})`,
   );
 
   // Get auth status
@@ -74,16 +74,16 @@ export async function getWorkflowData(
   // Extract tenant ID from Microsoft token
   if (microsoftToken && !variables.tenantId) {
     try {
-      const parts = microsoftToken.accessToken.split('.');
+      const parts = microsoftToken.accessToken.split(".");
       if (parts.length === 3) {
-        const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+        const payload = JSON.parse(Buffer.from(parts[1], "base64").toString());
         if (payload.tid) {
           variables.tenantId = payload.tid;
-          await updateGlobalVariable('tenantId', payload.tid);
+          await updateGlobalVariable("tenantId", payload.tid);
         }
       }
     } catch (error) {
-      console.warn('Failed to extract tenant ID from token:', error);
+      console.warn("Failed to extract tenant ID from token:", error);
     }
   }
 
@@ -135,7 +135,7 @@ export async function getWorkflowData(
       return requiredScopes.every((scope) => googleToken.scope.includes(scope));
     } else if (isMicrosoftStep && microsoftToken) {
       return requiredScopes.every((scope) =>
-        microsoftToken.scope.includes(scope)
+        microsoftToken.scope.includes(scope),
       );
     }
 
@@ -155,7 +155,7 @@ export async function getWorkflowData(
     // Track progress to prevent infinite loops
     if (iteration > 1 && processedSteps.size === lastProcessedCount) {
       console.warn(
-        `[Initial Load] No progress made in iteration ${iteration}, breaking loop`
+        `[Initial Load] No progress made in iteration ${iteration}, breaking loop`,
       );
       break;
     }
@@ -176,11 +176,11 @@ export async function getWorkflowData(
           const missingOutputs = step.outputs.filter(
             (output) =>
               !variables[output] &&
-              (!globalStatus.variables || !globalStatus.variables[output])
+              (!globalStatus.variables || !globalStatus.variables[output]),
           );
           if (missingOutputs.length > 0) {
             console.log(
-              `[Initial Load] Step ${step.name} marked completed but missing outputs: ${missingOutputs.join(", ")} - re-running`
+              `[Initial Load] Step ${step.name} marked completed but missing outputs: ${missingOutputs.join(", ")} - re-running`,
             );
             // Don't use global status, re-run the step
           } else {
@@ -191,7 +191,7 @@ export async function getWorkflowData(
               Object.assign(variables, globalStatus.variables);
             }
             console.log(
-              `[Initial Load] Using global status for: ${step.name} (${globalStatus.status})`
+              `[Initial Load] Using global status for: ${step.name} (${globalStatus.status})`,
             );
             continue;
           }
@@ -203,7 +203,7 @@ export async function getWorkflowData(
             Object.assign(variables, globalStatus.variables);
           }
           console.log(
-            `[Initial Load] Using global status for: ${step.name} (${globalStatus.status})`
+            `[Initial Load] Using global status for: ${step.name} (${globalStatus.status})`,
           );
           continue;
         }
@@ -233,7 +233,7 @@ export async function getWorkflowData(
         const missingInputs = step.inputs.filter((input) => !variables[input]);
         if (missingInputs.length > 0) {
           console.log(
-            `[Initial Load] Missing inputs for ${step.name}: ${missingInputs.join(", ")}`
+            `[Initial Load] Missing inputs for ${step.name}: ${missingInputs.join(", ")}`,
           );
           stepStatuses[step.name] = { status: "pending", logs: [] };
           processedSteps.add(step.name);
@@ -259,7 +259,7 @@ export async function getWorkflowData(
         variables,
         tokens,
         (log) => logs.push(log),
-        true // verification only
+        true, // verification only
       );
 
       if (actionResult.success) {
@@ -268,7 +268,7 @@ export async function getWorkflowData(
 
         // Persist variables globally
         for (const [key, value] of Object.entries(
-          actionResult.extractedVariables
+          actionResult.extractedVariables,
         )) {
           await updateGlobalVariable(key, value);
         }
@@ -300,7 +300,7 @@ export async function getWorkflowData(
   // Break infinite loop protection
   if (iteration >= workflow.steps.length * 2) {
     console.warn(
-      `[Initial Load] Stopped processing after ${iteration} iterations to prevent infinite loop`
+      `[Initial Load] Stopped processing after ${iteration} iterations to prevent infinite loop`,
     );
   }
 
@@ -310,8 +310,8 @@ export async function getWorkflowData(
       Object.entries(stepStatuses).map(([name, status]) => [
         name,
         status.status,
-      ])
-    )
+      ]),
+    ),
   );
 
   return {

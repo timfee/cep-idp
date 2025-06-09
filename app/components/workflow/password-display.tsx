@@ -10,7 +10,10 @@ interface PasswordDisplayProps {
   accountEmail: string;
 }
 
-export function PasswordDisplay({ password, accountEmail }: PasswordDisplayProps) {
+export function PasswordDisplay({
+  password,
+  accountEmail,
+}: PasswordDisplayProps) {
   const [showPassword, setShowPassword] = useState(true);
   const [copied, setCopied] = useState(false);
 
@@ -39,13 +42,13 @@ export function PasswordDisplay({ password, accountEmail }: PasswordDisplayProps
               variant="outline"
               onClick={() => setShowPassword(!showPassword)}
             >
-              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+              {showPassword ? (
+                <EyeOff className="h-4 w-4" />
+              ) : (
+                <Eye className="h-4 w-4" />
+              )}
             </Button>
-            <Button
-              size="sm"
-              variant="outline"
-              onClick={copyToClipboard}
-            >
+            <Button size="sm" variant="outline" onClick={copyToClipboard}>
               <Copy className="h-4 w-4" />
               {copied ? "Copied!" : "Copy"}
             </Button>

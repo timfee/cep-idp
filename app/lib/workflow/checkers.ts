@@ -1,8 +1,13 @@
 import { extractValueFromPath } from "./variables";
 
 export function evaluateChecker(
-  checker: { checker?: string; field?: string; value?: string; jsonPath?: string },
-  response: unknown
+  checker: {
+    checker?: string;
+    field?: string;
+    value?: string;
+    jsonPath?: string;
+  },
+  response: unknown,
 ): boolean {
   switch (checker.checker) {
     case "exists":

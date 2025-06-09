@@ -15,7 +15,7 @@ export const STEP_NAMES = {
   ASSIGN_USERS_TO_SSO: "Assign Users to SSO App",
   ENABLE_SSO_ROOT: "Enable SSO for Organization",
   DISABLE_SSO_AUTOMATION: "Disable SSO for Service Accounts",
-  TEST_SSO: "Test SSO Configuration"
+  TEST_SSO: "Test SSO Configuration",
 } as const;
 
 export const WORKFLOW_CONSTANTS = {
@@ -23,15 +23,15 @@ export const WORKFLOW_CONSTANTS = {
   OAUTH_STATE_TTL_MS: 600000, // 10 minutes
   TOKEN_REFRESH_BUFFER_MS: 300000, // 5 minutes
   TOKEN_COOKIE_MAX_AGE: 30 * 24 * 60 * 60, // 30 days
-  
+
   // Size constants
   MAX_COOKIE_SIZE: 3900,
   DEFAULT_PASSWORD_LENGTH: 16,
-  
+
   // API constants
   SYNC_INTERVAL: "PT40M", // 40 minutes in ISO 8601
   PROVISIONING_BASE_URL: "https://admin.googleapis.com/admin/directory/v1",
-  
+
   // Special markers
-  PASSWORD_EXTRACTION_KEY: "_generated_password_displayed"
+  PASSWORD_EXTRACTION_KEY: "_generated_password_displayed",
 };

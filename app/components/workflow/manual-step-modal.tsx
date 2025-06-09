@@ -11,7 +11,13 @@ import {
 } from "../ui/dialog";
 import { Button } from "../ui/button";
 import { Textarea } from "../ui/textarea";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "../ui/select";
+import {
+  Select,
+  SelectContent,
+  SelectItem,
+  SelectTrigger,
+  SelectValue,
+} from "../ui/select";
 import { Label } from "../ui/label";
 import { Input } from "../ui/input";
 import { Alert, AlertDescription } from "../ui/alert";
@@ -25,7 +31,11 @@ interface ManualStepModalProps {
   onComplete: () => void;
 }
 
-export function ManualStepModal({ step, isOpen, onComplete }: ManualStepModalProps) {
+export function ManualStepModal({
+  step,
+  isOpen,
+  onComplete,
+}: ManualStepModalProps) {
   const [values, setValues] = useState<Record<string, string>>({});
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [loading, setLoading] = useState(false);
@@ -75,7 +85,10 @@ export function ManualStepModal({ step, isOpen, onComplete }: ManualStepModalPro
                 <ol className="list-decimal list-inside space-y-2 text-sm">
                   <li>Go to Azure Portal → Enterprise Applications</li>
                   <li>Select your SSO app (not the provisioning app)</li>
-                  <li>Click &quot;Single sign-on&quot; → &quot;SAML Signing Certificate&quot;</li>
+                  <li>
+                    Click &quot;Single sign-on&quot; → &quot;SAML Signing
+                    Certificate&quot;
+                  </li>
                   <li>Download &quot;Certificate (Base64)&quot;</li>
                   <li>Open the downloaded .cer file in a text editor</li>
                   <li>Copy and paste the entire contents below</li>
@@ -138,8 +151,9 @@ export function ManualStepModal({ step, isOpen, onComplete }: ManualStepModalPro
           <div className="space-y-4 py-4">
             <Alert>
               <AlertDescription>
-                Choose who can sign in to Google Workspace using Microsoft credentials.
-                For most organizations, selecting &quot;All Users&quot; is recommended.
+                Choose who can sign in to Google Workspace using Microsoft
+                credentials. For most organizations, selecting &quot;All
+                Users&quot; is recommended.
               </AlertDescription>
             </Alert>
 
@@ -156,8 +170,12 @@ export function ManualStepModal({ step, isOpen, onComplete }: ManualStepModalPro
                   <SelectValue placeholder="Choose an option" />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="all-users">All Users (Recommended)</SelectItem>
-                  <SelectItem value="custom">Enter Custom Principal ID</SelectItem>
+                  <SelectItem value="all-users">
+                    All Users (Recommended)
+                  </SelectItem>
+                  <SelectItem value="custom">
+                    Enter Custom Principal ID
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>

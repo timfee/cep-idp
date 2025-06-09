@@ -35,7 +35,7 @@ function splitIntoChunks(value: string): string[] {
 export async function setChunkedCookie(
   name: string,
   value: string,
-  options: CookieOptions = {}
+  options: CookieOptions = {},
 ): Promise<void> {
   const cookieStore = await cookies();
 
@@ -51,7 +51,7 @@ export async function setChunkedCookie(
   } else {
     // Value needs to be chunked
     console.log(
-      `[Cookie Utils] Splitting ${name} into ${chunks.length} chunks`
+      `[Cookie Utils] Splitting ${name} into ${chunks.length} chunks`,
     );
 
     // Set the main cookie with metadata about chunks
@@ -66,7 +66,7 @@ export async function setChunkedCookie(
     for (let i = 0; i < chunks.length; i++) {
       const chunkName = `${name}${CHUNK_DELIMITER}${i}`;
       console.log(
-        `[Cookie Utils] Setting chunk ${i}: ${chunkName} (${chunks[i].length} bytes)`
+        `[Cookie Utils] Setting chunk ${i}: ${chunkName} (${chunks[i].length} bytes)`,
       );
       cookieStore.set(chunkName, chunks[i], options);
     }
@@ -91,7 +91,7 @@ export async function getChunkedCookie(name: string): Promise<string | null> {
     if (metadata.chunked && typeof metadata.count === "number") {
       // This is a chunked cookie, reconstruct it
       console.log(
-        `[Cookie Utils] Reconstructing ${name} from ${metadata.count} chunks`
+        `[Cookie Utils] Reconstructing ${name} from ${metadata.count} chunks`,
       );
 
       const chunks: string[] = [];
@@ -109,7 +109,7 @@ export async function getChunkedCookie(name: string): Promise<string | null> {
 
       const reconstructed = chunks.join("");
       console.log(
-        `[Cookie Utils] Reconstructed ${name}: ${reconstructed.length} bytes`
+        `[Cookie Utils] Reconstructed ${name}: ${reconstructed.length} bytes`,
       );
       return reconstructed;
     }
@@ -137,7 +137,7 @@ export async function clearChunkedCookie(name: string): Promise<void> {
       if (metadata.chunked && typeof metadata.count === "number") {
         // Clear all chunks
         console.log(
-          `[Cookie Utils] Clearing ${metadata.count} chunks for ${name}`
+          `[Cookie Utils] Clearing ${metadata.count} chunks for ${name}`,
         );
         for (let i = 0; i < metadata.count; i++) {
           const chunkName = `${name}${CHUNK_DELIMITER}${i}`;
@@ -170,7 +170,7 @@ export function setChunkedCookieOnResponse(
   response: Response,
   name: string,
   value: string,
-  options: CookieOptions = {}
+  options: CookieOptions = {},
 ): void {
   const chunks = splitIntoChunks(value);
 
@@ -193,7 +193,7 @@ export function setChunkedCookieOnResponse(
   } else {
     // Multiple chunks
     console.log(
-      `[Cookie Utils] Setting ${chunks.length} chunks on response for ${name}`
+      `[Cookie Utils] Setting ${chunks.length} chunks on response for ${name}`,
     );
 
     // Set metadata cookie
@@ -204,7 +204,7 @@ export function setChunkedCookieOnResponse(
     };
     response.headers.append(
       "Set-Cookie",
-      buildCookieString(name, JSON.stringify(metadata))
+      buildCookieString(name, JSON.stringify(metadata)),
     );
 
     // Set each chunk
@@ -212,7 +212,7 @@ export function setChunkedCookieOnResponse(
       const chunkName = `${name}${CHUNK_DELIMITER}${i}`;
       response.headers.append(
         "Set-Cookie",
-        buildCookieString(chunkName, chunks[i])
+        buildCookieString(chunkName, chunks[i]),
       );
     }
   }
@@ -224,7 +224,7 @@ export function setChunkedCookieOnResponse(
 export function estimateCookieSize(
   name: string,
   value: string,
-  options: CookieOptions = {}
+  options: CookieOptions = {},
 ): number {
   let size = name.length + 1 + value.length; // name=value
 

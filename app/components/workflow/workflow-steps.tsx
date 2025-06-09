@@ -13,14 +13,19 @@ interface WorkflowStepsProps {
   };
 }
 
-export function WorkflowSteps({ workflow, stepStatuses, authStatus }: WorkflowStepsProps) {
+export function WorkflowSteps({
+  workflow,
+  stepStatuses,
+  authStatus,
+}: WorkflowStepsProps) {
   // Calculate completed steps
   const completedSteps = new Set(
     Object.entries(stepStatuses)
-      .filter(([, status]) => 
-        status.status === "completed" || status.status === "skipped"
+      .filter(
+        ([, status]) =>
+          status.status === "completed" || status.status === "skipped",
       )
-      .map(([name]) => name)
+      .map(([name]) => name),
   );
 
   // Helper to get required scopes for a step
@@ -32,21 +37,22 @@ export function WorkflowSteps({ workflow, stepStatuses, authStatus }: WorkflowSt
   // Helper to check if auth is valid for a step
   const isAuthValidForStep = (step: Step) => {
     if (!step.role) return true;
-    
+
     const requiredScopes = getRequiredScopes(step);
-    const isGoogleStep = step.role.startsWith("dir") || step.role.startsWith("ci");
+    const isGoogleStep =
+      step.role.startsWith("dir") || step.role.startsWith("ci");
     const isMicrosoftStep = step.role.startsWith("graph");
-    
+
     if (isGoogleStep && authStatus.google.authenticated) {
       return requiredScopes.every((scope: string) =>
-        authStatus.google.scopes.includes(scope)
+        authStatus.google.scopes.includes(scope),
       );
     } else if (isMicrosoftStep && authStatus.microsoft.authenticated) {
       return requiredScopes.every((scope: string) =>
-        authStatus.microsoft.scopes.includes(scope)
+        authStatus.microsoft.scopes.includes(scope),
       );
     }
-    
+
     return false;
   };
 

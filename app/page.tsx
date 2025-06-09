@@ -27,18 +27,18 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
           .filter(
             (step) =>
               step.role &&
-              (step.role.startsWith("dir") || step.role.startsWith("ci"))
+              (step.role.startsWith("dir") || step.role.startsWith("ci")),
           )
-          .flatMap((step) => workflow.roles[step.role!] || [])
-      )
+          .flatMap((step) => workflow.roles[step.role!] || []),
+      ),
     );
 
     const allRequiredMicrosoftScopes = Array.from(
       new Set(
         workflow.steps
           .filter((step) => step.role && step.role.startsWith("graph"))
-          .flatMap((step) => workflow.roles[step.role!] || [])
-      )
+          .flatMap((step) => workflow.roles[step.role!] || []),
+      ),
     );
 
     return (
@@ -94,8 +94,8 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
 
             {/* Sidebar */}
             <aside className="lg:col-span-1">
-              <VariableViewer 
-                variables={variables} 
+              <VariableViewer
+                variables={variables}
                 definitions={workflow.variables}
               />
             </aside>

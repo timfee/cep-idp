@@ -18,19 +18,19 @@ An administrator at a large enterprise (e.g., Chrome Admin, Security Admin, IT P
 
 #### Goals
 
-* To get user identities provisioned into their Google tenant to enable advanced CEP features.
+- To get user identities provisioned into their Google tenant to enable advanced CEP features.
 
-* To configure SSO so that employees have a seamless, familiar login experience via their existing Microsoft credentials.
+- To configure SSO so that employees have a seamless, familiar login experience via their existing Microsoft credentials.
 
-* To complete the identity setup with minimal disruption to end-users and existing infrastructure.
+- To complete the identity setup with minimal disruption to end-users and existing infrastructure.
 
 #### Challenges & Environment
 
-* The CEP Champion is an expert in their domain (e.g., Chrome) but may not be a Super Admin in both Google Workspace and Microsoft Entra ID.
+- The CEP Champion is an expert in their domain (e.g., Chrome) but may not be a Super Admin in both Google Workspace and Microsoft Entra ID.
 
-* They may need to coordinate with other teams or administrators who hold the required privileges (e.g., a dedicated Microsoft Global Administrator or a Google Workspace User Admin).
+- They may need to coordinate with other teams or administrators who hold the required privileges (e.g., a dedicated Microsoft Global Administrator or a Google Workspace User Admin).
 
-* Their success depends on their ability to either execute the necessary steps themselves or clearly articulate the required actions to other administrators.
+- Their success depends on their ability to either execute the necessary steps themselves or clearly articulate the required actions to other administrators.
 
 ## 3. Core Features & User Flow
 
@@ -38,43 +38,43 @@ The application guides the CEP Champion through the federation setup, gracefully
 
 ### 3.1. User Flow
 
-1. **Onboarding & Authentication:** The CEP Champion lands on the workflow page. They are prompted to authenticate with both their Google and Microsoft accounts. The system will use the permissions they have been granted.  
-2. **Step-by-Step Execution:** The interface presents the series of steps.  
-   * Nice to have: Steps that cannot be completed with the Champion's current permissions are disabled with a short message explaining why. For example: *"This action requires the 'Role Management Administrator' privilege in Google Workspace. Please run this step with a user who has this privilege, or delegate this task to the appropriate administrator."*  
-3. **Stateful Progression:** The application's state (completed steps, extracted variables like domain names and IDs) is maintained using client-side state management. Because the status of each step can be ascertained by READ API calls, it’s not critical to persist the entirety of the workflow in any sophisticated way.  
+1. **Onboarding & Authentication:** The CEP Champion lands on the workflow page. They are prompted to authenticate with both their Google and Microsoft accounts. The system will use the permissions they have been granted.
+2. **Step-by-Step Execution:** The interface presents the series of steps.
+   - Nice to have: Steps that cannot be completed with the Champion's current permissions are disabled with a short message explaining why. For example: _"This action requires the 'Role Management Administrator' privilege in Google Workspace. Please run this step with a user who has this privilege, or delegate this task to the appropriate administrator."_
+3. **Stateful Progression:** The application's state (completed steps, extracted variables like domain names and IDs) is maintained using client-side state management. Because the status of each step can be ascertained by READ API calls, it’s not critical to persist the entirety of the workflow in any sophisticated way.
 4. **Completion:** The workflow is complete once all technical steps are marked “completed.”
 
 ## 4. Functional Requirements
 
 ### 4.1. Workflow Engine
 
-* **Declarative Workflow:** All steps must be defined in the external `workflow.json` file to separate logic from the application code.  
-* **Dependency Management:** The engine must strictly enforce the step execution order based on the `depends_on` array.  
-* **Permission-Aware Error Handling:** The engine must be able to interpret common API error codes (especially `401 Unauthorized` and `403 Forbidden`) and map them to user-friendly, actionable error messages related to insufficient privileges.  
-* **Verification and Execution:** Each step must support distinct `verify` (read-only checks) and `execute` (write operations) action sets. In some cases, an error code may not indicate irregular operations (for instance `404 Not Found` would be acceptable if a user account hasn’t been created yet).
+- **Declarative Workflow:** All steps must be defined in the external `workflow.json` file to separate logic from the application code.
+- **Dependency Management:** The engine must strictly enforce the step execution order based on the `depends_on` array.
+- **Permission-Aware Error Handling:** The engine must be able to interpret common API error codes (especially `401 Unauthorized` and `403 Forbidden`) and map them to user-friendly, actionable error messages related to insufficient privileges.
+- **Verification and Execution:** Each step must support distinct `verify` (read-only checks) and `execute` (write operations) action sets. In some cases, an error code may not indicate irregular operations (for instance `404 Not Found` would be acceptable if a user account hasn’t been created yet).
 
 ## 4.2. State Management
 
-* **Volatile Persistence:** In this MVP, state is managed with `useState` (or similar) client side to track variables and step completion. This state is **not** persisted across server restarts. A user, or set of collaborating administrators, must complete the workflow within a single continuous server session.  
-  * This is acceptable given that the state can be reconstituted relatively easily upon page load using READ APIs.
+- **Volatile Persistence:** In this MVP, state is managed with `useState` (or similar) client side to track variables and step completion. This state is **not** persisted across server restarts. A user, or set of collaborating administrators, must complete the workflow within a single continuous server session.
+  - This is acceptable given that the state can be reconstituted relatively easily upon page load using READ APIs.
 
 ## 4.3. Authentication & Authorization
 
-* **Multi-Provider OAuth:** Must handle separate, secure OAuth 2.0 flows for Google and Microsoft. Note that Google requires explicit `consent` style grants due to the sensitivity of the tokens.  
-* **Secure Token Handling:** Access tokens must be stored securely in encrypted, chunked, HTTP-only cookies.  
-* The system should detect and attempt to re-acquire expired tokens. If unsuccessful, the user should be notified and allowed to re-authenticate.
+- **Multi-Provider OAuth:** Must handle separate, secure OAuth 2.0 flows for Google and Microsoft. Note that Google requires explicit `consent` style grants due to the sensitivity of the tokens.
+- **Secure Token Handling:** Access tokens must be stored securely in encrypted, chunked, HTTP-only cookies.
+- The system should detect and attempt to re-acquire expired tokens. If unsuccessful, the user should be notified and allowed to re-authenticate.
 
 ## 4.4. UI & User Experience
 
-* **Clarity and Guidance:** The UI must clearly articulate the purpose of each step and its current status.  
-* **Actionable Feedback:** Error messages must be specific and helpful, guiding the CEP Champion on how to resolve permission-based blockers.  
-* **Transparency:** The "Variable Viewer" sidebar provides crucial transparency into the data being collected and used throughout the workflow.
+- **Clarity and Guidance:** The UI must clearly articulate the purpose of each step and its current status.
+- **Actionable Feedback:** Error messages must be specific and helpful, guiding the CEP Champion on how to resolve permission-based blockers.
+- **Transparency:** The "Variable Viewer" sidebar provides crucial transparency into the data being collected and used throughout the workflow.
 
 ## 5. Non-Functional Requirements
 
-* **Security:** Follows best practices for handling OAuth flows and API tokens. All sensitive configuration is server-side.  
-* **Usability:** Designed to simplify a highly complex task for a technical administrator who may not be an expert in all required domains. The tool serves as both an automation engine and an interactive guide.
+- **Security:** Follows best practices for handling OAuth flows and API tokens. All sensitive configuration is server-side.
+- **Usability:** Designed to simplify a highly complex task for a technical administrator who may not be an expert in all required domains. The tool serves as both an automation engine and an interactive guide.
 
 ## 6. Out of Scope / Future Work
 
-* **Delegatable Tasks:** To further streamline collaboration, a future release could introduce a "delegation" feature. A CEP Champion could generate a secure, single-use URL for a specific step (e.g., 'Create Microsoft Enterprise App') and send it to the administrator with the correct permissions. That admin could then authorize the app and complete just that single step without needing access to the full workflow.
+- **Delegatable Tasks:** To further streamline collaboration, a future release could introduce a "delegation" feature. A CEP Champion could generate a secure, single-use URL for a specific step (e.g., 'Create Microsoft Enterprise App') and send it to the administrator with the correct permissions. That admin could then authorize the app and complete just that single step without needing access to the full workflow.

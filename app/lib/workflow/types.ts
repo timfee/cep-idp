@@ -6,7 +6,10 @@ export const ACTION_MODES = {
 } as const;
 export type ActionMode = (typeof ACTION_MODES)[keyof typeof ACTION_MODES];
 
-export const ActionModeEnum = z.enum([ACTION_MODES.VERIFY, ACTION_MODES.EXECUTE]);
+export const ActionModeEnum = z.enum([
+  ACTION_MODES.VERIFY,
+  ACTION_MODES.EXECUTE,
+]);
 
 export const VariableSchema = z.object({
   validator: z.string().optional(),

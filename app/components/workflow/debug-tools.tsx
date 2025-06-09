@@ -1,6 +1,6 @@
 "use client";
 
-import { clearWorkflowState } from "@/app/actions/clear-state";
+import { clearWorkflowState } from "@/app/actions/workflow-state";
 import { refreshWorkflowState } from "@/app/actions/workflow-state";
 import { Bug, RefreshCw, Trash2 } from "lucide-react";
 import { useTransition } from "react";

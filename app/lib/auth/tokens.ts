@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { Token } from "../workflow";
+import { Token, WORKFLOW_CONSTANTS } from "../workflow";
 import {
   clearChunkedCookie,
   CookieOptions,
@@ -73,7 +73,7 @@ export async function setToken(
     // Use chunked cookie setter to handle large tokens
     await setChunkedCookie(cookieName, encrypted, {
       ...COOKIE_OPTIONS,
-      maxAge: 30 * 24 * 60 * 60, // 30 days
+      maxAge: WORKFLOW_CONSTANTS.TOKEN_COOKIE_MAX_AGE,
     });
   } catch (err) {
     console.error(`[setToken] Failed to set cookie for ${provider}:`, err);
@@ -98,7 +98,7 @@ export async function setOAuthState(
 
   (await cookies()).set("oauth_state", encrypted, {
     ...COOKIE_OPTIONS,
-    maxAge: 600, // 10 minutes
+    maxAge: WORKFLOW_CONSTANTS.OAUTH_STATE_TTL_MS / 1000,
   });
 }
 
@@ -117,7 +117,7 @@ export async function validateOAuthState(
     return (
       data.state === state &&
       data.provider === provider &&
-      Date.now() - data.timestamp < 600000
+      Date.now() - data.timestamp < WORKFLOW_CONSTANTS.OAUTH_STATE_TTL_MS
     );
   } catch {
     return false;

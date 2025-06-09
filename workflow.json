@@ -235,8 +235,8 @@
     },
     "googleAccessToken": {},
     "azureAccessToken": {},
-    "generatedPassword": {
-      "generator": "randomPassword(16)"
+    "samlCertificate": {
+      "validator": "^-----BEGIN CERTIFICATE-----[\\s\\S]+-----END CERTIFICATE-----$"
     },
     "provisioningUserId": {},
     "provisioningUserEmail": {},
@@ -266,6 +266,7 @@
   "steps": [
     {
       "name": "Verify Primary Domain",
+      "description": "Ensures your Google Workspace primary domain is verified and ready for SSO integration. This is required before any other configuration can proceed.",
       "inputs": [],
       "outputs": ["primaryDomain"],
       "actions": [
@@ -291,7 +292,8 @@
       "role": "dirDomainRW"
     },
     {
-      "name": "OU Automation",
+      "name": "Create Automation Organizational Unit",
+      "description": "Creates a special folder '/Automation' in Google Workspace to house service accounts that need to bypass SSO and use passwords instead.",
       "inputs": ["primaryDomain"],
       "outputs": [],
       "actions": [
@@ -312,7 +314,8 @@
       "depends_on": ["Verify Primary Domain"]
     },
     {
-      "name": "Service user",
+      "name": "Create Service Account for Microsoft",
+      "description": "Creates a dedicated Google account that Microsoft Entra ID will use to sync users and groups to your Google Workspace. The password will be generated automatically.",
       "inputs": ["primaryDomain"],
       "outputs": ["provisioningUserId", "provisioningUserEmail"],
       "actions": [
@@ -331,21 +334,23 @@
               "givenName": "Microsoft",
               "familyName": "Provisioning"
             },
-            "password": "{generatedPassword}",
+            "password": "{generatePassword(16)}",
             "orgUnitPath": "/Automation"
           },
           "extract": {
             "provisioningUserId": "$.id",
-            "provisioningUserEmail": "$.primaryEmail"
+            "provisioningUserEmail": "$.primaryEmail",
+            "generatedPassword": "_generated_password_displayed"
           },
           "fallback": true
         }
       ],
       "role": "dirUserRW",
-      "depends_on": ["OU Automation"]
+      "depends_on": ["Create Automation Organizational Unit"]
     },
     {
-      "name": "Custom admin role",
+      "name": "Create Custom Admin Role",
+      "description": "Sets up a limited admin role with only the permissions Microsoft needs for user provisioning (create, read, update users and groups).",
       "inputs": ["customerId"],
       "outputs": ["adminRoleId", "directoryServiceId"],
       "actions": [
@@ -360,7 +365,7 @@
         {
           "use": "admin.listPrivileges",
           "extract": {
-            "directoryServiceId": "$.items[?(@.serviceName=='Admin Directory API')].serviceId"
+            "directoryServiceId": "$.items[?(@.privilegeName=='USERS_RETRIEVE')].serviceId"
           },
           "fallback": true
         },
@@ -403,10 +408,11 @@
         }
       ],
       "role": "dirRoleRW",
-      "depends_on": ["Service user"]
+      "depends_on": ["Create Service Account for Microsoft"]
     },
     {
-      "name": "Assign role to user",
+      "name": "Assign Admin Role to Service Account",
+      "description": "Grants the Microsoft service account the custom admin permissions it needs to manage users in your Google Workspace.",
       "inputs": ["adminRoleId", "primaryDomain"],
       "outputs": [],
       "actions": [
@@ -425,10 +431,11 @@
         }
       ],
       "role": "dirRoleRW",
-      "depends_on": ["Custom admin role"]
+      "depends_on": ["Create Custom Admin Role"]
     },
     {
-      "name": "Inbound SAML profile",
+      "name": "Create SAML Profile for SSO",
+      "description": "Configures the SAML settings that allow Microsoft Entra ID to authenticate your Google Workspace users.",
       "verify": [
         {
           "use": "ci.listSamlProfiles",
@@ -454,11 +461,14 @@
         }
       ],
       "role": "ciInboundSso",
-      "depends_on": ["Assign role to user"],
+      "depends_on": ["Assign Admin Role to Service Account"],
       "apiStatus": "beta"
     },
     {
-      "name": "Add IdP certificate",
+      "name": "Add Microsoft Identity Certificate",
+      "manual": true,
+      "description": "Download the SAML signing certificate from Azure Portal (Enterprise Applications → Your SSO App → Single sign-on → SAML Signing Certificate → Download Certificate Base64) and paste it below.",
+      "outputs": ["samlCertificate"],
       "verify": [
         {
           "use": "ci.getIdpCreds",
@@ -469,16 +479,16 @@
         {
           "use": "ci.addIdpCert",
           "payload": {
-            "pemData": "-----BEGIN CERTIFICATE-----..."
-          },
-          "longRunning": true
+            "pemData": "{samlCertificate}"
+          }
         }
       ],
       "role": "ciInboundSso",
-      "depends_on": ["Inbound SAML profile"]
+      "depends_on": ["Create SAML Profile for SSO"]
     },
     {
-      "name": "Provisioning app SP",
+      "name": "Create Microsoft Provisioning App",
+      "description": "Sets up the Microsoft Entra ID app that will automatically sync users from Azure AD to Google Workspace.",
       "verify": [
         {
           "use": "graph.appByTemplateProv",
@@ -497,10 +507,11 @@
         }
       ],
       "role": "graphAppRW",
-      "depends_on": ["Add IdP certificate"]
+      "depends_on": ["Add Microsoft Identity Certificate"]
     },
     {
-      "name": "Set provisioning credentials",
+      "name": "Configure User Provisioning",
+      "description": "Provides Microsoft with the service account credentials to access your Google Workspace directory API.",
       "verify": [
         {
           "use": "graph.getSync",
@@ -511,30 +522,25 @@
         {
           "use": "graph.patchSync",
           "payload": {
-            "credentials": {
-              "fields": [
-                {
-                  "name": "Username",
-                  "value": "{provisioningUserEmail}"
-                },
-                {
-                  "name": "Password",
-                  "value": "{provisioningUserPassword}"
-                }
-              ]
-            },
-            "schedule": {
-              "interval": "PT40M"
-            },
-            "templateId": "sync-schema-v2"
+            "secrets": [
+              {
+                "key": "BaseAddress",
+                "value": "https://admin.googleapis.com/admin/directory/v1"
+              },
+              {
+                "key": "SecretKey",
+                "value": "{generatedPassword}"
+              }
+            ]
           }
         }
       ],
       "role": "graphSyncRW",
-      "depends_on": ["Provisioning app SP"]
+      "depends_on": ["Create Microsoft Provisioning App"]
     },
     {
-      "name": "Start provisioning sync",
+      "name": "Start User Synchronization",
+      "description": "Activates the sync process to begin provisioning users from Microsoft Entra ID to Google Workspace every 40 minutes.",
       "verify": [
         {
           "use": "graph.getSync",
@@ -548,10 +554,11 @@
         }
       ],
       "role": "graphSyncRW",
-      "depends_on": ["Set provisioning credentials"]
+      "depends_on": ["Configure User Provisioning"]
     },
     {
-      "name": "SSO app SP",
+      "name": "Create Microsoft SSO App",
+      "description": "Sets up the Microsoft Entra ID app that handles single sign-on authentication for your users.",
       "verify": [
         {
           "use": "graph.appByTemplateSSO",
@@ -570,10 +577,11 @@
         }
       ],
       "role": "graphAppRW",
-      "depends_on": ["Add IdP certificate"]
+      "depends_on": ["Add Microsoft Identity Certificate"]
     },
     {
-      "name": "Basic SAML settings",
+      "name": "Configure SAML Settings",
+      "description": "Configures the technical SAML parameters (Entity ID, ACS URL) for secure authentication between Microsoft and Google.",
       "verify": [
         {
           "use": "graph.getSamlSettings",
@@ -592,11 +600,12 @@
         }
       ],
       "role": "graphAppRW",
-      "depends_on": ["SSO app SP"],
+      "depends_on": ["Create Microsoft SSO App"],
       "apiStatus": "beta"
     },
     {
-      "name": "Claims mapping policy",
+      "name": "Create Claims Mapping Policy",
+      "description": "Defines how Microsoft user attributes map to Google user attributes. By default, maps email to email.",
       "verify": [
         {
           "use": "graph.listPolicies",
@@ -607,9 +616,9 @@
         {
           "use": "graph.createPolicy",
           "payload": {
-            "displayName": "Google Claims",
+            "displayName": "Google Workspace Basic Claims",
             "definition": [
-              "{ \\\"claimsMapping\\\": { \\\"user\\\": { \\\"given_name\\\": \\\"user.givenName\\\" } } }"
+              "{\"ClaimsMappingPolicy\":{\"Version\":1,\"IncludeBasicClaimSet\":true,\"ClaimsMapping\":{\"email\":{\"source\":\"user\",\"id\":\"mail\"}}}}"
             ]
           },
           "outputs": {
@@ -624,32 +633,19 @@
         }
       ],
       "role": "graphPolicyRW",
-      "depends_on": ["Basic SAML settings"],
+      "depends_on": ["Configure SAML Settings"],
       "apiStatus": "beta"
     },
     {
-      "name": "Assign user/group to SSO app",
-      "verify": [
-        {
-          "use": "graph.getAppRoleAssign",
-          "checker": "exists"
-        }
-      ],
-      "execute": [
-        {
-          "use": "graph.postAppRoleAssign",
-          "payload": {
-            "principalId": "{principalId}",
-            "resourceId": "{ssoServicePrincipalId}",
-            "appRoleId": "00000000-0000-0000-0000-000000000000"
-          }
-        }
-      ],
-      "role": "graphAppRole",
-      "depends_on": ["Claims mapping policy"]
+      "name": "Assign Users to SSO App",
+      "manual": true,
+      "description": "Select which users or groups should have SSO access. For simple setups, choose 'All Users'. For complex requirements, configure in Azure Portal and paste the principal ID.",
+      "inputs": ["ssoServicePrincipalId"],
+      "outputs": ["principalId"]
     },
     {
-      "name": "Assign SAML profile to root OU",
+      "name": "Enable SSO for Organization",
+      "description": "Activates SSO for all users in your Google Workspace organization (except those in /Automation).",
       "verify": [
         {
           "use": "ci.listSsoAssignments",
@@ -667,10 +663,11 @@
         }
       ],
       "role": "ciInboundSso",
-      "depends_on": ["Assign user/group to SSO app"]
+      "depends_on": ["Assign Users to SSO App"]
     },
     {
-      "name": "Disable SSO for /Automation OU",
+      "name": "Disable SSO for Service Accounts",
+      "description": "Ensures service accounts in the /Automation folder can still use passwords instead of SSO.",
       "verify": [
         {
           "use": "ci.listSsoAssignments",
@@ -688,12 +685,13 @@
         }
       ],
       "role": "ciInboundSso",
-      "depends_on": ["Assign SAML profile to root OU"]
+      "depends_on": ["Enable SSO for Organization"]
     },
     {
-      "name": "Manual SSO test",
+      "name": "Test SSO Configuration",
+      "description": "Verify that users can successfully sign in to Google Workspace using their Microsoft credentials. Test with a regular user account.",
       "manual": true,
-      "depends_on": ["Disable SSO for /Automation OU"]
+      "depends_on": ["Disable SSO for Service Accounts"]
     }
   ]
 }

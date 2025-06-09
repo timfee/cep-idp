@@ -115,3 +115,20 @@ export async function setWorkflowVariable(
     };
   }
 }
+
+export async function clearWorkflowState(): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  try {
+    globalVariables = {};
+    globalStepStatuses = {};
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}

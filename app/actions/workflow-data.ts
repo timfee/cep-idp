@@ -71,6 +71,22 @@ export async function getWorkflowData(
     }
   }
 
+  // Extract tenant ID from Microsoft token
+  if (microsoftToken && !variables.tenantId) {
+    try {
+      const parts = microsoftToken.accessToken.split('.');
+      if (parts.length === 3) {
+        const payload = JSON.parse(Buffer.from(parts[1], 'base64').toString());
+        if (payload.tid) {
+          variables.tenantId = payload.tid;
+          await updateGlobalVariable('tenantId', payload.tid);
+        }
+      }
+    } catch (error) {
+      console.warn('Failed to extract tenant ID from token:', error);
+    }
+  }
+
   // Process steps in dependency order
   const stepStatuses: Record<string, StepStatus> = {};
   const processedSteps = new Set<string>();

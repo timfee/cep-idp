@@ -1,7 +1,8 @@
 import { cookies } from "next/headers";
+import { WORKFLOW_CONSTANTS } from "../workflow";
 
-// Safe limit is around 4093 bytes per cookie, but we'll use 3900 to leave room for cookie metadata
-const MAX_COOKIE_SIZE = 3900;
+// Safe limit is around 4093 bytes per cookie, but we'll use constant to leave room for cookie metadata
+const MAX_COOKIE_SIZE = WORKFLOW_CONSTANTS.MAX_COOKIE_SIZE;
 const CHUNK_DELIMITER = ".chunk.";
 
 export interface CookieOptions {

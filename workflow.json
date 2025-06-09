@@ -459,7 +459,7 @@
               "singleSignOnServiceUri": "{url('https://login.microsoftonline.com', concat(tenantId, '/saml2'))}"
             }
           },
-          "outputs": {
+          "extract": {
             "samlProfileId": "$.name",
             "entityId": "$.idpConfig.entityId",
             "acsUrl": "$.spConfig.acsUri"
@@ -513,7 +513,7 @@
           "payload": {
             "displayName": "Google Cloud (Provisioning)"
           },
-          "outputs": {
+          "extract": {
             "provServicePrincipalId": "$.servicePrincipal.id"
           }
         }

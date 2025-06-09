@@ -15,73 +15,6 @@ function isValidStepName(stepName: string): boolean {
   return workflow.steps.some((s) => s.name === stepName);
 }
 
-// Global variable state - persisted across requests (NOTE: This resets on server restart)
-let globalVariables = new Map<string, string>();
-let globalStepStatuses = new Map<string, StepStatus>();
-
-/**
- * Update global variable state
- */
-export async function updateGlobalVariable(
-  name: string,
-  value: string,
-): Promise<void> {
-  if (isValidVariableName(name)) {
-    globalVariables.set(name, value);
-  }
-}
-
-/**
- * Update global step status
- */
-export async function updateGlobalStepStatus(
-  stepName: string,
-  status: StepStatus,
-): Promise<void> {
-  if (isValidStepName(stepName)) {
-    globalStepStatuses.set(stepName, {
-      ...status,
-      variables: Object.fromEntries(globalVariables),
-    });
-  }
-}
-
-/**
- * Get global variables
- */
-export async function getGlobalVariables(): Promise<Record<string, string>> {
-  return Object.fromEntries(globalVariables);
-}
-
-/**
- * Get global step status
- */
-export async function getGlobalStepStatus(
-  stepName: string,
-): Promise<StepStatus | undefined> {
-  if (isValidStepName(stepName)) {
-    return globalStepStatuses.get(stepName);
-  }
-  return undefined;
-}
-
-/**
- * Get all global step statuses
- */
-export async function getAllGlobalStepStatuses(): Promise<
-  Record<string, StepStatus>
-> {
-  return Object.fromEntries(globalStepStatuses);
-}
-
-/**
- * Clear all global state (useful for testing)
- */
-export async function clearGlobalState(): Promise<void> {
-  globalVariables = new Map();
-  globalStepStatuses = new Map();
-  revalidatePath("/");
-}
 
 /**
  * Force refresh workflow state
@@ -124,9 +57,6 @@ export async function setWorkflowVariable(
       }
     }
 
-    // Update the global variable
-    await updateGlobalVariable(name, value);
-
     // Variable is valid, invalidate cache to refresh UI
     revalidatePath("/");
 
@@ -140,22 +70,6 @@ export async function setWorkflowVariable(
   }
 }
 
-export async function clearWorkflowState(): Promise<{
-  success: boolean;
-  error?: string;
-}> {
-  try {
-    globalVariables = new Map();
-    globalStepStatuses = new Map();
-    revalidatePath("/");
-    return { success: true };
-  } catch (error) {
-    return {
-      success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
-    };
-  }
-}
 
 export async function refreshAuthToken(
   provider: "google" | "microsoft",

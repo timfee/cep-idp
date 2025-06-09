@@ -88,6 +88,7 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
                   workflow={workflow}
                   stepStatuses={stepStatuses}
                   authStatus={auth}
+                  variables={variables}
                 />
               </section>
             </div>

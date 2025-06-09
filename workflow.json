@@ -519,7 +519,7 @@
         }
       ],
       "role": "graphAppRW",
-      "depends_on": ["Add Microsoft Identity Certificate"]
+      "depends_on": ["Create SAML Profile for SSO"]
     },
     {
       "name": "Configure User Provisioning",

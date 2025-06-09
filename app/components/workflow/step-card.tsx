@@ -4,6 +4,7 @@ import { executeWorkflowStep } from "@/app/actions/workflow-execution";
 import { cn } from "@/app/lib/utils";
 import { LogEntry, Step, StepStatus } from "@/app/lib/workflow";
 import { MIN_LOG_COUNT_FOR_PLURAL } from "@/app/lib/workflow/constants";
+import { substituteVariables } from "@/app/lib/workflow";
 import { PasswordDisplay } from "./password-display";
 import {
   AlertTriangle,
@@ -31,6 +32,7 @@ interface StepCardProps {
   status: StepStatus;
   canExecute: boolean;
   isAuthValid: boolean;
+  variables: Record<string, string>;
 }
 
 export function StepCard({
@@ -38,6 +40,7 @@ export function StepCard({
   status,
   canExecute,
   isAuthValid,
+  variables,
 }: StepCardProps) {
   const [isPending, startTransition] = useTransition();
   const [localExecutionResult, setLocalExecutionResult] = useState<{
@@ -131,6 +134,55 @@ export function StepCard({
                 {statusIcon}
                 <div>
                   <h3 className="font-medium">{step.name}</h3>
+                  {(step.inputs?.length || step.outputs?.length) && (
+                    <div className="mt-2 space-y-1">
+                      {step.inputs && step.inputs.length > 0 && (
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs text-zinc-500">Needs:</span>
+                          {step.inputs.map((input) => {
+                            const rawValue = variables[input];
+                            let display = input;
+                            if (rawValue) {
+                              const substituted = substituteVariables(
+                                rawValue,
+                                variables,
+                              );
+                              display = `${input}: ${substituted.substring(0, 20)}${substituted.length > 20 ? "..." : ""}`;
+                            }
+
+                            return (
+                              <Badge
+                                key={input}
+                                variant={rawValue ? "secondary" : "outline"}
+                                className={cn(
+                                  "text-xs font-mono",
+                                  rawValue
+                                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                                    : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+                                )}
+                              >
+                                {display}
+                              </Badge>
+                            );
+                          })}
+                        </div>
+                      )}
+                      {step.outputs && step.outputs.length > 0 && (
+                        <div className="flex items-center gap-2 flex-wrap">
+                          <span className="text-xs text-zinc-500">Sets:</span>
+                          {step.outputs.map((output) => (
+                            <Badge
+                              key={output}
+                              variant="outline"
+                              className="text-xs font-mono border-green-200 text-green-700 dark:border-green-800 dark:text-green-300"
+                            >
+                              {output}
+                            </Badge>
+                          ))}
+                        </div>
+                      )}
+                    </div>
+                  )}
                   {step.apiStatus && (
                     <Badge color="amber" className="mt-1">
                       {step.apiStatus}

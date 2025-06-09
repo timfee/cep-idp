@@ -6,6 +6,7 @@ import { AlertOctagonIcon, BadgeCheckIcon } from "lucide-react";
 import Link from "next/link";
 import { WILDCARD_SUFFIX_LENGTH } from "@/app/lib/workflow/constants";
 import { TokenStatus } from "./token-status";
+import { refreshAuthToken } from "@/app/actions/workflow-state";
 
 interface AuthStatusProps {
   provider: "google" | "microsoft";
@@ -121,14 +122,20 @@ export function AuthStatus({
   return (
     <div className="flex items-center justify-between p-4 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
       <div className="flex-1">
-        {isAuthenticated && (
-          <TokenStatus
-            provider={provider}
-            isAuthenticated={isAuthenticated}
-            expiresAt={expiresAt}
-            hasRefreshToken={hasRefreshToken}
-          />
-        )}
+          {isAuthenticated && (
+            <TokenStatus
+              provider={provider}
+              isAuthenticated={isAuthenticated}
+              expiresAt={expiresAt}
+              hasRefreshToken={hasRefreshToken}
+              onRefresh={async () => {
+                const result = await refreshAuthToken(provider);
+                if (!result.success) {
+                  throw new Error(result.error!);
+                }
+              }}
+            />
+          )}
 
         <div className="flex items-center gap-3">
           {isAuthenticated ? (

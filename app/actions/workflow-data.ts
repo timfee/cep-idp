@@ -1,7 +1,7 @@
 "use server";
 
-import { getToken, setToken } from "@/app/lib/auth/tokens";
-import { isTokenExpired, refreshAccessToken } from "@/app/lib/auth/oauth";
+import { getToken } from "@/app/lib/auth/tokens";
+import { isTokenExpired } from "@/app/lib/auth/oauth";
 import {
   evaluateGenerator,
   LogEntry,
@@ -190,42 +190,9 @@ export async function getWorkflowData(
     `[Initial Load] Starting getWorkflowData (forceRefresh: ${forceRefresh})`,
   );
 
-  let googleToken = await getToken("google");
-  let microsoftToken = await getToken("microsoft");
+  const googleToken = await getToken("google");
+  const microsoftToken = await getToken("microsoft");
 
-  // Try to refresh expired tokens automatically
-  for (const provider of ["google", "microsoft"] as const) {
-    const token = provider === "google" ? googleToken : microsoftToken;
-    if (token && isTokenExpired(token) && token.refreshToken) {
-      console.log(
-        `[Workflow Data] ${provider} token expired, attempting auto-refresh...`,
-      );
-      try {
-        const refreshedToken = await refreshAccessToken(
-          provider,
-          token.refreshToken,
-        );
-        await setToken(provider, refreshedToken);
-
-        // Update the local reference
-        if (provider === "google") {
-          googleToken = refreshedToken;
-        } else {
-          microsoftToken = refreshedToken;
-        }
-
-        console.log(
-          `[Workflow Data] ${provider} token auto-refreshed successfully`,
-        );
-      } catch (error) {
-        console.error(
-          `[Workflow Data] ${provider} token auto-refresh failed:`,
-          error,
-        );
-        // Continue with expired token - UI will show re-auth needed
-      }
-    }
-  }
 
   const tokens = {
     google: googleToken ?? undefined,

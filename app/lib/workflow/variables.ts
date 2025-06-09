@@ -67,8 +67,8 @@ export function substituteVariables(
       }
     }
 
-    if (expression in variables) {
-      return variables[expression];
+    if (Object.prototype.hasOwnProperty.call(variables, expression)) {
+      return variables[expression as keyof typeof variables];
     }
 
     if (options.throwOnMissing) {
@@ -84,7 +84,7 @@ function evaluateTemplateExpression(
   expression: string,
   variables: Record<string, string>,
 ): string {
-  const match = expression.match(/^(\w+)\((.*)\)$/);
+  const match = expression.match(/^([a-zA-Z0-9_]+)\(([^)]*)\)$/);
   if (!match) {
     throw new Error(`Invalid template expression: ${expression}`);
   }
@@ -192,8 +192,8 @@ function resolveTemplateArg(
     return arg.slice(1, -1);
   }
 
-  if (arg in variables) {
-    return variables[arg];
+  if (Object.prototype.hasOwnProperty.call(variables, arg)) {
+    return variables[arg as keyof typeof variables];
   }
 
   return arg;
@@ -286,7 +286,7 @@ export function extractValueFromPath(obj: unknown, path: string): unknown {
 
 function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
   const findByMatch = expression.match(
-    /findBy\(([^,]+),\s*'([^']+)',\s*([^)]+)\)\.?(.*)$/,
+    /^findBy\(([^,]+),\s*'([^']+)',\s*([^\)]+)\)(?:\.(.*))?$/,
   );
 
   if (findByMatch) {
@@ -306,8 +306,9 @@ function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
           item &&
           typeof item === "object" &&
           item !== null &&
-          property in item &&
-          (item as Record<string, unknown>)[property] === targetValue
+          Object.prototype.hasOwnProperty.call(item, property) &&
+          (item as Record<string, unknown>)[property as keyof typeof item] ===
+            targetValue
         );
       });
 
@@ -323,7 +324,9 @@ function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
 }
 
 function evaluatePredicatePath(obj: unknown, path: string): unknown {
-  const predicateMatch = path.match(/^([^[]+)\[([^=]+)=([^\]]+)\]\.?(.*)$/);
+  const predicateMatch = path.match(
+    /^([^[]+)\[([^=]+)=([^\]]+)\](?:\.(.*))?$/,
+  );
 
   if (predicateMatch) {
     const [, arrayPath, property, value, remainingPath] = predicateMatch;
@@ -343,8 +346,10 @@ function evaluatePredicatePath(obj: unknown, path: string): unknown {
           item &&
           typeof item === "object" &&
           item !== null &&
-          trimmedProperty in item &&
-          (item as Record<string, unknown>)[trimmedProperty] === targetValue
+          Object.prototype.hasOwnProperty.call(item, trimmedProperty) &&
+          (item as Record<string, unknown>)[
+            trimmedProperty as keyof typeof item
+          ] === targetValue
         );
       });
 
@@ -378,7 +383,13 @@ function evaluateSimplePath(obj: unknown, path: string): unknown {
         return undefined;
       }
     } else {
-      current = (current as Record<string, unknown>)[part];
+      if (
+        Object.prototype.hasOwnProperty.call(current as Record<string, unknown>, part)
+      ) {
+        current = (current as Record<string, unknown>)[part as keyof typeof current];
+      } else {
+        return undefined;
+      }
     }
   }
 
@@ -439,7 +450,7 @@ export function extractMissingVariables(
 function extractVariablesFromExpression(expression: string): string[] {
   const extractedVariables: string[] = [];
 
-  const match = expression.match(/^(\w+)\((.*)\)$/);
+  const match = expression.match(/^([a-zA-Z0-9_]+)\(([^)]*)\)$/);
   if (match) {
     const [, , argsString] = match;
 

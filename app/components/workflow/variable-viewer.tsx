@@ -47,9 +47,9 @@ export function VariableViewer({
   ]);
 
   allVarNames.forEach((key) => {
-    if (variables[key]) {
-      definedVars.push([key, variables[key]]);
-    } else if (definitions[key]) {
+    if (Object.prototype.hasOwnProperty.call(variables, key)) {
+      definedVars.push([key, variables[key as keyof typeof variables]]);
+    } else if (Object.prototype.hasOwnProperty.call(definitions, key)) {
       undefinedVars.push(key);
     }
   });
@@ -64,7 +64,7 @@ export function VariableViewer({
   });
 
   const getVariableIcon = (key: string) => {
-    const def = definitions[key];
+    const def = definitions[key as keyof typeof definitions];
     if (!def) return <Database className="h-3 w-3" />;
 
     if (def.generator) return <Sparkles className="h-3 w-3" />;
@@ -74,12 +74,20 @@ export function VariableViewer({
   };
 
   const getVariableSource = (key: string) => {
-    const def = definitions[key];
+    const def = definitions[key as keyof typeof definitions];
     if (!def) return "extracted";
 
     if (def.generator) return "generated";
     if (def.default) return "default";
     return "dynamic";
+  };
+
+  const getVariableDescription = (
+    def?: { default?: string; generator?: string },
+  ): string => {
+    if (def?.generator) return "Will be generated";
+    if (def?.default) return `Default: ${def.default}`;
+    return "Will be set by workflow";
   };
 
   return (
@@ -181,7 +189,7 @@ export function VariableViewer({
                   {(showUndefined || definedVars.length === 0) && (
                     <div className="space-y-2 mt-2">
                       {undefinedVars.map((key) => {
-                        const def = definitions[key];
+                        const def = definitions[key as keyof typeof definitions];
                         const isRequired = requiredVariables.has(key);
 
                         return (
@@ -204,11 +212,7 @@ export function VariableViewer({
                             </div>
                             <div className="font-mono text-xs bg-zinc-50 dark:bg-zinc-900 p-2 rounded">
                               <span className="text-zinc-400 italic">
-                                {def?.generator
-                                  ? `Will be generated`
-                                  : def?.default
-                                    ? `Default: ${def.default}`
-                                    : "Will be set by workflow"}
+                                {getVariableDescription(def)}
                               </span>
                             </div>
                           </div>

@@ -1,3 +1,4 @@
+
 export const STEP_NAMES = {
   VERIFY_PRIMARY_DOMAIN: "Verify Primary Domain",
   CREATE_AUTOMATION_OU: "Create Automation Organizational Unit",
@@ -24,9 +25,30 @@ export const WORKFLOW_CONSTANTS = {
   TOKEN_REFRESH_BUFFER_MS: 300000, // 5 minutes
   TOKEN_COOKIE_MAX_AGE: 30 * 24 * 60 * 60, // 30 days
 
+  // HTTP Status codes
+  HTTP_STATUS: {
+    UNAUTHORIZED: 401,
+    NOT_FOUND: 404,
+  },
+
+  // Cognitive limits
+  MAX_COGNITIVE_COMPLEXITY: 20,
+  MAX_FUNCTION_UPDATES: 4,
+
+  // UI Constants
+  ANIMATION_DURATION_MS: 2000,
+  DEBOUNCE_DELAY_MS: 300,
+
+  // String processing
+  MIN_PASSWORD_LENGTH: 16,
+  JSONPATH_SINGLE_RESULT: 1,
+  STRING_SPLIT_PAIR: 2,
+
+  // Iteration limits
+  MAX_WORKFLOW_ITERATIONS: 2,
+
   // Size constants
   MAX_COOKIE_SIZE: 3900,
-  DEFAULT_PASSWORD_LENGTH: 16,
 
   // API constants
   SYNC_INTERVAL: "PT40M", // 40 minutes in ISO 8601

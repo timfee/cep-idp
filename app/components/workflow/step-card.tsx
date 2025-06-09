@@ -219,11 +219,16 @@ export function StepCard({
                     : "text-zinc-500 dark:text-zinc-400",
                 )}
               >
-                {effectiveStatus.status === "failed" && effectiveStatus.error
-                  ? "View error details"
-                  : effectiveStatus.logs.length > 0
-                    ? `View ${effectiveStatus.logs.length} log${effectiveStatus.logs.length > 1 ? "s" : ""}`
-                    : "View details"}
+                {(() => {
+                  if (effectiveStatus.status === "failed" && effectiveStatus.error) {
+                    return "View error details";
+                  }
+                  if (effectiveStatus.logs.length > 0) {
+                    const count = effectiveStatus.logs.length;
+                    return `View ${count} log${count > 1 ? "s" : ""}`;
+                  }
+                  return "View details";
+                })()}
               </span>
             </AccordionTrigger>
           )}

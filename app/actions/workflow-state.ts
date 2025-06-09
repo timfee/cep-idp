@@ -3,11 +3,20 @@
 import { revalidatePath } from "next/cache";
 import { StepStatus, parseWorkflow } from "@/app/lib/workflow";
 
-// Global variable state - persisted across requests (NOTE: This resets on server restart)
-let globalVariables: Record<string, string> = {};
-let globalStepStatuses: Record<string, StepStatus> = {};
+function isValidVariableName(name: string): boolean {
+  const workflow = parseWorkflow();
+  return Object.prototype.hasOwnProperty.call(workflow.variables, name);
+}
 
-// TODO: For production, this should be persisted to a database or cache like Redis
+function isValidStepName(stepName: string): boolean {
+  const workflow = parseWorkflow();
+  return workflow.steps.some((s) => s.name === stepName);
+}
+
+// Global variable state - persisted across requests (NOTE: This resets on server restart)
+let globalVariables = new Map<string, string>();
+let globalStepStatuses = new Map<string, StepStatus>();
+
 
 /**
  * Update global variable state
@@ -16,7 +25,9 @@ export async function updateGlobalVariable(
   name: string,
   value: string,
 ): Promise<void> {
-  globalVariables[name] = value;
+  if (isValidVariableName(name)) {
+    globalVariables.set(name, value);
+  }
 }
 
 /**
@@ -26,14 +37,19 @@ export async function updateGlobalStepStatus(
   stepName: string,
   status: StepStatus,
 ): Promise<void> {
-  globalStepStatuses[stepName] = { ...status, variables: globalVariables };
+  if (isValidStepName(stepName)) {
+    globalStepStatuses.set(stepName, {
+      ...status,
+      variables: Object.fromEntries(globalVariables),
+    });
+  }
 }
 
 /**
  * Get global variables
  */
 export async function getGlobalVariables(): Promise<Record<string, string>> {
-  return { ...globalVariables };
+  return Object.fromEntries(globalVariables);
 }
 
 /**
@@ -42,7 +58,10 @@ export async function getGlobalVariables(): Promise<Record<string, string>> {
 export async function getGlobalStepStatus(
   stepName: string,
 ): Promise<StepStatus | undefined> {
-  return globalStepStatuses[stepName];
+  if (isValidStepName(stepName)) {
+    return globalStepStatuses.get(stepName);
+  }
+  return undefined;
 }
 
 /**
@@ -51,15 +70,15 @@ export async function getGlobalStepStatus(
 export async function getAllGlobalStepStatuses(): Promise<
   Record<string, StepStatus>
 > {
-  return { ...globalStepStatuses };
+  return Object.fromEntries(globalStepStatuses);
 }
 
 /**
  * Clear all global state (useful for testing)
  */
 export async function clearGlobalState(): Promise<void> {
-  globalVariables = {};
-  globalStepStatuses = {};
+  globalVariables = new Map();
+  globalStepStatuses = new Map();
   revalidatePath("/");
 }
 
@@ -85,13 +104,13 @@ export async function setWorkflowVariable(
     const workflow = parseWorkflow();
 
     // Check if variable exists in workflow
-    const varDef = workflow.variables[name];
-    if (!varDef) {
+    if (!Object.prototype.hasOwnProperty.call(workflow.variables, name)) {
       return {
         success: false,
         error: `Variable '${name}' is not defined in the workflow`,
       };
     }
+    const varDef = workflow.variables[name as keyof typeof workflow.variables];
 
     // Validate the value if validator is defined
     if (varDef.validator) {
@@ -123,10 +142,10 @@ export async function setWorkflowVariable(
 export async function clearWorkflowState(): Promise<{
   success: boolean;
   error?: string;
-}> {
+  }> {
   try {
-    globalVariables = {};
-    globalStepStatuses = {};
+    globalVariables = new Map();
+    globalStepStatuses = new Map();
     revalidatePath("/");
     return { success: true };
   } catch (error) {

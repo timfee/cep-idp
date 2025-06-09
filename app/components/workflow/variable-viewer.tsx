@@ -3,32 +3,35 @@
 import { useState } from "react";
 import { Card } from "../ui/card";
 import { Badge } from "../ui/badge";
-import { 
-  ChevronDownIcon, 
+import {
+  ChevronDownIcon,
   ChevronUpIcon,
   CheckCircle,
   AlertCircle,
   Key,
   Database,
   Sparkles,
-  FileText
+  FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface VariableViewerProps {
   variables: Record<string, string>;
-  definitions?: Record<string, {
-    default?: string;
-    generator?: string;
-    validator?: string;
-  }>;
+  definitions?: Record<
+    string,
+    {
+      default?: string;
+      generator?: string;
+      validator?: string;
+    }
+  >;
   requiredVariables?: Set<string>;
 }
 
-export function VariableViewer({ 
-  variables, 
-  definitions = {}, 
-  requiredVariables = new Set() 
+export function VariableViewer({
+  variables,
+  definitions = {},
+  requiredVariables = new Set(),
 }: VariableViewerProps) {
   const [expanded, setExpanded] = useState(true);
   const [showUndefined, setShowUndefined] = useState(false);
@@ -40,10 +43,10 @@ export function VariableViewer({
   // Check all variables from definitions
   const allVarNames = new Set([
     ...Object.keys(variables),
-    ...Object.keys(definitions)
+    ...Object.keys(definitions),
   ]);
 
-  allVarNames.forEach(key => {
+  allVarNames.forEach((key) => {
     if (variables[key]) {
       definedVars.push([key, variables[key]]);
     } else if (definitions[key]) {
@@ -63,7 +66,7 @@ export function VariableViewer({
   const getVariableIcon = (key: string) => {
     const def = definitions[key];
     if (!def) return <Database className="h-3 w-3" />;
-    
+
     if (def.generator) return <Sparkles className="h-3 w-3" />;
     if (def.default) return <FileText className="h-3 w-3" />;
     if (def.validator) return <Key className="h-3 w-3" />;
@@ -73,7 +76,7 @@ export function VariableViewer({
   const getVariableSource = (key: string) => {
     const def = definitions[key];
     if (!def) return "extracted";
-    
+
     if (def.generator) return "generated";
     if (def.default) return "default";
     return "dynamic";
@@ -114,27 +117,35 @@ export function VariableViewer({
               {definedVars.map(([key, value]) => {
                 const isRequired = requiredVariables.has(key);
                 const source = getVariableSource(key);
-                
+
                 return (
                   <div key={key} className="space-y-1">
                     <div className="flex items-center justify-between gap-2">
                       <div className="flex items-center gap-1.5 min-w-0">
                         {getVariableIcon(key)}
-                        <span className="text-xs font-medium truncate">{key}</span>
+                        <span className="text-xs font-medium truncate">
+                          {key}
+                        </span>
                       </div>
                       <div className="flex items-center gap-1 flex-shrink-0">
                         {isRequired && (
-                          <Badge variant="secondary" className="text-[10px] px-1 py-0">
+                          <Badge
+                            variant="secondary"
+                            className="text-[10px] px-1 py-0"
+                          >
                             required
                           </Badge>
                         )}
-                        <Badge 
-                          variant="outline" 
+                        <Badge
+                          variant="outline"
                           className={cn(
                             "text-[10px] px-1 py-0",
-                            source === "generated" && "border-purple-200 text-purple-700 dark:border-purple-800 dark:text-purple-300",
-                            source === "default" && "border-blue-200 text-blue-700 dark:border-blue-800 dark:text-blue-300",
-                            source === "extracted" && "border-green-200 text-green-700 dark:border-green-800 dark:text-green-300"
+                            source === "generated" &&
+                              "border-purple-200 text-purple-700 dark:border-purple-800 dark:text-purple-300",
+                            source === "default" &&
+                              "border-blue-200 text-blue-700 dark:border-blue-800 dark:text-blue-300",
+                            source === "extracted" &&
+                              "border-green-200 text-green-700 dark:border-green-800 dark:text-green-300",
                           )}
                         >
                           {source}
@@ -169,28 +180,35 @@ export function VariableViewer({
 
                   {(showUndefined || definedVars.length === 0) && (
                     <div className="space-y-2 mt-2">
-                      {undefinedVars.map(key => {
+                      {undefinedVars.map((key) => {
                         const def = definitions[key];
                         const isRequired = requiredVariables.has(key);
-                        
+
                         return (
                           <div key={key} className="space-y-1 opacity-60">
                             <div className="flex items-center justify-between gap-2">
                               <div className="flex items-center gap-1.5 min-w-0">
                                 {getVariableIcon(key)}
-                                <span className="text-xs font-medium truncate">{key}</span>
+                                <span className="text-xs font-medium truncate">
+                                  {key}
+                                </span>
                               </div>
                               {isRequired && (
-                                <Badge variant="outline" className="text-[10px] px-1 py-0">
+                                <Badge
+                                  variant="outline"
+                                  className="text-[10px] px-1 py-0"
+                                >
                                   required
                                 </Badge>
                               )}
                             </div>
                             <div className="font-mono text-xs bg-zinc-50 dark:bg-zinc-900 p-2 rounded">
                               <span className="text-zinc-400 italic">
-                                {def?.generator ? `Will be generated` : 
-                                 def?.default ? `Default: ${def.default}` : 
-                                 'Will be set by workflow'}
+                                {def?.generator
+                                  ? `Will be generated`
+                                  : def?.default
+                                    ? `Default: ${def.default}`
+                                    : "Will be set by workflow"}
                               </span>
                             </div>
                           </div>

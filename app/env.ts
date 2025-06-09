@@ -8,7 +8,6 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: z.string().min(1),
     MICROSOFT_CLIENT_ID: z.string().min(1),
     MICROSOFT_CLIENT_SECRET: z.string().min(1),
-    MICROSOFT_TENANT_ID: z.string().min(1),
   },
   shared: {
     NODE_ENV: z
@@ -21,7 +20,6 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     MICROSOFT_CLIENT_ID: process.env.MICROSOFT_CLIENT_ID,
     MICROSOFT_CLIENT_SECRET: process.env.MICROSOFT_CLIENT_SECRET,
-    MICROSOFT_TENANT_ID: process.env.MICROSOFT_TENANT_ID,
     NODE_ENV: process.env.NODE_ENV,
   },
 });

@@ -68,7 +68,7 @@
     "admin.getUser": {
       "conn": "googleAdmin",
       "method": "GET",
-      "path": "/users/azuread-provisioning@{primaryDomain}"
+      "path": "/users/{email('azuread-provisioning', domainName)}"
     },
     "admin.postUser": {
       "conn": "googleAdmin",
@@ -265,7 +265,7 @@
         {
           "use": "admin.listDomains",
           "outputs": {
-            "primaryDomain": "domains[0].domainName"
+            "domainName": "$.domains[?(@.isPrimary)].domainName"
           }
         }
       ],
@@ -336,7 +336,7 @@
         {
           "use": "admin.postUser",
           "payload": {
-            "primaryEmail": "azuread-provisioning@{primaryDomain}",
+            "primaryEmail": "{email('azuread-provisioning', domainName)}",
             "name": {
               "givenName": "Microsoft",
               "familyName": "Provisioning"
@@ -347,7 +347,7 @@
           "outputs": {
             "provisioningUserId": "$.id",
             "provisioningUserEmail": "$.primaryEmail",
-            "provisioningUserPassword": "{generatedPassword}"
+            "provisioningUserPassword": "$.password"
           }
         }
       ],
@@ -394,7 +394,7 @@
           "use": "admin.postRoleAssign",
           "payload": {
             "roleId": "{adminRoleId}",
-            "assignedTo": "azuread-provisioning@{primaryDomain}",
+            "assignedTo": "{email('azuread-provisioning', domainName)}",
             "scopeType": "CUSTOMER"
           }
         }
@@ -416,13 +416,13 @@
           "payload": {
             "displayName": "Azure AD",
             "idpConfig": {
-              "entityId": "https://sts.windows.net/{tenantId}/",
-              "singleSignOnServiceUri": "https://login.microsoftonline.com/{tenantId}/saml2"
+              "entityId": "{url('https://sts.windows.net', tenantId)}/",
+              "singleSignOnServiceUri": "{url('https://login.microsoftonline.com', concat(tenantId, '/saml2'))}"
             }
           },
           "outputs": {
             "samlProfileId": "$.name",
-            "entityId": "$.spConfig.entityId",
+            "entityId": "$.idpConfig.entityId",
             "acsUrl": "$.spConfig.acsUri"
           },
           "longRunning": true
@@ -594,7 +594,7 @@
         {
           "use": "graph.linkPolicy",
           "payload": {
-            "@odata.id": "https://graph.microsoft.com/beta/policies/tokenIssuancePolicies/{claimsPolicyId}"
+            "@odata.id": "{url('https://graph.microsoft.com/beta/policies/tokenIssuancePolicies', claimsPolicyId)}"
           }
         }
       ],

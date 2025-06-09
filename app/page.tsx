@@ -7,12 +7,13 @@ import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
 export const dynamic = "force-dynamic";
 
 interface PageProps {
-  searchParams: { [key: string]: string | string[] | undefined };
+  searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }
 
 export default async function WorkflowPage({ searchParams }: PageProps) {
   // Handle OAuth errors
-  const error = searchParams.error;
+  const resolvedSearchParams = await searchParams;
+  const error = resolvedSearchParams.error;
 
   try {
     // Fetch all workflow data server-side

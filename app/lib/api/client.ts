@@ -73,7 +73,7 @@ class ApiClient {
     if (body && ["POST", "PATCH", "PUT"].includes(endpoint.method)) {
       requestOptions.body = JSON.stringify(body);
     }
-
+    console.log("Fetching:\n\n", url, requestOptions);
     const response = await fetch(url, requestOptions);
 
     // Handle 401 - Authentication error

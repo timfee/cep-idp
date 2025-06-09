@@ -1,0 +1,55 @@
+// https://admin.googleapis.com/admin/directory/v1/customer/my_customer/domains
+export default {
+  kind: "admin#directory#domains",
+  etag: '"4kY5xF2bP9VuOt_lSydUBmcnVRehnx0y-sSIeNM7DPc/Cw9hK8kGkkLTmgOJS8jmW0x3JY8"',
+  domains: [
+    {
+      kind: "admin#directory#domain",
+      etag: '"4kY5xF2bP9VuOt_lSydUBmcnVRehnx0y-sSIeNM7DPc/-FPJp2PzSqMqdY8W_mUTLHoj8k4"',
+      domainName: "feeley.xyz",
+      isPrimary: true,
+      verified: true,
+      creationTime: "1622665520252",
+    },
+    {
+      kind: "admin#directory#domain",
+      etag: '"4kY5xF2bP9VuOt_lSydUBmcnVRehnx0y-sSIeNM7DPc/EhZ3amtjOI9hDQLcrx05AQZR7c8"',
+      domainName: "boolean-the-cat.com",
+      isPrimary: false,
+      verified: true,
+      creationTime: "1622667060220",
+    },
+    {
+      kind: "admin#directory#domain",
+      etag: '"4kY5xF2bP9VuOt_lSydUBmcnVRehnx0y-sSIeNM7DPc/ZsER_5zMZpInlAecsg69JxTATCI"',
+      domainName: "kevin-the-cat.com",
+      isPrimary: false,
+      verified: true,
+      creationTime: "1623076232502",
+    },
+    {
+      kind: "admin#directory#domain",
+      etag: '"4kY5xF2bP9VuOt_lSydUBmcnVRehnx0y-sSIeNM7DPc/NWtnQxFF-3dhdmUAi5tuAUsoom4"',
+      domainName: "cat-forums.com",
+      isPrimary: false,
+      verified: true,
+      creationTime: "1734124229963",
+    },
+    {
+      kind: "admin#directory#domain",
+      etag: '"4kY5xF2bP9VuOt_lSydUBmcnVRehnx0y-sSIeNM7DPc/8lxX9tMG3mBJhZH4L5isVnhdwPQ"',
+      domainName: "boolean-and-kevin.app",
+      isPrimary: false,
+      verified: true,
+      creationTime: "1734124314917",
+    },
+    {
+      kind: "admin#directory#domain",
+      etag: '"4kY5xF2bP9VuOt_lSydUBmcnVRehnx0y-sSIeNM7DPc/ar4l_yNeBP3NAGjTPymVE9jcZBs"',
+      domainName: "timfeeley.com",
+      isPrimary: false,
+      verified: true,
+      creationTime: "1739767819695",
+    },
+  ],
+};

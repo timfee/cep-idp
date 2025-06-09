@@ -1,5 +1,5 @@
 // https://admin.googleapis.com/admin/directory/v1/users/azuread-provisioning@feeley.xyz
-export default {
+export const sample = {
   kind: "admin#directory#user",
   id: "116949259093507633648",
   etag: '"4kY5xF2bP9VuOt_lSydUBmcnVRehnx0y-sSIeNM7DPc/Nm76Mshl4mLAMLyMcGj4oVPE0yY"',

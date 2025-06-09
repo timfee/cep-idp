@@ -1,5 +1,5 @@
 // https://admin.googleapis.com/admin/directory/v1/users/notcreated@foo.com
-export default {
+export const sample = {
   error: {
     code: 404,
     message: "Resource Not Found: userKey",

@@ -1,5 +1,5 @@
 // GET https://admin.googleapis.com/admin/directory/v1/customer/my_customer/domains
-export default {
+export const sample = {
   kind: "admin#directory#domains",
   etag: '"4kY5xF2bP9VuOt_lSydUBmcnVRehnx0y-sSIeNM7DPc/Cw9hK8kGkkLTmgOJS8jmW0x3JY8"',
   domains: [

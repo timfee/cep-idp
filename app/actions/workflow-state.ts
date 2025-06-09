@@ -2,6 +2,8 @@
 
 import { revalidatePath } from "next/cache";
 import { StepStatus, parseWorkflow } from "@/app/lib/workflow";
+import { getToken, setToken } from "@/app/lib/auth/tokens";
+import { refreshAccessToken } from "@/app/lib/auth/oauth";
 
 function isValidVariableName(name: string): boolean {
   const workflow = parseWorkflow();
@@ -148,6 +150,33 @@ export async function clearWorkflowState(): Promise<{
     revalidatePath("/");
     return { success: true };
   } catch (error) {
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Unknown error",
+    };
+  }
+}
+
+export async function refreshAuthToken(
+  provider: "google" | "microsoft",
+): Promise<{ success: boolean; error?: string }> {
+  try {
+    const token = await getToken(provider);
+    if (!token) {
+      return { success: false, error: "No token found" };
+    }
+
+    if (!token.refreshToken) {
+      return { success: false, error: "No refresh token available" };
+    }
+
+    const refreshedToken = await refreshAccessToken(provider, token.refreshToken);
+    await setToken(provider, refreshedToken);
+
+    revalidatePath("/");
+    return { success: true };
+  } catch (error) {
+    console.error(`Failed to refresh ${provider} token:`, error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

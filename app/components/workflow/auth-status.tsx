@@ -5,12 +5,15 @@ import { Button } from "../ui/button";
 import { AlertOctagonIcon, BadgeCheckIcon } from "lucide-react";
 import Link from "next/link";
 import { WILDCARD_SUFFIX_LENGTH } from "@/app/lib/workflow/constants";
+import { TokenStatus } from "./token-status";
 
 interface AuthStatusProps {
   provider: "google" | "microsoft";
   isAuthenticated: boolean;
   scopes: string[];
   requiredScopes: string[];
+  expiresAt?: number;
+  hasRefreshToken?: boolean;
 }
 
 /**
@@ -78,6 +81,8 @@ export function AuthStatus({
   isAuthenticated,
   scopes,
   requiredScopes,
+  expiresAt,
+  hasRefreshToken,
 }: AuthStatusProps) {
   const displayName = provider === "google" ? "Google" : "Microsoft";
   const hasAllScopes = hasAllRequiredScopes(scopes, requiredScopes);
@@ -115,31 +120,42 @@ export function AuthStatus({
 
   return (
     <div className="flex items-center justify-between p-4 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
-      <div className="flex items-center gap-3">
-        {isAuthenticated ? (
-          <Badge
-            variant="secondary"
-            className="bg-green-500 text-white dark:bg-blue-600"
-          >
-            <BadgeCheckIcon />
-            All set
-          </Badge>
-        ) : (
-          <Badge
-            variant="secondary"
-            className="bg-yellow-700 text-white dark:bg-blue-600"
-          >
-            <AlertOctagonIcon />
-            Attention
-          </Badge>
+      <div className="flex-1">
+        {isAuthenticated && (
+          <TokenStatus
+            provider={provider}
+            isAuthenticated={isAuthenticated}
+            expiresAt={expiresAt}
+            hasRefreshToken={hasRefreshToken}
+          />
         )}
-        <div>
-          <h3 className="font-medium">{displayName}</h3>
-          {isAuthenticated && (
-            <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              {scopeMessage}
-            </p>
+
+        <div className="flex items-center gap-3">
+          {isAuthenticated ? (
+            <Badge
+              variant="secondary"
+              className="bg-green-500 text-white dark:bg-blue-600"
+            >
+              <BadgeCheckIcon />
+              All set
+            </Badge>
+          ) : (
+            <Badge
+              variant="secondary"
+              className="bg-yellow-700 text-white dark:bg-blue-600"
+            >
+              <AlertOctagonIcon />
+              Attention
+            </Badge>
           )}
+          <div>
+            <h3 className="font-medium">{displayName}</h3>
+            {isAuthenticated && (
+              <p className="text-sm text-zinc-500 dark:text-zinc-400">
+                {scopeMessage}
+              </p>
+            )}
+          </div>
         </div>
       </div>
 

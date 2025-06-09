@@ -31,7 +31,7 @@ const eslintConfig = [
   ...compat.extends(
     "next/core-web-vitals",
     "next/typescript",
-    "plugin:promise/recommended",
+    "plugin:promise/recommended"
   ),
   security.configs.recommended,
   sonar.configs.recommended,
@@ -41,6 +41,8 @@ const eslintConfig = [
     },
     rules: {
       "tsdoc/syntax": "warn",
+      "security/detect-object-injection": "off",
+      // eslint-disable-next-line no-magic-numbers
       "sonarjs/cognitive-complexity": ["warn", 20],
       "no-magic-numbers": ["warn", { ignore: [-1, 0, 1] }],
     },

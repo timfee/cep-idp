@@ -4,7 +4,6 @@ import { executeWorkflowStep } from "@/app/actions/workflow-execution";
 import { cn } from "@/app/lib/utils";
 import { LogEntry, Step, StepStatus } from "@/app/lib/workflow";
 import { PasswordDisplay } from "./password-display";
-import { ManualStepModal } from "./manual-step-modal";
 import {
   AlertTriangle,
   CheckCircle,
@@ -42,7 +41,6 @@ export function StepCard({
     error?: string;
     logs?: LogEntry[];
   }>({ status: null });
-  const [showManualModal, setShowManualModal] = useState(false);
 
   // Use local execution result if available, otherwise use prop status
   const effectiveStatus = localExecutionResult.status
@@ -143,22 +141,6 @@ export function StepCard({
               </div>
 
               <div className="flex items-center gap-2">
-                {step.manual && effectiveStatus.status === "pending" && (
-                  <>
-                    <Button onClick={() => setShowManualModal(true)}>
-                      Configure Manually
-                    </Button>
-                    <ManualStepModal
-                      step={step}
-                      isOpen={showManualModal}
-                      onComplete={() => {
-                        setShowManualModal(false);
-                        window.location.reload();
-                      }}
-                    />
-                  </>
-                )}
-
                 {!step.manual &&
                   effectiveStatus.status === "pending" &&
                   canExecute &&

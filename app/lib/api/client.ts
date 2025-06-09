@@ -16,6 +16,33 @@ export async function apiRequest(options: ApiRequestOptions): Promise<unknown> {
     throw new Error(`Connection not found: ${endpoint.conn}`);
   }
 
+  if (connection.auth === "none") {
+    const path = substituteVariables(endpoint.path, variables, {
+      throwOnMissing: throwOnMissingVars,
+    });
+    let url = `${connection.base}${path}`;
+
+    if (endpoint.qs) {
+      const params = new URLSearchParams();
+      for (const [key, value] of Object.entries(endpoint.qs)) {
+        params.append(key, substituteVariables(value, variables));
+      }
+      url += `?${params.toString()}`;
+    }
+
+    const response = await fetch(url);
+    if (!response.ok) {
+      throw new Error(
+        `Request failed: ${response.status} - ${response.statusText}`,
+      );
+    }
+    const contentType = response.headers.get("content-type");
+    if (contentType?.includes("xml")) {
+      return response.text();
+    }
+    return response.json();
+  }
+
   // Determine which token to use
   let token = null;
   let provider: "google" | "microsoft" | null = null;

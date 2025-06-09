@@ -1,6 +1,33 @@
 import { JSONPath } from "jsonpath-plus";
 import { randomBytes } from "crypto";
 
+export function extractCertificateFromXml(xmlString: string): string {
+  const signingBlockMatch = xmlString.match(
+    /<KeyDescriptor[^>]*use="signing"[^>]*>[\s\S]*?<\/KeyDescriptor>/,
+  );
+
+  if (!signingBlockMatch) {
+    throw new Error("No signing certificate found in federation metadata");
+  }
+
+  const signingBlock = signingBlockMatch[0];
+
+  const certMatch = signingBlock.match(
+    /<X509Certificate[^>]*>([^<]+)<\/X509Certificate>/,
+  );
+
+  if (!certMatch || !certMatch[1]) {
+    throw new Error("Could not extract certificate from federation metadata");
+  }
+
+  const base64Cert = certMatch[1].trim().replace(/\s+/g, "");
+  const pemCert = `-----BEGIN CERTIFICATE-----\n${base64Cert
+    .match(/.{1,64}/g)
+    ?.join("\n")}\n-----END CERTIFICATE-----`;
+
+  return pemCert;
+}
+
 export function generatePassword(length: number): string {
   const chars =
     "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
@@ -103,6 +130,14 @@ function evaluateTemplateExpression(
         throw new Error("generatePassword() length must be a positive number");
       }
       return generatePassword(length);
+    }
+    case "extractCertificateFromXml": {
+      if (args.length !== 1) {
+        throw new Error(
+          "extractCertificateFromXml() requires exactly 1 argument: xml string",
+        );
+      }
+      return extractCertificateFromXml(args[0]);
     }
     default:
       throw new Error(`Unknown template function: ${functionName}`);

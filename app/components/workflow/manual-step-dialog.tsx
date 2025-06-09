@@ -33,9 +33,12 @@ export function ManualStepDialog({
           </DialogDescription>
         </DialogHeader>
 
-        <ManualStepGuide step={step} variables={variables} onComplete={onComplete} />
+        <ManualStepGuide
+          step={step}
+          variables={variables}
+          onComplete={onComplete}
+        />
       </DialogContent>
     </Dialog>
   );
 }
-

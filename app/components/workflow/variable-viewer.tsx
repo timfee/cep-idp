@@ -82,9 +82,10 @@ export function VariableViewer({
     return "dynamic";
   };
 
-  const getVariableDescription = (
-    def?: { default?: string; generator?: string },
-  ): string => {
+  const getVariableDescription = (def?: {
+    default?: string;
+    generator?: string;
+  }): string => {
     if (def?.generator) return "Will be generated";
     if (def?.default) return `Default: ${def.default}`;
     return "Will be set by workflow";
@@ -189,7 +190,8 @@ export function VariableViewer({
                   {(showUndefined || definedVars.length === 0) && (
                     <div className="space-y-2 mt-2">
                       {undefinedVars.map((key) => {
-                        const def = definitions[key as keyof typeof definitions];
+                        const def =
+                          definitions[key as keyof typeof definitions];
                         const isRequired = requiredVariables.has(key);
 
                         return (

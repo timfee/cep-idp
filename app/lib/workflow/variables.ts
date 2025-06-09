@@ -324,9 +324,7 @@ function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
 }
 
 function evaluatePredicatePath(obj: unknown, path: string): unknown {
-  const predicateMatch = path.match(
-    /^([^[]+)\[([^=]+)=([^\]]+)\](?:\.(.*))?$/,
-  );
+  const predicateMatch = path.match(/^([^[]+)\[([^=]+)=([^\]]+)\](?:\.(.*))?$/);
 
   if (predicateMatch) {
     const [, arrayPath, property, value, remainingPath] = predicateMatch;
@@ -384,9 +382,14 @@ function evaluateSimplePath(obj: unknown, path: string): unknown {
       }
     } else {
       if (
-        Object.prototype.hasOwnProperty.call(current as Record<string, unknown>, part)
+        Object.prototype.hasOwnProperty.call(
+          current as Record<string, unknown>,
+          part,
+        )
       ) {
-        current = (current as Record<string, unknown>)[part as keyof typeof current];
+        current = (current as Record<string, unknown>)[
+          part as keyof typeof current
+        ];
       } else {
         return undefined;
       }

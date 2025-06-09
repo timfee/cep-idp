@@ -220,7 +220,10 @@ export function StepCard({
                 )}
               >
                 {(() => {
-                  if (effectiveStatus.status === "failed" && effectiveStatus.error) {
+                  if (
+                    effectiveStatus.status === "failed" &&
+                    effectiveStatus.error
+                  ) {
                     return "View error details";
                   }
                   if (effectiveStatus.logs.length > 0) {

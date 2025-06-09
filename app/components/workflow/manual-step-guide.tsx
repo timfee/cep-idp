@@ -50,8 +50,7 @@ export function ManualStepGuide({
           {
             text: "Open Azure Portal and navigate to your SSO Enterprise Application",
             link: {
-              url:
-                "https://portal.azure.com/#blade/Microsoft_AAD_IAM/StartboardApplicationsMenuBlade/AllApps",
+              url: "https://portal.azure.com/#blade/Microsoft_AAD_IAM/StartboardApplicationsMenuBlade/AllApps",
               text: "Open Azure Portal",
             },
           },
@@ -145,7 +144,8 @@ export function ManualStepGuide({
       <CardContent className="space-y-4">
         <Alert>
           <AlertDescription>
-            Follow these steps in order. Check each box as you complete the step.
+            Follow these steps in order. Check each box as you complete the
+            step.
           </AlertDescription>
         </Alert>
 
@@ -185,7 +185,9 @@ export function ManualStepGuide({
                     <Button
                       size="sm"
                       variant="outline"
-                      onClick={() => copyToClipboard(instruction.code!, `code-${index}`)}
+                      onClick={() =>
+                        copyToClipboard(instruction.code!, `code-${index}`)
+                      }
                     >
                       {copied === `code-${index}` ? (
                         <CheckCircle2 className="h-3 w-3" />
@@ -221,14 +223,20 @@ export function ManualStepGuide({
         {step.name === "Assign Users to SSO App" && (
           <Alert className="border-amber-200 bg-amber-50 dark:bg-amber-950/20">
             <AlertDescription>
-              <strong>Tip:</strong> For initial testing, add yourself or a test user. You can add more users or groups later without re-running this workflow.
+              <strong>Tip:</strong> For initial testing, add yourself or a test
+              user. You can add more users or groups later without re-running
+              this workflow.
             </AlertDescription>
           </Alert>
         )}
       </CardContent>
 
       <CardFooter>
-        <Button onClick={onComplete} disabled={!allStepsChecked} className="w-full">
+        <Button
+          onClick={onComplete}
+          disabled={!allStepsChecked}
+          className="w-full"
+        >
           {allStepsChecked ? (
             <>
               <CheckCircle2 className="mr-2 h-4 w-4" />
@@ -247,4 +255,3 @@ export function ManualStepGuide({
     </Card>
   );
 }
-

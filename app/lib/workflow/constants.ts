@@ -1,4 +1,3 @@
-
 export const STEP_NAMES = {
   VERIFY_PRIMARY_DOMAIN: "Verify Primary Domain",
   CREATE_AUTOMATION_OU: "Create Automation Organizational Unit",

@@ -90,7 +90,8 @@ export function AuthStatus({
     "All required scopes granted"
   ) : (
     <>
-      Missing some required scopes: <span className="font-mono">{missingScopes.join(", ")}</span>
+      Missing some required scopes:{" "}
+      <span className="font-mono">{missingScopes.join(", ")}</span>
     </>
   );
 

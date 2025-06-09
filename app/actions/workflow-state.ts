@@ -17,7 +17,6 @@ function isValidStepName(stepName: string): boolean {
 let globalVariables = new Map<string, string>();
 let globalStepStatuses = new Map<string, StepStatus>();
 
-
 /**
  * Update global variable state
  */
@@ -142,7 +141,7 @@ export async function setWorkflowVariable(
 export async function clearWorkflowState(): Promise<{
   success: boolean;
   error?: string;
-  }> {
+}> {
   try {
     globalVariables = new Map();
     globalStepStatuses = new Map();

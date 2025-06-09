@@ -62,7 +62,7 @@ export async function getWorkflowData(
   const variables: Record<string, string> = { ...(await getGlobalVariables()) };
 
   for (const [name, varDef] of Object.entries(workflow.variables)) {
-    if (!variables[name]) {
+    if (!Object.prototype.hasOwnProperty.call(variables, name)) {
       if (varDef.default) {
         variables[name] = varDef.default;
       } else if (varDef.generator) {
@@ -88,7 +88,7 @@ export async function getWorkflowData(
   }
 
   // Process steps in dependency order
-  const stepStatuses: Record<string, StepStatus> = {};
+  const stepStatuses = new Map<string, StepStatus>();
   const processedSteps = new Set<string>();
 
   // Get global step statuses
@@ -99,7 +99,7 @@ export async function getWorkflowData(
     if (!step.depends_on) return true;
     return step.depends_on.every((dep) => {
       // Check local status first, then global status
-      const localStatus = stepStatuses[dep];
+      const localStatus = stepStatuses.get(dep);
       if (
         localStatus &&
         (localStatus.status === "completed" || localStatus.status === "skipped")
@@ -107,14 +107,19 @@ export async function getWorkflowData(
         return true;
       }
 
-      const globalStatus = globalStepStatuses[dep];
+      const globalStatus = Object.prototype.hasOwnProperty.call(
+        globalStepStatuses,
+        dep,
+      )
+        ? globalStepStatuses[dep as keyof typeof globalStepStatuses]
+        : undefined;
       if (
         globalStatus &&
         (globalStatus.status === "completed" ||
           globalStatus.status === "skipped")
       ) {
         // Copy global status to local for consistency
-        stepStatuses[dep] = globalStatus;
+        stepStatuses.set(dep, globalStatus);
         return true;
       }
 
@@ -126,7 +131,12 @@ export async function getWorkflowData(
   const isAuthMet = (step: Step): boolean => {
     if (!step.role) return true;
 
-    const requiredScopes = workflow.roles[step.role] || [];
+    const requiredScopes = Object.prototype.hasOwnProperty.call(
+      workflow.roles,
+      step.role,
+    )
+      ? workflow.roles[step.role as keyof typeof workflow.roles]
+      : [];
     const isGoogleStep =
       step.role.startsWith("dir") || step.role.startsWith("ci");
     const isMicrosoftStep = step.role.startsWith("graph");
@@ -165,7 +175,12 @@ export async function getWorkflowData(
       if (processedSteps.has(step.name)) continue;
 
       // Check if step is already completed globally
-      const globalStatus = globalStepStatuses[step.name];
+      const globalStatus = Object.prototype.hasOwnProperty.call(
+        globalStepStatuses,
+        step.name,
+      )
+        ? globalStepStatuses[step.name as keyof typeof globalStepStatuses]
+        : undefined;
       if (
         globalStatus &&
         (globalStatus.status === "completed" ||
@@ -173,18 +188,26 @@ export async function getWorkflowData(
       ) {
         // Verify that expected outputs were actually extracted
         if (step.outputs && step.outputs.length > 0) {
-          const missingOutputs = step.outputs.filter(
-            (output) =>
-              !variables[output] &&
-              (!globalStatus.variables || !globalStatus.variables[output]),
-          );
+          const missingOutputs = step.outputs.filter((output) => {
+            const hasLocal = Object.prototype.hasOwnProperty.call(
+              variables,
+              output,
+            );
+            const hasGlobal =
+              globalStatus.variables &&
+              Object.prototype.hasOwnProperty.call(
+                globalStatus.variables,
+                output,
+              );
+            return !hasLocal && !hasGlobal;
+          });
           if (missingOutputs.length > 0) {
             console.log(
               `[Initial Load] Step ${step.name} marked completed but missing outputs: ${missingOutputs.join(", ")} - re-running`,
             );
             // Don't use global status, re-run the step
           } else {
-            stepStatuses[step.name] = globalStatus;
+            stepStatuses.set(step.name, globalStatus);
             processedSteps.add(step.name);
             // Merge any variables from completed step
             if (globalStatus.variables) {
@@ -196,7 +219,7 @@ export async function getWorkflowData(
             continue;
           }
         } else {
-          stepStatuses[step.name] = globalStatus;
+          stepStatuses.set(step.name, globalStatus);
           processedSteps.add(step.name);
           // Merge any variables from completed step
           if (globalStatus.variables) {
@@ -216,26 +239,28 @@ export async function getWorkflowData(
 
       // Check auth requirements
       if (!isAuthMet(step)) {
-        stepStatuses[step.name] = { status: "pending", logs: [] };
+        stepStatuses.set(step.name, { status: "pending", logs: [] });
         processedSteps.add(step.name);
         continue;
       }
 
       // Skip manual steps
       if (step.manual) {
-        stepStatuses[step.name] = { status: "pending", logs: [] };
+        stepStatuses.set(step.name, { status: "pending", logs: [] });
         processedSteps.add(step.name);
         continue;
       }
 
       // For initial load, check if step has required inputs
       if (step.inputs && step.inputs.length > 0) {
-        const missingInputs = step.inputs.filter((input) => !variables[input]);
+        const missingInputs = step.inputs.filter(
+          (input) => !Object.prototype.hasOwnProperty.call(variables, input),
+        );
         if (missingInputs.length > 0) {
           console.log(
             `[Initial Load] Missing inputs for ${step.name}: ${missingInputs.join(", ")}`,
           );
-          stepStatuses[step.name] = { status: "pending", logs: [] };
+          stepStatuses.set(step.name, { status: "pending", logs: [] });
           processedSteps.add(step.name);
           continue;
         }
@@ -243,10 +268,15 @@ export async function getWorkflowData(
 
       // Check if step already has a failed status - don't overwrite it
       const existingGlobalStatus = await getAllGlobalStepStatuses();
-      const currentGlobalStatus = existingGlobalStatus[step.name];
+      const currentGlobalStatus = Object.prototype.hasOwnProperty.call(
+        existingGlobalStatus,
+        step.name,
+      )
+        ? existingGlobalStatus[step.name as keyof typeof existingGlobalStatus]
+        : undefined;
 
       if (currentGlobalStatus && currentGlobalStatus.status === "failed") {
-        stepStatuses[step.name] = currentGlobalStatus;
+        stepStatuses.set(step.name, currentGlobalStatus);
         processedSteps.add(step.name);
         continue;
       }
@@ -273,17 +303,20 @@ export async function getWorkflowData(
           await updateGlobalVariable(key, value);
         }
 
-        stepStatuses[step.name] = {
+        stepStatuses.set(step.name, {
           status: "completed",
           logs,
           result: actionResult.data,
           completedAt: Date.now(),
-        };
+        });
 
         // Persist step completion globally
-        await updateGlobalStepStatus(step.name, stepStatuses[step.name]);
+        await updateGlobalStepStatus(
+          step.name,
+          stepStatuses.get(step.name) as StepStatus,
+        );
       } else {
-        stepStatuses[step.name] = { status: "pending", logs };
+        stepStatuses.set(step.name, { status: "pending", logs });
       }
 
       processedSteps.add(step.name);
@@ -292,8 +325,8 @@ export async function getWorkflowData(
 
   // Mark any unprocessed steps as pending
   for (const step of workflow.steps) {
-    if (!stepStatuses[step.name]) {
-      stepStatuses[step.name] = { status: "pending", logs: [] };
+    if (!stepStatuses.has(step.name)) {
+      stepStatuses.set(step.name, { status: "pending", logs: [] });
     }
   }
 
@@ -307,7 +340,7 @@ export async function getWorkflowData(
   console.log(
     `[Initial Load] Final step statuses:`,
     Object.fromEntries(
-      Object.entries(stepStatuses).map(([name, status]) => [
+      Array.from(stepStatuses.entries()).map(([name, status]) => [
         name,
         status.status,
       ]),
@@ -317,7 +350,7 @@ export async function getWorkflowData(
   return {
     workflow,
     variables,
-    stepStatuses,
+    stepStatuses: Object.fromEntries(stepStatuses),
     auth: {
       google: {
         authenticated: !!googleToken,
@@ -394,7 +427,9 @@ export async function getWorkflowVariables(): Promise<{
   // Build result with current values and definitions
   for (const [name, def] of Object.entries(workflow.variables)) {
     result[name] = {
-      value: variables[name],
+      value: Object.prototype.hasOwnProperty.call(variables, name)
+        ? variables[name as keyof typeof variables]
+        : undefined,
       definition: def,
       isRequired: requiredVars.has(name),
     };

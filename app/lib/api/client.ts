@@ -1,5 +1,6 @@
 import { isTokenExpired, refreshAccessToken } from "../auth/oauth";
 import { substituteVariables } from "../workflow";
+import { WORKFLOW_CONSTANTS } from "../workflow/constants";
 import { ApiRequestOptions } from "./types";
 
 export async function apiRequest(options: ApiRequestOptions): Promise<unknown> {
@@ -11,7 +12,12 @@ export async function apiRequest(options: ApiRequestOptions): Promise<unknown> {
     body,
     throwOnMissingVars = true,
   } = options;
-  const connection = connections[endpoint.conn];
+  const connection = Object.prototype.hasOwnProperty.call(
+    connections,
+    endpoint.conn,
+  )
+    ? connections[endpoint.conn as keyof typeof connections]
+    : undefined;
   if (!connection) {
     throw new Error(`Connection not found: ${endpoint.conn}`);
   }
@@ -77,13 +83,16 @@ export async function apiRequest(options: ApiRequestOptions): Promise<unknown> {
   const response = await fetch(url, requestOptions);
 
   // Handle 401 - Authentication error
-  if (response.status === 401) {
+  if (response.status === WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED) {
     throw new Error(`Authentication failed: Token may be expired or invalid`);
   }
 
   // For verification requests, 404 is expected (resource doesn't exist yet)
   // Return null to indicate "not found" rather than throwing
-  if (response.status === 404 && !throwOnMissingVars) {
+  if (
+    response.status === WORKFLOW_CONSTANTS.HTTP_STATUS.NOT_FOUND &&
+    !throwOnMissingVars
+  ) {
     return null;
   }
 

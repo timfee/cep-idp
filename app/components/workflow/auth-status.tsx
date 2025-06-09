@@ -86,6 +86,31 @@ export function AuthStatus({
 
   const authUrl = `/api/auth/${provider}`;
 
+  const scopeMessage = hasAllScopes ? (
+    "All required scopes granted"
+  ) : (
+    <>
+      Missing some required scopes: <span className="font-mono">{missingScopes.join(", ")}</span>
+    </>
+  );
+
+  let actionElement: React.ReactNode;
+  if (!isAuthenticated) {
+    actionElement = (
+      <Button asChild>
+        <Link href={authUrl}>Authenticate</Link>
+      </Button>
+    );
+  } else if (!hasAllScopes) {
+    actionElement = (
+      <Button asChild color="amber">
+        <Link href={authUrl}>Re-authenticate</Link>
+      </Button>
+    );
+  } else {
+    actionElement = <Badge color="green">Connected</Badge>;
+  }
+
   return (
     <div className="flex items-center justify-between p-4 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
       <div className="flex items-center gap-3">
@@ -110,30 +135,13 @@ export function AuthStatus({
           <h3 className="font-medium">{displayName}</h3>
           {isAuthenticated && (
             <p className="text-sm text-zinc-500 dark:text-zinc-400">
-              {hasAllScopes ? (
-                "All required scopes granted"
-              ) : (
-                <>
-                  Missing some required scopes:{" "}
-                  <span className="font-mono">{missingScopes.join(", ")}</span>
-                </>
-              )}
+              {scopeMessage}
             </p>
           )}
         </div>
       </div>
 
-      {!isAuthenticated ? (
-        <Button asChild>
-          <Link href={authUrl}>Authenticate</Link>
-        </Button>
-      ) : !hasAllScopes ? (
-        <Button asChild color="amber">
-          <Link href={authUrl}>Re-authenticate</Link>
-        </Button>
-      ) : (
-        <Badge color="green">Connected</Badge>
-      )}
+      {actionElement}
     </div>
   );
 }

@@ -2,6 +2,7 @@ import { setChunkedCookieOnResponse } from "@/app/lib/auth/cookie-utils";
 import { encrypt } from "@/app/lib/auth/crypto";
 import { exchangeCodeForToken } from "@/app/lib/auth/oauth";
 import { validateOAuthState } from "@/app/lib/auth/tokens";
+import { WORKFLOW_CONSTANTS } from "@/app/lib/workflow/constants";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -43,7 +44,7 @@ export async function GET(request: Request) {
       secure: isProduction,
       sameSite: "lax" as const,
       path: "/",
-      maxAge: 30 * 24 * 60 * 60, // 30 days
+      maxAge: WORKFLOW_CONSTANTS.TOKEN_COOKIE_MAX_AGE,
     };
 
     // Create redirect response

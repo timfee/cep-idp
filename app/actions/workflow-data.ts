@@ -14,12 +14,6 @@ import {
 } from "@/app/lib/workflow";
 import { JWT_PART_COUNT } from "@/app/lib/workflow/constants";
 import { runStepActions } from "./workflow-execution";
-import {
-  getAllGlobalStepStatuses,
-  getGlobalVariables,
-  updateGlobalStepStatus,
-  updateGlobalVariable,
-} from "./workflow-state";
 
 export interface AuthState {
   google: {
@@ -46,7 +40,7 @@ export interface WorkflowData {
 async function initializeVariables(
   workflow: Workflow,
 ): Promise<Record<string, string>> {
-  const vars: Record<string, string> = { ...(await getGlobalVariables()) };
+  const vars: Record<string, string> = {};
   for (const [name, def] of Object.entries(workflow.variables)) {
     if (!Object.prototype.hasOwnProperty.call(vars, name)) {
       if (def.default) {
@@ -79,7 +73,6 @@ async function reconstituteStepStatuses(
   tokens: { google?: Token; microsoft?: Token },
 ): Promise<Map<string, StepStatus>> {
   const stepStatuses = new Map<string, StepStatus>();
-  const globalStepStatuses = await getAllGlobalStepStatuses();
 
   const pendingStatus = { status: "pending", logs: [] } as StepStatus;
 
@@ -87,11 +80,7 @@ async function reconstituteStepStatuses(
     if (!step.depends_on) return true;
     return step.depends_on.every((dep) => {
       const local = stepStatuses.get(dep);
-      if (local && (local.status === "completed" || local.status === "skipped")) {
-        return true;
-      }
-      const global = globalStepStatuses[dep as keyof typeof globalStepStatuses];
-      return global ? global.status === "completed" || global.status === "skipped" : false;
+      return local ? local.status === "completed" || local.status === "skipped" : false;
     });
   };
 
@@ -111,25 +100,6 @@ async function reconstituteStepStatuses(
     return false;
   };
 
-  const applyGlobalStatus = (step: Step, status: StepStatus | undefined): boolean => {
-    if (!status) return false;
-    if (status.status !== "completed" && status.status !== "skipped") {
-      return false;
-    }
-    const missing = step.outputs?.some((o) => {
-      const hasLocal = Object.prototype.hasOwnProperty.call(variables, o);
-      const hasGlobal = status.variables && Object.prototype.hasOwnProperty.call(status.variables, o);
-      return !hasLocal && !hasGlobal;
-    });
-    if (!missing) {
-      stepStatuses.set(step.name, status);
-      if (status.variables) {
-        Object.assign(variables, status.variables);
-      }
-      return true;
-    }
-    return false;
-  };
 
   const shouldSkipStep = (step: Step): boolean =>
     !areDependenciesMet(step) ||
@@ -138,36 +108,22 @@ async function reconstituteStepStatuses(
     (step.inputs && step.inputs.some((i) => !Object.prototype.hasOwnProperty.call(variables, i)));
 
   const verifyStep = async (step: Step): Promise<void> => {
-    const latest = await getAllGlobalStepStatuses();
-    const existing = latest[step.name as keyof typeof latest];
-    if (existing && existing.status === "failed") {
-      stepStatuses.set(step.name, existing);
-      return;
-    }
     const logs: LogEntry[] = [];
     const result = await runStepActions(step, variables, tokens, (log) => logs.push(log), true);
     if (result.success) {
       Object.assign(variables, result.extractedVariables);
-      for (const [k, v] of Object.entries(result.extractedVariables)) {
-        await updateGlobalVariable(k, v);
-      }
       stepStatuses.set(step.name, {
         status: "completed",
         logs,
         result: result.data,
         completedAt: Date.now(),
       });
-      await updateGlobalStepStatus(step.name, stepStatuses.get(step.name) as StepStatus);
     } else {
       stepStatuses.set(step.name, { status: "pending", logs });
     }
   };
 
   for (const step of workflow.steps) {
-    const globalStatus = globalStepStatuses[step.name as keyof typeof globalStepStatuses];
-    if (applyGlobalStatus(step, globalStatus)) {
-      continue;
-    }
 
     if (shouldSkipStep(step)) {
       stepStatuses.set(step.name, pendingStatus);
@@ -205,7 +161,6 @@ export async function getWorkflowData(
   const tenantId = extractTenantId(microsoftToken);
   if (tenantId && !variables.tenantId) {
     variables.tenantId = tenantId;
-    await updateGlobalVariable("tenantId", tenantId);
   }
 
   const stepStatusesMap = await reconstituteStepStatuses(workflow, variables, tokens);
@@ -278,7 +233,7 @@ export async function getWorkflowVariables(): Promise<{
   >;
 }> {
   const workflow = parseWorkflow();
-  const variables = await getGlobalVariables();
+  const variables: Record<string, string> = {};
 
   const result: Record<
     string,

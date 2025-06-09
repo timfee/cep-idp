@@ -20,11 +20,6 @@ import {
 } from "@/app/lib/workflow";
 import { COPY_FEEDBACK_DURATION_MS, WORKFLOW_CONSTANTS } from "@/app/lib/workflow/constants";
 import { revalidatePath } from "next/cache";
-import {
-  getGlobalVariables,
-  updateGlobalStepStatus,
-  updateGlobalVariable,
-} from "./workflow-state";
 
 function applyExtracts(
   action: Action,
@@ -130,14 +125,14 @@ async function handleActionExecution(
 
   onLog({ timestamp: Date.now(), level: "info", message: `Executing action: ${action.use}` });
 
-  const response = await apiRequest({
+  const { data: response, capturedValues } = (await apiRequest({
     endpoint,
     connections: workflow.connections,
     variables,
     tokens,
     body: payload,
     throwOnMissingVars: !action.fallback,
-  });
+  })) as { data: unknown; capturedValues: Record<string, string> };
 
   const method = endpoint.method;
   const baseUrl = workflow.connections[endpoint.conn].base;
@@ -162,6 +157,7 @@ async function handleActionExecution(
   }
 
   applyExtracts(action, response, variables, extractedVariables, onLog);
+  Object.assign(extractedVariables, capturedValues);
 
   if (areOutputsMissing(step, extractedVariables)) {
     onLog({
@@ -216,9 +212,6 @@ async function processStepExecution(
     }
 
     Object.assign(variables, actionResult.extractedVariables);
-    for (const [key, value] of Object.entries(actionResult.extractedVariables)) {
-      await updateGlobalVariable(key, value);
-    }
 
     status.result = actionResult.data;
     status.status = "completed";
@@ -226,7 +219,6 @@ async function processStepExecution(
     status.logs = logs;
 
     onLog({ timestamp: Date.now(), level: "info", message: `Step completed: ${step.name}` });
-    await updateGlobalStepStatus(step.name, status);
   } catch (error: unknown) {
     let errorMessage = error instanceof Error ? error.message : String(error);
     let apiError = null;
@@ -343,7 +335,7 @@ export async function executeWorkflowStep(stepName: string): Promise<{
   try {
     // Get workflow and current variables directly without rebuilding entire state
     const workflow = parseWorkflow();
-    const updatedVariables = { ...(await getGlobalVariables()) };
+    const updatedVariables: Record<string, string> = {};
 
     // Initialize variables with defaults if not already set
     for (const [name, varDef] of Object.entries(workflow.variables)) {

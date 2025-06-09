@@ -1,24 +1,13 @@
 "use client";
 
-import { clearWorkflowState } from "@/app/actions/workflow-state";
 import { refreshWorkflowState } from "@/app/actions/workflow-state";
-import { Bug, RefreshCw, Trash2 } from "lucide-react";
+import { Bug, RefreshCw } from "lucide-react";
 import { useTransition } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
 
 export function DebugTools() {
   const [isPending, startTransition] = useTransition();
-
-  const handleClearState = () => {
-    startTransition(async () => {
-      const result = await clearWorkflowState();
-      if (result.success) {
-      } else {
-        console.error("Failed to clear workflow state:", result.error);
-      }
-    });
-  };
 
   const handleRefreshState = () => {
     startTransition(async () => {
@@ -40,17 +29,6 @@ export function DebugTools() {
       </CardHeader>
       <CardContent className="space-y-3">
         <div className="flex flex-wrap gap-2">
-          <Button
-            onClick={handleClearState}
-            disabled={isPending}
-            variant="outline"
-            size="sm"
-            className="border-red-200 text-red-700 hover:bg-red-50 dark:border-red-800 dark:text-red-300 dark:hover:bg-red-950/20"
-          >
-            <Trash2 className="h-3 w-3 mr-1" />
-            Clear State
-          </Button>
-
           <Button
             onClick={handleRefreshState}
             disabled={isPending}

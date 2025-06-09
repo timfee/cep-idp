@@ -1,19 +1,29 @@
 import { isTokenExpired, refreshAccessToken } from "../auth/oauth";
 import { setToken } from "../auth/tokens";
-import { substituteVariables, Token } from "../workflow";
+import { substituteVariables, substituteObject, Token } from "../workflow";
 import { WORKFLOW_CONSTANTS } from "../workflow/constants";
 import { ApiRequestOptions } from "./types";
 
 async function handlePublicRequest(options: ApiRequestOptions): Promise<unknown> {
   const { endpoint, connections, variables, throwOnMissingVars = true } = options;
   const connection = connections[endpoint.conn as keyof typeof connections];
-  const path = substituteVariables(endpoint.path, variables, { throwOnMissing: throwOnMissingVars });
+  const capturedValues: Record<string, string> = {};
+  const path = substituteVariables(endpoint.path, variables, {
+    throwOnMissing: throwOnMissingVars,
+    captureGenerated: capturedValues,
+  });
   let url = `${connection.base}${path}`;
 
   if (endpoint.qs) {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(endpoint.qs)) {
-      params.append(key, substituteVariables(value, variables));
+      params.append(
+        key,
+        substituteVariables(value, variables, {
+          throwOnMissing: throwOnMissingVars,
+          captureGenerated: capturedValues,
+        }),
+      );
     }
     url += `?${params.toString()}`;
   }
@@ -24,9 +34,9 @@ async function handlePublicRequest(options: ApiRequestOptions): Promise<unknown>
   }
   const contentType = response.headers.get("content-type");
   if (contentType?.includes("xml")) {
-    return response.text();
+    return { data: await response.text(), capturedValues };
   }
-  return response.json();
+  return { data: await response.json(), capturedValues };
 }
 
 async function handleAuthenticatedRequest(options: ApiRequestOptions): Promise<unknown> {
@@ -104,8 +114,15 @@ async function handleAuthenticatedRequest(options: ApiRequestOptions): Promise<u
     headers,
   };
 
-  if (body && ["POST", "PATCH", "PUT"].includes(endpoint.method)) {
-    requestOptions.body = JSON.stringify(body);
+  const finalBody = body
+    ? substituteObject(body, variables, {
+        throwOnMissing: throwOnMissingVars,
+        captureGenerated: capturedValues,
+      })
+    : undefined;
+
+  if (finalBody && ["POST", "PATCH", "PUT"].includes(endpoint.method)) {
+    requestOptions.body = JSON.stringify(finalBody);
   }
 
   const response = await fetch(url, requestOptions);
@@ -125,13 +142,15 @@ async function handleAuthenticatedRequest(options: ApiRequestOptions): Promise<u
 
   const contentType = response.headers.get("content-type");
   if (contentType?.includes("application/json")) {
-    return response.json();
+    return { data: await response.json(), capturedValues };
   }
 
-  return response.text();
+  return { data: await response.text(), capturedValues };
 }
 
-export async function apiRequest(options: ApiRequestOptions): Promise<unknown> {
+export async function apiRequest(
+  options: ApiRequestOptions,
+): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
   const { endpoint, connections } = options;
   const connection = connections[endpoint.conn as keyof typeof connections];
   if (!connection) {

@@ -53,12 +53,19 @@ export function evaluateGenerator(generator: string): string {
 export function substituteVariables(
   template: string,
   variables: Record<string, string>,
-  options: { throwOnMissing?: boolean } = {},
+  options: { throwOnMissing?: boolean; captureGenerated?: Record<string, string> } = {},
 ): string {
   return template.replace(/\{([^{}]+)\}/g, (match, expression) => {
     if (expression.includes("(")) {
       try {
-        return evaluateTemplateExpression(expression, variables);
+        const result = evaluateTemplateExpression(expression, variables);
+        if (
+          expression.startsWith('generatePassword(') &&
+          options.captureGenerated
+        ) {
+          options.captureGenerated.generatedPassword = result;
+        }
+        return result;
       } catch (error) {
         if (options.throwOnMissing) {
           throw error;
@@ -217,7 +224,7 @@ function formatString(template: string, values: string[]): string {
 export function substituteObject(
   obj: unknown,
   variables: Record<string, string>,
-  options: { throwOnMissing?: boolean } = {},
+  options: { throwOnMissing?: boolean; captureGenerated?: Record<string, string> } = {},
 ): unknown {
   if (typeof obj === "string") {
     return substituteVariables(obj, variables, options);

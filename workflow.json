@@ -15,6 +15,10 @@
     "graphBeta": {
       "base": "https://graph.microsoft.com/beta",
       "auth": "Bearer {azureAccessToken}"
+    },
+    "public": {
+      "base": "",
+      "auth": "none"
     }
   },
   "roles": {
@@ -213,6 +217,11 @@
       "conn": "graphGA",
       "method": "POST",
       "path": "/servicePrincipals/{ssoServicePrincipalId}/appRoleAssignedTo"
+    },
+    "web.fetchMetadata": {
+      "conn": "public",
+      "method": "GET",
+      "path": "https://login.microsoftonline.com/{tenantId}/federationmetadata/2007-06/federationmetadata.xml?appid={ssoAppId}"
     }
   },
   "checkers": {
@@ -235,9 +244,6 @@
     },
     "googleAccessToken": {},
     "azureAccessToken": {},
-    "samlCertificate": {
-      "validator": "^-----BEGIN CERTIFICATE-----[\\s\\S]+-----END CERTIFICATE-----$"
-    },
     "provisioningUserId": {},
     "provisioningUserEmail": {},
     "adminRoleId": {},
@@ -254,6 +260,7 @@
     },
     "provServicePrincipalId": {},
     "ssoServicePrincipalId": {},
+    "ssoAppId": {},
     "jobId": {
       "default": "Initial"
     },
@@ -466,9 +473,9 @@
     },
     {
       "name": "Add Microsoft Identity Certificate",
-      "manual": true,
-      "description": "Download the SAML signing certificate from Azure Portal (Enterprise Applications → Your SSO App → Single sign-on → SAML Signing Certificate → Download Certificate Base64) and paste it below.",
-      "outputs": ["samlCertificate"],
+      "description": "Automatically fetches and installs Microsoft's SAML signing certificate",
+      "inputs": ["tenantId", "ssoAppId"],
+      "depends_on": ["Create Microsoft SSO App"],
       "verify": [
         {
           "use": "ci.getIdpCreds",
@@ -477,14 +484,19 @@
       ],
       "execute": [
         {
+          "use": "web.fetchMetadata",
+          "extract": {
+            "rawXmlResponse": "$"
+          }
+        },
+        {
           "use": "ci.addIdpCert",
           "payload": {
-            "pemData": "{samlCertificate}"
+            "pemData": "{extractCertificateFromXml(rawXmlResponse)}"
           }
         }
       ],
-      "role": "ciInboundSso",
-      "depends_on": ["Create SAML Profile for SSO"]
+      "role": "ciInboundSso"
     },
     {
       "name": "Create Microsoft Provisioning App",
@@ -558,7 +570,8 @@
     },
     {
       "name": "Create Microsoft SSO App",
-      "description": "Sets up the Microsoft Entra ID app that handles single sign-on authentication for your users.",
+      "description": "Sets up the Microsoft app that handles single sign-on authentication",
+      "outputs": ["ssoServicePrincipalId", "ssoAppId"],
       "verify": [
         {
           "use": "graph.appByTemplateSSO",
@@ -571,13 +584,14 @@
           "payload": {
             "displayName": "Google Cloud"
           },
-          "outputs": {
-            "ssoServicePrincipalId": "$.servicePrincipal.id"
+          "extract": {
+            "ssoServicePrincipalId": "$.servicePrincipal.id",
+            "ssoAppId": "$.application.appId"
           }
         }
       ],
       "role": "graphAppRW",
-      "depends_on": ["Add Microsoft Identity Certificate"]
+      "depends_on": ["Start User Synchronization"]
     },
     {
       "name": "Configure SAML Settings",
@@ -638,10 +652,10 @@
     },
     {
       "name": "Assign Users to SSO App",
-      "manual": true,
-      "description": "Select which users or groups should have SSO access. For simple setups, choose 'All Users'. For complex requirements, configure in Azure Portal and paste the principal ID.",
+      "description": "For now, this step requires manual configuration in Azure Portal. In most cases, assign 'All Users' to the SSO app.",
       "inputs": ["ssoServicePrincipalId"],
-      "outputs": ["principalId"]
+      "manual": true,
+      "depends_on": ["Create Claims Mapping Policy"]
     },
     {
       "name": "Enable SSO for Organization",

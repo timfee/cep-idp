@@ -6,6 +6,11 @@ import {
   createHash,
   randomBytes,
 } from "crypto";
+import {
+  CRYPTO_IV_LENGTH_BYTES,
+  CRYPTO_AUTH_TAG_SPLIT_INDEX,
+  CRYPTO_RANDOM_BYTES_LENGTH,
+} from "../workflow";
 
 const algorithm = "aes-256-gcm";
 
@@ -15,7 +20,7 @@ function getKey(): Buffer {
 }
 
 export function encrypt(text: string): string {
-  const iv = randomBytes(16);
+  const iv = randomBytes(CRYPTO_IV_LENGTH_BYTES);
   const cipher = createCipheriv(algorithm, getKey(), iv);
 
   let encrypted = cipher.update(text, "utf8", "hex");
@@ -30,7 +35,7 @@ export function decrypt(encryptedData: string): string {
   const parts = encryptedData.split(":");
   const iv = Buffer.from(parts[0], "hex");
   const authTag = Buffer.from(parts[1], "hex");
-  const encrypted = parts[2];
+  const encrypted = parts[CRYPTO_AUTH_TAG_SPLIT_INDEX];
 
   const decipher = createDecipheriv(algorithm, getKey(), iv);
   decipher.setAuthTag(authTag);
@@ -42,11 +47,11 @@ export function decrypt(encryptedData: string): string {
 }
 
 export function generateState(): string {
-  return randomBytes(32).toString("hex");
+  return randomBytes(CRYPTO_RANDOM_BYTES_LENGTH).toString("hex");
 }
 
 export function generateCodeVerifier(): string {
-  return randomBytes(32).toString("base64url");
+  return randomBytes(CRYPTO_RANDOM_BYTES_LENGTH).toString("base64url");
 }
 
 export function generateCodeChallenge(verifier: string): string {

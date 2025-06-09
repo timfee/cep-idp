@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { WORKFLOW_CONSTANTS } from "../workflow";
+import { WORKFLOW_CONSTANTS, COOKIE_METADATA_SIZES } from "../workflow";
 
 // Safe limit is around 4093 bytes per cookie, but we'll use constant to leave room for cookie metadata
 const MAX_COOKIE_SIZE = WORKFLOW_CONSTANTS.MAX_COOKIE_SIZE;
@@ -228,12 +228,12 @@ export function estimateCookieSize(
 ): number {
   let size = name.length + 1 + value.length; // name=value
 
-  if (options.path) size += 7 + options.path.length; // ; Path=/
-  if (options.maxAge) size += 9 + options.maxAge.toString().length; // ; Max-Age=
-  if (options.sameSite) size += 11 + options.sameSite.length; // ; SameSite=
-  if (options.httpOnly) size += 10; // ; HttpOnly
-  if (options.secure) size += 8; // ; Secure
-  if (options.domain) size += 9 + options.domain.length; // ; Domain=
+  if (options.path) size += COOKIE_METADATA_SIZES.PATH + options.path.length; // ; Path=/
+  if (options.maxAge) size += COOKIE_METADATA_SIZES.MAX_AGE + options.maxAge.toString().length; // ; Max-Age=
+  if (options.sameSite) size += COOKIE_METADATA_SIZES.SAME_SITE + options.sameSite.length; // ; SameSite=
+  if (options.httpOnly) size += COOKIE_METADATA_SIZES.HTTP_ONLY; // ; HttpOnly
+  if (options.secure) size += COOKIE_METADATA_SIZES.SECURE; // ; Secure
+  if (options.domain) size += COOKIE_METADATA_SIZES.DOMAIN + options.domain.length; // ; Domain=
 
   return size;
 }

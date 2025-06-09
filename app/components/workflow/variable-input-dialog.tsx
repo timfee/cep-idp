@@ -14,6 +14,7 @@ import { Input } from "../ui/input";
 import { Label } from "../ui/label";
 import { Alert, AlertDescription } from "../ui/alert";
 import { setWorkflowVariable } from "@/app/actions/workflow-state";
+import { escapeRegExp } from "@/app/lib/utils";
 import { Loader2 } from "lucide-react";
 
 interface VariableInputDialogProps {
@@ -46,7 +47,8 @@ export function VariableInputDialog({
     }
 
     if (validator) {
-      const regex = new RegExp(validator);
+      const sanitizedValidator = escapeRegExp(validator);
+      const regex = new RegExp(sanitizedValidator);
       if (!regex.test(value)) {
         setError("Invalid format");
         return;

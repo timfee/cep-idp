@@ -26,13 +26,32 @@ export const MS_IN_SECOND = 1000;
 export const COPY_FEEDBACK_DURATION_MS = 2000;
 export const RETRY_COUNT = 3;
 export const SPLIT_LIMIT = 2;
+export const JWT_PART_COUNT = 3;
+export const WORKFLOW_MAX_ITERATION_MULTIPLIER = 2;
+export const STRING_SPLIT_PAIR = 2;
+export const WILDCARD_SUFFIX_LENGTH = 2;
+export const MIN_LOG_COUNT_FOR_PLURAL = 2;
+export const EXPECTED_ARG_COUNT_PAIR = 2;
+export const CRYPTO_IV_LENGTH_BYTES = 16;
+export const CRYPTO_AUTH_TAG_SPLIT_INDEX = 2;
+export const CRYPTO_RANDOM_BYTES_LENGTH = 32;
+
+export const COOKIE_METADATA_SIZES = {
+  PATH: 7,
+  MAX_AGE: 9,
+  SAME_SITE: 11,
+  HTTP_ONLY: 10,
+  SECURE: 8,
+  DOMAIN: 9,
+} as const;
 
 export const WORKFLOW_CONSTANTS = {
   // Time constants (replacing magic numbers)
   OAUTH_STATE_TTL_MS:
     DAYS_IN_MONTH * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE * MS_IN_SECOND,
   TOKEN_REFRESH_BUFFER_MS: 300000, // 5 minutes
-  TOKEN_COOKIE_MAX_AGE: 30 * 24 * 60 * 60, // 30 days
+  TOKEN_COOKIE_MAX_AGE:
+    DAYS_IN_MONTH * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE, // 30 days
 
   // HTTP Status codes
   HTTP_STATUS: {

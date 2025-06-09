@@ -1,6 +1,5 @@
-import { isTokenExpired, refreshAccessToken } from "../auth/oauth";
-import { Connection, Endpoint, Token } from "../workflow/types";
-import { substituteVariables } from "../workflow/variables";
+import { isTokenExpired, refreshAccessToken } from "./auth/oauth";
+import { Connection, Endpoint, Token, substituteVariables } from "./workflow";
 
 class ApiClient {
   async request(

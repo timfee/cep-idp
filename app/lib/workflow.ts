@@ -1,4 +1,125 @@
+import { z } from "zod";
 import { randomBytes } from 'crypto';
+import { JSONPath } from 'jsonpath-plus';
+
+// ============================================================================
+// TYPES
+// ============================================================================
+
+export const VariableSchema = z.object({
+  validator: z.string().optional(),
+  generator: z.string().optional(),
+  default: z.string().optional(),
+});
+
+export const ActionSchema = z.object({
+  use: z.string(),
+  checker: z.string().optional(),
+  field: z.string().optional(),
+  value: z.string().optional(),
+  jsonPath: z.string().optional(),
+  payload: z.record(z.any()).optional(),
+  extract: z.record(z.string()).optional(),
+  longRunning: z.boolean().optional(),
+  fallback: z.boolean().optional(),
+});
+
+export const StepSchema = z.object({
+  name: z.string(),
+  inputs: z.array(z.string()).optional(),
+  outputs: z.array(z.string()).optional(),
+  actions: z.array(ActionSchema).optional(),
+  role: z.string().optional(),
+  depends_on: z.array(z.string()).optional(),
+  manual: z.boolean().optional(),
+  apiStatus: z.string().optional(),
+});
+
+export const EndpointSchema = z.object({
+  conn: z.string(),
+  method: z.enum(["GET", "POST", "PATCH", "PUT", "DELETE"]),
+  path: z.string(),
+  qs: z.record(z.string()).optional(),
+});
+
+export const ConnectionSchema = z.object({
+  base: z.string(),
+  auth: z.string(),
+});
+
+export const WorkflowSchema = z.object({
+  connections: z.record(ConnectionSchema),
+  roles: z.record(z.array(z.string())),
+  endpoints: z.record(EndpointSchema),
+  checkers: z.record(z.string()),
+  variables: z.record(VariableSchema),
+  steps: z.array(StepSchema),
+});
+
+export const TokenSchema = z.object({
+  accessToken: z.string(),
+  refreshToken: z.string().optional(),
+  expiresAt: z.number(),
+  scope: z.array(z.string()),
+});
+
+export type Workflow = z.infer<typeof WorkflowSchema>;
+export type Step = z.infer<typeof StepSchema>;
+export type Variable = z.infer<typeof VariableSchema>;
+export type Action = z.infer<typeof ActionSchema>;
+export type Endpoint = z.infer<typeof EndpointSchema>;
+export type Connection = z.infer<typeof ConnectionSchema>;
+export type Token = z.infer<typeof TokenSchema>;
+
+export interface WorkflowState {
+  variables: Record<string, string>;
+  stepStatus: Record<string, StepStatus>;
+}
+
+export interface StepStatus {
+  status: "pending" | "running" | "completed" | "failed" | "skipped";
+  error?: string;
+  result?: unknown;
+  logs: LogEntry[];
+  startedAt?: number;
+  completedAt?: number;
+  variables?: Record<string, string>;
+}
+
+export interface LogEntry {
+  timestamp: number;
+  level: "info" | "warn" | "error";
+  message: string;
+  data?: unknown;
+}
+
+export interface OAuthConfig {
+  clientId: string;
+  clientSecret: string;
+  redirectUri: string;
+  authorizationUrl: string;
+  tokenUrl: string;
+  scopes: string[];
+}
+
+// ============================================================================
+// WORKFLOW PARSING
+// ============================================================================
+
+export function parseWorkflow(): Workflow {
+  try {
+    // eslint-disable-next-line @typescript-eslint/no-require-imports
+    const workflow = require("../../workflow.json");
+    return WorkflowSchema.parse(workflow);
+  } catch (error) {
+    console.error("Failed to parse workflow:", error);
+    throw new Error("Invalid workflow configuration");
+  }
+}
+
+// ============================================================================
+// VARIABLE UTILITIES
+// ============================================================================
 
 export function generatePassword(length: number): string {
   const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*';
@@ -13,12 +134,10 @@ export function generatePassword(length: number): string {
 }
 
 export function evaluateGenerator(generator: string): string {
-  // Handle randomPassword(n) generator
   const passwordMatch = generator.match(/randomPassword\((\d+)\)/);
   if (passwordMatch) {
     return generatePassword(parseInt(passwordMatch[1]));
   }
-
   throw new Error(`Unknown generator: ${generator}`);
 }
 
@@ -28,7 +147,6 @@ export function substituteVariables(
   options: { throwOnMissing?: boolean } = {}
 ): string {
   return template.replace(/\{([^}]+)\}/g, (match, expression) => {
-    // Handle template functions (e.g., concat, format)
     if (expression.includes('(')) {
       try {
         return evaluateTemplateExpression(expression, variables);
@@ -41,7 +159,6 @@ export function substituteVariables(
       }
     }
     
-    // Handle simple variable substitution
     if (expression in variables) {
       return variables[expression];
     }
@@ -50,26 +167,15 @@ export function substituteVariables(
       throw new Error(`Variable ${expression} not found`);
     }
     
-    // Return the original placeholder if variable not found
     console.warn(`Variable ${expression} not found, keeping placeholder`);
     return match;
   });
 }
 
-/**
- * Evaluates template expressions like concat(), format(), etc.
- * 
- * Supported functions:
- * - concat(arg1, arg2, ...) - Concatenates arguments
- * - format(template, arg1, arg2, ...) - String formatting with %s placeholders
- * - email(username, domain) - Creates email address
- * - url(base, path) - Combines URL parts
- */
 function evaluateTemplateExpression(
   expression: string,
   variables: Record<string, string>
 ): string {
-  // Parse function call: functionName(arg1, arg2, ...)
   const match = expression.match(/^(\w+)\((.*)\)$/);
   if (!match) {
     throw new Error(`Invalid template expression: ${expression}`);
@@ -107,14 +213,22 @@ function evaluateTemplateExpression(
       return `${base}/${path}`;
     }
     
+    case 'generatePassword': {
+      if (args.length !== 1) {
+        throw new Error('generatePassword() requires exactly 1 argument: length');
+      }
+      const length = parseInt(args[0], 10);
+      if (isNaN(length) || length <= 0) {
+        throw new Error('generatePassword() length must be a positive number');
+      }
+      return generatePassword(length);
+    }
+    
     default:
       throw new Error(`Unknown template function: ${functionName}`);
   }
 }
 
-/**
- * Parses template function arguments, handling quoted strings and variable references
- */
 function parseTemplateArgs(
   argsString: string,
   variables: Record<string, string>
@@ -152,31 +266,22 @@ function parseTemplateArgs(
   return args;
 }
 
-/**
- * Resolves a single template argument (variable reference or literal string)
- */
 function resolveTemplateArg(
   arg: string,
   variables: Record<string, string>
 ): string {
-  // Handle quoted strings
   if ((arg.startsWith('"') && arg.endsWith('"')) || 
       (arg.startsWith("'") && arg.endsWith("'"))) {
     return arg.slice(1, -1);
   }
   
-  // Handle variable references
   if (arg in variables) {
     return variables[arg];
   }
   
-  // Treat as literal string
   return arg;
 }
 
-/**
- * Simple string formatting with %s placeholders
- */
 function formatString(template: string, values: string[]): string {
   let result = template;
   let valueIndex = 0;
@@ -185,7 +290,7 @@ function formatString(template: string, values: string[]): string {
     if (valueIndex < values.length) {
       return values[valueIndex++];
     }
-    return '%s'; // Keep placeholder if no more values
+    return '%s';
   });
   
   return result;
@@ -215,80 +320,40 @@ export function substituteObject(
   return obj;
 }
 
-import { JSONPath } from 'jsonpath-plus';
-
-/**
- * Enhanced path expression evaluator that supports multiple expression formats for flexible data extraction.
- * 
- * Supported formats:
- * 
- * 1. **JSONPath expressions** (most powerful):
- *    - `$.domains[?(@.isPrimary)].domainName` - Find domain where isPrimary is true, get domainName
- *    - `$.users[?(@.role === 'admin')].email` - Find users with admin role, get their emails
- *    - `$.items[*].name` - Get all item names as array
- *    - `$..name` - Get all name properties recursively
- * 
- * 2. **Template functions** (readable and intuitive):
- *    - `findBy(domains, 'isPrimary', true).domainName` - Find by property value
- *    - `findBy(users, 'status', 'active').email` - Find active user's email
- * 
- * 3. **Predicate syntax** (concise filtering):
- *    - `domains[isPrimary=true].domainName` - Find domain where isPrimary equals true
- *    - `users[role=admin].email` - Find user where role equals admin
- *    - `items[status=active].name` - Find active items
- * 
- * 4. **Simple dot notation** (traditional property access):
- *    - `user.profile.email` - Navigate nested objects
- *    - `domains.0.domainName` - Access array elements by index
- *    - `response.data.items` - Standard property traversal
- * 
- * 5. **Special cases** (legacy compatibility):
- *    - `primaryDomain` - Shorthand for finding primary domain in domains array
- * 
- * @example
- * // JSONPath: Find primary domain
- * extractValueFromPath(response, '$.domains[?(@.isPrimary)].domainName')
- * 
- * @example  
- * // Template function: Find admin user
- * extractValueFromPath(data, "findBy(users, 'role', 'admin').email")
- * 
- * @example
- * // Predicate: Find verified domain
- * extractValueFromPath(response, 'domains[verified=true].domainName')
- * 
- * @param obj - The object to extract data from
- * @param path - The path expression (any of the supported formats)
- * @returns The extracted value, or undefined if not found
- */
 export function extractValueFromPath(obj: unknown, path: string): unknown {
   if (!obj || !path) return undefined;
 
   try {
-    // Handle JSONPath expressions (starting with $ or containing filters)
     if (path.startsWith('$') || path.includes('[?(') || path.includes('[*]')) {
       const results = JSONPath({ path, json: obj, wrap: false });
-      return Array.isArray(results) && results.length === 1 ? results[0] : results;
+      
+      if (Array.isArray(results)) {
+        if (results.length === 1 && !path.includes('[*]') && !path.includes('..')) {
+          return results[0];
+        } else if (results.length === 0) {
+          return undefined;
+        } else {
+          return results;
+        }
+      }
+      
+      return results;
     }
 
-    // Handle template functions like findBy(domains, 'isPrimary', true).domainName
     if (path.includes('findBy(')) {
       return evaluateTemplateFunction(obj, path);
     }
 
-    // Handle predicate syntax like domains[isPrimary=true].domainName
     if (path.includes('[') && path.includes('=')) {
       return evaluatePredicatePath(obj, path);
     }
 
-    // Handle special case for primary domain extraction
     if (path === 'primaryDomain' && hasDomainsArray(obj)) {
       const data = obj as { domains: Array<{ isPrimary?: boolean; domainName?: string }> };
       const primaryDomain = data.domains.find(d => d.isPrimary);
       return primaryDomain?.domainName;
     }
 
-    // Fall back to simple dot notation
     return evaluateSimplePath(obj, path);
   } catch (error) {
     console.warn('Failed to extract value from path:', path, error);
@@ -296,9 +361,6 @@ export function extractValueFromPath(obj: unknown, path: string): unknown {
   }
 }
 
-/**
- * Evaluates template functions like findBy(array, property, value)
- */
 function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
   const findByMatch = expression.match(/findBy\(([^,]+),\s*'([^']+)',\s*([^)]+)\)\.?(.*)$/);
   
@@ -311,7 +373,13 @@ function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
                          value.trim() === 'false' ? false : 
                          value.replace(/['"]/g, '');
       
-      const found = array.find((item: any) => item && item[property] === targetValue);
+      const found = array.find((item: unknown) => {
+        return item && 
+               typeof item === 'object' && 
+               item !== null && 
+               property in item &&
+               (item as Record<string, unknown>)[property] === targetValue;
+      });
       
       if (found && remainingPath) {
         return evaluateSimplePath(found, remainingPath);
@@ -324,9 +392,6 @@ function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
   return undefined;
 }
 
-/**
- * Evaluates predicate paths like domains[isPrimary=true].domainName
- */
 function evaluatePredicatePath(obj: unknown, path: string): unknown {
   const predicateMatch = path.match(/^([^[]+)\[([^=]+)=([^\]]+)\]\.?(.*)$/);
   
@@ -339,7 +404,14 @@ function evaluatePredicatePath(obj: unknown, path: string): unknown {
                          value.trim() === 'false' ? false : 
                          value.replace(/['"]/g, '');
       
-      const found = array.find((item: any) => item && item[property.trim()] === targetValue);
+      const found = array.find((item: unknown) => {
+        const trimmedProperty = property.trim();
+        return item && 
+               typeof item === 'object' && 
+               item !== null && 
+               trimmedProperty in item &&
+               (item as Record<string, unknown>)[trimmedProperty] === targetValue;
+      });
       
       if (found && remainingPath) {
         return evaluateSimplePath(found, remainingPath.trim());
@@ -352,11 +424,7 @@ function evaluatePredicatePath(obj: unknown, path: string): unknown {
   return undefined;
 }
 
-/**
- * Evaluates simple dot notation paths
- */
 function evaluateSimplePath(obj: unknown, path: string): unknown {
-  // Handle JSONPath-like syntax ($.field.subfield)
   if (path.startsWith('$.')) {
     path = path.substring(2);
   }
@@ -367,7 +435,6 @@ function evaluateSimplePath(obj: unknown, path: string): unknown {
   for (const part of parts) {
     if (current == null) return undefined;
     
-    // Handle array indices
     if (part.match(/^\d+$/)) {
       const index = parseInt(part, 10);
       if (Array.isArray(current)) {
@@ -383,14 +450,11 @@ function evaluateSimplePath(obj: unknown, path: string): unknown {
   return current;
 }
 
-/**
- * Type guard to check if object has domains array
- */
-function hasDomainsArray(obj: unknown): obj is { domains: Array<any> } {
+function hasDomainsArray(obj: unknown): obj is { domains: Array<{ isPrimary?: boolean; domainName?: string }> } {
   return obj != null && 
          typeof obj === 'object' && 
          'domains' in obj && 
-         Array.isArray((obj as any).domains);
+         Array.isArray((obj as Record<string, unknown>).domains);
 }
 
 export function validateVariable(value: string, validator?: string): boolean {
@@ -403,4 +467,93 @@ export function validateVariable(value: string, validator?: string): boolean {
     console.error('Invalid regex validator:', validator, error);
     return false;
   }
+}
+
+// ============================================================================
+// CHECKER UTILITIES
+// ============================================================================
+
+export function evaluateChecker(
+  checker: { checker?: string; field?: string; value?: string; jsonPath?: string },
+  response: unknown,
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  _variables: Record<string, string>
+): boolean {
+  switch (checker.checker) {
+    case 'exists':
+      return response != null;
+
+    case 'fieldTruthy': {
+      if (!checker.field) return false;
+      const value = extractValueFromPath(response, checker.field);
+      return !!value;
+    }
+
+    case 'eq': {
+      let compareValue: unknown = checker.value;
+      if (checker.jsonPath) {
+        compareValue = extractValueFromPath(response, checker.jsonPath);
+      }
+      return response === compareValue;
+    }
+
+    default:
+      return true;
+  }
+}
+
+// ============================================================================
+// UTILITY FUNCTIONS
+// ============================================================================
+
+export function extractMissingVariables(
+  template: string,
+  variables: Record<string, string>
+): string[] {
+  const missing: string[] = [];
+  
+  const matches = template.matchAll(/\{([^}]+)\}/g);
+  
+  for (const match of matches) {
+    const expression = match[1];
+    
+    if (expression.includes('(')) {
+      const functionVars = extractVariablesFromExpression(expression);
+      for (const varName of functionVars) {
+        if (!(varName in variables) && !missing.includes(varName)) {
+          missing.push(varName);
+        }
+      }
+    } else {
+      if (!(expression in variables) && !missing.includes(expression)) {
+        missing.push(expression);
+      }
+    }
+  }
+  
+  return missing;
+}
+
+function extractVariablesFromExpression(expression: string): string[] {
+  const extractedVariables: string[] = [];
+  
+  const match = expression.match(/^(\w+)\((.*)\)$/);
+  if (match) {
+    const [, , argsString] = match;
+    
+    if (argsString.trim()) {
+      // Simple parsing - split by comma and check for unquoted arguments
+      const args = argsString.split(',').map(arg => arg.trim());
+      
+      for (const arg of args) {
+        // Skip quoted strings, keep variable names
+        if (!arg.startsWith('"') && !arg.startsWith("'") && 
+            !arg.includes('(') && /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(arg)) {
+          extractedVariables.push(arg);
+        }
+      }
+    }
+  }
+  
+  return extractedVariables;
 }

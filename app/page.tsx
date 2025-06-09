@@ -2,6 +2,7 @@ import { getWorkflowData } from "./actions/workflow";
 import { AuthStatus } from "./components/workflow/auth-status";
 import { WorkflowSteps } from "./components/workflow/workflow-steps";
 import { VariableViewer } from "./components/workflow/variable-viewer";
+import { DebugTools } from "./components/workflow/debug-tools";
 import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
 
 export const dynamic = "force-dynamic";
@@ -57,6 +58,8 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
               </AlertDescription>
             </Alert>
           )}
+
+          <DebugTools />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Main content */}

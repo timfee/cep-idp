@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { Token } from "../workflow/types";
+import { Token } from "../workflow";
 import { decrypt, encrypt } from "./crypto";
 import {
   getChunkedCookie,

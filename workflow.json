@@ -85,6 +85,12 @@
       "method": "POST",
       "path": "/customer/{customerId}/roles"
     },
+    "admin.listPrivileges": {
+      "conn": "googleAdmin",
+      "method": "GET",
+      "path": "/customer/{customerId}/roles/ALL/privileges"
+    },
+
     "admin.getRoleAssign": {
       "conn": "googleAdmin",
       "method": "GET",
@@ -224,10 +230,11 @@
     },
     "domainName": {
       "validator": "^([\\w-]+\\.)+[A-Za-z]{2,}$",
-      "_comment": "This should be the same as primaryDomain unless configuring a secondary domain"
+      "default": "feeley.xyz",
+      "_comment": "Manual override domain - defaults to feeley.xyz but can be changed"
     },
     "primaryDomain": {
-      "_comment": "This should be fetched from the Google Admin API on initialization"
+      "_comment": "Primary domain fetched from Google Admin API on initialization"
     },
     "googleAccessToken": {},
     "azureAccessToken": {},
@@ -236,8 +243,9 @@
     },
     "provisioningUserId": {},
     "provisioningUserEmail": {},
-    "provisioningUserPassword": {},
     "adminRoleId": {},
+    "directoryServiceId": {},
+
     "samlProfileId": {},
     "entityId": {},
     "acsUrl": {},
@@ -260,83 +268,68 @@
   },
   "steps": [
     {
-      "name": "Initialize Primary Domain",
-      "execute": [
+      "name": "Verify Primary Domain",
+      "inputs": [],
+      "outputs": ["primaryDomain"],
+      "actions": [
         {
           "use": "admin.listDomains",
-          "outputs": {
-            "domainName": "$.domains[?(@.isPrimary)].domainName"
+          "extract": {
+            "primaryDomain": "$.domains[?(@.isPrimary)].domainName"
           }
-        }
-      ],
-      "role": "dirDomainRW"
-    },
-    {
-      "name": "Verify Primary Domain",
-      "depends_on": ["Initialize Primary Domain"],
-      "verify": [
-        {
-          "use": "admin.getDomain",
-          "checker": "exists"
-        }
-      ],
-      "role": "dirDomainRW"
-    },
-    {
-      "name": "Verify domain",
-      "verify": [
+        },
         {
           "use": "admin.getDomain",
           "checker": "fieldTruthy",
           "field": "verified"
-        }
-      ],
-      "execute": [
+        },
         {
           "use": "admin.postDomain",
           "payload": {
-            "domainName": "{domainName}"
-          }
+            "domainName": "{primaryDomain}"
+          },
+          "fallback": true
         }
       ],
       "role": "dirDomainRW"
     },
     {
       "name": "OU Automation",
-      "verify": [
+      "inputs": ["primaryDomain"],
+      "outputs": [],
+      "actions": [
         {
           "use": "admin.listOUAutomation",
           "checker": "exists"
-        }
-      ],
-      "execute": [
+        },
         {
           "use": "admin.postOU",
           "payload": {
             "name": "Automation",
             "parentOrgUnitPath": "/"
-          }
+          },
+          "fallback": true
         }
       ],
       "role": "dirOrgunitRW",
-      "depends_on": [
-        "Initialize Primary Domain",
-        "Verify Primary Domain",
-        "Verify domain"
-      ]
+      "depends_on": ["Verify Primary Domain"]
     },
     {
       "name": "Service user",
-      "verify": [
+      "inputs": ["primaryDomain"],
+      "outputs": ["provisioningUserId", "provisioningUserEmail"],
+      "actions": [
         {
-          "use": "admin.getUser"
-        }
-      ],
-      "execute": [
+          "use": "admin.getUser",
+          "extract": {
+            "provisioningUserId": "$.id",
+            "provisioningUserEmail": "$.primaryEmail"
+          }
+        },
         {
           "use": "admin.postUser",
           "payload": {
-            "primaryEmail": "{email('azuread-provisioning', domainName)}",
+            "primaryEmail": "{email('azuread-provisioning', primaryDomain)}",
             "name": {
               "givenName": "Microsoft",
               "familyName": "Provisioning"
@@ -344,11 +337,11 @@
             "password": "{generatedPassword}",
             "orgUnitPath": "/Automation"
           },
-          "outputs": {
+          "extract": {
             "provisioningUserId": "$.id",
-            "provisioningUserEmail": "$.primaryEmail",
-            "provisioningUserPassword": "$.password"
-          }
+            "provisioningUserEmail": "$.primaryEmail"
+          },
+          "fallback": true
         }
       ],
       "role": "dirUserRW",
@@ -356,26 +349,60 @@
     },
     {
       "name": "Custom admin role",
-      "verify": [
+      "inputs": ["customerId"],
+      "outputs": ["adminRoleId", "directoryServiceId"],
+      "actions": [
         {
           "use": "admin.listRoles",
-          "checker": "exists"
-        }
-      ],
-      "execute": [
+          "checker": "exists",
+          "extract": {
+            "adminRoleId": "$.items[?(@.roleName=='Microsoft Entra Provisioning')].roleId",
+            "directoryServiceId": "$.items[?(@.roleName=='Microsoft Entra Provisioning')].rolePrivileges[0].serviceId"
+          }
+        },
+        {
+          "use": "admin.listPrivileges",
+          "extract": {
+            "directoryServiceId": "$.items[?(@.serviceName=='Admin Directory API')].serviceId"
+          },
+          "fallback": true
+        },
         {
           "use": "admin.postRole",
           "payload": {
             "roleName": "Microsoft Entra Provisioning",
-            "privilegeIds": [
-              "USERS_ALL",
-              "GROUPS_ALL",
-              "ORGANIZATION_UNITS_READ"
+            "roleDescription": "Custom role for Microsoft Entra provisioning service",
+            "rolePrivileges": [
+              {
+                "serviceId": "{directoryServiceId}",
+                "privilegeName": "USERS_RETRIEVE"
+              },
+              {
+                "serviceId": "{directoryServiceId}",
+                "privilegeName": "USERS_CREATE"
+              },
+              {
+                "serviceId": "{directoryServiceId}",
+                "privilegeName": "USERS_UPDATE"
+              },
+              {
+                "serviceId": "{directoryServiceId}",
+                "privilegeName": "GROUPS_RETRIEVE"
+              },
+              {
+                "serviceId": "{directoryServiceId}",
+                "privilegeName": "GROUPS_CREATE"
+              },
+              {
+                "serviceId": "{directoryServiceId}",
+                "privilegeName": "ORG_UNITS_RETRIEVE"
+              }
             ]
           },
-          "outputs": {
+          "extract": {
             "adminRoleId": "$.roleId"
-          }
+          },
+          "fallback": true
         }
       ],
       "role": "dirRoleRW",
@@ -383,20 +410,21 @@
     },
     {
       "name": "Assign role to user",
-      "verify": [
+      "inputs": ["adminRoleId", "primaryDomain"],
+      "outputs": [],
+      "actions": [
         {
           "use": "admin.getRoleAssign",
           "checker": "exists"
-        }
-      ],
-      "execute": [
+        },
         {
           "use": "admin.postRoleAssign",
           "payload": {
             "roleId": "{adminRoleId}",
-            "assignedTo": "{email('azuread-provisioning', domainName)}",
+            "assignedTo": "{email('azuread-provisioning', primaryDomain)}",
             "scopeType": "CUSTOMER"
-          }
+          },
+          "fallback": true
         }
       ],
       "role": "dirRoleRW",

@@ -1,4 +1,4 @@
-// https://admin.googleapis.com/admin/directory/v1/customer/my_customer/roles
+// GET https://admin.googleapis.com/admin/directory/v1/customer/my_customer/roles
 export default {
   kind: "admin#directory#roles",
   etag: '"4kY5xF2bP9VuOt_lSydUBmcnVRehnx0y-sSIeNM7DPc/3sz-kMxWOALibJKHh0LCGXWKkfY"',

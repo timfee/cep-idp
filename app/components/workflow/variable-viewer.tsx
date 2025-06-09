@@ -13,7 +13,7 @@ import {
   Sparkles,
   FileText,
 } from "lucide-react";
-import { cn } from "@/lib/utils";
+import { cn } from "@/app/lib/utils";
 
 interface VariableViewerProps {
   variables: Record<string, string>;

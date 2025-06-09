@@ -1,12 +1,8 @@
 "use client";
 
-import { useTransition, useOptimistic } from "react";
+import React from "react";
 import { StepCard } from "./step-card";
-import { 
-  executeWorkflowStep, 
-  skipWorkflowStep 
-} from "@/app/actions/workflow";
-import type { Workflow, WorkflowState, Step, StepStatus } from "@/app/lib/workflow/types";
+import type { Workflow, Step, StepStatus } from "@/app/lib/workflow";
 
 interface WorkflowStepsProps {
   workflow: Workflow;
@@ -18,12 +14,9 @@ interface WorkflowStepsProps {
 }
 
 export function WorkflowSteps({ workflow, stepStatuses, authStatus }: WorkflowStepsProps) {
-  const [isPending, startTransition] = useTransition();
-  const [optimisticStatuses, setOptimisticStatuses] = useOptimistic(stepStatuses);
-
   // Calculate completed steps
   const completedSteps = new Set(
-    Object.entries(optimisticStatuses)
+    Object.entries(stepStatuses)
       .filter(([, status]) => 
         status.status === "completed" || status.status === "skipped"
       )
@@ -45,11 +38,11 @@ export function WorkflowSteps({ workflow, stepStatuses, authStatus }: WorkflowSt
     const isMicrosoftStep = step.role.startsWith("graph");
     
     if (isGoogleStep && authStatus.google.authenticated) {
-      return requiredScopes.every(scope => 
+      return requiredScopes.every((scope: string) =>
         authStatus.google.scopes.includes(scope)
       );
     } else if (isMicrosoftStep && authStatus.microsoft.authenticated) {
-      return requiredScopes.every(scope => 
+      return requiredScopes.every((scope: string) =>
         authStatus.microsoft.scopes.includes(scope)
       );
     }
@@ -57,44 +50,16 @@ export function WorkflowSteps({ workflow, stepStatuses, authStatus }: WorkflowSt
     return false;
   };
 
-  const handleExecute = async (stepName: string) => {
-    startTransition(async () => {
-      setOptimisticStatuses(prev => ({
-        ...prev,
-        [stepName]: {
-          status: "running",
-          logs: [],
-          startedAt: Date.now(),
-        },
-      }));
-      await executeWorkflowStep(stepName);
-    });
-  };
-
-  const handleSkip = async (stepName: string) => {
-    startTransition(async () => {
-      setOptimisticStatuses(prev => ({
-        ...prev,
-        [stepName]: {
-          status: "skipped",
-          logs: [],
-          completedAt: Date.now(),
-        },
-      }));
-      await skipWorkflowStep(stepName);
-    });
-  };
-
   return (
     <div className="space-y-4">
-      {workflow.steps.map((step) => {
-        const status = optimisticStatuses[step.name] || {
+      {workflow.steps.map((step: Step) => {
+        const status = stepStatuses[step.name] || {
           status: "pending" as const,
           logs: [],
         };
 
         const canExecute = step.depends_on
-          ? step.depends_on.every(dep => completedSteps.has(dep))
+          ? step.depends_on.every((dep: string) => completedSteps.has(dep))
           : true;
 
         const isAuthValid = isAuthValidForStep(step);
@@ -104,10 +69,8 @@ export function WorkflowSteps({ workflow, stepStatuses, authStatus }: WorkflowSt
             key={step.name}
             step={step}
             status={status}
-            canExecute={canExecute && !isPending}
+            canExecute={canExecute}
             isAuthValid={isAuthValid}
-            onExecute={() => handleExecute(step.name)}
-            onSkip={() => handleSkip(step.name)}
           />
         );
       })}

@@ -1,11 +1,11 @@
 "use client";
 
+import { clearWorkflowState } from "@/app/actions/clear-state";
+import { refreshWorkflowState } from "@/app/actions/workflow-state";
+import { Bug, RefreshCw, Trash2 } from "lucide-react";
 import { useTransition } from "react";
 import { Button } from "../ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "../ui/card";
-import { clearWorkflowState } from "@/app/actions/clear-state";
-import { refreshWorkflowState } from "@/app/actions/workflow-state";
-import { Trash2, RefreshCw, Bug } from "lucide-react";
 
 export function DebugTools() {
   const [isPending, startTransition] = useTransition();
@@ -14,7 +14,6 @@ export function DebugTools() {
     startTransition(async () => {
       const result = await clearWorkflowState();
       if (result.success) {
-        console.log("Workflow state cleared successfully");
       } else {
         console.error("Failed to clear workflow state:", result.error);
       }
@@ -24,14 +23,10 @@ export function DebugTools() {
   const handleRefreshState = () => {
     startTransition(async () => {
       await refreshWorkflowState();
-      console.log("Workflow state refreshed");
     });
   };
 
-  const handleShowLocalStorage = () => {
-    console.log("Local storage contents:", localStorage);
-    console.log("Session storage contents:", sessionStorage);
-  };
+  const handleShowLocalStorage = () => {};
 
   // Always show debug tools for now
 
@@ -55,7 +50,7 @@ export function DebugTools() {
             <Trash2 className="h-3 w-3 mr-1" />
             Clear State
           </Button>
-          
+
           <Button
             onClick={handleRefreshState}
             disabled={isPending}
@@ -66,7 +61,7 @@ export function DebugTools() {
             <RefreshCw className="h-3 w-3 mr-1" />
             Refresh
           </Button>
-          
+
           <Button
             onClick={handleShowLocalStorage}
             variant="outline"
@@ -76,7 +71,7 @@ export function DebugTools() {
             Log Storage
           </Button>
         </div>
-        
+
         <p className="text-xs text-amber-700 dark:text-amber-300">
           Development tools - not visible in production
         </p>

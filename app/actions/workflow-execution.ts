@@ -1,37 +1,36 @@
 "use server";
 
-import { revalidatePath } from "next/cache";
+import { apiClient } from "@/app/lib/api-client";
 import { getToken } from "@/app/lib/auth/tokens";
 import {
-  parseWorkflow,
-  extractValueFromPath,
-  substituteVariables,
-  substituteObject,
   evaluateChecker,
-  extractMissingVariables,
   evaluateGenerator,
-  Workflow,
+  extractMissingVariables,
+  extractValueFromPath,
+  LogEntry,
+  parseWorkflow,
   Step,
   StepStatus,
-  LogEntry,
+  substituteObject,
+  substituteVariables,
   Token,
 } from "@/app/lib/workflow";
-import { apiClient } from "@/app/lib/api-client";
+import { revalidatePath } from "next/cache";
 import {
-  updateGlobalVariable,
-  updateGlobalStepStatus,
   getGlobalVariables,
+  updateGlobalStepStatus,
+  updateGlobalVariable,
 } from "./workflow-state";
 
 /**
  * Run actions for a step (simplified approach)
  */
-async function runStepActions(
+export async function runStepActions(
   step: Step,
   variables: Record<string, string>,
   tokens: { google?: Token; microsoft?: Token },
   onLog: (entry: LogEntry) => void,
-  verificationOnly: boolean = false,
+  verificationOnly: boolean = false
 ): Promise<{
   success: boolean;
   extractedVariables: Record<string, string>;
@@ -46,8 +45,8 @@ async function runStepActions(
   let lastResponse: unknown;
 
   // Filter actions based on mode
-  const actionsToRun = verificationOnly 
-    ? step.actions.filter(action => !action.fallback)
+  const actionsToRun = verificationOnly
+    ? step.actions.filter((action) => !action.fallback)
     : step.actions;
 
   // Try each action in sequence
@@ -59,12 +58,22 @@ async function runStepActions(
         continue;
       }
 
+      // Merge any previously extracted variables into current variables before payload substitution
+      for (const [key, value] of Object.entries(extractedVariables)) {
+        variables[key] = value;
+      }
+
+      console.log(
+        `[DEBUG] Variables available for ${action.use}:`,
+        Object.keys(variables)
+      );
+
       // Skip action if required variables are missing (unless it's a fallback)
       if (endpoint.path && !action.fallback) {
         const missingVars = extractMissingVariables(endpoint.path, variables);
         if (missingVars.length > 0) {
           console.log(
-            `Skipping action ${action.use} - missing variables: ${missingVars.join(', ')}`
+            `Skipping action ${action.use} - missing variables: ${missingVars.join(", ")}`
           );
           continue;
         }
@@ -72,7 +81,9 @@ async function runStepActions(
 
       // Substitute variables in payload
       const payload = action.payload
-        ? substituteObject(action.payload, variables, { throwOnMissing: !action.fallback })
+        ? substituteObject(action.payload, variables, {
+            throwOnMissing: !action.fallback,
+          })
         : undefined;
 
       onLog({
@@ -87,7 +98,7 @@ async function runStepActions(
         variables,
         tokens,
         payload,
-        { throwOnMissingVars: !action.fallback },
+        { throwOnMissingVars: !action.fallback }
       );
 
       lastResponse = response;
@@ -97,14 +108,14 @@ async function runStepActions(
       const baseUrl = workflow.connections[endpoint.conn].base;
       const fullPath = substituteVariables(endpoint.path, variables);
       const fullUrl = `${baseUrl}${fullPath}`;
-      
+
       // Create condensed API block with method + path
       const condensedMessage = `${method} ${fullPath}`;
       const fullResponseData = {
         fullUrl,
-        response
+        response,
       };
-      
+
       onLog({
         timestamp: Date.now(),
         level: "info",
@@ -133,14 +144,198 @@ async function runStepActions(
 
       // Extract variables from response
       if (action.extract) {
+        // Add debug logging for Custom admin role step
+        if (step.name === "Custom admin role") {
+          onLog({
+            timestamp: Date.now(),
+            level: "info",
+            message: `[DEBUG] Custom admin role response from ${action.use}:`,
+            data: response,
+          });
+
+          // Log the response structure
+          if (response && typeof response === "object") {
+            const responseObj = response as Record<string, unknown>;
+            onLog({
+              timestamp: Date.now(),
+              level: "info",
+              message: `[DEBUG] Response keys: ${Object.keys(responseObj).join(", ")}`,
+            });
+
+            if ("items" in responseObj && Array.isArray(responseObj.items)) {
+              onLog({
+                timestamp: Date.now(),
+                level: "info",
+                message: `[DEBUG] Found ${responseObj.items.length} items in response`,
+              });
+
+              if (action.use === "admin.listPrivileges") {
+                // Special debug for privileges API
+                onLog({
+                  timestamp: Date.now(),
+                  level: "info",
+                  message: `[DEBUG] PRIVILEGES API - Looking for serviceName='Admin Directory API'`,
+                });
+
+                responseObj.items.forEach((item: unknown, index: number) => {
+                  if (item && typeof item === "object") {
+                    const itemObj = item as Record<string, unknown>;
+                    onLog({
+                      timestamp: Date.now(),
+                      level: "info",
+                      message: `[DEBUG] Privilege ${index}: serviceName="${itemObj.serviceName}", serviceId="${itemObj.serviceId}", privilegeName="${itemObj.privilegeName}"`,
+                    });
+                  }
+                });
+
+                // Check if Admin Directory API service exists
+                const adminDirService = responseObj.items.find(
+                  (item: unknown) =>
+                    item &&
+                    typeof item === "object" &&
+                    "serviceName" in item &&
+                    (item as Record<string, unknown>).serviceName ===
+                      "Admin Directory API"
+                );
+
+                if (adminDirService) {
+                  onLog({
+                    timestamp: Date.now(),
+                    level: "info",
+                    message: `[DEBUG] FOUND Admin Directory API service:`,
+                    data: adminDirService,
+                  });
+                } else {
+                  onLog({
+                    timestamp: Date.now(),
+                    level: "warn",
+                    message: `[DEBUG] Admin Directory API service NOT FOUND in privileges list!`,
+                  });
+
+                  // Log all available service names
+                  const serviceNames = responseObj.items
+                    .map((item: unknown) =>
+                      item && typeof item === "object" && "serviceName" in item
+                        ? (item as Record<string, unknown>).serviceName
+                        : null
+                    )
+                    .filter(Boolean);
+                  onLog({
+                    timestamp: Date.now(),
+                    level: "info",
+                    message: `[DEBUG] Available service names: ${serviceNames.join(", ")}`,
+                  });
+                }
+              } else if (action.use === "admin.listRoles") {
+                responseObj.items.forEach((item: unknown, index: number) => {
+                  if (item && typeof item === "object") {
+                    const itemObj = item as Record<string, unknown>;
+                    onLog({
+                      timestamp: Date.now(),
+                      level: "info",
+                      message: `[DEBUG] Item ${index}: roleName="${itemObj.roleName}", roleId="${itemObj.roleId}"`,
+                    });
+                  }
+                });
+              }
+            } else {
+              onLog({
+                timestamp: Date.now(),
+                level: "warn",
+                message: `[DEBUG] No 'items' array found in response or items is not an array`,
+              });
+            }
+          }
+        }
+
         for (const [varName, path] of Object.entries(action.extract)) {
+          if (step.name === "Custom admin role") {
+            onLog({
+              timestamp: Date.now(),
+              level: "info",
+              message: `[DEBUG] Extracting ${varName} from path: ${path}`,
+            });
+
+            // Additional debug for JSONPath extraction
+            if (path.includes("$.items[?(@.roleName==")) {
+              onLog({
+                timestamp: Date.now(),
+                level: "info",
+                message: `[DEBUG] This is a JSONPath filter query, checking for specific role name`,
+              });
+
+              if (
+                response &&
+                typeof response === "object" &&
+                "items" in response
+              ) {
+                const items = (response as Record<string, unknown>).items;
+                if (Array.isArray(items)) {
+                  const roleNames = items
+                    .map((item: unknown) =>
+                      item && typeof item === "object" && "roleName" in item
+                        ? (item as Record<string, unknown>).roleName ||
+                          "undefined"
+                        : "undefined"
+                    )
+                    .join(", ");
+                  onLog({
+                    timestamp: Date.now(),
+                    level: "info",
+                    message: `[DEBUG] Available role names: [${roleNames}]`,
+                  });
+
+                  // Check if the specific role exists
+                  const targetRole = items.find(
+                    (item: unknown) =>
+                      item &&
+                      typeof item === "object" &&
+                      "roleName" in item &&
+                      (item as Record<string, unknown>).roleName ===
+                        "Microsoft Entra Provisioning"
+                  );
+                  if (targetRole) {
+                    onLog({
+                      timestamp: Date.now(),
+                      level: "info",
+                      message: `[DEBUG] Found target role: ${JSON.stringify(targetRole)}`,
+                    });
+                  } else {
+                    onLog({
+                      timestamp: Date.now(),
+                      level: "warn",
+                      message: `[DEBUG] Target role 'Microsoft Entra Provisioning' not found in items`,
+                    });
+                  }
+                }
+              }
+            }
+          }
+
           const value = extractValueFromPath(response, path);
+
+          if (step.name === "Custom admin role") {
+            onLog({
+              timestamp: Date.now(),
+              level: "info",
+              message: `[DEBUG] Extracted value for ${varName}: ${value}`,
+            });
+          }
+
           if (value != null) {
             extractedVariables[varName] = String(value);
+            // Also merge into current variables for next action
+            variables[varName] = String(value);
             onLog({
               timestamp: Date.now(),
               level: "info",
               message: `Extracted variable: ${varName} = ${value}`,
+            });
+          } else if (step.name === "Custom admin role") {
+            onLog({
+              timestamp: Date.now(),
+              level: "warn",
+              message: `[DEBUG] Failed to extract ${varName} from path ${path}`,
             });
           }
         }
@@ -149,12 +344,14 @@ async function runStepActions(
       // If we got here and didn't throw, the action succeeded
       // But also check if required outputs were extracted
       if (step.outputs && step.outputs.length > 0) {
-        const missingOutputs = step.outputs.filter(output => !extractedVariables[output]);
+        const missingOutputs = step.outputs.filter(
+          (output) => !extractedVariables[output]
+        );
         if (missingOutputs.length > 0) {
           onLog({
             timestamp: Date.now(),
             level: "warn",
-            message: `Action succeeded but missing required outputs: ${missingOutputs.join(', ')} - continuing to fallback actions`,
+            message: `Action succeeded but missing required outputs: ${missingOutputs.join(", ")} - continuing to fallback actions`,
           });
           // Continue to next action (fallback) instead of returning success
           continue;
@@ -166,16 +363,15 @@ async function runStepActions(
         extractedVariables,
         data: lastResponse,
       };
-
     } catch (error: unknown) {
       // Parse API error details
       let errorMessage = error instanceof Error ? error.message : String(error);
       let apiError = null;
-      
+
       // Try to extract structured API error
       try {
-        if (errorMessage.includes('{') && errorMessage.includes('}')) {
-          const jsonMatch = errorMessage.match(/\{.*\}/s);
+        if (errorMessage.includes("{") && errorMessage.includes("}")) {
+          const jsonMatch = errorMessage.match(/\{[\s\S]*\}/);
           if (jsonMatch) {
             apiError = JSON.parse(jsonMatch[0]);
             if (apiError.error) {
@@ -186,7 +382,7 @@ async function runStepActions(
       } catch {
         // Keep original error message if parsing fails
       }
-      
+
       // Log the detailed error
       onLog({
         timestamp: Date.now(),
@@ -194,7 +390,7 @@ async function runStepActions(
         message: `Action ${action.use} failed: ${errorMessage}`,
         data: apiError || error,
       });
-      
+
       // If this is a fallback action, continue to next action
       if (action.fallback) {
         onLog({
@@ -204,7 +400,7 @@ async function runStepActions(
         });
         continue;
       }
-      
+
       // Handle different error types
       if (errorMessage.includes("401")) {
         throw new Error(`Authentication failed: ${errorMessage}`);
@@ -235,11 +431,10 @@ export async function executeWorkflowStep(stepName: string): Promise<{
   variables?: Record<string, string>;
   error?: string;
 }> {
-  console.log(`[DEBUG] executeWorkflowStep called for: ${stepName}`);
   try {
     // Get workflow and current variables directly without rebuilding entire state
     const workflow = parseWorkflow();
-    const updatedVariables = { ...await getGlobalVariables() };
+    const updatedVariables = { ...(await getGlobalVariables()) };
 
     // Initialize variables with defaults if not already set
     for (const [name, varDef] of Object.entries(workflow.variables)) {
@@ -264,20 +459,17 @@ export async function executeWorkflowStep(stepName: string): Promise<{
     // Find the step
     const step = workflow.steps.find((s) => s.name === stepName);
     if (!step) {
-      console.log(`[DEBUG] Step not found: ${stepName}`);
       return {
         success: false,
         error: "Step not found",
       };
     }
 
-    console.log(`[DEBUG] Found step: ${step.name}, starting execution`);
-
     // Track logs and variables
     const logs: LogEntry[] = [];
     const onLog = (log: LogEntry) => {
-      console.log(`[DEBUG] Log entry: ${log.level} - ${log.message}`);
       logs.push(log);
+      console.log(`[LOG] ${log.level.toUpperCase()}: ${log.message}`, log.data);
     };
 
     const status: StepStatus = {
@@ -286,10 +478,7 @@ export async function executeWorkflowStep(stepName: string): Promise<{
       startedAt: Date.now(),
     };
 
-    console.log(`[DEBUG] Initial status created: running`);
-
     try {
-      console.log(`[DEBUG] Starting try block for step: ${stepName}`);
       onLog({
         timestamp: Date.now(),
         level: "info",
@@ -298,14 +487,19 @@ export async function executeWorkflowStep(stepName: string): Promise<{
 
       // Check if step has required inputs
       if (step.inputs && step.inputs.length > 0) {
-        const missingInputs = step.inputs.filter(input => !updatedVariables[input]);
+        const missingInputs = step.inputs.filter(
+          (input) => !updatedVariables[input]
+        );
         if (missingInputs.length > 0) {
-          console.log(`[DEBUG] Missing inputs detected: ${missingInputs.join(', ')}`);
-          throw new Error(`Missing required inputs: ${missingInputs.join(', ')}`);
+          console.log(
+            `[DEBUG] Missing inputs detected: ${missingInputs.join(", ")}`
+          );
+          throw new Error(
+            `Missing required inputs: ${missingInputs.join(", ")}`
+          );
         }
       }
 
-      console.log(`[DEBUG] About to run step actions for: ${stepName}`);
       // Run step actions (including fallbacks)
       const actionResult = await runStepActions(
         step,
@@ -315,24 +509,28 @@ export async function executeWorkflowStep(stepName: string): Promise<{
         false // full execution mode
       );
 
-      console.log(`[DEBUG] Action result for ${stepName}:`, actionResult);
-
       if (!actionResult.success) {
-        console.log(`[DEBUG] Action result failed for ${stepName}, throwing error`);
+        console.log(
+          `[DEBUG] Action result failed for ${stepName}, throwing error`
+        );
         throw new Error("Step actions failed");
       }
 
       // Update variables with extracted values
       Object.assign(updatedVariables, actionResult.extractedVariables);
-      
+
       // Persist variables globally
-      for (const [key, value] of Object.entries(actionResult.extractedVariables)) {
+      for (const [key, value] of Object.entries(
+        actionResult.extractedVariables
+      )) {
         await updateGlobalVariable(key, value);
       }
 
       status.result = actionResult.data;
 
-      console.log(`[DEBUG] Step actions succeeded for ${stepName}, marking as completed`);
+      console.log(
+        `[DEBUG] Step actions succeeded for ${stepName}, marking as completed`
+      );
       status.status = "completed";
       status.completedAt = Date.now();
       status.logs = logs;
@@ -343,37 +541,34 @@ export async function executeWorkflowStep(stepName: string): Promise<{
         message: `Step completed: ${stepName}`,
       });
 
-      console.log(`[DEBUG] About to persist completed status for ${stepName}`);
       // Persist step completion globally
       await updateGlobalStepStatus(stepName, status);
-      console.log(`[DEBUG] Persisted completed status for ${stepName}`);
     } catch (error: unknown) {
-      console.log(`[DEBUG] CAUGHT ERROR in executeWorkflowStep for ${stepName}:`, error);
-      
+      console.log(
+        `[DEBUG] CAUGHT ERROR in executeWorkflowStep for ${stepName}:`,
+        error
+      );
+
       // Parse API error details
-      let errorMessage = error instanceof Error ? error.message : "Unknown error";
+      let errorMessage =
+        error instanceof Error ? error.message : "Unknown error";
       let apiError = null;
-      
-      console.log(`[DEBUG] Initial error message: ${errorMessage}`);
-      
+
       // Try to extract structured API error
       try {
-        if (errorMessage.includes('{') && errorMessage.includes('}')) {
-          const jsonMatch = errorMessage.match(/\{.*\}/s);
+        if (errorMessage.includes("{") && errorMessage.includes("}")) {
+          const jsonMatch = errorMessage.match(/\{[\s\S]*\}/);
           if (jsonMatch) {
             apiError = JSON.parse(jsonMatch[0]);
             if (apiError.error) {
               errorMessage = `${apiError.error.code}: ${apiError.error.message}`;
-              console.log(`[DEBUG] Parsed API error: ${errorMessage}`);
             }
           }
         }
       } catch (parseError) {
-        console.log(`[DEBUG] Failed to parse API error:`, parseError);
-        // Keep original error message if parsing fails
+        throw parseError;
       }
 
-      console.log(`[DEBUG] Adding error log for ${stepName}`);
       onLog({
         timestamp: Date.now(),
         level: "error",
@@ -406,14 +601,13 @@ export async function executeWorkflowStep(stepName: string): Promise<{
 /**
  * Skip a workflow step
  */
-export async function skipWorkflowStep(stepName: string): Promise<{
+export async function skipWorkflowStep(): Promise<{
   success: boolean;
   error?: string;
 }> {
   try {
     // Skipping is handled by the UI state only
     // The next getWorkflowData call will still show it as pending/completed based on verification
-    console.log(`Skipping step: ${stepName}`);
 
     revalidatePath("/");
 
@@ -433,4 +627,3 @@ export async function skipWorkflowStep(stepName: string): Promise<{
 async function refreshWorkflowState(): Promise<void> {
   revalidatePath("/");
 }
-

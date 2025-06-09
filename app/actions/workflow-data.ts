@@ -1,23 +1,22 @@
 "use server";
 
-
 import { getToken } from "@/app/lib/auth/tokens";
 import {
-  parseWorkflow,
   evaluateGenerator,
-  Workflow,
+  LogEntry,
+  parseWorkflow,
+  Step,
   StepStatus,
   Variable,
-  LogEntry,
-  Step,
+  Workflow,
 } from "@/app/lib/workflow";
+import { runStepActions } from "./workflow-execution";
 import {
-  getGlobalVariables,
   getAllGlobalStepStatuses,
-  updateGlobalVariable,
+  getGlobalVariables,
   updateGlobalStepStatus,
+  updateGlobalVariable,
 } from "./workflow-state";
-import { runStepActions } from "@/app/lib/step-actions";
 
 export interface AuthState {
   google: {
@@ -41,10 +40,12 @@ export interface WorkflowData {
  * Get complete workflow data by reconstructing state from verification checks
  */
 export async function getWorkflowData(
-  forceRefresh = false,
+  forceRefresh = false
 ): Promise<WorkflowData> {
-  console.log(`[Initial Load] Starting getWorkflowData (forceRefresh: ${forceRefresh})`);
-  
+  console.log(
+    `[Initial Load] Starting getWorkflowData (forceRefresh: ${forceRefresh})`
+  );
+
   // Get auth status
   const googleToken = await getToken("google");
   const microsoftToken = await getToken("microsoft");
@@ -58,8 +59,8 @@ export async function getWorkflowData(
   const workflow = parseWorkflow();
 
   // Initialize variables with defaults and merge with global state
-  const variables: Record<string, string> = { ...await getGlobalVariables() };
-  console.log(`[Initial Load] Initial variables:`, variables);
+  const variables: Record<string, string> = { ...(await getGlobalVariables()) };
+
   for (const [name, varDef] of Object.entries(workflow.variables)) {
     if (!variables[name]) {
       if (varDef.default) {
@@ -83,17 +84,24 @@ export async function getWorkflowData(
     return step.depends_on.every((dep) => {
       // Check local status first, then global status
       const localStatus = stepStatuses[dep];
-      if (localStatus && (localStatus.status === "completed" || localStatus.status === "skipped")) {
+      if (
+        localStatus &&
+        (localStatus.status === "completed" || localStatus.status === "skipped")
+      ) {
         return true;
       }
-      
+
       const globalStatus = globalStepStatuses[dep];
-      if (globalStatus && (globalStatus.status === "completed" || globalStatus.status === "skipped")) {
+      if (
+        globalStatus &&
+        (globalStatus.status === "completed" ||
+          globalStatus.status === "skipped")
+      ) {
         // Copy global status to local for consistency
         stepStatuses[dep] = globalStatus;
         return true;
       }
-      
+
       return false;
     });
   };
@@ -111,7 +119,7 @@ export async function getWorkflowData(
       return requiredScopes.every((scope) => googleToken.scope.includes(scope));
     } else if (isMicrosoftStep && microsoftToken) {
       return requiredScopes.every((scope) =>
-        microsoftToken.scope.includes(scope),
+        microsoftToken.scope.includes(scope)
       );
     }
 
@@ -121,35 +129,43 @@ export async function getWorkflowData(
   // Process steps until all are processed
   let iteration = 0;
   let lastProcessedCount = 0;
-  console.log(`[Initial Load] Processing ${workflow.steps.length} steps`);
-  
+
   while (
     processedSteps.size < workflow.steps.length &&
     iteration < workflow.steps.length * 2 // Allow more iterations but prevent infinite loops
   ) {
     iteration++;
-    console.log(`[Initial Load] Iteration ${iteration}, processed: ${processedSteps.size}/${workflow.steps.length}`);
-    
+
     // Track progress to prevent infinite loops
     if (iteration > 1 && processedSteps.size === lastProcessedCount) {
-      console.warn(`[Initial Load] No progress made in iteration ${iteration}, breaking loop`);
+      console.warn(
+        `[Initial Load] No progress made in iteration ${iteration}, breaking loop`
+      );
       break;
     }
     lastProcessedCount = processedSteps.size;
 
     for (const step of workflow.steps) {
       if (processedSteps.has(step.name)) continue;
-      
-      console.log(`[Initial Load] Processing step: ${step.name}`);
 
       // Check if step is already completed globally
       const globalStatus = globalStepStatuses[step.name];
-      if (globalStatus && (globalStatus.status === "completed" || globalStatus.status === "skipped")) {
+      if (
+        globalStatus &&
+        (globalStatus.status === "completed" ||
+          globalStatus.status === "skipped")
+      ) {
         // Verify that expected outputs were actually extracted
         if (step.outputs && step.outputs.length > 0) {
-          const missingOutputs = step.outputs.filter(output => !variables[output] && (!globalStatus.variables || !globalStatus.variables[output]));
+          const missingOutputs = step.outputs.filter(
+            (output) =>
+              !variables[output] &&
+              (!globalStatus.variables || !globalStatus.variables[output])
+          );
           if (missingOutputs.length > 0) {
-            console.log(`[Initial Load] Step ${step.name} marked completed but missing outputs: ${missingOutputs.join(', ')} - re-running`);
+            console.log(
+              `[Initial Load] Step ${step.name} marked completed but missing outputs: ${missingOutputs.join(", ")} - re-running`
+            );
             // Don't use global status, re-run the step
           } else {
             stepStatuses[step.name] = globalStatus;
@@ -158,7 +174,9 @@ export async function getWorkflowData(
             if (globalStatus.variables) {
               Object.assign(variables, globalStatus.variables);
             }
-            console.log(`[Initial Load] Using global status for: ${step.name} (${globalStatus.status})`);
+            console.log(
+              `[Initial Load] Using global status for: ${step.name} (${globalStatus.status})`
+            );
             continue;
           }
         } else {
@@ -168,20 +186,20 @@ export async function getWorkflowData(
           if (globalStatus.variables) {
             Object.assign(variables, globalStatus.variables);
           }
-          console.log(`[Initial Load] Using global status for: ${step.name} (${globalStatus.status})`);
+          console.log(
+            `[Initial Load] Using global status for: ${step.name} (${globalStatus.status})`
+          );
           continue;
         }
       }
 
       // Skip if dependencies not met
       if (!areDependenciesMet(step)) {
-        console.log(`[Initial Load] Dependencies not met for: ${step.name}`);
         continue;
       }
 
       // Check auth requirements
       if (!isAuthMet(step)) {
-        console.log(`[Initial Load] Auth not met for: ${step.name}`);
         stepStatuses[step.name] = { status: "pending", logs: [] };
         processedSteps.add(step.name);
         continue;
@@ -189,7 +207,6 @@ export async function getWorkflowData(
 
       // Skip manual steps
       if (step.manual) {
-        console.log(`[Initial Load] Skipping manual step: ${step.name}`);
         stepStatuses[step.name] = { status: "pending", logs: [] };
         processedSteps.add(step.name);
         continue;
@@ -197,9 +214,11 @@ export async function getWorkflowData(
 
       // For initial load, check if step has required inputs
       if (step.inputs && step.inputs.length > 0) {
-        const missingInputs = step.inputs.filter(input => !variables[input]);
+        const missingInputs = step.inputs.filter((input) => !variables[input]);
         if (missingInputs.length > 0) {
-          console.log(`[Initial Load] Missing inputs for ${step.name}: ${missingInputs.join(', ')}`);
+          console.log(
+            `[Initial Load] Missing inputs for ${step.name}: ${missingInputs.join(", ")}`
+          );
           stepStatuses[step.name] = { status: "pending", logs: [] };
           processedSteps.add(step.name);
           continue;
@@ -209,16 +228,15 @@ export async function getWorkflowData(
       // Check if step already has a failed status - don't overwrite it
       const existingGlobalStatus = await getAllGlobalStepStatuses();
       const currentGlobalStatus = existingGlobalStatus[step.name];
-      
+
       if (currentGlobalStatus && currentGlobalStatus.status === "failed") {
-        console.log(`[Initial Load] Preserving failed status for: ${step.name}`);
         stepStatuses[step.name] = currentGlobalStatus;
         processedSteps.add(step.name);
         continue;
       }
 
       // Run verification actions only for this step
-      console.log(`[Initial Load] Running verification for: ${step.name}`);
+
       const logs: LogEntry[] = [];
       const actionResult = await runStepActions(
         step,
@@ -229,13 +247,13 @@ export async function getWorkflowData(
       );
 
       if (actionResult.success) {
-        console.log(`[Initial Load] Verification succeeded for: ${step.name}`);
-        
         // Update variables with extracted values
         Object.assign(variables, actionResult.extractedVariables);
-        
+
         // Persist variables globally
-        for (const [key, value] of Object.entries(actionResult.extractedVariables)) {
+        for (const [key, value] of Object.entries(
+          actionResult.extractedVariables
+        )) {
           await updateGlobalVariable(key, value);
         }
 
@@ -248,9 +266,7 @@ export async function getWorkflowData(
 
         // Persist step completion globally
         await updateGlobalStepStatus(step.name, stepStatuses[step.name]);
-        console.log(`[Initial Load] Completed step: ${step.name}`);
       } else {
-        console.log(`[Initial Load] Verification failed for: ${step.name} - marking as pending`);
         stepStatuses[step.name] = { status: "pending", logs };
       }
 
@@ -261,20 +277,26 @@ export async function getWorkflowData(
   // Mark any unprocessed steps as pending
   for (const step of workflow.steps) {
     if (!stepStatuses[step.name]) {
-      console.log(`[Initial Load] Marking unprocessed step as pending: ${step.name}`);
       stepStatuses[step.name] = { status: "pending", logs: [] };
     }
   }
 
   // Break infinite loop protection
   if (iteration >= workflow.steps.length * 2) {
-    console.warn(`[Initial Load] Stopped processing after ${iteration} iterations to prevent infinite loop`);
+    console.warn(
+      `[Initial Load] Stopped processing after ${iteration} iterations to prevent infinite loop`
+    );
   }
 
-  console.log(`[Initial Load] Final step statuses:`, Object.fromEntries(
-    Object.entries(stepStatuses).map(([name, status]) => [name, status.status])
-  ));
-  console.log(`[Initial Load] Final variables:`, variables);
+  console.log(
+    `[Initial Load] Final step statuses:`,
+    Object.fromEntries(
+      Object.entries(stepStatuses).map(([name, status]) => [
+        name,
+        status.status,
+      ])
+    )
+  );
 
   return {
     workflow,

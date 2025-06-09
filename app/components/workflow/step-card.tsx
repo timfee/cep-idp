@@ -1,7 +1,8 @@
 "use client";
 
-import { useTransition, useState } from "react";
-import { Step, StepStatus, LogEntry } from "@/app/lib/workflow";
+import { executeWorkflowStep } from "@/app/actions/workflow";
+import { cn } from "@/app/lib/utils";
+import { LogEntry, Step, StepStatus } from "@/app/lib/workflow";
 import {
   AlertTriangle,
   CheckCircle,
@@ -9,20 +10,16 @@ import {
   Loader2,
   XCircle,
 } from "lucide-react";
-import { cn } from "@/app/lib/utils";
-import { 
-  executeWorkflowStep, 
-  skipWorkflowStep 
-} from "@/app/actions/workflow";
-import { Badge } from "../ui/badge";
-import { Button } from "../ui/button";
-import { Card } from "../ui/card";
+import { useState, useTransition } from "react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
+import { Badge } from "../ui/badge";
+import { Button } from "../ui/button";
+import { Card } from "../ui/card";
 
 interface StepCardProps {
   step: Step;
@@ -43,17 +40,17 @@ export function StepCard({
     error?: string;
     logs?: LogEntry[];
   }>({ status: null });
-  
+
   // Use local execution result if available, otherwise use prop status
-  const effectiveStatus = localExecutionResult.status 
+  const effectiveStatus = localExecutionResult.status
     ? {
         ...status,
         status: localExecutionResult.status,
         error: localExecutionResult.error,
-        logs: localExecutionResult.logs || status.logs
+        logs: localExecutionResult.logs || status.logs,
       }
     : status;
-  
+
   // Debug logging
   console.log(`[DEBUG] StepCard rendered for ${step.name}:`, {
     propStatus: status.status,
@@ -63,31 +60,24 @@ export function StepCard({
     errorMessage: effectiveStatus.error,
     logsCount: effectiveStatus.logs?.length || 0,
     canExecute,
-    isAuthValid
+    isAuthValid,
   });
-  
+
   const handleExecute = (stepName: string) => {
     // Clear any previous local result
     setLocalExecutionResult({ status: null });
-    
+
     startTransition(async () => {
       const result = await executeWorkflowStep(stepName);
-      console.log("Step execution result:", result);
-      
+
       // Update local state with execution result
       if (result.status) {
         setLocalExecutionResult({
           status: result.status.status as "failed" | "completed",
           error: result.status.error,
-          logs: result.status.logs
+          logs: result.status.logs,
         });
       }
-    });
-  };
-
-  const handleSkip = (stepName: string) => {
-    startTransition(async () => {
-      await skipWorkflowStep(stepName);
     });
   };
 
@@ -108,11 +98,14 @@ export function StepCard({
     }
   })();
 
-  const hasContent = effectiveStatus.error || effectiveStatus.logs.length > 0 || effectiveStatus.status === "failed";
-  const defaultOpen = effectiveStatus.status === "failed" || effectiveStatus.status === "running";
-  
+  const hasContent =
+    effectiveStatus.error ||
+    effectiveStatus.logs.length > 0 ||
+    effectiveStatus.status === "failed";
+
   // Force expand if there's an error
-  const forceOpen = effectiveStatus.status === "failed" || effectiveStatus.error;
+  const forceOpen =
+    effectiveStatus.status === "failed" || effectiveStatus.error;
 
   return (
     <Card className="overflow-hidden">
@@ -142,32 +135,35 @@ export function StepCard({
               </div>
 
               <div className="flex items-center gap-2">
-                {effectiveStatus.status === "pending" && canExecute && isAuthValid && (
-                  <>
-                    <Button 
-                      onClick={() => handleExecute(step.name)} 
-                      variant="default"
-                      disabled={isPending}
-                    >
-                      {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Execute"}
-                    </Button>
-                    <Button 
-                      onClick={() => handleSkip(step.name)} 
-                      variant="link"
-                      disabled={isPending}
-                    >
-                      Skip
-                    </Button>
-                  </>
-                )}
+                {effectiveStatus.status === "pending" &&
+                  canExecute &&
+                  isAuthValid && (
+                    <>
+                      <Button
+                        onClick={() => handleExecute(step.name)}
+                        variant="default"
+                        disabled={isPending}
+                      >
+                        {isPending ? (
+                          <Loader2 className="h-4 w-4 animate-spin" />
+                        ) : (
+                          "Execute"
+                        )}
+                      </Button>
+                    </>
+                  )}
 
                 {effectiveStatus.status === "failed" && (
-                  <Button 
-                    onClick={() => handleExecute(step.name)} 
+                  <Button
+                    onClick={() => handleExecute(step.name)}
                     variant="destructive"
                     disabled={isPending}
                   >
-                    {isPending ? <Loader2 className="h-4 w-4 animate-spin" /> : "Retry"}
+                    {isPending ? (
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                    ) : (
+                      "Retry"
+                    )}
                   </Button>
                 )}
               </div>
@@ -178,7 +174,9 @@ export function StepCard({
                 <div className="flex gap-3">
                   <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
                   <div className="w-full">
-                    <h4 className="font-medium text-red-800 dark:text-red-200 mb-2">❌ STEP FAILED</h4>
+                    <h4 className="font-medium text-red-800 dark:text-red-200 mb-2">
+                      ❌ STEP FAILED
+                    </h4>
                     <div className="bg-red-50 dark:bg-red-950/50 p-3 rounded border border-red-200 dark:border-red-700">
                       <pre className="text-xs text-red-700 dark:text-red-300 whitespace-pre-wrap overflow-x-auto">
                         {effectiveStatus.error || "Step execution failed"}
@@ -192,12 +190,14 @@ export function StepCard({
 
           {hasContent && (
             <AccordionTrigger className="px-6 pb-2 pt-2">
-              <span className={cn(
-                "text-sm",
-                effectiveStatus.status === "failed" 
-                  ? "text-red-600 dark:text-red-400 font-medium"
-                  : "text-zinc-500 dark:text-zinc-400"
-              )}>
+              <span
+                className={cn(
+                  "text-sm",
+                  effectiveStatus.status === "failed"
+                    ? "text-red-600 dark:text-red-400 font-medium"
+                    : "text-zinc-500 dark:text-zinc-400"
+                )}
+              >
                 {effectiveStatus.status === "failed" && effectiveStatus.error
                   ? "View error details"
                   : effectiveStatus.logs.length > 0
@@ -211,7 +211,9 @@ export function StepCard({
             <AccordionContent className="px-6 pb-6">
               {effectiveStatus.status === "failed" && (
                 <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/30 rounded-lg border border-red-200 dark:border-red-800">
-                  <h4 className="text-sm font-medium text-red-800 dark:text-red-200 mb-2">❌ Execution Failed</h4>
+                  <h4 className="text-sm font-medium text-red-800 dark:text-red-200 mb-2">
+                    ❌ Execution Failed
+                  </h4>
                   {effectiveStatus.error && (
                     <p className="text-xs text-red-700 dark:text-red-300 font-mono bg-red-100 dark:bg-red-900/50 p-2 rounded">
                       {effectiveStatus.error}
@@ -222,7 +224,9 @@ export function StepCard({
               {effectiveStatus.logs.length > 0 && (
                 <div className="space-y-1">
                   <h4 className="text-sm font-medium mb-2">
-                    {effectiveStatus.status === "failed" ? "Debug Logs" : "Execution Logs"}
+                    {effectiveStatus.status === "failed"
+                      ? "Debug Logs"
+                      : "Execution Logs"}
                   </h4>
                   <div className="bg-zinc-50 dark:bg-zinc-900 rounded-lg p-3 text-xs font-mono space-y-1 max-h-64 overflow-y-auto">
                     {effectiveStatus.logs.map((log: LogEntry, i: number) => (
@@ -233,10 +237,12 @@ export function StepCard({
                           log.level === "error" &&
                             "text-red-600 dark:text-red-400",
                           log.level === "warn" &&
-                            "text-amber-600 dark:text-amber-400",
+                            "text-amber-600 dark:text-amber-400"
                         )}
                       >
-                        {log.data && typeof log.data === 'object' && 'fullUrl' in log.data ? (
+                        {log.data &&
+                        typeof log.data === "object" &&
+                        "fullUrl" in log.data ? (
                           // API response log - show condensed format
                           <div className="space-y-1">
                             <details className="group">
@@ -251,11 +257,19 @@ export function StepCard({
                               <div className="mt-2 ml-4">
                                 <div className="bg-slate-900 dark:bg-slate-950 rounded-md border border-slate-600 relative">
                                   <div className="flex items-center justify-between px-3 py-2 border-b border-slate-600 bg-slate-800 rounded-t-md">
-                                    <span className="text-xs font-mono text-slate-400">API Response</span>
-                                    <button 
+                                    <span className="text-xs font-mono text-slate-400">
+                                      API Response
+                                    </span>
+                                    <button
                                       onClick={() => {
-                                        if (log.data && typeof log.data === 'object' && 'response' in log.data && 'fullUrl' in log.data) {
-                                          const responseData = log.data.response;
+                                        if (
+                                          log.data &&
+                                          typeof log.data === "object" &&
+                                          "response" in log.data &&
+                                          "fullUrl" in log.data
+                                        ) {
+                                          const responseData =
+                                            log.data.response;
                                           const fullUrl = log.data.fullUrl;
                                           const text = `// ${fullUrl}\nexport default ${JSON.stringify(responseData, null, 2)};`;
                                           navigator.clipboard.writeText(text);
@@ -269,12 +283,20 @@ export function StepCard({
                                   <pre className="p-3 text-xs overflow-x-auto text-slate-100 font-mono leading-relaxed">
                                     <code>
                                       {(() => {
-                                        if (log.data && typeof log.data === 'object' && 'response' in log.data && 'fullUrl' in log.data) {
-                                          const responseData = log.data.response;
+                                        if (
+                                          log.data &&
+                                          typeof log.data === "object" &&
+                                          "response" in log.data &&
+                                          "fullUrl" in log.data
+                                        ) {
+                                          const responseData =
+                                            log.data.response;
                                           const fullUrl = log.data.fullUrl;
                                           return `// ${fullUrl}\nexport default ${JSON.stringify(responseData, null, 2)};`;
                                         }
-                                        return typeof log.data === 'string' ? log.data : JSON.stringify(log.data, null, 2);
+                                        return typeof log.data === "string"
+                                          ? log.data
+                                          : JSON.stringify(log.data, null, 2);
                                       })()}
                                     </code>
                                   </pre>

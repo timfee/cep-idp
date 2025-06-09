@@ -108,10 +108,7 @@
     "ci.listSamlProfiles": {
       "conn": "googleCI",
       "method": "GET",
-      "path": "/inboundSamlSsoProfiles",
-      "qs": {
-        "filter": "displayName=Azure AD"
-      }
+      "path": "/inboundSamlSsoProfiles"
     },
     "ci.createSamlProfile": {
       "conn": "googleCI",

@@ -8,7 +8,7 @@ class ApiClient {
     variables: Record<string, string>,
     tokens: { google?: Token; microsoft?: Token },
     body?: unknown,
-    options: { throwOnMissingVars?: boolean } = { throwOnMissingVars: true },
+    options: { throwOnMissingVars?: boolean } = { throwOnMissingVars: true }
   ): Promise<unknown> {
     const connection = connections[endpoint.conn];
     if (!connection) {
@@ -72,7 +72,7 @@ class ApiClient {
     if (body && ["POST", "PATCH", "PUT"].includes(endpoint.method)) {
       requestOptions.body = JSON.stringify(body);
     }
-    console.log("Fetching:\n\n", url, requestOptions);
+
     const response = await fetch(url, requestOptions);
 
     // Handle 401 - Authentication error

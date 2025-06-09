@@ -402,16 +402,17 @@ export async function runStepActions(
 
       // Handle different error types
       if (errorMessage.includes("401")) {
-        throw new Error(`Authentication failed: ${errorMessage}`);
+        throw new Error(
+          `Authentication failed for "${step.name}". Please re-authenticate with ${
+            endpoint.conn.includes("google") ? "Google" : "Microsoft"
+          }.`
+        );
+      } else if (errorMessage.includes("404") && !verificationOnly) {
+        throw new Error(
+          `Resource not found for "${step.name}". This usually means a previous step failed to create the required resource.`
+        );
       } else if (errorMessage.includes("404")) {
-        // 404 is expected when resource doesn't exist
-        if (verificationOnly) {
-          // During verification, 404 means step is pending
-          return { success: false, extractedVariables };
-        } else {
-          // During execution, continue to fallback actions
-          continue;
-        }
+        return { success: false, extractedVariables };
       } else {
         throw new Error(errorMessage);
       }
@@ -494,7 +495,7 @@ export async function executeWorkflowStep(stepName: string): Promise<{
             `[DEBUG] Missing inputs detected: ${missingInputs.join(", ")}`
           );
           throw new Error(
-            `Missing required inputs: ${missingInputs.join(", ")}`
+            `Cannot execute "${step.name}". Missing required data: ${missingInputs.join(", ")}. Please complete the previous steps first.`
           );
         }
       }

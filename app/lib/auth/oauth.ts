@@ -1,5 +1,5 @@
 import { env } from "@/app/env";
-import { OAuthConfig, Token } from "../workflow";
+import { OAuthConfig, Token, WORKFLOW_CONSTANTS } from "../workflow";
 
 export const googleOAuthConfig: OAuthConfig = {
   clientId: env.GOOGLE_CLIENT_ID,
@@ -153,7 +153,10 @@ export function validateScopes(
 }
 
 export function isTokenExpired(token: Token): boolean {
-  return Date.now() >= token.expiresAt - 300000; // 5 minute buffer
+  return (
+    Date.now() >=
+    token.expiresAt - WORKFLOW_CONSTANTS.TOKEN_REFRESH_BUFFER_MS
+  );
 }
 
 export {

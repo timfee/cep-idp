@@ -1,4 +1,4 @@
-import { getWorkflowData } from "./actions/workflow";
+import { getWorkflowData } from "./actions/workflow-data";
 import { AuthStatus } from "./components/workflow/auth-status";
 import { WorkflowSteps } from "./components/workflow/workflow-steps";
 import { VariableViewer } from "./components/workflow/variable-viewer";

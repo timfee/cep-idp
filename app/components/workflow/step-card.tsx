@@ -1,8 +1,10 @@
 "use client";
 
-import { executeWorkflowStep } from "@/app/actions/workflow";
+import { executeWorkflowStep } from "@/app/actions/workflow-execution";
 import { cn } from "@/app/lib/utils";
 import { LogEntry, Step, StepStatus } from "@/app/lib/workflow";
+import { PasswordDisplay } from "./password-display";
+import { ManualStepModal } from "./manual-step-modal";
 import {
   AlertTriangle,
   CheckCircle,
@@ -40,6 +42,7 @@ export function StepCard({
     error?: string;
     logs?: LogEntry[];
   }>({ status: null });
+  const [showManualModal, setShowManualModal] = useState(false);
 
   // Use local execution result if available, otherwise use prop status
   const effectiveStatus = localExecutionResult.status
@@ -86,7 +89,12 @@ export function StepCard({
       case "pending":
         return <Clock className="h-5 w-5 text-zinc-400" />;
       case "running":
-        return <Loader2 className="h-5 w-5 text-blue-500 animate-spin" />;
+        return (
+          <div className="flex items-center gap-2">
+            <Loader2 className="h-5 w-5 text-blue-500 animate-spin" />
+            <span className="text-sm text-blue-600">Executing...</span>
+          </div>
+        );
       case "completed":
         return <CheckCircle className="h-5 w-5 text-green-500" />;
       case "failed":
@@ -135,22 +143,35 @@ export function StepCard({
               </div>
 
               <div className="flex items-center gap-2">
-                {effectiveStatus.status === "pending" &&
+                {step.manual && effectiveStatus.status === "pending" && (
+                  <>
+                    <Button onClick={() => setShowManualModal(true)}>Configure Manually</Button>
+                    <ManualStepModal
+                      step={step}
+                      isOpen={showManualModal}
+                      onComplete={() => {
+                        setShowManualModal(false);
+                        window.location.reload();
+                      }}
+                    />
+                  </>
+                )}
+
+                {!step.manual &&
+                  effectiveStatus.status === "pending" &&
                   canExecute &&
                   isAuthValid && (
-                    <>
-                      <Button
-                        onClick={() => handleExecute(step.name)}
-                        variant="default"
-                        disabled={isPending}
-                      >
-                        {isPending ? (
-                          <Loader2 className="h-4 w-4 animate-spin" />
-                        ) : (
-                          "Execute"
-                        )}
-                      </Button>
-                    </>
+                    <Button
+                      onClick={() => handleExecute(step.name)}
+                      variant="default"
+                      disabled={isPending}
+                    >
+                      {isPending ? (
+                        <Loader2 className="h-4 w-4 animate-spin" />
+                      ) : (
+                        "Execute"
+                      )}
+                    </Button>
                   )}
 
                 {effectiveStatus.status === "failed" && (
@@ -187,6 +208,20 @@ export function StepCard({
               </div>
             )}
           </div>
+
+          {effectiveStatus.status === "completed" &&
+            effectiveStatus.variables?.generatedPassword &&
+            step.name === "Create Service Account for Microsoft" && (
+              <div className="mt-3">
+                <PasswordDisplay
+                  password={effectiveStatus.variables.generatedPassword}
+                  accountEmail={
+                    effectiveStatus.variables.provisioningUserEmail ||
+                    "azuread-provisioning@domain"
+                  }
+                />
+              </div>
+            )}
 
           {hasContent && (
             <AccordionTrigger className="px-6 pb-2 pt-2">

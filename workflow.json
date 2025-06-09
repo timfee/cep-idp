@@ -18,10 +18,15 @@
     }
   },
   "roles": {
-    "dirDomainRW": ["https://www.googleapis.com/auth/admin.directory.domain", "https://www.googleapis.com/auth/siteverification"],
+    "dirDomainRW": [
+      "https://www.googleapis.com/auth/admin.directory.domain",
+      "https://www.googleapis.com/auth/siteverification"
+    ],
     "dirOrgunitRW": ["https://www.googleapis.com/auth/admin.directory.orgunit"],
     "dirUserRW": ["https://www.googleapis.com/auth/admin.directory.user"],
-    "dirRoleRW": ["https://www.googleapis.com/auth/admin.directory.rolemanagement"],
+    "dirRoleRW": [
+      "https://www.googleapis.com/auth/admin.directory.rolemanagement"
+    ],
     "ciInboundSso": [
       "https://www.googleapis.com/auth/cloud-identity.inboundsso"
     ],
@@ -255,13 +260,24 @@
   },
   "steps": [
     {
-      "name": "Initialize workflow variables",
-      "_comment": "Fetches the primary domain from Google Workspace to use as default domainName",
-      "verify": [
+      "name": "Initialize Primary Domain",
+      "execute": [
         {
           "use": "admin.listDomains",
-          "checker": "exists",
-          "_extractVars": "Special handling in code extracts primaryDomain from domains array"
+          "outputs": {
+            "primaryDomain": "domains[0].domainName"
+          }
+        }
+      ],
+      "role": "dirDomainRW"
+    },
+    {
+      "name": "Verify Primary Domain",
+      "depends_on": ["Initialize Primary Domain"],
+      "verify": [
+        {
+          "use": "admin.getDomain",
+          "checker": "exists"
         }
       ],
       "role": "dirDomainRW"
@@ -303,7 +319,11 @@
         }
       ],
       "role": "dirOrgunitRW",
-      "depends_on": ["Initialize workflow variables", "Verify domain"]
+      "depends_on": [
+        "Initialize Primary Domain",
+        "Verify Primary Domain",
+        "Verify domain"
+      ]
     },
     {
       "name": "Service user",

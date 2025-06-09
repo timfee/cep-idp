@@ -1,12 +1,13 @@
 "use server";
 
-import { apiClient } from "@/app/lib/api-client";
+import { apiRequest } from "@/app/lib/api/client";
 import { getToken } from "@/app/lib/auth/tokens";
 import {
   evaluateChecker,
   evaluateGenerator,
   extractMissingVariables,
   extractValueFromPath,
+  filterActions,
   LogEntry,
   parseWorkflow,
   Step,
@@ -44,10 +45,8 @@ export async function runStepActions(
   const extractedVariables: Record<string, string> = {};
   let lastResponse: unknown;
 
-  // Filter actions based on mode
-  const actionsToRun = verificationOnly
-    ? step.actions.filter((action) => !action.fallback)
-    : step.actions;
+  // Filter actions based on mode using engine utility
+  const actionsToRun = filterActions(step, verificationOnly);
 
   // Try each action in sequence
   for (const action of actionsToRun) {
@@ -92,14 +91,14 @@ export async function runStepActions(
         message: `Executing action: ${action.use}`,
       });
 
-      const response = await apiClient.request(
+      const response = await apiRequest({
         endpoint,
-        workflow.connections,
+        connections: workflow.connections,
         variables,
         tokens,
-        payload,
-        { throwOnMissingVars: !action.fallback }
-      );
+        body: payload,
+        throwOnMissingVars: !action.fallback,
+      });
 
       lastResponse = response;
 
@@ -135,7 +134,7 @@ export async function runStepActions(
 
       // If this is a verification action, check if it passes
       if (action.checker && response !== null) {
-        const verified = evaluateChecker(action, response, variables);
+        const verified = evaluateChecker(action, response);
         if (!verified && !action.fallback) {
           // Verification failed, continue to fallback actions
           continue;

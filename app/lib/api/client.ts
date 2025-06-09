@@ -1,15 +1,16 @@
-import { isTokenExpired, refreshAccessToken } from "./auth/oauth";
-import { Connection, Endpoint, Token, substituteVariables } from "./workflow";
+import { isTokenExpired, refreshAccessToken } from "../auth/oauth";
+import { substituteVariables } from "../workflow";
+import { ApiRequestOptions } from "./types";
 
-class ApiClient {
-  async request(
-    endpoint: Endpoint,
-    connections: Record<string, Connection>,
-    variables: Record<string, string>,
-    tokens: { google?: Token; microsoft?: Token },
-    body?: unknown,
-    options: { throwOnMissingVars?: boolean } = { throwOnMissingVars: true }
-  ): Promise<unknown> {
+export async function apiRequest(options: ApiRequestOptions): Promise<unknown> {
+  const {
+    endpoint,
+    connections,
+    variables,
+    tokens,
+    body,
+    throwOnMissingVars = true,
+  } = options;
     const connection = connections[endpoint.conn];
     if (!connection) {
       throw new Error(`Connection not found: ${endpoint.conn}`);
@@ -39,7 +40,7 @@ class ApiClient {
 
     // Build URL
     const path = substituteVariables(endpoint.path, variables, {
-      throwOnMissing: options.throwOnMissingVars,
+      throwOnMissing: throwOnMissingVars,
     });
     let url = `${connection.base}${path}`;
 
@@ -82,7 +83,7 @@ class ApiClient {
 
     // For verification requests, 404 is expected (resource doesn't exist yet)
     // Return null to indicate "not found" rather than throwing
-    if (response.status === 404 && !options.throwOnMissingVars) {
+    if (response.status === 404 && !throwOnMissingVars) {
       return null;
     }
 
@@ -98,6 +99,4 @@ class ApiClient {
 
     return response.text();
   }
-}
 
-export const apiClient = new ApiClient();

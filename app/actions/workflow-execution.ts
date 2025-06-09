@@ -16,6 +16,7 @@ import {
   substituteVariables,
   Token,
 } from "@/app/lib/workflow";
+import { COPY_FEEDBACK_DURATION_MS } from "@/app/lib/workflow/constants";
 import { revalidatePath } from "next/cache";
 import {
   getGlobalVariables,
@@ -129,7 +130,7 @@ export async function runStepActions(
           level: "info",
           message: "Waiting for long-running operation...",
         });
-        await new Promise((resolve) => setTimeout(resolve, 2000));
+        await new Promise((resolve) => setTimeout(resolve, COPY_FEEDBACK_DURATION_MS));
       }
 
       // If this is a verification action, check if it passes
@@ -370,7 +371,7 @@ export async function runStepActions(
       // Try to extract structured API error
       try {
         if (errorMessage.includes("{") && errorMessage.includes("}")) {
-          const jsonMatch = errorMessage.match(/\{[\s\S]*\}/);
+          const jsonMatch = errorMessage.match(/\{[^]*?\}/);
           if (jsonMatch) {
             apiError = JSON.parse(jsonMatch[0]);
             if (apiError.error) {
@@ -557,7 +558,7 @@ export async function executeWorkflowStep(stepName: string): Promise<{
       // Try to extract structured API error
       try {
         if (errorMessage.includes("{") && errorMessage.includes("}")) {
-          const jsonMatch = errorMessage.match(/\{[\s\S]*\}/);
+          const jsonMatch = errorMessage.match(/\{[^]*?\}/);
           if (jsonMatch) {
             apiError = JSON.parse(jsonMatch[0]);
             if (apiError.error) {

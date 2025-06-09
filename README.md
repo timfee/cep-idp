@@ -44,6 +44,26 @@ The application guides the CEP Champion through the federation setup, gracefully
 3. **Stateful Progression:** The application's state (completed steps, extracted variables like domain names and IDs) is maintained using client-side state management. Because the status of each step can be ascertained by READ API calls, it’s not critical to persist the entirety of the workflow in any sophisticated way.
 4. **Completion:** The workflow is complete once all technical steps are marked “completed.”
 
+### 3.2. Workflow Step Order
+
+1. Verify Primary Domain
+2. Create Automation Organizational Unit
+3. Create Service Account for Microsoft
+4. Create Custom Admin Role
+5. Assign Admin Role to Service Account
+6. Create SAML Profile for SSO
+7. Create Microsoft Provisioning App
+8. Configure User Provisioning
+9. Create Microsoft SSO App
+10. Add Microsoft Identity Certificate
+11. Start User Synchronization
+12. Configure SAML Settings
+13. Create Claims Mapping Policy
+14. Assign Users to SSO App (manual)
+15. Enable SSO for Organization
+16. Disable SSO for Service Accounts
+17. Test SSO Configuration (manual)
+
 ## 4. Functional Requirements
 
 ### 4.1. Workflow Engine

@@ -18,9 +18,19 @@ export const STEP_NAMES = {
   TEST_SSO: "Test SSO Configuration",
 } as const;
 
+export const HOURS_IN_DAY = 24;
+export const DAYS_IN_MONTH = 30;
+export const MINUTES_IN_HOUR = 60;
+export const SECONDS_IN_MINUTE = 60;
+export const MS_IN_SECOND = 1000;
+export const COPY_FEEDBACK_DURATION_MS = 2000;
+export const RETRY_COUNT = 3;
+export const SPLIT_LIMIT = 2;
+
 export const WORKFLOW_CONSTANTS = {
   // Time constants (replacing magic numbers)
-  OAUTH_STATE_TTL_MS: 600000, // 10 minutes
+  OAUTH_STATE_TTL_MS:
+    DAYS_IN_MONTH * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE * MS_IN_SECOND,
   TOKEN_REFRESH_BUFFER_MS: 300000, // 5 minutes
   TOKEN_COOKIE_MAX_AGE: 30 * 24 * 60 * 60, // 30 days
 

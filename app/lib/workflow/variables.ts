@@ -54,7 +54,7 @@ export function substituteVariables(
   variables: Record<string, string>,
   options: { throwOnMissing?: boolean } = {},
 ): string {
-  return template.replace(/\{([^}]+)\}/g, (match, expression) => {
+  return template.replace(/\{([^{}]+)\}/g, (match, expression) => {
     if (expression.includes("(")) {
       try {
         return evaluateTemplateExpression(expression, variables);
@@ -84,7 +84,7 @@ function evaluateTemplateExpression(
   expression: string,
   variables: Record<string, string>,
 ): string {
-  const match = expression.match(/^([a-zA-Z0-9_]+)\(([^)]*)\)$/);
+  const match = expression.match(/^(\w+)\(([^)]*)\)$/);
   if (!match) {
     throw new Error(`Invalid template expression: ${expression}`);
   }
@@ -453,7 +453,7 @@ export function extractMissingVariables(
 function extractVariablesFromExpression(expression: string): string[] {
   const extractedVariables: string[] = [];
 
-  const match = expression.match(/^([a-zA-Z0-9_]+)\(([^)]*)\)$/);
+  const match = expression.match(/^(\w+)\(([^)]*)\)$/);
   if (match) {
     const [, , argsString] = match;
 
@@ -465,7 +465,7 @@ function extractVariablesFromExpression(expression: string): string[] {
           !arg.startsWith('"') &&
           !arg.startsWith("'") &&
           !arg.includes("(") &&
-          /^[a-zA-Z_][a-zA-Z0-9_]*$/.test(arg)
+          /^\w+$/.test(arg)
         ) {
           extractedVariables.push(arg);
         }

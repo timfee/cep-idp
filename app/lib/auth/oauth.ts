@@ -1,5 +1,6 @@
 import { env } from "@/app/env";
 import { OAuthConfig, Token, WORKFLOW_CONSTANTS } from "../workflow";
+import { MS_IN_SECOND } from "../workflow/constants";
 
 export const googleOAuthConfig: OAuthConfig = {
   clientId: env.GOOGLE_CLIENT_ID,
@@ -104,7 +105,7 @@ export async function exchangeCodeForToken(
   return {
     accessToken: data.access_token,
     refreshToken: data.refresh_token,
-    expiresAt: Date.now() + data.expires_in * 1000,
+    expiresAt: Date.now() + data.expires_in * MS_IN_SECOND,
     scope: data.scope?.split(" ") || config.scopes,
   };
 }
@@ -140,7 +141,7 @@ export async function refreshAccessToken(
   return {
     accessToken: data.access_token,
     refreshToken: data.refresh_token || refreshToken,
-    expiresAt: Date.now() + data.expires_in * 1000,
+    expiresAt: Date.now() + data.expires_in * MS_IN_SECOND,
     scope: data.scope?.split(" ") || config.scopes,
   };
 }

@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { COPY_FEEDBACK_DURATION_MS } from "@/app/lib/workflow/constants";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Button } from "../ui/button";
 import {
@@ -40,7 +41,7 @@ export function ManualStepGuide({
   const copyToClipboard = async (text: string, id: string) => {
     await navigator.clipboard.writeText(text);
     setCopied(id);
-    setTimeout(() => setCopied(null), 2000);
+    setTimeout(() => setCopied(null), COPY_FEEDBACK_DURATION_MS);
   };
 
   const getInstructions = (): StepInstruction[] => {

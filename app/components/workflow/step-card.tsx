@@ -3,6 +3,7 @@
 import { executeWorkflowStep } from "@/app/actions/workflow-execution";
 import { cn } from "@/app/lib/utils";
 import { LogEntry, Step, StepStatus } from "@/app/lib/workflow";
+import { MIN_LOG_COUNT_FOR_PLURAL } from "@/app/lib/workflow/constants";
 import { PasswordDisplay } from "./password-display";
 import {
   AlertTriangle,
@@ -226,7 +227,9 @@ export function StepCard({
                   }
                   if (effectiveStatus.logs.length > 0) {
                     const count = effectiveStatus.logs.length;
-                    return `View ${count} log${count > 1 ? "s" : ""}`;
+                    return `View ${count} log${
+                      count >= MIN_LOG_COUNT_FOR_PLURAL ? "s" : ""
+                    }`;
                   }
                   return "View details";
                 })()}

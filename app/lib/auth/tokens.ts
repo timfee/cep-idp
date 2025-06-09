@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { Token, WORKFLOW_CONSTANTS } from "../workflow";
+import { Token, WORKFLOW_CONSTANTS, MS_IN_SECOND } from "../workflow";
 import {
   clearChunkedCookie,
   CookieOptions,
@@ -98,7 +98,7 @@ export async function setOAuthState(
 
   (await cookies()).set("oauth_state", encrypted, {
     ...COOKIE_OPTIONS,
-    maxAge: WORKFLOW_CONSTANTS.OAUTH_STATE_TTL_MS / 1000,
+    maxAge: WORKFLOW_CONSTANTS.OAUTH_STATE_TTL_MS / MS_IN_SECOND,
   });
 }
 

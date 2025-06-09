@@ -1,56 +1,38 @@
 import { isTokenExpired, refreshAccessToken } from "../auth/oauth";
-import { substituteVariables } from "../workflow";
+import { substituteVariables, Token } from "../workflow";
 import { WORKFLOW_CONSTANTS } from "../workflow/constants";
 import { ApiRequestOptions } from "./types";
 
-export async function apiRequest(options: ApiRequestOptions): Promise<unknown> {
-  const {
-    endpoint,
-    connections,
-    variables,
-    tokens,
-    body,
-    throwOnMissingVars = true,
-  } = options;
-  const connection = Object.prototype.hasOwnProperty.call(
-    connections,
-    endpoint.conn,
-  )
-    ? connections[endpoint.conn as keyof typeof connections]
-    : undefined;
-  if (!connection) {
-    throw new Error(`Connection not found: ${endpoint.conn}`);
+async function handlePublicRequest(options: ApiRequestOptions): Promise<unknown> {
+  const { endpoint, connections, variables, throwOnMissingVars = true } = options;
+  const connection = connections[endpoint.conn as keyof typeof connections];
+  const path = substituteVariables(endpoint.path, variables, { throwOnMissing: throwOnMissingVars });
+  let url = `${connection.base}${path}`;
+
+  if (endpoint.qs) {
+    const params = new URLSearchParams();
+    for (const [key, value] of Object.entries(endpoint.qs)) {
+      params.append(key, substituteVariables(value, variables));
+    }
+    url += `?${params.toString()}`;
   }
 
-  if (connection.auth === "none") {
-    const path = substituteVariables(endpoint.path, variables, {
-      throwOnMissing: throwOnMissingVars,
-    });
-    let url = `${connection.base}${path}`;
-
-    if (endpoint.qs) {
-      const params = new URLSearchParams();
-      for (const [key, value] of Object.entries(endpoint.qs)) {
-        params.append(key, substituteVariables(value, variables));
-      }
-      url += `?${params.toString()}`;
-    }
-
-    const response = await fetch(url);
-    if (!response.ok) {
-      throw new Error(
-        `Request failed: ${response.status} - ${response.statusText}`,
-      );
-    }
-    const contentType = response.headers.get("content-type");
-    if (contentType?.includes("xml")) {
-      return response.text();
-    }
-    return response.json();
+  const response = await fetch(url);
+  if (!response.ok) {
+    throw new Error(`Request failed: ${response.status} - ${response.statusText}`);
   }
+  const contentType = response.headers.get("content-type");
+  if (contentType?.includes("xml")) {
+    return response.text();
+  }
+  return response.json();
+}
 
-  // Determine which token to use
-  let token = null;
+async function handleAuthenticatedRequest(options: ApiRequestOptions): Promise<unknown> {
+  const { endpoint, connections, variables, tokens, body, throwOnMissingVars = true } = options;
+  const connection = connections[endpoint.conn as keyof typeof connections];
+
+  let token: Token | null = null;
   let provider: "google" | "microsoft" | null = null;
 
   if (endpoint.conn.includes("google") || endpoint.conn.includes("CI")) {
@@ -65,19 +47,13 @@ export async function apiRequest(options: ApiRequestOptions): Promise<unknown> {
     throw new Error(`No token available for connection: ${endpoint.conn}`);
   }
 
-  // Check and refresh token if needed
   if (isTokenExpired(token) && token.refreshToken && provider) {
     token = await refreshAccessToken(provider, token.refreshToken);
-    // Update token in state (this would be handled by the caller)
   }
 
-  // Build URL
-  const path = substituteVariables(endpoint.path, variables, {
-    throwOnMissing: throwOnMissingVars,
-  });
+  const path = substituteVariables(endpoint.path, variables, { throwOnMissing: throwOnMissingVars });
   let url = `${connection.base}${path}`;
 
-  // Add query parameters
   if (endpoint.qs) {
     const params = new URLSearchParams();
     for (const [key, value] of Object.entries(endpoint.qs)) {
@@ -86,18 +62,15 @@ export async function apiRequest(options: ApiRequestOptions): Promise<unknown> {
     url += `?${params.toString()}`;
   }
 
-  // Build headers
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
   };
 
-  // Add authorization
   const authHeader = connection.auth
     .replace("{googleAccessToken}", token.accessToken)
     .replace("{azureAccessToken}", token.accessToken);
   headers["Authorization"] = authHeader;
 
-  // Make request
   const requestOptions: RequestInit = {
     method: endpoint.method,
     headers,
@@ -109,17 +82,11 @@ export async function apiRequest(options: ApiRequestOptions): Promise<unknown> {
 
   const response = await fetch(url, requestOptions);
 
-  // Handle 401 - Authentication error
   if (response.status === WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED) {
     throw new Error(`Authentication failed: Token may be expired or invalid`);
   }
 
-  // For verification requests, 404 is expected (resource doesn't exist yet)
-  // Return null to indicate "not found" rather than throwing
-  if (
-    response.status === WORKFLOW_CONSTANTS.HTTP_STATUS.NOT_FOUND &&
-    !throwOnMissingVars
-  ) {
+  if (response.status === WORKFLOW_CONSTANTS.HTTP_STATUS.NOT_FOUND && !throwOnMissingVars) {
     return null;
   }
 
@@ -134,4 +101,16 @@ export async function apiRequest(options: ApiRequestOptions): Promise<unknown> {
   }
 
   return response.text();
+}
+
+export async function apiRequest(options: ApiRequestOptions): Promise<unknown> {
+  const { endpoint, connections } = options;
+  const connection = connections[endpoint.conn as keyof typeof connections];
+  if (!connection) {
+    throw new Error(`Connection not found: ${endpoint.conn}`);
+  }
+  if (connection.auth === "none") {
+    return handlePublicRequest(options);
+  }
+  return handleAuthenticatedRequest(options);
 }

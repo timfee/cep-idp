@@ -1,5 +1,7 @@
 import { JSONPath } from "jsonpath-plus";
 import { randomBytes } from "crypto";
+import { escapeRegExp } from "../utils";
+import { STRING_SPLIT_PAIR, EXPECTED_ARG_COUNT_PAIR } from "./constants";
 
 export function extractCertificateFromXml(xmlString: string): string {
   const signingBlockMatch = xmlString.match(
@@ -84,7 +86,7 @@ function evaluateTemplateExpression(
   expression: string,
   variables: Record<string, string>,
 ): string {
-  const match = expression.match(/^(\w+)\(([^)]*)\)$/);
+  const match = expression.match(/^(\w+)\(([^)]*?)\)$/);
   if (!match) {
     throw new Error(`Invalid template expression: ${expression}`);
   }
@@ -103,16 +105,16 @@ function evaluateTemplateExpression(
       const values = args.slice(1);
       return formatString(template, values);
     }
-    case "email": {
-      if (args.length !== 2) {
+      case "email": {
+        if (args.length !== EXPECTED_ARG_COUNT_PAIR) {
         throw new Error(
           "email() requires exactly 2 arguments: username and domain",
         );
       }
       return `${args[0]}@${args[1]}`;
     }
-    case "url": {
-      if (args.length !== 2) {
+      case "url": {
+        if (args.length !== EXPECTED_ARG_COUNT_PAIR) {
         throw new Error("url() requires exactly 2 arguments: base and path");
       }
       const base = args[0].replace(/\/$/, "");
@@ -414,7 +416,7 @@ export function validateVariable(value: string, validator?: string): boolean {
   if (!validator) return true;
 
   try {
-    const regex = new RegExp(validator);
+  const regex = new RegExp(escapeRegExp(validator));
     return regex.test(value);
   } catch (error) {
     console.error("Invalid regex validator:", validator, error);
@@ -428,7 +430,7 @@ export function extractMissingVariables(
 ): string[] {
   const missing: string[] = [];
 
-  const matches = template.matchAll(/\{([^}]+)\}/g);
+  const matches = template.matchAll(/\{([^}]+?)\}/g);
 
   for (const match of matches) {
     const expression = match[1];
@@ -453,7 +455,7 @@ export function extractMissingVariables(
 function extractVariablesFromExpression(expression: string): string[] {
   const extractedVariables: string[] = [];
 
-  const match = expression.match(/^(\w+)\(([^)]*)\)$/);
+  const match = expression.match(/^(\w+)\(([^)]*?)\)$/);
   if (match) {
     const [, , argsString] = match;
 

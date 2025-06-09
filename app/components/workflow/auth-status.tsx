@@ -4,6 +4,7 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { AlertOctagonIcon, BadgeCheckIcon } from "lucide-react";
 import Link from "next/link";
+import { WILDCARD_SUFFIX_LENGTH } from "@/app/lib/workflow/constants";
 
 interface AuthStatusProps {
   provider: "google" | "microsoft";
@@ -34,7 +35,7 @@ function scopeImplies(granted: string, required: string): boolean {
 
   // Wildcard: e.g., 'admin.directory.*' implies 'admin.directory.user'
   if (normGranted.endsWith(".*")) {
-    const prefix = normGranted.slice(0, -2);
+    const prefix = normGranted.slice(0, -WILDCARD_SUFFIX_LENGTH);
     if (normRequired.startsWith(prefix)) return true;
   }
 

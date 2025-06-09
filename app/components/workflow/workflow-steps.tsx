@@ -11,14 +11,12 @@ interface WorkflowStepsProps {
     google: { authenticated: boolean; scopes: string[] };
     microsoft: { authenticated: boolean; scopes: string[] };
   };
-  variables: Record<string, string>;
 }
 
 export function WorkflowSteps({
   workflow,
   stepStatuses,
   authStatus,
-  variables,
 }: WorkflowStepsProps) {
   // Calculate completed steps
   const completedSteps = new Set(

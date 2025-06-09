@@ -72,12 +72,16 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
                   isAuthenticated={auth.google.authenticated}
                   scopes={auth.google.scopes}
                   requiredScopes={allRequiredGoogleScopes}
+                  expiresAt={auth.google.expiresAt}
+                  hasRefreshToken={auth.google.hasRefreshToken}
                 />
                 <AuthStatus
                   provider="microsoft"
                   isAuthenticated={auth.microsoft.authenticated}
                   scopes={auth.microsoft.scopes}
                   requiredScopes={allRequiredMicrosoftScopes}
+                  expiresAt={auth.microsoft.expiresAt}
+                  hasRefreshToken={auth.microsoft.hasRefreshToken}
                 />
               </section>
 

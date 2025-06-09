@@ -22,6 +22,9 @@ import {
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
+import { Alert, AlertDescription } from "../ui/alert";
+
+const JSON_INDENT = 2;
 
 interface StepCardProps {
   step: Step;
@@ -175,6 +178,16 @@ export function StepCard({
               </div>
             </div>
 
+            {!isAuthValid && step.role && effectiveStatus.status === "pending" && (
+              <Alert variant="destructive" className="mt-3">
+                <AlertTriangle className="h-4 w-4" />
+                <AlertDescription>
+                  Authentication required. Please re-authenticate with{' '}
+                  {step.role.startsWith('graph') ? 'Microsoft' : 'Google'} to continue.
+                </AlertDescription>
+              </Alert>
+            )}
+
             {(effectiveStatus.error || effectiveStatus.status === "failed") && (
               <div className="mt-3 p-4 bg-red-100 dark:bg-red-900/30 rounded-lg border border-red-200 dark:border-red-800">
                 <div className="flex gap-3">
@@ -301,7 +314,7 @@ export function StepCard({
                                           const responseData =
                                             log.data.response;
                                           const fullUrl = log.data.fullUrl;
-                                          const text = `// ${fullUrl}\nexport default ${JSON.stringify(responseData, null, 2)};`;
+                                          const text = `// ${fullUrl}\nexport default ${JSON.stringify(responseData, null, JSON_INDENT)};`;
                                           navigator.clipboard.writeText(text);
                                         }
                                       }}
@@ -322,11 +335,11 @@ export function StepCard({
                                           const responseData =
                                             log.data.response;
                                           const fullUrl = log.data.fullUrl;
-                                          return `// ${fullUrl}\nexport default ${JSON.stringify(responseData, null, 2)};`;
+                                            return `// ${fullUrl}\nexport default ${JSON.stringify(responseData, null, JSON_INDENT)};`;
                                         }
                                         return typeof log.data === "string"
                                           ? log.data
-                                          : JSON.stringify(log.data, null, 2);
+                                            : JSON.stringify(log.data, null, JSON_INDENT);
                                       })()}
                                     </code>
                                   </pre>

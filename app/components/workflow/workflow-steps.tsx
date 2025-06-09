@@ -8,8 +8,8 @@ interface WorkflowStepsProps {
   workflow: Workflow;
   stepStatuses: Record<string, StepStatus>;
   authStatus: {
-    google: { authenticated: boolean; scopes: string[] };
-    microsoft: { authenticated: boolean; scopes: string[] };
+    google: { authenticated: boolean; scopes: string[]; expiresAt?: number };
+    microsoft: { authenticated: boolean; scopes: string[]; expiresAt?: number };
   };
 }
 
@@ -44,12 +44,23 @@ export function WorkflowSteps({
     const isMicrosoftStep = step.role.startsWith("graph");
 
     if (isGoogleStep && authStatus.google.authenticated) {
-      return requiredScopes.every((scope: string) =>
-        authStatus.google.scopes.includes(scope),
+      const notExpired =
+        !authStatus.google.expiresAt || authStatus.google.expiresAt > Date.now();
+      return (
+        notExpired &&
+        requiredScopes.every((scope: string) =>
+          authStatus.google.scopes.includes(scope),
+        )
       );
     } else if (isMicrosoftStep && authStatus.microsoft.authenticated) {
-      return requiredScopes.every((scope: string) =>
-        authStatus.microsoft.scopes.includes(scope),
+      const notExpired =
+        !authStatus.microsoft.expiresAt ||
+        authStatus.microsoft.expiresAt > Date.now();
+      return (
+        notExpired &&
+        requiredScopes.every((scope: string) =>
+          authStatus.microsoft.scopes.includes(scope),
+        )
       );
     }
 

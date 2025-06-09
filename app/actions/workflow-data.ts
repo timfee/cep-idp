@@ -1,6 +1,7 @@
 "use server";
 
-import { getToken } from "@/app/lib/auth/tokens";
+import { getToken, setToken } from "@/app/lib/auth/tokens";
+import { isTokenExpired, refreshAccessToken } from "@/app/lib/auth/oauth";
 import {
   evaluateGenerator,
   LogEntry,
@@ -11,10 +12,7 @@ import {
   Workflow,
   Token,
 } from "@/app/lib/workflow";
-import {
-  JWT_PART_COUNT,
-  WORKFLOW_MAX_ITERATION_MULTIPLIER,
-} from "@/app/lib/workflow/constants";
+import { JWT_PART_COUNT } from "@/app/lib/workflow/constants";
 import { runStepActions } from "./workflow-execution";
 import {
   getAllGlobalStepStatuses,
@@ -27,10 +25,14 @@ export interface AuthState {
   google: {
     authenticated: boolean;
     scopes: string[];
+    expiresAt?: number;
+    hasRefreshToken?: boolean;
   };
   microsoft: {
     authenticated: boolean;
     scopes: string[];
+    expiresAt?: number;
+    hasRefreshToken?: boolean;
   };
 }
 
@@ -77,24 +79,19 @@ async function reconstituteStepStatuses(
   tokens: { google?: Token; microsoft?: Token },
 ): Promise<Map<string, StepStatus>> {
   const stepStatuses = new Map<string, StepStatus>();
-  const processedSteps = new Set<string>();
   const globalStepStatuses = await getAllGlobalStepStatuses();
+
+  const pendingStatus = { status: "pending", logs: [] } as StepStatus;
 
   const areDependenciesMet = (step: Step): boolean => {
     if (!step.depends_on) return true;
     return step.depends_on.every((dep) => {
-      const localStatus = stepStatuses.get(dep);
-      if (localStatus && (localStatus.status === "completed" || localStatus.status === "skipped")) {
+      const local = stepStatuses.get(dep);
+      if (local && (local.status === "completed" || local.status === "skipped")) {
         return true;
       }
-      const globalStatus = Object.prototype.hasOwnProperty.call(globalStepStatuses, dep)
-        ? globalStepStatuses[dep as keyof typeof globalStepStatuses]
-        : undefined;
-      if (globalStatus && (globalStatus.status === "completed" || globalStatus.status === "skipped")) {
-        stepStatuses.set(dep, globalStatus);
-        return true;
-      }
-      return false;
+      const global = globalStepStatuses[dep as keyof typeof globalStepStatuses];
+      return global ? global.status === "completed" || global.status === "skipped" : false;
     });
   };
 
@@ -106,121 +103,78 @@ async function reconstituteStepStatuses(
     const isGoogleStep = step.role.startsWith("dir") || step.role.startsWith("ci");
     const isMicrosoftStep = step.role.startsWith("graph");
     if (isGoogleStep && tokens.google) {
-      return requiredScopes.every((s) => tokens.google!.scope.includes(s));
+      return !isTokenExpired(tokens.google) && requiredScopes.every((s) => tokens.google!.scope.includes(s));
     }
     if (isMicrosoftStep && tokens.microsoft) {
-      return requiredScopes.every((s) => tokens.microsoft!.scope.includes(s));
+      return !isTokenExpired(tokens.microsoft) && requiredScopes.every((s) => tokens.microsoft!.scope.includes(s));
     }
     return false;
   };
 
-  let iteration = 0;
-  let lastProcessedCount = 0;
-  const maxIterations = workflow.steps.length * WORKFLOW_MAX_ITERATION_MULTIPLIER;
-
-  while (processedSteps.size < workflow.steps.length && iteration < maxIterations) {
-    iteration++;
-    if (iteration > 1 && processedSteps.size === lastProcessedCount) {
-      console.warn(`[Initial Load] No progress made in iteration ${iteration}, breaking loop`);
-      break;
+  const applyGlobalStatus = (step: Step, status: StepStatus | undefined): boolean => {
+    if (!status) return false;
+    if (status.status !== "completed" && status.status !== "skipped") {
+      return false;
     }
-    lastProcessedCount = processedSteps.size;
-
-    for (const step of workflow.steps) {
-      if (processedSteps.has(step.name)) continue;
-
-      const globalStatus = Object.prototype.hasOwnProperty.call(globalStepStatuses, step.name)
-        ? globalStepStatuses[step.name as keyof typeof globalStepStatuses]
-        : undefined;
-      if (globalStatus && (globalStatus.status === "completed" || globalStatus.status === "skipped")) {
-        if (step.outputs && step.outputs.length > 0) {
-          const missingOutputs = step.outputs.filter((o) => {
-            const hasLocal = Object.prototype.hasOwnProperty.call(variables, o);
-            const hasGlobal = globalStatus.variables && Object.prototype.hasOwnProperty.call(globalStatus.variables, o);
-            return !hasLocal && !hasGlobal;
-          });
-          if (missingOutputs.length === 0) {
-            stepStatuses.set(step.name, globalStatus);
-            processedSteps.add(step.name);
-            if (globalStatus.variables) {
-              Object.assign(variables, globalStatus.variables);
-            }
-            continue;
-          }
-        } else {
-          stepStatuses.set(step.name, globalStatus);
-          processedSteps.add(step.name);
-          if (globalStatus.variables) {
-            Object.assign(variables, globalStatus.variables);
-          }
-          continue;
-        }
+    const missing = step.outputs?.some((o) => {
+      const hasLocal = Object.prototype.hasOwnProperty.call(variables, o);
+      const hasGlobal = status.variables && Object.prototype.hasOwnProperty.call(status.variables, o);
+      return !hasLocal && !hasGlobal;
+    });
+    if (!missing) {
+      stepStatuses.set(step.name, status);
+      if (status.variables) {
+        Object.assign(variables, status.variables);
       }
-
-      if (!areDependenciesMet(step)) {
-        continue;
-      }
-
-      if (!isAuthMet(step)) {
-        stepStatuses.set(step.name, { status: "pending", logs: [] });
-        processedSteps.add(step.name);
-        continue;
-      }
-
-      if (step.manual) {
-        stepStatuses.set(step.name, { status: "pending", logs: [] });
-        processedSteps.add(step.name);
-        continue;
-      }
-
-      if (step.inputs && step.inputs.length > 0) {
-        const missingInputs = step.inputs.filter((i) => !Object.prototype.hasOwnProperty.call(variables, i));
-        if (missingInputs.length > 0) {
-          stepStatuses.set(step.name, { status: "pending", logs: [] });
-          processedSteps.add(step.name);
-          continue;
-        }
-      }
-
-      const existingGlobalStatus = await getAllGlobalStepStatuses();
-      const currentGlobalStatus = Object.prototype.hasOwnProperty.call(existingGlobalStatus, step.name)
-        ? existingGlobalStatus[step.name as keyof typeof existingGlobalStatus]
-        : undefined;
-      if (currentGlobalStatus && currentGlobalStatus.status === "failed") {
-        stepStatuses.set(step.name, currentGlobalStatus);
-        processedSteps.add(step.name);
-        continue;
-      }
-
-      const logs: LogEntry[] = [];
-      const result = await runStepActions(step, variables, tokens, (log) => logs.push(log), true);
-      if (result.success) {
-        Object.assign(variables, result.extractedVariables);
-        for (const [k, v] of Object.entries(result.extractedVariables)) {
-          await updateGlobalVariable(k, v);
-        }
-        stepStatuses.set(step.name, {
-          status: "completed",
-          logs,
-          result: result.data,
-          completedAt: Date.now(),
-        });
-        await updateGlobalStepStatus(step.name, stepStatuses.get(step.name) as StepStatus);
-      } else {
-        stepStatuses.set(step.name, { status: "pending", logs });
-      }
-      processedSteps.add(step.name);
+      return true;
     }
-  }
+    return false;
+  };
+
+  const shouldSkipStep = (step: Step): boolean =>
+    !areDependenciesMet(step) ||
+    !isAuthMet(step) ||
+    step.manual ||
+    (step.inputs && step.inputs.some((i) => !Object.prototype.hasOwnProperty.call(variables, i)));
+
+  const verifyStep = async (step: Step): Promise<void> => {
+    const latest = await getAllGlobalStepStatuses();
+    const existing = latest[step.name as keyof typeof latest];
+    if (existing && existing.status === "failed") {
+      stepStatuses.set(step.name, existing);
+      return;
+    }
+    const logs: LogEntry[] = [];
+    const result = await runStepActions(step, variables, tokens, (log) => logs.push(log), true);
+    if (result.success) {
+      Object.assign(variables, result.extractedVariables);
+      for (const [k, v] of Object.entries(result.extractedVariables)) {
+        await updateGlobalVariable(k, v);
+      }
+      stepStatuses.set(step.name, {
+        status: "completed",
+        logs,
+        result: result.data,
+        completedAt: Date.now(),
+      });
+      await updateGlobalStepStatus(step.name, stepStatuses.get(step.name) as StepStatus);
+    } else {
+      stepStatuses.set(step.name, { status: "pending", logs });
+    }
+  };
 
   for (const step of workflow.steps) {
-    if (!stepStatuses.has(step.name)) {
-      stepStatuses.set(step.name, { status: "pending", logs: [] });
+    const globalStatus = globalStepStatuses[step.name as keyof typeof globalStepStatuses];
+    if (applyGlobalStatus(step, globalStatus)) {
+      continue;
     }
-  }
 
-  if (iteration >= maxIterations) {
-    console.warn(`[Initial Load] Stopped processing after ${iteration} iterations to prevent infinite loop`);
+    if (shouldSkipStep(step)) {
+      stepStatuses.set(step.name, pendingStatus);
+      continue;
+    }
+
+    await verifyStep(step);
   }
 
   return stepStatuses;
@@ -236,8 +190,42 @@ export async function getWorkflowData(
     `[Initial Load] Starting getWorkflowData (forceRefresh: ${forceRefresh})`,
   );
 
-  const googleToken = await getToken("google");
-  const microsoftToken = await getToken("microsoft");
+  let googleToken = await getToken("google");
+  let microsoftToken = await getToken("microsoft");
+
+  // Try to refresh expired tokens automatically
+  for (const provider of ["google", "microsoft"] as const) {
+    const token = provider === "google" ? googleToken : microsoftToken;
+    if (token && isTokenExpired(token) && token.refreshToken) {
+      console.log(
+        `[Workflow Data] ${provider} token expired, attempting auto-refresh...`,
+      );
+      try {
+        const refreshedToken = await refreshAccessToken(
+          provider,
+          token.refreshToken,
+        );
+        await setToken(provider, refreshedToken);
+
+        // Update the local reference
+        if (provider === "google") {
+          googleToken = refreshedToken;
+        } else {
+          microsoftToken = refreshedToken;
+        }
+
+        console.log(
+          `[Workflow Data] ${provider} token auto-refreshed successfully`,
+        );
+      } catch (error) {
+        console.error(
+          `[Workflow Data] ${provider} token auto-refresh failed:`,
+          error,
+        );
+        // Continue with expired token - UI will show re-auth needed
+      }
+    }
+  }
 
   const tokens = {
     google: googleToken ?? undefined,
@@ -273,10 +261,14 @@ export async function getWorkflowData(
       google: {
         authenticated: !!googleToken,
         scopes: googleToken?.scope || [],
+        expiresAt: googleToken?.expiresAt,
+        hasRefreshToken: !!googleToken?.refreshToken,
       },
       microsoft: {
         authenticated: !!microsoftToken,
         scopes: microsoftToken?.scope || [],
+        expiresAt: microsoftToken?.expiresAt,
+        hasRefreshToken: !!microsoftToken?.refreshToken,
       },
     },
   };
@@ -293,10 +285,14 @@ export async function getAuthStatus(): Promise<AuthState> {
     google: {
       authenticated: !!googleToken,
       scopes: googleToken?.scope || [],
+      expiresAt: googleToken?.expiresAt,
+      hasRefreshToken: !!googleToken?.refreshToken,
     },
     microsoft: {
       authenticated: !!microsoftToken,
       scopes: microsoftToken?.scope || [],
+      expiresAt: microsoftToken?.expiresAt,
+      hasRefreshToken: !!microsoftToken?.refreshToken,
     },
   };
 }

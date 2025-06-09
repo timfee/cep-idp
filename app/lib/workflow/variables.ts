@@ -1,7 +1,6 @@
 import { JSONPath } from "jsonpath-plus";
 import { randomBytes } from "crypto";
-import { escapeRegExp } from "../utils";
-import { STRING_SPLIT_PAIR, EXPECTED_ARG_COUNT_PAIR } from "./constants";
+import { EXPECTED_ARG_COUNT_PAIR, WILDCARD_SUFFIX_LENGTH } from "./constants";
 
 export function extractCertificateFromXml(xmlString: string): string {
   const signingBlockMatch = xmlString.match(
@@ -287,86 +286,89 @@ export function extractValueFromPath(obj: unknown, path: string): unknown {
 }
 
 function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
-  const findByMatch = expression.match(
-    /^findBy\(([^,]+),\s*'([^']+)',\s*([^\)]+)\)(?:\.(.*))?$/,
-  );
+  const prefix = "findBy(";
+  if (expression.startsWith(prefix)) {
+    const closing = expression.indexOf(")", prefix.length);
+    if (closing !== -1) {
+      const inside = expression.slice(prefix.length, closing);
+      const [arrayPathRaw, propertyRaw, valueRaw] = inside.split(/,\s*/);
+      const remainingPath = expression.slice(closing + 1).replace(/^\./, "");
+      const arrayPath = arrayPathRaw.trim();
+      const property = propertyRaw.replace(/^'/, "").replace(/'$/, "");
+      const array = evaluateSimplePath(obj, arrayPath);
 
-  if (findByMatch) {
-    const [, arrayPath, property, value, remainingPath] = findByMatch;
-    const array = evaluateSimplePath(obj, arrayPath.trim());
+      if (Array.isArray(array)) {
+        let targetValue: string | boolean = valueRaw.trim().replace(/['\"]/g, "");
+        if (valueRaw.trim() === "true") {
+          targetValue = true;
+        } else if (valueRaw.trim() === "false") {
+          targetValue = false;
+        }
 
-    if (Array.isArray(array)) {
-      const targetValue =
-        value.trim() === "true"
-          ? true
-          : value.trim() === "false"
-            ? false
-            : value.replace(/['"]/g, "");
-
-      const found = array.find((item: unknown) => {
-        return (
+        const found = array.find((item: unknown) =>
           item &&
           typeof item === "object" &&
           item !== null &&
           Object.prototype.hasOwnProperty.call(item, property) &&
-          (item as Record<string, unknown>)[property as keyof typeof item] ===
-            targetValue
+          (item as Record<string, unknown>)[property as keyof typeof item] === targetValue,
         );
-      });
 
-      if (found && remainingPath) {
-        return evaluateSimplePath(found, remainingPath);
+        if (found && remainingPath) {
+          return evaluateSimplePath(found, remainingPath);
+        }
+
+        return found;
       }
-
-      return found;
     }
   }
-
   return undefined;
 }
 
 function evaluatePredicatePath(obj: unknown, path: string): unknown {
-  const predicateMatch = path.match(/^([^[]+)\[([^=]+)=([^\]]+)\](?:\.(.*))?$/);
-
-  if (predicateMatch) {
-    const [, arrayPath, property, value, remainingPath] = predicateMatch;
-    const array = evaluateSimplePath(obj, arrayPath.trim());
-
-    if (Array.isArray(array)) {
-      const targetValue =
-        value.trim() === "true"
-          ? true
-          : value.trim() === "false"
-            ? false
-            : value.replace(/['"]/g, "");
-
-      const found = array.find((item: unknown) => {
-        const trimmedProperty = property.trim();
-        return (
-          item &&
-          typeof item === "object" &&
-          item !== null &&
-          Object.prototype.hasOwnProperty.call(item, trimmedProperty) &&
-          (item as Record<string, unknown>)[
-            trimmedProperty as keyof typeof item
-          ] === targetValue
-        );
-      });
-
-      if (found && remainingPath) {
-        return evaluateSimplePath(found, remainingPath.trim());
-      }
-
-      return found;
-    }
+  const startBracket = path.indexOf("[");
+  const endBracket = path.indexOf("]");
+  const eqPos = path.indexOf("=", startBracket);
+  if (startBracket === -1 || endBracket === -1 || eqPos === -1) {
+    return undefined;
   }
 
-  return undefined;
+  const arrayPath = path.slice(0, startBracket);
+  const property = path.slice(startBracket + 1, eqPos);
+  const valuePart = path.slice(eqPos + 1, endBracket);
+  const remainingPath = path.slice(endBracket + 1).replace(/^\./, "");
+
+  const array = evaluateSimplePath(obj, arrayPath.trim());
+  if (!Array.isArray(array)) return undefined;
+
+  let targetValue: string | boolean = valuePart.replace(/['"]/g, "");
+  if (valuePart.trim() === "true") {
+    targetValue = true;
+  } else if (valuePart.trim() === "false") {
+    targetValue = false;
+  }
+
+  const found = array.find((item: unknown) => {
+    const trimmedProperty = property.trim();
+    return (
+      item &&
+      typeof item === "object" &&
+      item !== null &&
+      Object.prototype.hasOwnProperty.call(item, trimmedProperty) &&
+      (item as Record<string, unknown>)[trimmedProperty as keyof typeof item] ===
+        targetValue
+    );
+  });
+
+  if (found && remainingPath) {
+    return evaluateSimplePath(found, remainingPath.trim());
+  }
+
+  return found;
 }
 
 function evaluateSimplePath(obj: unknown, path: string): unknown {
   if (path.startsWith("$")) {
-    path = path.substring(2);
+    path = path.substring(WILDCARD_SUFFIX_LENGTH);
   }
 
   const parts = path.split(".");
@@ -412,16 +414,31 @@ function hasDomainsArray(
   );
 }
 
+type ValidatorFunction = (val: string) => boolean;
+
+function isValidDomain(value: string): boolean {
+  if (!value.includes(".")) return false;
+  const parts = value.split(".");
+  if (parts.some((p) => p.trim() === "")) return false;
+  const tld = parts[parts.length - 1];
+  return /^[A-Za-z]{2,}$/.test(tld);
+}
+
+const VALIDATOR_FUNCTIONS: Record<string, ValidatorFunction> = {
+  "^C[0-9a-f]{10,}$|^my_customer$": (val) =>
+    /^C[0-9a-f]{10,}$|^my_customer$/.test(val),
+  "^([\\w-]+\\.)+[A-Za-z]{2,}$": isValidDomain,
+};
+
 export function validateVariable(value: string, validator?: string): boolean {
   if (!validator) return true;
 
-  try {
-  const regex = new RegExp(escapeRegExp(validator));
-    return regex.test(value);
-  } catch (error) {
-    console.error("Invalid regex validator:", validator, error);
+  const fn = VALIDATOR_FUNCTIONS[validator];
+  if (!fn) {
+    console.error("Unknown validator pattern:", validator);
     return false;
   }
+  return fn(value);
 }
 
 export function extractMissingVariables(
@@ -430,7 +447,7 @@ export function extractMissingVariables(
 ): string[] {
   const missing: string[] = [];
 
-  const matches = template.matchAll(/\{([^}]+?)\}/g);
+  const matches = template.matchAll(/\{([^{}]+)\}/g);
 
   for (const match of matches) {
     const expression = match[1];

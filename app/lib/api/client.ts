@@ -1,4 +1,5 @@
 import { isTokenExpired, refreshAccessToken } from "../auth/oauth";
+import { setToken } from "../auth/tokens";
 import { substituteVariables, Token } from "../workflow";
 import { WORKFLOW_CONSTANTS } from "../workflow/constants";
 import { ApiRequestOptions } from "./types";
@@ -47,8 +48,35 @@ async function handleAuthenticatedRequest(options: ApiRequestOptions): Promise<u
     throw new Error(`No token available for connection: ${endpoint.conn}`);
   }
 
+  // Check and refresh token if needed
   if (isTokenExpired(token) && token.refreshToken && provider) {
-    token = await refreshAccessToken(provider, token.refreshToken);
+    try {
+      console.log(
+        `[API Client] Token expired for ${provider}, attempting refresh...`,
+      );
+      const refreshedToken = await refreshAccessToken(
+        provider,
+        token.refreshToken,
+      );
+
+      // CRITICAL: Persist the refreshed token
+      await setToken(provider, refreshedToken);
+
+      // Use the refreshed token for this request
+      token = refreshedToken;
+
+      console.log(`[API Client] Token refreshed successfully for ${provider}`);
+    } catch (refreshError) {
+      console.error(
+        `[API Client] Token refresh failed for ${provider}:`,
+        refreshError,
+      );
+
+      // Throw a specific error that indicates re-authentication is needed
+      throw new Error(
+        `Authentication expired for ${provider}. Please re-authenticate.`,
+      );
+    }
   }
 
   const path = substituteVariables(endpoint.path, variables, { throwOnMissing: throwOnMissingVars });

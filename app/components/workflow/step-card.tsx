@@ -4,7 +4,7 @@ import { executeWorkflowStep } from "@/app/actions/workflow-execution";
 import { cn } from "@/app/lib/utils";
 import { LogEntry, Step, StepStatus } from "@/app/lib/workflow";
 import { PasswordDisplay } from "./password-display";
-import { ManualStepModal } from "./manual-step-modal";
+import { ManualStepDialog } from "./manual-step-dialog";
 import {
   AlertTriangle,
   CheckCircle,
@@ -28,6 +28,7 @@ interface StepCardProps {
   status: StepStatus;
   canExecute: boolean;
   isAuthValid: boolean;
+  variables: Record<string, string>;
 }
 
 export function StepCard({
@@ -35,6 +36,7 @@ export function StepCard({
   status,
   canExecute,
   isAuthValid,
+  variables,
 }: StepCardProps) {
   const [isPending, startTransition] = useTransition();
   const [localExecutionResult, setLocalExecutionResult] = useState<{
@@ -42,7 +44,7 @@ export function StepCard({
     error?: string;
     logs?: LogEntry[];
   }>({ status: null });
-  const [showManualModal, setShowManualModal] = useState(false);
+  const [showManualDialog, setShowManualDialog] = useState(false);
 
   // Use local execution result if available, otherwise use prop status
   const effectiveStatus = localExecutionResult.status
@@ -145,15 +147,16 @@ export function StepCard({
               <div className="flex items-center gap-2">
                 {step.manual && effectiveStatus.status === "pending" && (
                   <>
-                    <Button onClick={() => setShowManualModal(true)}>
-                      Configure Manually
+                    <Button onClick={() => setShowManualDialog(true)} variant="default">
+                      Start Manual Setup
                     </Button>
-                    <ManualStepModal
+                    <ManualStepDialog
                       step={step}
-                      isOpen={showManualModal}
+                      variables={variables}
+                      isOpen={showManualDialog}
                       onComplete={() => {
-                        setShowManualModal(false);
-                        window.location.reload();
+                        setShowManualDialog(false);
+                        handleExecute(step.name);
                       }}
                     />
                   </>

@@ -74,7 +74,7 @@ async function handleAuthenticatedRequest(
           level: "info",
           message: `Refreshing token for ${provider}, attempt ${refreshAttempts + 1}`,
         });
-        const refreshedToken = await refreshAccessToken(provider, token.refreshToken);
+        const refreshedToken = await refreshAccessToken(provider, token.refreshToken!);
         await setToken(provider, refreshedToken);
         token = refreshedToken;
         break;

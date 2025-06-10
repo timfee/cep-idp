@@ -4,7 +4,8 @@ import { revalidatePath } from "next/cache";
 import { parseWorkflow } from "@/app/lib/workflow";
 import { getToken, setToken } from "@/app/lib/auth/tokens";
 import { refreshAccessToken } from "@/app/lib/auth/oauth";
-import { Provider, LogEntry } from "@/app/lib/workflow/constants";
+import { Provider } from "@/app/lib/workflow/constants";
+import type { LogEntry } from "@/app/lib/workflow/types";
 
 function isValidVariableName(name: string): boolean {
   const workflow = parseWorkflow();

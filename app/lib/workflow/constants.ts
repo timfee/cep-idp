@@ -60,6 +60,7 @@ export const EXPECTED_ARG_COUNT_PAIR = 2;
 export const CRYPTO_IV_LENGTH_BYTES = 16;
 export const CRYPTO_AUTH_TAG_SPLIT_INDEX = 2;
 export const CRYPTO_RANDOM_BYTES_LENGTH = 32;
+export const VARIABLE_DISPLAY_MAX_LENGTH = 20;
 
 export const COOKIE_METADATA_SIZES = {
   PATH: 7,

@@ -18,7 +18,14 @@ import {
   Workflow,
   Action,
 } from "@/app/lib/workflow";
-import { COPY_FEEDBACK_DURATION_MS, WORKFLOW_CONSTANTS, PROVIDERS, STATUS_VALUES } from "@/app/lib/workflow/constants";
+import {
+  COPY_FEEDBACK_DURATION_MS,
+  WORKFLOW_CONSTANTS,
+  PROVIDERS,
+  STATUS_VALUES,
+  STEP_NAMES,
+  VARIABLE_KEYS,
+} from "@/app/lib/workflow/constants";
 import { revalidatePath } from "next/cache";
 
 function applyExtracts(
@@ -46,12 +53,14 @@ function applyExtracts(
     } else {
       const value = extractValueFromPath(response, path);
       if (value != null) {
-        extractedVariables[varName] = String(value);
-        variables[varName] = String(value);
+        const storedValue =
+          typeof value === "object" ? JSON.stringify(value) : String(value);
+        extractedVariables[varName] = storedValue;
+        variables[varName] = storedValue;
         onLog({
           timestamp: Date.now(),
           level: "info",
-          message: `Extracted variable: ${varName} = ${value}`,
+          message: `Extracted variable: ${varName} = ${storedValue}`,
         });
       }
     }
@@ -60,14 +69,6 @@ function applyExtracts(
 
 function areOutputsMissing(step: Step, extracted: Record<string, string>): boolean {
   return !!step.outputs && step.outputs.some((o) => !extracted[o]);
-}
-
-interface StructuredApiError {
-  error: {
-    code: number;
-    status?: string;
-    message: string;
-  };
 }
 
 interface StructuredApiError {
@@ -166,9 +167,11 @@ async function handleActionExecution(
     }
   }
 
+  const generatedCaptures: Record<string, string> = {};
   const payload = action.payload
     ? substituteObject(action.payload, variables, {
         throwOnMissing: !action.fallback,
+        captureGenerated: generatedCaptures,
       })
     : undefined;
 
@@ -183,6 +186,7 @@ async function handleActionExecution(
     throwOnMissingVars: !action.fallback,
     onLog,
   });
+  Object.assign(capturedValues, generatedCaptures);
 
   const method = endpoint.method;
   const baseUrl = workflow.connections[endpoint.conn].base;
@@ -206,9 +210,9 @@ async function handleActionExecution(
     }
   }
 
-  applyExtracts(action, response, variables, extractedVariables, onLog);
   Object.assign(extractedVariables, capturedValues);
   Object.assign(variables, capturedValues);
+  applyExtracts(action, response, variables, extractedVariables, onLog);
 
   if (areOutputsMissing(step, extractedVariables)) {
     onLog({
@@ -320,6 +324,8 @@ export async function runStepActions(
   const extractedVariables: Record<string, string> = {};
   const actionsToRun = filterActions(step, verificationOnly);
 
+  let lastData: unknown = undefined;
+  let success = false;
   for (const action of actionsToRun) {
     try {
       const result = await handleActionExecution(
@@ -333,7 +339,8 @@ export async function runStepActions(
         verificationOnly,
       );
       if (result.success) {
-        return result;
+        success = true;
+        lastData = result.data;
       }
     } catch (error: unknown) {
       const { message: errorMessage, needsReauth, data } = parseApiError(error);
@@ -371,14 +378,15 @@ export async function runStepActions(
           `Resource not found for "${step.name}". This usually means a previous step failed to create the required resource.`,
         );
       } else if (errorMessage.includes("404")) {
-        return { success: false, extractedVariables };
+        success = false;
+        break;
       } else {
         throw new Error(errorMessage);
       }
     }
   }
 
-  return { success: false, extractedVariables };
+  return { success, extractedVariables, data: lastData };
 }
 
 /**

@@ -94,9 +94,17 @@ async function reconstituteStepStatuses(
 }> {
   const stepStatuses = new Map<string, StepStatus>();
   const workingVariables = { ...variables };
-  const manualData = workingVariables.manualStepsState
-    ? JSON.parse(workingVariables.manualStepsState)
-    : { completed: [], completedAt: {} } as { completed: string[]; completedAt: Record<string, number> };
+  let manualData: { completed: string[]; completedAt: Record<string, number> } = {
+    completed: [],
+    completedAt: {},
+  };
+  if (workingVariables.manualStepsState) {
+    try {
+      manualData = JSON.parse(workingVariables.manualStepsState);
+    } catch (error) {
+      console.warn("Failed to parse manualStepsState", error);
+    }
+  }
   const manualCompleted = manualData.completed;
 
   const pendingStatus: StepStatus = { status: STATUS_VALUES.PENDING, logs: [] };

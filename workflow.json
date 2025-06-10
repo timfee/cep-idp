@@ -52,36 +52,48 @@
       "method": "POST",
       "path": "/customer/{customerId}/domains"
     },
+    "admin.listOrgUnits": {
+      "conn": "googleAdmin",
+      "method": "GET",
+      "path": "/customer/{customerId}/orgunits",
+      "qs": { "type": "all" }
+    },
     "admin.listOUAutomation": {
       "conn": "googleAdmin",
       "method": "GET",
       "path": "/customer/{customerId}/orgunits",
       "qs": { "orgUnitPath": "/Automation", "type": "children" }
     },
+    "admin.getOU": {
+      "conn": "googleAdmin",
+      "method": "GET",
+      "path": "/customer/{customerId}/orgunits/{ouPath}"
+    },
     "admin.postOU": {
       "conn": "googleAdmin",
       "method": "POST",
       "path": "/customer/{customerId}/orgunits"
     },
+    "admin.listUsers": {
+      "conn": "googleAdmin",
+      "method": "GET",
+      "path": "/users",
+      "qs": { "customer": "{customerId}" }
+    },
     "admin.getUser": {
       "conn": "googleAdmin",
       "method": "GET",
-      "path": "/users/{email('azuread-provisioning', primaryDomain)}"
+      "path": "/users/{serviceAccountEmail}"
+    },
+    "admin.updateUser": {
+      "conn": "googleAdmin",
+      "method": "PUT",
+      "path": "/users/{serviceAccountEmail}"
     },
     "admin.postUser": {
       "conn": "googleAdmin",
       "method": "POST",
       "path": "/users"
-    },
-    "admin.listUsers": {
-      "conn": "googleAdmin",
-      "method": "GET",
-      "path": "/users"
-    },
-    "admin.updateUser": {
-      "conn": "googleAdmin",
-      "method": "PUT",
-      "path": "/users/{provisioningUserEmail}"
     },
     "admin.listRoles": {
       "conn": "googleAdmin",
@@ -265,7 +277,10 @@
     },
     "manualStepsState": {
       "_comment": "JSON string storing completed manual steps"
-    }
+    },
+    "ouPath": {},
+    "ouName": {},
+    "serviceAccountEmail": {}
   },
   "steps": [
     {
@@ -295,12 +310,39 @@
     {
       "name": "Create Automation Organizational Unit",
       "inputs": ["primaryDomain"],
+      "outputs": ["ouPath", "ouName"],
       "actions": [
-        { "use": "admin.listOUAutomation", "checker": "exists" },
+        {
+          "use": "admin.listOrgUnits",
+          "interactive": {
+            "type": "select-or-create",
+            "variable": "ouName",
+            "prompt": "Select or create an Organizational Unit for service accounts",
+            "extractOptions": "$.organizationUnits[?(@.parentOrgUnitPath == '/')].name",
+            "default": "Automation",
+            "createOption": {
+              "prompt": "Enter new organizational unit name",
+              "fields": [
+                {
+                  "name": "ouName",
+                  "label": "OU Name",
+                  "default": "Automation"
+                }
+              ]
+            }
+          }
+        },
         {
           "use": "admin.postOU",
-          "payload": { "name": "Automation", "parentOrgUnitPath": "/" },
+          "payload": { "name": "{ouName}", "parentOrgUnitPath": "/" },
+          "condition": "ouName.isNew",
+          "extract": { "ouPath": "$.orgUnitPath" },
           "fallback": true
+        },
+        {
+          "use": "admin.getOU",
+          "extract": { "ouPath": "$.orgUnitPath" },
+          "condition": "ouName_existing"
         }
       ],
       "role": "dirOrgunitRW",
@@ -308,7 +350,7 @@
     },
     {
       "name": "Create Service Account for Microsoft",
-      "inputs": ["primaryDomain"],
+      "inputs": ["primaryDomain", "ouPath"],
       "outputs": [
         "provisioningUserId",
         "provisioningUserEmail",
@@ -320,7 +362,7 @@
           "qs": { "query": "email:*-provisioning*" },
           "interactive": {
             "type": "select-or-create",
-            "variable": "provisioningUserEmail",
+            "variable": "serviceAccountEmail",
             "prompt": "Select existing service account or create new",
             "extractOptions": "$.users[*].primaryEmail",
             "requiresPassword": true,
@@ -328,7 +370,7 @@
               "prompt": "Create new service account",
               "fields": [
                 {
-                  "name": "provisioningUserEmail",
+                  "name": "serviceAccountEmail",
                   "type": "email",
                   "label": "Email Address",
                   "default": "azuread-provisioning@{primaryDomain}",
@@ -346,28 +388,30 @@
         },
         {
           "use": "admin.getUser",
-          "condition": "provisioningUserEmail_existing",
-          "extract": { "provisioningUserId": "$.id" }
+          "extract": {
+            "provisioningUserId": "$.id",
+            "provisioningUserEmail": "$.primaryEmail"
+          },
+          "condition": "serviceAccountEmail_existing"
         },
         {
           "use": "admin.updateUser",
-          "condition": "passwordAction == 'reset'",
-          "payload": { "password": "{generatedPassword}" }
+          "payload": { "password": "{generatedPassword}" },
+          "condition": "passwordAction == 'reset'"
         },
         {
           "use": "admin.postUser",
-          "condition": "provisioningUserEmail.isNew",
           "payload": {
-            "primaryEmail": "{provisioningUserEmail}",
+            "primaryEmail": "{serviceAccountEmail}",
             "name": { "givenName": "Microsoft", "familyName": "Provisioning" },
             "password": "{generatedPassword}",
-            "orgUnitPath": "/Automation"
+            "orgUnitPath": "{ouPath}"
           },
           "extract": {
             "provisioningUserId": "$.id",
-            "provisioningUserEmail": "$.primaryEmail",
-            "generatedPassword": "_generated_password_displayed"
+            "provisioningUserEmail": "$.primaryEmail"
           },
+          "condition": "serviceAccountEmail.isNew",
           "fallback": true
         }
       ],

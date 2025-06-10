@@ -254,7 +254,19 @@ async function handleAuthenticatedRequest(
 
   if (!response.ok) {
     const error = await response.text();
-    throw new Error(`API request failed: ${response.status} - ${error}`);
+    // re-construct the URL in curl format:
+    console.log(
+      "curl -X",
+      endpoint.method,
+      url,
+      Object.entries(requestOptions.headers || {})
+        .map(([key, value]) => `-H "${key}: ${value}"`)
+        .join(" "),
+      finalBody ? `-d '${JSON.stringify(finalBody)}'` : ""
+    );
+    throw new Error(
+      `API request to ${connection.base + " " + endpoint.method + " " + endpoint.path + " Params:" + endpoint.qs} failed: ${response.status} - ${error}`
+    );
   }
 
   const contentType = response.headers.get("content-type");

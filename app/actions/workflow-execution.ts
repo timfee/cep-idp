@@ -19,6 +19,7 @@ import {
   Token,
   Workflow,
   Action,
+  Endpoint,
 } from "@/app/lib/workflow";
 import {
   COPY_FEEDBACK_DURATION_MS,
@@ -86,36 +87,91 @@ function areOutputsMissing(
   return !!step.outputs && step.outputs.some((o) => !extracted[o]);
 }
 
-import {
-  ApiError,
-  isStructuredError,
-  assertNever,
-} from "@/app/lib/workflow/error-types";
-
-function parseApiError(error: unknown): ApiError {
-  if (error instanceof Error) {
-    const message = error.message;
-    try {
-      const start = message.indexOf("{");
-      const end = message.lastIndexOf("}");
-      if (start !== -1 && end !== -1) {
-        const parsed = JSON.parse(message.slice(start, end + 1));
-        if (isStructuredError(parsed)) {
-          return {
-            kind: "structured",
-            code: parsed.error.code,
-            status: parsed.error.status,
-            message: parsed.error.message,
-          };
-        }
-      }
-    } catch {
-      // Fall through to text error
-    }
-    return { kind: "text", message };
+function validateActionPrerequisites(
+  action: Action,
+  endpoint: Endpoint | undefined,
+  variables: Record<string, string>,
+  onLog: (entry: LogEntry) => void,
+): { isValid: boolean; missingVars?: string[] } {
+  if (!endpoint) {
+    onLog({
+      timestamp: Date.now(),
+      level: "error",
+      message: ERROR_MESSAGES.ENDPOINT_NOT_FOUND(action.use),
+    });
+    return { isValid: false };
   }
-  return { kind: "unknown", data: error };
+
+  const missingVars = endpoint.path
+    ? extractMissingVariables(endpoint.path, variables)
+    : [];
+  if (missingVars.length > 0) {
+    onLog({
+      timestamp: Date.now(),
+      level: "info",
+      message: `Skipping action ${action.use} - missing variables: ${missingVars.join(", ")}`,
+    });
+    return { isValid: false, missingVars };
+  }
+
+  return { isValid: true };
 }
+
+function prepareActionPayload(
+  action: Action,
+  variables: Record<string, string>,
+): { payload: unknown; capturedValues: Record<string, string> } {
+  const capturedValues: Record<string, string> = {};
+  const payload = action.payload
+    ? substituteObject(action.payload, variables, {
+        throwOnMissing: !action.fallback,
+        captureGenerated: capturedValues,
+      })
+    : undefined;
+  return { payload, capturedValues };
+}
+
+async function processActionResponse(
+  action: Action,
+  response: unknown,
+  variables: Record<string, string>,
+  extractedVariables: Record<string, string>,
+  allCapturedValues: Record<string, string>,
+  onLog: (entry: LogEntry) => void,
+): Promise<{ success: boolean; extractedVariables: Record<string, string> }> {
+  if (action.longRunning) {
+    onLog({
+      timestamp: Date.now(),
+      level: "info",
+      message: "Waiting for long-running operation...",
+    });
+    await new Promise((resolve) =>
+      setTimeout(resolve, COPY_FEEDBACK_DURATION_MS),
+    );
+  }
+
+  if (action.checker && response !== null) {
+    const verified = evaluateChecker(action, response);
+    if (!verified && !action.fallback) {
+      return { success: false, extractedVariables };
+    }
+  }
+
+  Object.assign(extractedVariables, allCapturedValues);
+  Object.assign(variables, allCapturedValues);
+  applyExtracts(
+    action,
+    response,
+    variables,
+    extractedVariables,
+    onLog,
+    allCapturedValues,
+  );
+
+  return { success: true, extractedVariables };
+}
+
+import { assertNever, parseApiError } from "@/app/lib/workflow/error-types";
 
 /**
  * Run actions for a step (simplified approach)
@@ -135,12 +191,13 @@ async function handleActionExecution(
   data?: unknown;
 }> {
   const endpoint = workflow.endpoints[action.use];
-  if (!endpoint) {
-    onLog({
-      timestamp: Date.now(),
-      level: "error",
-      message: ERROR_MESSAGES.ENDPOINT_NOT_FOUND(action.use),
-    });
+  const prereq = validateActionPrerequisites(
+    action,
+    endpoint,
+    variables,
+    onLog,
+  );
+  if (!prereq.isValid || !endpoint) {
     return { success: false, extractedVariables };
   }
 
@@ -154,25 +211,11 @@ async function handleActionExecution(
     message: `[DEBUG] Variables available for ${action.use}: ${Object.keys(variables).join(", ")}`,
   });
 
-  const missingVars = endpoint.path
-    ? extractMissingVariables(endpoint.path, variables)
-    : [];
-  if (missingVars.length > 0) {
-    onLog({
-      timestamp: Date.now(),
-      level: "info",
-      message: `Skipping action ${action.use} - missing variables: ${missingVars.join(", ")}`,
-    });
-    return { success: false, extractedVariables };
-  }
 
-  const generatedCaptures: Record<string, string> = {};
-  const payload = action.payload
-    ? substituteObject(action.payload, variables, {
-        throwOnMissing: !action.fallback,
-        captureGenerated: generatedCaptures,
-      })
-    : undefined;
+  const { payload, capturedValues: generatedCaptures } = prepareActionPayload(
+    action,
+    variables,
+  );
 
   onLog({
     timestamp: Date.now(),
@@ -209,44 +252,25 @@ async function handleActionExecution(
   const fullPath = substituteVariables(endpoint.path, variables);
   const fullUrl = `${baseUrl}${fullPath}`;
 
-  const condensedMessage = `${method} ${fullPath}`;
-  const fullResponseData = { fullUrl, response };
-
   onLog({
     timestamp: Date.now(),
     level: "info",
-    message: condensedMessage,
-    data: fullResponseData,
+    message: `${method} ${fullPath}`,
+    data: { fullUrl, response },
   });
 
-  if (action.longRunning) {
-    onLog({
-      timestamp: Date.now(),
-      level: "info",
-      message: "Waiting for long-running operation...",
-    });
-    await new Promise((resolve) =>
-      setTimeout(resolve, COPY_FEEDBACK_DURATION_MS),
-    );
-  }
-
-  if (action.checker && response !== null) {
-    const verified = evaluateChecker(action, response);
-    if (!verified && !action.fallback) {
-      return { success: false, extractedVariables };
-    }
-  }
-
-  Object.assign(extractedVariables, allCapturedValues);
-  Object.assign(variables, allCapturedValues);
-  applyExtracts(
+  const processResult = await processActionResponse(
     action,
     response,
     variables,
     extractedVariables,
-    onLog,
     allCapturedValues,
+    onLog,
   );
+
+  if (!processResult.success) {
+    return { success: false, extractedVariables };
+  }
 
   if (areOutputsMissing(step, extractedVariables)) {
     onLog({
@@ -359,6 +383,16 @@ async function processStepExecution(
   return status;
 }
 
+/**
+ * Execute all actions for a workflow step.
+ *
+ * @param step - Step definition to execute
+ * @param variables - Current workflow variables
+ * @param tokens - Authentication tokens
+ * @param onLog - Callback for log events
+ * @param verificationOnly - Whether to execute only verification actions
+ * @returns Result of execution and any extracted variables
+ */
 export async function runStepActions(
   step: Step,
   variables: Record<string, string>,
@@ -473,6 +507,12 @@ export async function runStepActions(
 /**
  * Execute a workflow step
  */
+/**
+ * Execute a single step of the workflow.
+ *
+ * @param stepName - Name of the step to execute
+ * @returns Result status and updated variables
+ */
 export async function executeWorkflowStep(stepName: string): Promise<{
   success: boolean;
   status?: StepStatus;
@@ -556,6 +596,11 @@ export async function executeWorkflowStep(stepName: string): Promise<{
 
 /**
  * Skip a workflow step
+ */
+/**
+ * Mark the current step as skipped.
+ *
+ * @returns Whether the skip succeeded
  */
 export async function skipWorkflowStep(): Promise<{
   success: boolean;

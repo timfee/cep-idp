@@ -1,6 +1,6 @@
 import { encrypt, generateState } from "@/app/lib/auth/crypto";
 import { generateAuthUrl } from "@/app/lib/auth/oauth";
-import { PROVIDERS, Provider } from "@/app/lib/workflow/constants";
+import { PROVIDERS, Provider, OAUTH_STATE_COOKIE_NAME } from "@/app/lib/workflow/constants";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
   };
 
   // Build cookie string
-  let cookieString = `oauth_state=${encrypted}`;
+  let cookieString = `${OAUTH_STATE_COOKIE_NAME}=${encrypted}`;
   cookieString += `; Path=${cookieOptions.path}`;
   cookieString += `; Max-Age=${cookieOptions.maxAge}`;
   cookieString += `; SameSite=${cookieOptions.sameSite}`;

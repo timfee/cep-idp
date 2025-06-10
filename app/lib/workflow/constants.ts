@@ -120,6 +120,8 @@ export const WORKFLOW_CONSTANTS = {
   PASSWORD_EXTRACTION_KEY: "_generated_password_displayed",
 };
 
+export const OAUTH_STATE_COOKIE_NAME = "oauth_state";
+
 export const VARIABLE_KEYS = {
   GENERATED_PASSWORD: "generatedPassword",
   TENANT_ID: "tenantId",
@@ -156,9 +158,6 @@ export const CONNECTION_IDENTIFIERS = {
   MICROSOFT: "graph",
 } as const;
 
-export const PASSWORD_CHARS =
-  "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
-export const PASSWORD_GENERATOR_REGEX = /randomPassword\((\d+)\)/;
 
 export const LOG_LEVELS = {
   INFO: "info",

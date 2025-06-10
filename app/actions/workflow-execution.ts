@@ -508,7 +508,7 @@ export async function executeWorkflowStep(stepName: string): Promise<{
     await setStoredVariables(updatedVariables);
 
     if (
-      status.status === "completed" &&
+      status.status === STATUS_VALUES.COMPLETED &&
       Object.keys(updatedVariables).length >
         Object.keys(currentData.variables).length
     ) {
@@ -530,7 +530,7 @@ export async function executeWorkflowStep(stepName: string): Promise<{
     revalidatePath("/");
 
     return {
-      success: status.status === "completed",
+      success: status.status === STATUS_VALUES.COMPLETED,
       status,
       variables: updatedVariables,
     };

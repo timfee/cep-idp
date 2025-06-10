@@ -5,9 +5,11 @@ import { Button } from "../ui/button";
 import { RefreshCw, AlertTriangle, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
+import { PROVIDERS } from "@/app/lib/workflow/constants";
+import { TIME } from "@/app/lib/workflow/all-constants";
 
 interface TokenStatusProps {
-  provider: "google" | "microsoft";
+  provider: (typeof PROVIDERS)[keyof typeof PROVIDERS];
   isAuthenticated: boolean;
   expiresAt?: number;
   hasRefreshToken?: boolean;
@@ -24,9 +26,9 @@ export function TokenStatus({
   const [isRefreshing, setIsRefreshing] = useState(false);
   const router = useRouter();
 
-  const MS_IN_MINUTE = 60000;
-  const EXPIRING_SOON_MINUTES = 30;
-  const MINUTES_IN_HOUR = 60;
+  const MS_IN_MINUTE = TIME.MS_IN_MINUTE;
+  const EXPIRING_SOON_MINUTES = TIME.TOKEN_EXPIRING_SOON_MINUTES;
+  const MINUTES_IN_HOUR = TIME.MINUTES_IN_HOUR;
   
   if (!isAuthenticated) return null;
   

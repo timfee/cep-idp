@@ -4,6 +4,7 @@ import React from "react";
 import { StepCard } from "./step-card";
 import type { Workflow, Step, StepStatus } from "@/app/lib/workflow";
 import { isTokenExpired } from "@/app/lib/auth/oauth";
+import { STATUS_VALUES, ROLE_PREFIXES } from "@/app/lib/workflow/constants";
 
 interface WorkflowStepsProps {
   workflow: Workflow;
@@ -26,7 +27,8 @@ export function WorkflowSteps({
     Object.entries(stepStatuses)
       .filter(
         ([, status]) =>
-          status.status === "completed" || status.status === "skipped",
+          status.status === STATUS_VALUES.COMPLETED ||
+          status.status === STATUS_VALUES.SKIPPED,
       )
       .map(([name]) => name),
   );
@@ -43,8 +45,9 @@ export function WorkflowSteps({
 
     const requiredScopes = getRequiredScopes(step);
     const isGoogleStep =
-      step.role.startsWith("dir") || step.role.startsWith("ci");
-    const isMicrosoftStep = step.role.startsWith("graph");
+      step.role.startsWith(ROLE_PREFIXES.GOOGLE_DIR) ||
+      step.role.startsWith(ROLE_PREFIXES.GOOGLE_CI);
+    const isMicrosoftStep = step.role.startsWith(ROLE_PREFIXES.MICROSOFT);
 
     if (isGoogleStep && authStatus.google.authenticated) {
       const notExpired =
@@ -83,7 +86,7 @@ export function WorkflowSteps({
     <div className="space-y-4">
       {workflow.steps.map((step: Step) => {
         const status = stepStatuses[step.name] || {
-          status: "pending" as const,
+          status: STATUS_VALUES.PENDING,
           logs: [],
         };
 

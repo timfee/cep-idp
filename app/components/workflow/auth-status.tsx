@@ -4,12 +4,12 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { AlertOctagonIcon, BadgeCheckIcon } from "lucide-react";
 import Link from "next/link";
-import { WILDCARD_SUFFIX_LENGTH } from "@/app/lib/workflow/constants";
+import { WILDCARD_SUFFIX_LENGTH, PROVIDERS } from "@/app/lib/workflow/constants";
 import { TokenStatus } from "./token-status";
 import { refreshAuthToken } from "@/app/actions/workflow-state";
 
 interface AuthStatusProps {
-  provider: "google" | "microsoft";
+  provider: (typeof PROVIDERS)[keyof typeof PROVIDERS];
   isAuthenticated: boolean;
   scopes: string[];
   requiredScopes: string[];
@@ -85,7 +85,7 @@ export function AuthStatus({
   expiresAt,
   hasRefreshToken,
 }: AuthStatusProps) {
-  const displayName = provider === "google" ? "Google" : "Microsoft";
+  const displayName = provider === PROVIDERS.GOOGLE ? "Google" : "Microsoft";
   const hasAllScopes = hasAllRequiredScopes(scopes, requiredScopes);
   const missingScopes = requiredScopes.filter(
     (required) => !scopes.some((granted) => scopeImplies(granted, required)),

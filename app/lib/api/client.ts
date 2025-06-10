@@ -2,6 +2,7 @@ import { isTokenExpired, refreshAccessToken } from "../auth/oauth";
 import { setToken } from "../auth/tokens";
 import { substituteVariables, substituteObject, Token } from "../workflow";
 import { WORKFLOW_CONSTANTS, PROVIDERS, Provider } from "../workflow/constants";
+import { CONNECTION_IDENTIFIERS, HTTP_METHODS_WITH_BODY, HttpMethod } from "../workflow/all-constants";
 import { ApiRequestOptions } from "./types";
 
 async function handlePublicRequest(
@@ -51,10 +52,13 @@ async function handleAuthenticatedRequest(
   let token: Token | null = null;
   let provider: Provider | null = null;
 
-  if (endpoint.conn.includes("google") || endpoint.conn.includes("CI")) {
+  if (
+    endpoint.conn.includes(CONNECTION_IDENTIFIERS.GOOGLE) ||
+    endpoint.conn.includes(CONNECTION_IDENTIFIERS.GOOGLE_CI)
+  ) {
     token = tokens.google ?? null;
     provider = PROVIDERS.GOOGLE;
-  } else if (endpoint.conn.includes("graph")) {
+  } else if (endpoint.conn.includes(CONNECTION_IDENTIFIERS.MICROSOFT)) {
     token = tokens.microsoft ?? null;
     provider = PROVIDERS.MICROSOFT;
   }
@@ -67,7 +71,7 @@ async function handleAuthenticatedRequest(
   if (isTokenExpired(token) && token.refreshToken && provider) {
     let refreshAttempts = 0;
 
-    while (refreshAttempts < 2) {
+    while (refreshAttempts < WORKFLOW_CONSTANTS.MAX_FUNCTION_UPDATES - 2) {
       try {
         onLog?.({
           timestamp: Date.now(),
@@ -86,7 +90,7 @@ async function handleAuthenticatedRequest(
           message: `Token refresh attempt ${refreshAttempts} failed for ${provider}`,
           data: error,
         });
-        if (refreshAttempts === 2) {
+        if (refreshAttempts === WORKFLOW_CONSTANTS.MAX_FUNCTION_UPDATES - 2) {
           throw new Error(
             `${PROVIDERS[provider.toUpperCase() as keyof typeof PROVIDERS]} authentication expired. Please re-authenticate.`
           );
@@ -127,7 +131,7 @@ async function handleAuthenticatedRequest(
       })
     : undefined;
 
-  if (finalBody && ["POST", "PATCH", "PUT"].includes(endpoint.method)) {
+  if (finalBody && HTTP_METHODS_WITH_BODY.includes(endpoint.method as HttpMethod)) {
     requestOptions.body = JSON.stringify(finalBody);
   }
 

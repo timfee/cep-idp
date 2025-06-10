@@ -41,12 +41,19 @@ export async function setStoredVariables(
   onLog?: (entry: LogEntry) => void,
 ): Promise<void> {
   const encrypted = encrypt(JSON.stringify(vars));
-  await setChunkedCookie(
+  const result = await setChunkedCookie(
     WORKFLOW_CONSTANTS.VARIABLES_COOKIE_NAME,
     encrypted,
     { ...COOKIE_OPTIONS, maxAge: WORKFLOW_CONSTANTS.VARIABLES_COOKIE_MAX_AGE },
     onLog,
   );
+  if (!result.success) {
+    onLog?.({
+      timestamp: Date.now(),
+      level: "error",
+      message: result.error || "Failed to set cookie",
+    });
+  }
 }
 
 export async function clearStoredVariables(

@@ -18,7 +18,9 @@ import {
   STATUS_VALUES,
   VARIABLE_KEYS,
 } from "@/app/lib/workflow/constants";
+import { ROLE_PREFIXES } from "@/app/lib/workflow/all-constants";
 import { getStoredVariables, setStoredVariables } from "@/app/lib/workflow";
+import { hasOwnProperty } from "@/app/lib/utils";
 import { runStepActions } from "./workflow-execution";
 import { refreshWorkflowState } from "./workflow-state";
 
@@ -49,7 +51,7 @@ async function initializeVariables(
 ): Promise<Record<string, string>> {
   const vars: Record<string, string> = {};
   for (const [name, def] of Object.entries(workflow.variables)) {
-    if (!Object.prototype.hasOwnProperty.call(vars, name)) {
+    if (!hasOwnProperty(vars, name)) {
       if (def.default) {
         vars[name] = def.default;
       } else if (def.generator) {
@@ -92,13 +94,23 @@ async function reconstituteStepStatuses(
 }> {
   const stepStatuses = new Map<string, StepStatus>();
   const workingVariables = { ...variables };
+  const manualData = workingVariables.manualStepsState
+    ? JSON.parse(workingVariables.manualStepsState)
+    : { completed: [], completedAt: {} } as { completed: string[]; completedAt: Record<string, number> };
+  const manualCompleted = manualData.completed;
 
   const pendingStatus: StepStatus = { status: STATUS_VALUES.PENDING, logs: [] };
 
-  const areDependenciesMet = (step: Step): boolean => {
+  const areDependenciesMet = (step: Step, manualCompleted: string[]): boolean => {
     if (!step.depends_on) return true;
     return step.depends_on.every((dep) => {
+      const depStep = workflow.steps.find((s) => s.name === dep);
       const local = stepStatuses.get(dep);
+
+      if (depStep?.manual) {
+        return manualCompleted.includes(dep);
+      }
+
       return local
         ? local.status === STATUS_VALUES.COMPLETED ||
             local.status === STATUS_VALUES.SKIPPED
@@ -108,15 +120,13 @@ async function reconstituteStepStatuses(
 
   const isAuthMet = (step: Step): boolean => {
     if (!step.role) return true;
-    const requiredScopes = Object.prototype.hasOwnProperty.call(
-      workflow.roles,
-      step.role,
-    )
+    const requiredScopes = hasOwnProperty(workflow.roles, step.role)
       ? workflow.roles[step.role]
       : [];
     const isGoogleStep =
-      step.role.startsWith("dir") || step.role.startsWith("ci");
-    const isMicrosoftStep = step.role.startsWith("graph");
+      step.role.startsWith(ROLE_PREFIXES.GOOGLE_DIR) ||
+      step.role.startsWith(ROLE_PREFIXES.GOOGLE_CI);
+    const isMicrosoftStep = step.role.startsWith(ROLE_PREFIXES.MICROSOFT);
     if (isGoogleStep && tokens.google != null) {
       return (
         !isTokenExpired(tokens.google) &&
@@ -133,14 +143,10 @@ async function reconstituteStepStatuses(
   };
 
   const shouldSkipStep = (step: Step): boolean =>
-    !areDependenciesMet(step) ||
+    !areDependenciesMet(step, manualCompleted) ||
     !isAuthMet(step) ||
-    !!step.manual ||
-    (step.inputs
-      ? step.inputs.some(
-          (i) => !Object.prototype.hasOwnProperty.call(workingVariables, i),
-        )
-      : false);
+    (!!step.manual && !manualCompleted.includes(step.name)) ||
+    (step.inputs ? step.inputs.some((i) => !hasOwnProperty(workingVariables, i)) : false);
 
   const verifyStep = async (step: Step): Promise<void> => {
     const logs: LogEntry[] = [];
@@ -326,9 +332,7 @@ export async function getWorkflowVariables(): Promise<{
   // Build result with current values and definitions
   for (const [name, def] of Object.entries(workflow.variables)) {
     result[name] = {
-      value: Object.prototype.hasOwnProperty.call(variables, name)
-        ? variables[name]
-        : undefined,
+      value: hasOwnProperty(variables, name) ? variables[name] : undefined,
       definition: def,
       isRequired: requiredVars.has(name),
     };

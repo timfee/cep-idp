@@ -5,10 +5,13 @@ import {
   WILDCARD_SUFFIX_LENGTH,
   VARIABLE_KEYS,
 } from "./constants";
-
-function hasProp(obj: unknown, prop: string): obj is Record<string, unknown> {
-  return typeof obj === "object" && obj !== null && prop in obj;
-}
+import {
+  PASSWORD_CHARS,
+  PASSWORD_GENERATOR_REGEX,
+  VALIDATION_PATTERNS,
+  ERROR_MESSAGES,
+} from "./all-constants";
+import { hasOwnProperty } from "../utils";
 
 export function extractCertificateFromXml(xmlString: string): string {
   const signingBlockMatch = xmlString.match(
@@ -38,8 +41,7 @@ export function extractCertificateFromXml(xmlString: string): string {
 }
 
 export function generatePassword(length: number): string {
-  const chars =
-    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+  const chars = PASSWORD_CHARS;
   const bytes = randomBytes(length);
   let password = "";
 
@@ -51,11 +53,11 @@ export function generatePassword(length: number): string {
 }
 
 export function evaluateGenerator(generator: string): string {
-  const passwordMatch = generator.match(/randomPassword\((\d+)\)/);
+  const passwordMatch = generator.match(PASSWORD_GENERATOR_REGEX);
   if (passwordMatch) {
     return generatePassword(parseInt(passwordMatch[1]));
   }
-  throw new Error(`Unknown generator: ${generator}`);
+  throw new Error(ERROR_MESSAGES.UNKNOWN_GENERATOR(generator));
 }
 
 export function substituteVariables(
@@ -88,7 +90,7 @@ export function substituteVariables(
     }
 
     if (options.throwOnMissing) {
-      throw new Error(`Variable ${expression} not found`);
+      throw new Error(ERROR_MESSAGES.VARIABLE_NOT_FOUND(expression));
     }
 
     console.warn(`Variable ${expression} not found, keeping placeholder`);
@@ -301,12 +303,12 @@ export function extractValueFromPath(obj: unknown, path: string): unknown {
 }
 
 function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
-  const prefix = "findBy(";
+  const prefix = VALIDATION_PATTERNS.FIND_BY_PREFIX;
   if (expression.startsWith(prefix)) {
     const closing = expression.indexOf(")", prefix.length);
     if (closing !== -1) {
       const inside = expression.slice(prefix.length, closing);
-      const [arrayPathRaw, propertyRaw, valueRaw] = inside.split(/,\s*/);
+      const [arrayPathRaw, propertyRaw, valueRaw] = inside.split(VALIDATION_PATTERNS.SPLIT_ARGS);
       const remainingPath = expression.slice(closing + 1).replace(/^\./, "");
       const arrayPath = arrayPathRaw.trim();
       const property = propertyRaw.replace(/^'/, "").replace(/'$/, "");
@@ -321,7 +323,9 @@ function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
         }
 
         const found = array.find(
-          (item) => hasProp(item, property) && item[property] === targetValue,
+          (item) =>
+            hasOwnProperty(item as Record<string, unknown>, property) &&
+            (item as Record<string, unknown>)[property] === targetValue,
         );
 
         if (found && remainingPath) {
@@ -360,7 +364,10 @@ function evaluatePredicatePath(obj: unknown, path: string): unknown {
 
   const found = array.find((item) => {
     const trimmedProperty = property.trim();
-    return hasProp(item, trimmedProperty) && item[trimmedProperty] === targetValue;
+    return (
+      hasOwnProperty(item as Record<string, unknown>, trimmedProperty) &&
+      (item as Record<string, unknown>)[trimmedProperty] === targetValue
+    );
   });
 
   if (found && remainingPath) {
@@ -381,7 +388,7 @@ function evaluateSimplePath(obj: unknown, path: string): unknown {
   for (const part of parts) {
     if (current == null) return undefined;
 
-    if (part.match(/^\d+$/)) {
+    if (part.match(VALIDATION_PATTERNS.DIGITS_ONLY)) {
       const index = parseInt(part, 10);
       if (Array.isArray(current)) {
         current = current[index];
@@ -389,8 +396,8 @@ function evaluateSimplePath(obj: unknown, path: string): unknown {
         return undefined;
       }
     } else {
-      if (hasProp(current, part)) {
-        current = current[part];
+      if (hasOwnProperty(current as Record<string, unknown>, part)) {
+        current = (current as Record<string, unknown>)[part];
       } else {
         return undefined;
       }
@@ -404,7 +411,8 @@ function hasDomainsArray(
   obj: unknown,
 ): obj is { domains: Array<{ isPrimary?: boolean; domainName?: string }> } {
   return (
-    hasProp(obj, "domains") && Array.isArray(obj.domains)
+    hasOwnProperty(obj as Record<string, unknown>, "domains") &&
+    Array.isArray((obj as { domains: unknown }).domains)
   );
 }
 
@@ -419,9 +427,9 @@ function isValidDomain(value: string): boolean {
 }
 
 const VALIDATOR_FUNCTIONS: Record<string, ValidatorFunction> = {
-  "^C[0-9a-f]{10,}$|^my_customer$": (val) =>
-    /^C[0-9a-f]{10,}$|^my_customer$/.test(val),
-  "^([\\w-]+\\.)+[A-Za-z]{2,}$": isValidDomain,
+  [VALIDATION_PATTERNS.CUSTOMER_ID.source]: (val) =>
+    VALIDATION_PATTERNS.CUSTOMER_ID.test(val),
+  [VALIDATION_PATTERNS.DOMAIN.source]: isValidDomain,
 };
 
 export function validateVariable(value: string, validator?: string): boolean {

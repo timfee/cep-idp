@@ -269,6 +269,9 @@
     "generatedPassword": {},
     "tenantId": {
       "_comment": "Microsoft tenant ID from environment configuration"
+    },
+    "manualStepsState": {
+      "_comment": "JSON string storing completed manual steps"
     }
   },
   "steps": [

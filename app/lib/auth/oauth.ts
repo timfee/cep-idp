@@ -1,6 +1,7 @@
 import { env } from "@/app/env";
 import { OAuthConfig, Token, WORKFLOW_CONSTANTS, Provider } from "../workflow";
 import { MS_IN_SECOND, PROVIDERS } from "../workflow/constants";
+import { OAUTH_GRANT_TYPES } from "../workflow/all-constants";
 
 export const googleOAuthConfig: OAuthConfig = {
   clientId: env.GOOGLE_CLIENT_ID,
@@ -84,7 +85,7 @@ export async function exchangeCodeForToken(
     client_secret: config.clientSecret,
     code,
     redirect_uri: redirectUri,
-    grant_type: "authorization_code",
+    grant_type: OAUTH_GRANT_TYPES.AUTHORIZATION_CODE,
   });
 
   const response = await fetch(config.tokenUrl, {
@@ -120,7 +121,7 @@ export async function refreshAccessToken(
     client_id: config.clientId,
     client_secret: config.clientSecret,
     refresh_token: refreshToken,
-    grant_type: "refresh_token",
+    grant_type: OAUTH_GRANT_TYPES.REFRESH_TOKEN,
   });
 
   const response = await fetch(config.tokenUrl, {

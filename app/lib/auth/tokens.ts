@@ -79,11 +79,13 @@ export async function setToken(
   });
 
   try {
-    // Use chunked cookie setter to handle large tokens
-    await setChunkedCookie(cookieName, encrypted, {
+    const result = await setChunkedCookie(cookieName, encrypted, {
       ...COOKIE_OPTIONS,
       maxAge: WORKFLOW_CONSTANTS.TOKEN_COOKIE_MAX_AGE,
     });
+    if (!result.success) {
+      throw new Error(result.error);
+    }
   } catch (err) {
     onLog?.({
       timestamp: Date.now(),

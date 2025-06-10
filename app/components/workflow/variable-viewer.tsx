@@ -13,7 +13,7 @@ import {
   Sparkles,
   FileText,
 } from "lucide-react";
-import { cn } from "@/app/lib/utils";
+import { cn, hasOwnProperty } from "@/app/lib/utils";
 
 interface VariableViewerProps {
   variables: Record<string, string>;
@@ -47,9 +47,9 @@ export function VariableViewer({
   ]);
 
   allVarNames.forEach((key) => {
-    if (Object.prototype.hasOwnProperty.call(variables, key)) {
+    if (hasOwnProperty(variables, key)) {
       definedVars.push([key, variables[key]]);
-    } else if (Object.prototype.hasOwnProperty.call(definitions, key)) {
+    } else if (hasOwnProperty(definitions, key)) {
       undefinedVars.push(key);
     }
   });

@@ -27,6 +27,8 @@ import {
   STEP_NAMES,
   VARIABLE_KEYS,
 } from "@/app/lib/workflow/constants";
+import { safeAsync } from "@/app/lib/workflow/error-handling";
+import { CONNECTION_IDENTIFIERS, ERROR_MESSAGES } from "@/app/lib/workflow/all-constants";
 import { revalidatePath } from "next/cache";
 
 function applyExtracts(
@@ -80,56 +82,33 @@ function areOutputsMissing(
   return !!step.outputs && step.outputs.some((o) => !extracted[o]);
 }
 
-interface StructuredApiError {
-  error: { code: number; status?: string; message: string };
-}
 
-function hasProp<K extends string>(
-  obj: unknown,
-  prop: K,
-): obj is Record<K, unknown> {
-  return typeof obj === "object" && obj !== null && prop in obj;
-}
 
-function isStructuredApiError(obj: unknown): obj is StructuredApiError {
-  if (!hasProp(obj, "error")) return false;
-  const err = obj.error;
-  return (
-    typeof err === "object" && err !== null && "code" in err && "message" in err
-  );
-}
+import { ApiError, isStructuredError, assertNever } from "@/app/lib/workflow/error-types";
 
-function parseApiError(error: unknown): {
-  message: string;
-  needsReauth: boolean;
-  data: unknown;
-} {
-  let errorMessage = error instanceof Error ? error.message : String(error);
-  let apiError: unknown = null;
-  let needsReauth = false;
-  try {
-    const start = errorMessage.indexOf("{");
-    const end = errorMessage.lastIndexOf("}");
-    if (start !== -1 && end !== -1 && end > start) {
-      const parsed = JSON.parse(errorMessage.slice(start, end + 1));
-      if (isStructuredApiError(parsed)) {
-        apiError = parsed;
-        const err = parsed.error;
-        // Include all available fields from the API error to aid debugging
-        errorMessage = JSON.stringify(err);
-        if (
-          err.code === WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED ||
-          err.status === "UNAUTHENTICATED" ||
-          err.message?.includes("Token expired")
-        ) {
-          needsReauth = true;
+function parseApiError(error: unknown): ApiError {
+  if (error instanceof Error) {
+    const message = error.message;
+    try {
+      const start = message.indexOf("{");
+      const end = message.lastIndexOf("}");
+      if (start !== -1 && end !== -1) {
+        const parsed = JSON.parse(message.slice(start, end + 1));
+        if (isStructuredError(parsed)) {
+          return {
+            kind: "structured",
+            code: parsed.error.code,
+            status: parsed.error.status,
+            message: parsed.error.message,
+          };
         }
       }
+    } catch {
+      // Fall through to text error
     }
-  } catch {
-    // ignore
+    return { kind: "text", message };
   }
-  return { message: errorMessage, needsReauth, data: apiError ?? error };
+  return { kind: "unknown", data: error };
 }
 
 /**
@@ -154,7 +133,7 @@ async function handleActionExecution(
     onLog({
       timestamp: Date.now(),
       level: "error",
-      message: `Endpoint not found: ${action.use}`,
+      message: ERROR_MESSAGES.ENDPOINT_NOT_FOUND(action.use),
     });
     return { success: false, extractedVariables };
   }
@@ -195,16 +174,29 @@ async function handleActionExecution(
     message: `Executing action: ${action.use}`,
   });
 
-  const { data: response, capturedValues } = await apiRequest({
-    endpoint,
-    connections: workflow.connections,
-    variables,
-    tokens,
-    body: payload,
-    throwOnMissingVars: !action.fallback,
-    onLog,
-  });
-  Object.assign(capturedValues, generatedCaptures);
+  const apiResult = await safeAsync(
+    () =>
+      apiRequest({
+        endpoint,
+        connections: workflow.connections,
+        variables,
+        tokens,
+        body: payload,
+        throwOnMissingVars: !action.fallback,
+        onLog,
+      }),
+    "Failed to execute API request",
+  );
+
+  if (!apiResult.success) {
+    throw new Error(apiResult.error);
+  }
+
+  const { data: response, capturedValues } = apiResult.data;
+  const allCapturedValues = {
+    ...capturedValues,
+    ...generatedCaptures,
+  };
 
   const method = endpoint.method;
   const baseUrl = workflow.connections[endpoint.conn].base;
@@ -239,15 +231,15 @@ async function handleActionExecution(
     }
   }
 
-  Object.assign(extractedVariables, capturedValues);
-  Object.assign(variables, capturedValues);
+  Object.assign(extractedVariables, allCapturedValues);
+  Object.assign(variables, allCapturedValues);
   applyExtracts(
     action,
     response,
     variables,
     extractedVariables,
     onLog,
-    capturedValues,
+    allCapturedValues,
   );
 
   if (areOutputsMissing(step, extractedVariables)) {
@@ -289,9 +281,7 @@ async function processStepExecution(
     if (step.inputs && step.inputs.length > 0) {
       const missingInputs = step.inputs.filter((input) => !variables[input]);
       if (missingInputs.length > 0) {
-        throw new Error(
-          `Cannot execute "${step.name}". Missing required data: ${missingInputs.join(", ")}. Please complete the previous steps first.`,
-        );
+        throw new Error(ERROR_MESSAGES.MISSING_INPUTS(step.name, missingInputs));
       }
     }
 
@@ -378,6 +368,7 @@ export async function runStepActions(
 
   const workflow = parseWorkflow();
   const extractedVariables: Record<string, string> = {};
+  const workingVariables = { ...variables };
   const actionsToRun = filterActions(step, verificationOnly);
 
   let lastData: unknown = undefined;
@@ -387,7 +378,7 @@ export async function runStepActions(
       const result = await handleActionExecution(
         action,
         step,
-        variables,
+        workingVariables,
         tokens,
         onLog,
         extractedVariables,
@@ -397,15 +388,39 @@ export async function runStepActions(
       if (result.success) {
         success = true;
         lastData = result.data;
+        Object.assign(workingVariables, result.extractedVariables);
+        Object.assign(extractedVariables, result.extractedVariables);
       }
     } catch (error: unknown) {
-      const { message: errorMessage, needsReauth, data } = parseApiError(error);
+      const apiError = parseApiError(error);
+      let errorMessage = "";
+      let needsReauth = false;
+
+      switch (apiError.kind) {
+        case "structured":
+          errorMessage = apiError.message;
+          if (
+            apiError.code === WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED ||
+            apiError.status === "UNAUTHENTICATED"
+          ) {
+            needsReauth = true;
+          }
+          break;
+        case "text":
+          errorMessage = apiError.message;
+          break;
+        case "unknown":
+          errorMessage = "Unknown error";
+          break;
+        default:
+          assertNever(apiError);
+      }
 
       onLog({
         timestamp: Date.now(),
         level: "error",
         message: `Action ${action.use} failed: ${errorMessage}`,
-        data,
+        data: apiError,
       });
 
       // If this is a fallback action, continue to next action
@@ -427,16 +442,12 @@ export async function runStepActions(
         errorMessage.includes("Authentication expired")
       ) {
         const failedEndpoint = workflow.endpoints[action.use];
-        const provider = failedEndpoint.conn.includes("google")
+        const provider = failedEndpoint.conn.includes(CONNECTION_IDENTIFIERS.GOOGLE)
           ? "Google"
           : "Microsoft";
-        throw new Error(
-          `${provider} authentication expired. Please re-authenticate to continue.`,
-        );
+        throw new Error(ERROR_MESSAGES.AUTH_EXPIRED(provider));
       } else if (errorMessage.includes("404") && !verificationOnly) {
-        throw new Error(
-          `Resource not found for "${step.name}". This usually means a previous step failed to create the required resource.`,
-        );
+        throw new Error(ERROR_MESSAGES.RESOURCE_NOT_FOUND(step.name));
       } else if (errorMessage.includes("404")) {
         success = false;
         break;

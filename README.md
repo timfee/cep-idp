@@ -98,3 +98,13 @@ The application guides the CEP Champion through the federation setup, gracefully
 ## 6. Out of Scope / Future Work
 
 - **Delegatable Tasks:** To further streamline collaboration, a future release could introduce a "delegation" feature. A CEP Champion could generate a secure, single-use URL for a specific step (e.g., 'Create Microsoft Enterprise App') and send it to the administrator with the correct permissions. That admin could then authorize the app and complete just that single step without needing access to the full workflow.
+
+## 7. Development Quickstart
+
+Run linting and static verification before submitting patches:
+
+```bash
+npm run lint
+npx tsx verify-fixes.ts
+```
+

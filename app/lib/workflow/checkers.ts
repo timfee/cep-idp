@@ -1,4 +1,5 @@
 import { extractValueFromPath } from "./variables";
+import { CHECKER_TYPES } from "./all-constants";
 
 export function evaluateChecker(
   checker: {
@@ -10,14 +11,14 @@ export function evaluateChecker(
   response: unknown,
 ): boolean {
   switch (checker.checker) {
-    case "exists":
+    case CHECKER_TYPES.EXISTS:
       return response != null;
-    case "fieldTruthy": {
+    case CHECKER_TYPES.FIELD_TRUTHY: {
       if (!checker.field) return false;
       const value = extractValueFromPath(response, checker.field);
       return !!value;
     }
-    case "eq": {
+    case CHECKER_TYPES.EQ: {
       let compareValue: unknown = checker.value;
       if (checker.jsonPath) {
         compareValue = extractValueFromPath(response, checker.jsonPath);

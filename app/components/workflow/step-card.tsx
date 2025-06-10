@@ -1,6 +1,7 @@
 "use client";
 
 import { executeWorkflowStep } from "@/app/actions/workflow-execution";
+import { markManualStepComplete } from "@/app/actions/workflow-state";
 import { cn } from "@/app/lib/utils";
 import { LogEntry, Step, StepStatus } from "@/app/lib/workflow";
 import {
@@ -19,7 +20,7 @@ import {
   Loader2,
   XCircle,
 } from "lucide-react";
-import { useState, useTransition } from "react";
+import { useReducer, useTransition } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -41,6 +42,29 @@ interface StepCardProps {
   variables: Record<string, string>;
 }
 
+type StepCardState = {
+  isExecuting: boolean;
+  executionError?: string;
+};
+
+type StepCardAction =
+  | { type: "EXECUTE_START" }
+  | { type: "EXECUTE_SUCCESS" }
+  | { type: "EXECUTE_FAILURE"; error: string };
+
+function stepCardReducer(state: StepCardState, action: StepCardAction): StepCardState {
+  switch (action.type) {
+    case "EXECUTE_START":
+      return { isExecuting: true };
+    case "EXECUTE_SUCCESS":
+      return { isExecuting: false };
+    case "EXECUTE_FAILURE":
+      return { isExecuting: false, executionError: action.error };
+    default:
+      return state;
+  }
+}
+
 export function StepCard({
   step,
   status,
@@ -49,43 +73,25 @@ export function StepCard({
   variables,
 }: StepCardProps) {
   const [isPending, startTransition] = useTransition();
-  const [localExecutionResult, setLocalExecutionResult] = useState<{
-    status: "failed" | "completed" | null;
-    error?: string;
-    logs?: LogEntry[];
-  }>({ status: null });
-
-  // Use local execution result if available, otherwise use prop status
-  const effectiveStatus = localExecutionResult.status
-    ? {
-        ...status,
-        status: localExecutionResult.status,
-        error: localExecutionResult.error,
-        logs: localExecutionResult.logs || status.logs,
-      }
+  const [state, dispatch] = useReducer(stepCardReducer, { isExecuting: false });
+  const effectiveStatus = state.executionError
+    ? { ...status, status: STATUS_VALUES.FAILED, error: state.executionError }
     : status;
 
   // Debug logging
 
   const handleExecute = (stepName: string) => {
-    // Clear any previous local result
-    setLocalExecutionResult({ status: null });
-
+    dispatch({ type: "EXECUTE_START" });
     startTransition(async () => {
       const result = await executeWorkflowStep(stepName);
-
-      // Update local state with execution result
-      if (result.status) {
-        setLocalExecutionResult({
-          status:
-            result.status.status === STATUS_VALUES.FAILED
-              ? "failed"
-              : "completed",
-          error: result.status.error,
-          logs: result.status.logs,
-        });
+      if (result.status && result.status.status !== STATUS_VALUES.FAILED) {
+        dispatch({ type: "EXECUTE_SUCCESS" });
+      } else if (result.status && result.status.status === STATUS_VALUES.FAILED) {
+        dispatch({ type: "EXECUTE_FAILURE", error: result.status.error || "" });
       } else if (result.error) {
-        setLocalExecutionResult({ status: "failed", error: result.error, logs: [] });
+        dispatch({ type: "EXECUTE_FAILURE", error: result.error });
+      } else {
+        dispatch({ type: "EXECUTE_SUCCESS" });
       }
     });
   };
@@ -216,6 +222,15 @@ export function StepCard({
                       )}
                     </Button>
                   )}
+
+                {step.manual && effectiveStatus.status === STATUS_VALUES.PENDING && (
+                  <Button
+                    onClick={() => markManualStepComplete(step.name)}
+                    variant="outline"
+                  >
+                    Mark as Complete
+                  </Button>
+                )}
 
                 {effectiveStatus.status === STATUS_VALUES.FAILED && (
                   <Button

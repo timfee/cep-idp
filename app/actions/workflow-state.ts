@@ -120,3 +120,19 @@ export async function refreshAuthToken(
     };
   }
 }
+
+export async function markManualStepComplete(stepName: string): Promise<void> {
+  const vars = await getStoredVariables();
+  const state = vars.manualStepsState
+    ? JSON.parse(vars.manualStepsState)
+    : { completed: [], completedAt: {} } as { completed: string[]; completedAt: Record<string, number> };
+
+  if (!state.completed.includes(stepName)) {
+    state.completed.push(stepName);
+    state.completedAt[stepName] = Date.now();
+  }
+
+  vars.manualStepsState = JSON.stringify(state);
+  await setStoredVariables(vars);
+  revalidatePath("/");
+}

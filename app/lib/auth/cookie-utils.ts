@@ -1,5 +1,6 @@
 import { cookies } from "next/headers";
 import { WORKFLOW_CONSTANTS, COOKIE_METADATA_SIZES, LogEntry } from "../workflow";
+import { COOKIE_METADATA_KEYS } from "../workflow/all-constants";
 
 // Safe limit is around 4093 bytes per cookie, but we'll use constant to leave room for cookie metadata
 const MAX_COOKIE_SIZE = WORKFLOW_CONSTANTS.MAX_COOKIE_SIZE;
@@ -37,35 +38,48 @@ export async function setChunkedCookie(
   value: string,
   options: CookieOptions = {},
   onLog?: (entry: LogEntry) => void,
-): Promise<void> {
+): Promise<{ success: boolean; error?: string }> {
   const cookieStore = await cookies();
 
-  // First, clear any existing chunks for this cookie
   await clearChunkedCookie(name);
 
+  const singleSize = estimateCookieSize(name, value, options);
+  if (singleSize <= MAX_COOKIE_SIZE) {
+    try {
+      cookieStore.set(name, value, options);
+      return { success: true };
+    } catch (error) {
+      return { success: false, error: error instanceof Error ? error.message : 'Failed to set cookie' };
+    }
+  }
+
   const chunks = splitIntoChunks(value);
+  const metadata = {
+    [COOKIE_METADATA_KEYS.CHUNKED]: true,
+    [COOKIE_METADATA_KEYS.COUNT]: chunks.length,
+    [COOKIE_METADATA_KEYS.TIMESTAMP]: Date.now(),
+  };
+  const metadataSize = estimateCookieSize(name, JSON.stringify(metadata), options);
+  if (metadataSize > MAX_COOKIE_SIZE) {
+    return { success: false, error: `Metadata too large: ${metadataSize} bytes` };
+  }
 
-  if (chunks.length === 1) {
-    // Value fits in a single cookie
+  const totalSize = chunks.reduce((sum, chunk, i) => {
+    const chunkName = i === 0 ? name : `${name}${CHUNK_DELIMITER}${i}`;
+    return sum + estimateCookieSize(chunkName, chunk, options);
+  }, metadataSize);
 
-    cookieStore.set(name, value, options);
-  } else {
-    // Value needs to be chunked
+  if (totalSize > MAX_COOKIE_SIZE * (chunks.length + 1)) {
+    return { success: false, error: `Data too large: ${totalSize} bytes exceeds maximum` };
+  }
+
+  try {
     onLog?.({
       timestamp: Date.now(),
       level: "info",
       message: `[Cookie Utils] Splitting ${name} into ${chunks.length} chunks`,
     });
-
-    // Set the main cookie with metadata about chunks
-    const metadata = {
-      chunked: true,
-      count: chunks.length,
-      timestamp: Date.now(),
-    };
     cookieStore.set(name, JSON.stringify(metadata), options);
-
-    // Set each chunk
     for (let i = 0; i < chunks.length; i++) {
       const chunkName = `${name}${CHUNK_DELIMITER}${i}`;
       onLog?.({
@@ -75,6 +89,9 @@ export async function setChunkedCookie(
       });
       cookieStore.set(chunkName, chunks[i], options);
     }
+    return { success: true };
+  } catch (error) {
+    return { success: false, error: error instanceof Error ? error.message : 'Failed to set cookie' };
   }
 }
 
@@ -260,4 +277,9 @@ export function estimateCookieSize(
   if (options.domain) size += COOKIE_METADATA_SIZES.DOMAIN + options.domain.length; // ; Domain=
 
   return size;
+}
+
+export function validateCookieSize(name: string, value: string, options: CookieOptions): boolean {
+  const estimatedSize = estimateCookieSize(name, value, options);
+  return estimatedSize <= MAX_COOKIE_SIZE;
 }

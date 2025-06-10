@@ -4,6 +4,7 @@ import { WorkflowSteps } from "./components/workflow/workflow-steps";
 import { VariableViewer } from "./components/workflow/variable-viewer";
 import { DebugTools } from "./components/workflow/debug-tools";
 import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
+import { PROVIDERS, ROLE_PREFIXES } from "@/app/lib/workflow/constants";
 
 export const dynamic = "force-dynamic";
 
@@ -27,7 +28,8 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
           .filter(
             (step) =>
               step.role &&
-              (step.role.startsWith("dir") || step.role.startsWith("ci")),
+              (step.role.startsWith(ROLE_PREFIXES.GOOGLE_DIR) ||
+                step.role.startsWith(ROLE_PREFIXES.GOOGLE_CI)),
           )
           .flatMap((step) => workflow.roles[step.role!] || []),
       ),
@@ -36,7 +38,9 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
     const allRequiredMicrosoftScopes = Array.from(
       new Set(
         workflow.steps
-          .filter((step) => step.role && step.role.startsWith("graph"))
+          .filter(
+            (step) => step.role && step.role.startsWith(ROLE_PREFIXES.MICROSOFT)
+          )
           .flatMap((step) => workflow.roles[step.role!] || []),
       ),
     );
@@ -68,7 +72,7 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
               <section className="space-y-4">
                 <h2 className="text-lg font-medium">Authentication</h2>
                 <AuthStatus
-                  provider="google"
+                  provider={PROVIDERS.GOOGLE}
                   isAuthenticated={auth.google.authenticated}
                   scopes={auth.google.scopes}
                   requiredScopes={allRequiredGoogleScopes}
@@ -76,7 +80,7 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
                   hasRefreshToken={auth.google.hasRefreshToken}
                 />
                 <AuthStatus
-                  provider="microsoft"
+                  provider={PROVIDERS.MICROSOFT}
                   isAuthenticated={auth.microsoft.authenticated}
                   scopes={auth.microsoft.scopes}
                   requiredScopes={allRequiredMicrosoftScopes}

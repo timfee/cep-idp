@@ -4,7 +4,8 @@ import {
   clearChunkedCookie,
 } from "../auth/cookie-utils";
 import { encrypt, decrypt } from "../auth/crypto";
-import { WORKFLOW_CONSTANTS, LogEntry } from "./constants";
+import { WORKFLOW_CONSTANTS } from "./constants";
+import { LogEntry } from "./types";
 
 const COOKIE_OPTIONS = {
   httpOnly: true,

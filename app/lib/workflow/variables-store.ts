@@ -4,7 +4,7 @@ import {
   setChunkedCookie,
   clearChunkedCookie,
   CookieOptions,
-} from "../auth/cookie-server";
+} from "../cookies/server";
 import { encrypt, decrypt } from "../auth/crypto";
 import { WORKFLOW_CONSTANTS } from "./constants";
 import { LogEntry } from "./types";

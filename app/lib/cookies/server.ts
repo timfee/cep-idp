@@ -2,7 +2,7 @@ import "server-only";
 import { cookies } from "next/headers";
 import { WORKFLOW_CONSTANTS, LogEntry } from "../workflow";
 import { COOKIE_METADATA_KEYS } from "../workflow/constants";
-import { splitIntoChunks, estimateCookieSize } from "./cookie-utils";
+import { splitIntoChunks, estimateCookieSize } from "./utils";
 
 const CHUNK_DELIMITER = ".chunk.";
 const MAX_COOKIE_SIZE = WORKFLOW_CONSTANTS.MAX_COOKIE_SIZE;

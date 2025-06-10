@@ -23,3 +23,28 @@ export function isStructuredError(
 export function assertNever(x: never): never {
   throw new Error("Unexpected value: " + x);
 }
+
+export function parseApiError(error: unknown): ApiError {
+  if (error instanceof Error) {
+    const message = error.message;
+    try {
+      const start = message.indexOf("{");
+      const end = message.lastIndexOf("}");
+      if (start !== -1 && end !== -1) {
+        const parsed = JSON.parse(message.slice(start, end + 1));
+        if (isStructuredError(parsed)) {
+          return {
+            kind: "structured",
+            code: parsed.error.code,
+            status: parsed.error.status,
+            message: parsed.error.message,
+          };
+        }
+      }
+    } catch {
+      // Ignore parse errors
+    }
+    return { kind: "text", message };
+  }
+  return { kind: "unknown", data: error };
+}

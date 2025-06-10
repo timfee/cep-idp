@@ -7,12 +7,13 @@ import {
   LogEntry,
   Provider,
 } from "../workflow";
+import { OAUTH_STATE_COOKIE_NAME } from "../workflow/constants";
 import {
   clearChunkedCookie,
   getChunkedCookie,
   setChunkedCookie,
   CookieOptions,
-} from "./cookie-server";
+} from "../cookies/server";
 import { decrypt, encrypt } from "./crypto";
 
 // Use process.env.NODE_ENV directly to avoid issues with env import
@@ -117,7 +118,7 @@ export async function setOAuthState(
   const data = { state, provider, timestamp: Date.now() };
   const encrypted = encrypt(JSON.stringify(data));
 
-  (await cookies()).set("oauth_state", encrypted, {
+  (await cookies()).set(OAUTH_STATE_COOKIE_NAME, encrypted, {
     ...COOKIE_OPTIONS,
     maxAge: WORKFLOW_CONSTANTS.OAUTH_STATE_TTL_MS / MS_IN_SECOND,
   });
@@ -127,7 +128,7 @@ export async function validateOAuthState(
   state: string,
   provider: string,
 ): Promise<boolean> {
-  const cookie = (await cookies()).get("oauth_state");
+  const cookie = (await cookies()).get(OAUTH_STATE_COOKIE_NAME);
   if (!cookie) return false;
 
   try {

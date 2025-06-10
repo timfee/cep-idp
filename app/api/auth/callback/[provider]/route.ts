@@ -1,4 +1,4 @@
-import { setChunkedCookieOnResponse } from "@/app/lib/auth/cookie-server";
+import { setChunkedCookieOnResponse } from "@/app/lib/cookies/server";
 import { encrypt } from "@/app/lib/auth/crypto";
 import { exchangeCodeForToken } from "@/app/lib/auth/oauth";
 import { validateOAuthState } from "@/app/lib/auth/tokens";

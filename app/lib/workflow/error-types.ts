@@ -1,10 +1,17 @@
-// Discriminated union for API errors
+/**
+ * Structured representation for different types of API errors.
+ */
 export type ApiError =
   | { kind: "structured"; code: number; status?: string; message: string }
   | { kind: "text"; message: string }
   | { kind: "unknown"; data: unknown };
 
-// Type guard for structured errors
+/**
+ * Determine if the provided object matches the expected structured error shape.
+ *
+ * @param obj - Value returned from an API call
+ * @returns True if the object adheres to the structured error format
+ */
 export function isStructuredError(
   obj: unknown
 ): obj is { error: { code: number; message: string; status?: string } } {
@@ -19,11 +26,22 @@ export function isStructuredError(
   );
 }
 
-// Exhaustive check helper
+/**
+ * Utility for exhaustive type checking.
+ *
+ * @param x - Value that should never occur
+ * @returns Never; always throws
+ */
 export function assertNever(x: never): never {
   throw new Error("Unexpected value: " + x);
 }
 
+/**
+ * Best-effort parsing of an unknown error into a normalized form.
+ *
+ * @param error - Error thrown by an API call
+ * @returns Normalized `ApiError` structure
+ */
 export function parseApiError(error: unknown): ApiError {
   if (error instanceof Error) {
     const message = error.message;

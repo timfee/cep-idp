@@ -15,6 +15,14 @@ import { generatePassword } from "./generators";
  *  Interpolated string
  */
 
+/**
+ * Replace placeholders within a string with workflow variable values.
+ *
+ * @param template - Text containing `{var}` expressions
+ * @param variables - Map of variable names to values
+ * @param options - Substitution behaviour controls
+ * @returns Interpolated string
+ */
 export function substituteVariables(
   template: string,
   variables: Record<string, string>,
@@ -53,6 +61,14 @@ export function substituteVariables(
   });
 }
 
+/**
+ * Recursively substitute variables throughout an object.
+ *
+ * @param obj - Object or value to process
+ * @param variables - Available variable map
+ * @param options - Substitution behaviour controls
+ * @returns Object with all string fields interpolated
+ */
 export function substituteObject(
   obj: unknown,
   variables: Record<string, string>,
@@ -77,6 +93,13 @@ export function substituteObject(
   return obj;
 }
 
+/**
+ * Evaluate helper functions inside template expressions.
+ *
+ * @param expression - Template expression such as `concat(a,b)`
+ * @param variables - Available variable values
+ * @returns Result of the evaluated expression
+ */
 function evaluateTemplateExpression(
   expression: string,
   variables: Record<string, string>
@@ -139,6 +162,13 @@ function evaluateTemplateExpression(
   }
 }
 
+/**
+ * Split and resolve arguments for a template expression.
+ *
+ * @param argsString - Raw argument string from template
+ * @param variables - Known variables for interpolation
+ * @returns Array of resolved argument values
+ */
 function parseTemplateArgs(
   argsString: string,
   variables: Record<string, string>
@@ -171,6 +201,13 @@ function parseTemplateArgs(
   return args;
 }
 
+/**
+ * Resolve a single argument value from a template expression.
+ *
+ * @param arg - Raw argument string
+ * @param variables - Available variables for lookup
+ * @returns Resolved argument value
+ */
 function resolveTemplateArg(
   arg: string,
   variables: Record<string, string>
@@ -187,6 +224,13 @@ function resolveTemplateArg(
   return arg;
 }
 
+/**
+ * Simple `%s` formatter used by `format()` template helper.
+ *
+ * @param template - Format string containing `%s` tokens
+ * @param values - Values to substitute into the template
+ * @returns Formatted string
+ */
 function formatString(template: string, values: string[]): string {
   let result = template;
   let valueIndex = 0;
@@ -199,6 +243,13 @@ function formatString(template: string, values: string[]): string {
   return result;
 }
 
+/**
+ * Discover which variables referenced in a template are not yet provided.
+ *
+ * @param template - Template string with placeholders
+ * @param variables - Currently defined variables
+ * @returns Array of variable names that are missing
+ */
 export function extractMissingVariables(
   template: string,
   variables: Record<string, string>
@@ -221,6 +272,12 @@ export function extractMissingVariables(
   return missing;
 }
 
+/**
+ * Parse a template expression and return the variables it references.
+ *
+ * @param expression - Expression string inside `{}` braces
+ * @returns Array of variable names found within the expression
+ */
 function extractVariablesFromExpression(expression: string): string[] {
   const extractedVariables: string[] = [];
   const match = expression.match(/^(\w+)\(([^)]*?)\)$/);

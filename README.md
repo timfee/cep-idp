@@ -101,9 +101,8 @@ The application guides the CEP Champion through the federation setup, gracefully
 
 ## 7. Development Quickstart
 
-Run linting and static verification before submitting patches:
+Run linting before submitting patches:
 
 ```bash
 npm run lint
-npx tsx verify-fixes.ts
 ```

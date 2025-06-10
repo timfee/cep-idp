@@ -16,6 +16,12 @@ const COOKIE_OPTIONS: CookieOptions = {
   path: "/",
 };
 
+/**
+ * Retrieve workflow variables from the encrypted cookie store.
+ *
+ * @param onLog - Optional log callback
+ * @returns Key/value map of stored variables
+ */
 export async function getStoredVariables(
   onLog?: (entry: LogEntry) => void
 ): Promise<Record<string, string>> {
@@ -38,6 +44,12 @@ export async function getStoredVariables(
   }
 }
 
+/**
+ * Persist workflow variables to the encrypted cookie store.
+ *
+ * @param vars - Variables to persist
+ * @param onLog - Optional log callback
+ */
 export async function setStoredVariables(
   vars: Record<string, string>,
   onLog?: (entry: LogEntry) => void
@@ -58,6 +70,11 @@ export async function setStoredVariables(
   }
 }
 
+/**
+ * Clear all stored workflow variables.
+ *
+ * @param onLog - Optional log callback
+ */
 export async function clearStoredVariables(
   onLog?: (entry: LogEntry) => void
 ): Promise<void> {

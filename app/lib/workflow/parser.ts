@@ -1,6 +1,11 @@
 import workflow from "@/workflow.json";
 import { Action, ACTION_MODES, Workflow, WorkflowSchema } from "./types";
 
+/**
+ * Parse the workflow.json file and normalise action definitions.
+ *
+ * @returns Workflow object ready for execution
+ */
 export function parseWorkflow(): Workflow {
   try {
     const parsed = WorkflowSchema.parse(workflow);

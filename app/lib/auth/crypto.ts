@@ -14,11 +14,22 @@ import {
 
 const algorithm = "aes-256-gcm";
 
+/**
+ * Derive the symmetric key used for encryption from the environment.
+ *
+ * @returns Raw encryption key
+ */
 function getKey(): Buffer {
   const keyString = env.AUTH_SECRET;
   return Buffer.from(keyString, "hex");
 }
 
+/**
+ * Encrypt arbitrary text using AES-GCM.
+ *
+ * @param text - Plaintext value to encrypt
+ * @returns Encrypted string containing IV and auth tag
+ */
 export function encrypt(text: string): string {
   const iv = randomBytes(CRYPTO_IV_LENGTH_BYTES);
   const cipher = createCipheriv(algorithm, getKey(), iv);
@@ -31,6 +42,12 @@ export function encrypt(text: string): string {
   return iv.toString("hex") + ":" + authTag.toString("hex") + ":" + encrypted;
 }
 
+/**
+ * Decrypt a value previously encrypted with `encrypt`.
+ *
+ * @param encryptedData - Output from {@link encrypt}
+ * @returns Decrypted plaintext
+ */
 export function decrypt(encryptedData: string): string {
   const parts = encryptedData.split(":");
   const iv = Buffer.from(parts[0], "hex");
@@ -46,14 +63,30 @@ export function decrypt(encryptedData: string): string {
   return decrypted;
 }
 
+/**
+ * Generate a cryptographically strong state value.
+ *
+ * @returns Random hex string
+ */
 export function generateState(): string {
   return randomBytes(CRYPTO_RANDOM_BYTES_LENGTH).toString("hex");
 }
 
+/**
+ * Create a PKCE code verifier.
+ *
+ * @returns Random base64url string
+ */
 export function generateCodeVerifier(): string {
   return randomBytes(CRYPTO_RANDOM_BYTES_LENGTH).toString("base64url");
 }
 
+/**
+ * Convert a verifier into a code challenge string.
+ *
+ * @param verifier - Code verifier string
+ * @returns Corresponding code challenge
+ */
 export function generateCodeChallenge(verifier: string): string {
   return createHash("sha256").update(verifier).digest("base64url");
 }

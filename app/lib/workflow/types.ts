@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+/** Execution modes allowed for an action definition. */
 export const ACTION_MODES = { VERIFY: "verify", EXECUTE: "execute" } as const;
 export type ActionMode = (typeof ACTION_MODES)[keyof typeof ACTION_MODES];
 
@@ -8,12 +9,14 @@ export const ActionModeEnum = z.enum([
   ACTION_MODES.EXECUTE,
 ]);
 
+/** Schema describing a workflow variable. */
 export const VariableSchema = z.object({
   validator: z.string().optional(),
   generator: z.string().optional(),
   default: z.string().optional(),
 });
 
+/** Schema describing a single workflow action. */
 export const ActionSchema = z.object({
   use: z.string(),
   checker: z.string().optional(),
@@ -27,6 +30,7 @@ export const ActionSchema = z.object({
   mode: z.array(ActionModeEnum).optional(),
 });
 
+/** Schema describing a workflow step. */
 export const StepSchema = z.object({
   name: z.string(),
   inputs: z.array(z.string()).optional(),
@@ -40,6 +44,7 @@ export const StepSchema = z.object({
   apiStatus: z.string().optional(),
 });
 
+/** Schema for an API endpoint declaration. */
 export const EndpointSchema = z.object({
   conn: z.string(),
   method: z.enum(["GET", "POST", "PATCH", "PUT", "DELETE"]),
@@ -47,11 +52,13 @@ export const EndpointSchema = z.object({
   qs: z.record(z.string()).optional(),
 });
 
+/** Schema for a remote connection configuration. */
 export const ConnectionSchema = z.object({
   base: z.string(),
   auth: z.string(),
 });
 
+/** Top-level workflow configuration schema. */
 export const WorkflowSchema = z.object({
   connections: z.record(ConnectionSchema),
   roles: z.record(z.array(z.string())),
@@ -61,6 +68,7 @@ export const WorkflowSchema = z.object({
   steps: z.array(StepSchema),
 });
 
+/** OAuth token persisted for API calls. */
 export const TokenSchema = z.object({
   accessToken: z.string(),
   refreshToken: z.string().optional(),
@@ -76,6 +84,7 @@ export type Endpoint = z.infer<typeof EndpointSchema>;
 export type Connection = z.infer<typeof ConnectionSchema>;
 export type Token = z.infer<typeof TokenSchema>;
 
+/** Lifecycle states for an executing step. */
 export const STEP_STATUS = {
   PENDING: "pending",
   RUNNING: "running",
@@ -85,11 +94,13 @@ export const STEP_STATUS = {
 } as const;
 export type StepStatusValue = (typeof STEP_STATUS)[keyof typeof STEP_STATUS];
 
+/** Holds persisted workflow state between page requests. */
 export interface WorkflowState {
   variables: Record<string, string>;
   stepStatus: Record<string, StepStatus>;
 }
 
+/** Runtime information about a single step execution. */
 export interface StepStatus {
   status: StepStatusValue;
   error?: string;
@@ -100,6 +111,7 @@ export interface StepStatus {
   variables?: Record<string, string>;
 }
 
+/** Single log line emitted during step execution. */
 export interface LogEntry {
   timestamp: number;
   level: "info" | "warn" | "error";
@@ -107,6 +119,7 @@ export interface LogEntry {
   data?: unknown;
 }
 
+/** OAuth metadata required to start and maintain a token. */
 export interface OAuthConfig {
   clientId: string;
   clientSecret: string;

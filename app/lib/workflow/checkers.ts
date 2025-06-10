@@ -1,6 +1,13 @@
 import { CHECKER_TYPES } from "./constants";
 import { extractValueFromPath } from "./variables";
 
+/**
+ * Evaluate a workflow checker definition against an API response.
+ *
+ * @param checker - Checker configuration from workflow
+ * @param response - API response data to evaluate
+ * @returns Result of the checker evaluation
+ */
 export function evaluateChecker(
   checker: {
     checker?: string;

@@ -2,6 +2,12 @@ import { JSONPath } from "jsonpath-plus";
 import { hasOwnProperty } from "../utils";
 import { VALIDATION_PATTERNS } from "./constants";
 
+/**
+ * Pull the X509 certificate string from Microsoft federation metadata XML.
+ *
+ * @param xmlString - Raw federation metadata XML
+ * @returns PEM formatted certificate
+ */
 export function extractCertificateFromXml(xmlString: string): string {
   const signingBlockMatch = xmlString.match(
     /<KeyDescriptor[^>]*use="signing"[^>]*>[\s\S]*?<\/KeyDescriptor>/
@@ -23,6 +29,13 @@ export function extractCertificateFromXml(xmlString: string): string {
   return pemCert;
 }
 
+/**
+ * Resolve a value from a nested object using a simplified JSONPath syntax.
+ *
+ * @param obj - Source object to search
+ * @param path - JSONPath-like expression
+ * @returns Extracted value or `undefined`
+ */
 export function extractValueFromPath(obj: unknown, path: string): unknown {
   if (!obj || !path) return undefined;
   try {
@@ -63,6 +76,13 @@ export function extractValueFromPath(obj: unknown, path: string): unknown {
   }
 }
 
+/**
+ * Evaluate custom `findBy()` syntax within a path expression.
+ *
+ * @param obj - Object being searched
+ * @param expression - Expression containing the helper call
+ * @returns Extracted value or `undefined`
+ */
 function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
   const prefix = VALIDATION_PATTERNS.FIND_BY_PREFIX;
   if (expression.startsWith(prefix)) {
@@ -100,6 +120,13 @@ function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
   return undefined;
 }
 
+/**
+ * Support array predicates like `items[id=value]` in paths.
+ *
+ * @param obj - Source object
+ * @param path - Path expression containing predicate
+ * @returns Matched value or `undefined`
+ */
 function evaluatePredicatePath(obj: unknown, path: string): unknown {
   const startBracket = path.indexOf("[");
   const endBracket = path.indexOf("]");
@@ -132,6 +159,13 @@ function evaluatePredicatePath(obj: unknown, path: string): unknown {
   return found;
 }
 
+/**
+ * Walk an object tree using dot notation.
+ *
+ * @param obj - Object to traverse
+ * @param path - Dot-separated path
+ * @returns Retrieved value or `undefined`
+ */
 function evaluateSimplePath(obj: unknown, path: string): unknown {
   if (path.startsWith("$")) {
     path = path.slice(1);
@@ -161,6 +195,12 @@ function evaluateSimplePath(obj: unknown, path: string): unknown {
   return current;
 }
 
+/**
+ * Type guard for objects that contain a domains array.
+ *
+ * @param obj - Candidate object
+ * @returns Whether the object has a `domains` array
+ */
 function hasDomainsArray(
   obj: unknown
 ): obj is { domains: Array<{ isPrimary?: boolean; domainName?: string }> } {

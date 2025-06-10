@@ -14,7 +14,9 @@ import { timingSafeEqual } from "crypto";
 import { revalidatePath } from "next/cache";
 
 /**
- * Force refresh workflow state
+ * Force a UI revalidation of workflow state.
+ *
+ * @returns A promise that resolves once the cache is invalidated
  */
 export async function refreshWorkflowState(): Promise<void> {
   revalidatePath("/");
@@ -22,6 +24,14 @@ export async function refreshWorkflowState(): Promise<void> {
 
 /**
  * Set a workflow variable with validation
+ */
+/**
+ * Persist a workflow variable after validating its value.
+ *
+ * @param name - Workflow variable name
+ * @param value - Value to store
+ * @param onLog - Optional log handler
+ * @returns Success status and optional error message
  */
 export async function setWorkflowVariable(
   name: string,
@@ -83,6 +93,13 @@ export async function setWorkflowVariable(
   }
 }
 
+/**
+ * Refresh an OAuth access token if possible.
+ *
+ * @param provider - Which OAuth provider to refresh
+ * @param onLog - Optional log callback
+ * @returns Success flag and optional error
+ */
 export async function refreshAuthToken(
   provider: Provider,
   onLog?: (entry: LogEntry) => void
@@ -119,6 +136,11 @@ export async function refreshAuthToken(
   }
 }
 
+/**
+ * Record that a manual step has been completed by the user.
+ *
+ * @param stepName - Name of the manual step
+ */
 export async function markManualStepComplete(stepName: string): Promise<void> {
   const vars = await getStoredVariables();
   const state =

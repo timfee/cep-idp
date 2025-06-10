@@ -1,8 +1,11 @@
-import "server-only";
 import { env } from "@/app/env";
-import { OAuthConfig, Token, WORKFLOW_CONSTANTS, Provider } from "../workflow";
-import { MS_IN_SECOND, PROVIDERS } from "../workflow/constants";
-import { OAUTH_GRANT_TYPES } from "../workflow/constants";
+import "server-only";
+import { OAuthConfig, Provider, Token } from "../workflow";
+import {
+  MS_IN_SECOND,
+  OAUTH_GRANT_TYPES,
+  PROVIDERS,
+} from "../workflow/constants";
 
 export const googleOAuthConfig: OAuthConfig = {
   clientId: env.GOOGLE_CLIENT_ID,
@@ -46,13 +49,15 @@ export const microsoftOAuthConfig: OAuthConfig = {
 };
 
 export function getOAuthConfig(provider: Provider): OAuthConfig {
-  return provider === PROVIDERS.GOOGLE ? googleOAuthConfig : microsoftOAuthConfig;
+  return provider === PROVIDERS.GOOGLE
+    ? googleOAuthConfig
+    : microsoftOAuthConfig;
 }
 
 export function generateAuthUrl(
   provider: Provider,
   state: string,
-  baseUrl: string,
+  baseUrl: string
 ): string {
   const config = getOAuthConfig(provider);
   const params = new URLSearchParams();
@@ -75,7 +80,7 @@ export function generateAuthUrl(
 export async function exchangeCodeForToken(
   provider: Provider,
   code: string,
-  baseUrl: string,
+  baseUrl: string
 ): Promise<Token> {
   const config = getOAuthConfig(provider);
 
@@ -114,7 +119,7 @@ export async function exchangeCodeForToken(
 
 export async function refreshAccessToken(
   provider: Provider,
-  refreshToken: string,
+  refreshToken: string
 ): Promise<Token> {
   const config = getOAuthConfig(provider);
 

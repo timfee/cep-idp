@@ -1,13 +1,15 @@
 "use client";
 import "client-only";
 
+import { refreshAuthToken } from "@/app/actions/workflow-state";
+import {
+  PROVIDERS,
+  WILDCARD_SUFFIX_LENGTH,
+} from "@/app/lib/workflow/constants";
+import { AlertOctagonIcon, BadgeCheckIcon } from "lucide-react";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { AlertOctagonIcon, BadgeCheckIcon } from "lucide-react";
-import Link from "next/link";
-import { WILDCARD_SUFFIX_LENGTH, PROVIDERS } from "@/app/lib/workflow/constants";
 import { TokenStatus } from "./token-status";
-import { refreshAuthToken } from "@/app/actions/workflow-state";
 
 interface AuthStatusProps {
   provider: (typeof PROVIDERS)[keyof typeof PROVIDERS];
@@ -71,10 +73,10 @@ function scopeImplies(granted: string, required: string): boolean {
 
 function hasAllRequiredScopes(
   grantedScopes: string[],
-  requiredScopes: string[],
+  requiredScopes: string[]
 ): boolean {
   return requiredScopes.every((required) =>
-    grantedScopes.some((granted) => scopeImplies(granted, required)),
+    grantedScopes.some((granted) => scopeImplies(granted, required))
   );
 }
 
@@ -89,7 +91,7 @@ export function AuthStatus({
   const displayName = provider === PROVIDERS.GOOGLE ? "Google" : "Microsoft";
   const hasAllScopes = hasAllRequiredScopes(scopes, requiredScopes);
   const missingScopes = requiredScopes.filter(
-    (required) => !scopes.some((granted) => scopeImplies(granted, required)),
+    (required) => !scopes.some((granted) => scopeImplies(granted, required))
   );
 
   const authUrl = `/api/auth/${provider}`;
@@ -107,13 +109,13 @@ export function AuthStatus({
   if (!isAuthenticated) {
     actionElement = (
       <Button asChild>
-        <Link href={authUrl}>Authenticate</Link>
+        <a href={authUrl}>Authenticate</a>
       </Button>
     );
   } else if (!hasAllScopes) {
     actionElement = (
       <Button asChild color="amber">
-        <Link href={authUrl}>Re-authenticate</Link>
+        <a href={authUrl}>Re-authenticate</a>
       </Button>
     );
   } else {
@@ -123,20 +125,20 @@ export function AuthStatus({
   return (
     <div className="flex items-center justify-between p-4 bg-white dark:bg-zinc-900 rounded-lg border border-zinc-200 dark:border-zinc-800">
       <div className="flex-1">
-          {isAuthenticated && (
-            <TokenStatus
-              provider={provider}
-              isAuthenticated={isAuthenticated}
-              expiresAt={expiresAt}
-              hasRefreshToken={hasRefreshToken}
-              onRefresh={async () => {
-                const result = await refreshAuthToken(provider);
-                if (!result.success) {
-                  throw new Error(result.error!);
-                }
-              }}
-            />
-          )}
+        {isAuthenticated && (
+          <TokenStatus
+            provider={provider}
+            isAuthenticated={isAuthenticated}
+            expiresAt={expiresAt}
+            hasRefreshToken={hasRefreshToken}
+            onRefresh={async () => {
+              const result = await refreshAuthToken(provider);
+              if (!result.success) {
+                throw new Error(result.error!);
+              }
+            }}
+          />
+        )}
 
         <div className="flex items-center gap-3">
           {isAuthenticated ? (

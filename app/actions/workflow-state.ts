@@ -12,16 +12,6 @@ import { refreshAccessToken } from "@/app/lib/auth/oauth";
 import { Provider } from "@/app/lib/workflow/constants";
 import type { LogEntry } from "@/app/lib/workflow/types";
 
-function isValidVariableName(name: string): boolean {
-  const workflow = parseWorkflow();
-  return Object.prototype.hasOwnProperty.call(workflow.variables, name);
-}
-
-function isValidStepName(stepName: string): boolean {
-  const workflow = parseWorkflow();
-  return workflow.steps.some((s) => s.name === stepName);
-}
-
 /**
  * Force refresh workflow state
  */
@@ -92,11 +82,11 @@ export async function refreshAuthToken(
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const token = await getToken(provider);
-    if (token == null) {
+    if (!token) {
       return { success: false, error: "No token found" };
     }
 
-    if (token.refreshToken == null) {
+    if (!token.refreshToken) {
       return { success: false, error: "No refresh token available" };
     }
 

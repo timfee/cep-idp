@@ -1,15 +1,25 @@
 import { isTokenExpired } from "../auth/oauth-client";
 import { refreshAccessToken } from "../auth/oauth-server";
 import { setToken } from "../auth/tokens";
-import { substituteVariables, substituteObject, Token } from "../workflow";
-import { WORKFLOW_CONSTANTS, PROVIDERS, Provider } from "../workflow/constants";
-import { CONNECTION_IDENTIFIERS, HTTP_METHODS_WITH_BODY } from "../workflow/constants";
+import { substituteObject, substituteVariables, Token } from "../workflow";
+import {
+  CONNECTION_IDENTIFIERS,
+  HTTP_METHODS_WITH_BODY,
+  Provider,
+  PROVIDERS,
+  WORKFLOW_CONSTANTS,
+} from "../workflow/constants";
 import { ApiRequestOptions } from "./types";
 
 async function handlePublicRequest(
-  options: ApiRequestOptions,
+  options: ApiRequestOptions
 ): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
-  const { endpoint, connections, variables, throwOnMissingVars = true } = options;
+  const {
+    endpoint,
+    connections,
+    variables,
+    throwOnMissingVars = true,
+  } = options;
   const connection = connections[endpoint.conn];
   const capturedValues: Record<string, string> = {};
   const path = substituteVariables(endpoint.path, variables, {
@@ -26,7 +36,7 @@ async function handlePublicRequest(
         substituteVariables(value, variables, {
           throwOnMissing: throwOnMissingVars,
           captureGenerated: capturedValues,
-        }),
+        })
       );
     }
     url += `?${params.toString()}`;
@@ -34,7 +44,9 @@ async function handlePublicRequest(
 
   const response = await fetch(url);
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status} - ${response.statusText}`);
+    throw new Error(
+      `Request failed: ${response.status} - ${response.statusText}`
+    );
   }
   const contentType = response.headers.get("content-type");
   if (contentType?.includes("xml")) {
@@ -44,9 +56,17 @@ async function handlePublicRequest(
 }
 
 async function handleAuthenticatedRequest(
-  options: ApiRequestOptions,
+  options: ApiRequestOptions
 ): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
-  const { endpoint, connections, variables, tokens, body, throwOnMissingVars = true, onLog } = options;
+  const {
+    endpoint,
+    connections,
+    variables,
+    tokens,
+    body,
+    throwOnMissingVars = true,
+    onLog,
+  } = options;
   const connection = connections[endpoint.conn];
   const capturedValues: Record<string, string> = {};
 
@@ -79,7 +99,10 @@ async function handleAuthenticatedRequest(
           level: "info",
           message: `Refreshing token for ${provider}, attempt ${refreshAttempts + 1}`,
         });
-        const refreshedToken = await refreshAccessToken(provider, token.refreshToken!);
+        const refreshedToken = await refreshAccessToken(
+          provider,
+          token.refreshToken!
+        );
         await setToken(provider, refreshedToken);
         token = refreshedToken;
         break;
@@ -100,7 +123,9 @@ async function handleAuthenticatedRequest(
     }
   }
 
-  const path = substituteVariables(endpoint.path, variables, { throwOnMissing: throwOnMissingVars });
+  const path = substituteVariables(endpoint.path, variables, {
+    throwOnMissing: throwOnMissingVars,
+  });
   let url = `${connection.base}${path}`;
 
   if (endpoint.qs) {
@@ -135,7 +160,7 @@ async function handleAuthenticatedRequest(
   if (
     finalBody &&
     HTTP_METHODS_WITH_BODY.includes(
-      endpoint.method as (typeof HTTP_METHODS_WITH_BODY)[number],
+      endpoint.method as (typeof HTTP_METHODS_WITH_BODY)[number]
     )
   ) {
     requestOptions.body = JSON.stringify(finalBody);
@@ -168,7 +193,7 @@ async function handleAuthenticatedRequest(
 }
 
 export async function apiRequest(
-  options: ApiRequestOptions,
+  options: ApiRequestOptions
 ): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
   const { endpoint, connections } = options;
   const connection = connections[endpoint.conn];

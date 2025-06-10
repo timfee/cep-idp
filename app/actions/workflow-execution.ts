@@ -513,11 +513,13 @@ export async function executeWorkflowStep(stepName: string): Promise<{
         Object.keys(currentData.variables).length
     ) {
       const newVars: Record<string, string> = {};
-      for (const [key, value] of Object.entries(updatedVariables)) {
-        if (!currentData.variables[key]) {
-          newVars[key] = value;
+        for (const [key, value] of Object.entries(updatedVariables)) {
+          if (
+            !Object.prototype.hasOwnProperty.call(currentData.variables, key)
+          ) {
+            newVars[key] = value;
+          }
         }
-      }
       if (Object.keys(newVars).length > 0) {
         status.variables = newVars;
       }

@@ -18,7 +18,7 @@ import {
   STATUS_VALUES,
   VARIABLE_KEYS,
 } from "@/app/lib/workflow/constants";
-import { getStoredVariables } from "@/app/lib/workflow";
+import { getStoredVariables, setStoredVariables } from "@/app/lib/workflow";
 import { runStepActions } from "./workflow-execution";
 import { refreshWorkflowState } from "./workflow-state";
 
@@ -223,6 +223,11 @@ export async function getWorkflowData(
 
   const { stepStatuses: stepStatusesMap, variables: reconstructedVariables } =
     await reconstituteStepStatuses(workflow, variables, tokens);
+
+  // Persist variables reconstructed from verification so they are available
+  // during subsequent executions. This acts as a central variable store
+  // ensuring all extracted values survive between requests.
+  await setStoredVariables(reconstructedVariables);
 
   console.log(
     `[Initial Load] Final step statuses:`,

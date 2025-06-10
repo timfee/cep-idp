@@ -115,7 +115,8 @@ function parseApiError(error: unknown): {
       if (isStructuredApiError(parsed)) {
         apiError = parsed;
         const err = parsed.error;
-        errorMessage = `${err.code}: ${err.message}`;
+        // Include all available fields from the API error to aid debugging
+        errorMessage = JSON.stringify(err);
         if (
           err.code === WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED ||
           err.status === "UNAUTHENTICATED" ||

@@ -1,6 +1,10 @@
 import { JSONPath } from "jsonpath-plus";
 import { randomBytes } from "crypto";
-import { EXPECTED_ARG_COUNT_PAIR, WILDCARD_SUFFIX_LENGTH } from "./constants";
+import {
+  EXPECTED_ARG_COUNT_PAIR,
+  WILDCARD_SUFFIX_LENGTH,
+  VARIABLE_KEYS,
+} from "./constants";
 
 function hasProp(obj: unknown, prop: string): obj is Record<string, unknown> {
   return typeof obj === "object" && obj !== null && prop in obj;
@@ -67,7 +71,7 @@ export function substituteVariables(
           expression.startsWith('generatePassword(') &&
           options.captureGenerated
         ) {
-          options.captureGenerated.generatedPassword = result;
+          options.captureGenerated[VARIABLE_KEYS.GENERATED_PASSWORD] = result;
         }
         return result;
       } catch (error) {

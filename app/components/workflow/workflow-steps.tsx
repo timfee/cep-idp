@@ -1,4 +1,5 @@
 "use client";
+import "client-only";
 
 import React from "react";
 import { StepCard } from "./step-card";

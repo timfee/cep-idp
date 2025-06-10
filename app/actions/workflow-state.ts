@@ -1,11 +1,12 @@
 "use server";
+import "server-only";
 
 import { revalidatePath } from "next/cache";
+import { parseWorkflow } from "@/app/lib/workflow";
 import {
-  parseWorkflow,
   getStoredVariables,
   setStoredVariables,
-} from "@/app/lib/workflow";
+} from "@/app/lib/workflow/variables-store";
 import { getToken, setToken } from "@/app/lib/auth/tokens";
 import { refreshAccessToken } from "@/app/lib/auth/oauth";
 import { Provider } from "@/app/lib/workflow/constants";

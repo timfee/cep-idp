@@ -2,7 +2,7 @@ import { isTokenExpired, refreshAccessToken } from "../auth/oauth";
 import { setToken } from "../auth/tokens";
 import { substituteVariables, substituteObject, Token } from "../workflow";
 import { WORKFLOW_CONSTANTS, PROVIDERS, Provider } from "../workflow/constants";
-import { CONNECTION_IDENTIFIERS, HTTP_METHODS_WITH_BODY, HttpMethod } from "../workflow/all-constants";
+import { CONNECTION_IDENTIFIERS, HTTP_METHODS_WITH_BODY } from "../workflow/constants";
 import { ApiRequestOptions } from "./types";
 
 async function handlePublicRequest(
@@ -131,7 +131,12 @@ async function handleAuthenticatedRequest(
       })
     : undefined;
 
-  if (finalBody && HTTP_METHODS_WITH_BODY.includes(endpoint.method as HttpMethod)) {
+  if (
+    finalBody &&
+    HTTP_METHODS_WITH_BODY.includes(
+      endpoint.method as (typeof HTTP_METHODS_WITH_BODY)[number],
+    )
+  ) {
     requestOptions.body = JSON.stringify(finalBody);
   }
 

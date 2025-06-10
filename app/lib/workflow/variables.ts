@@ -9,7 +9,7 @@ import {
   PASSWORD_GENERATOR_REGEX,
   VALIDATION_PATTERNS,
   ERROR_MESSAGES,
-} from "./all-constants";
+} from "./constants";
 import { hasOwnProperty } from "../utils";
 
 export function extractCertificateFromXml(xmlString: string): string {

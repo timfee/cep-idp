@@ -1,5 +1,5 @@
 import { extractValueFromPath } from "./variables";
-import { CHECKER_TYPES } from "./all-constants";
+import { CHECKER_TYPES } from "./constants";
 
 export function evaluateChecker(
   checker: {

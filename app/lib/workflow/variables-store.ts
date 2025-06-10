@@ -1,13 +1,15 @@
+import "server-only";
 import {
   getChunkedCookie,
   setChunkedCookie,
   clearChunkedCookie,
-} from "../auth/cookie-utils";
+  CookieOptions,
+} from "../auth/cookie-server";
 import { encrypt, decrypt } from "../auth/crypto";
 import { WORKFLOW_CONSTANTS } from "./constants";
 import { LogEntry } from "./types";
 
-const COOKIE_OPTIONS = {
+const COOKIE_OPTIONS: CookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax" as const,

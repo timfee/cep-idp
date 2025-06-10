@@ -5,7 +5,7 @@ export type ApiError =
   | { kind: 'unknown'; data: unknown };
 
 // Type guard for structured errors
-export function isStructuredError(obj: unknown): obj is { error: { code: number; message: string } } {
+export function isStructuredError(obj: unknown): obj is { error: { code: number; message: string; status?: string } } {
   return (
     typeof obj === 'object' &&
     obj !== null &&

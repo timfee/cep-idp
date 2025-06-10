@@ -1,4 +1,5 @@
 "use client";
+import "client-only";
 
 import { executeWorkflowStep } from "@/app/actions/workflow-execution";
 import { markManualStepComplete } from "@/app/actions/workflow-state";

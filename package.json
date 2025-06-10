@@ -21,6 +21,7 @@
     "@radix-ui/react-slot": "^1.2.3",
     "@radix-ui/react-tooltip": "^1.2.7",
     "class-variance-authority": "^0.7.1",
+    "client-only": "^0.0.1",
     "eslint-plugin-react-hooks": "^5.2.0",
     "jsonpath-plus": "^10.3.0",
     "lucide-react": "^0.513.0",
@@ -28,6 +29,7 @@
     "react": "19.1.0",
     "react-dom": "19.1.0",
     "react-hook-form": "^7.57.0",
+    "server-only": "^0.0.1",
     "sonner": "^2.0.5",
     "tailwind-merge": "^3.3.0"
   },

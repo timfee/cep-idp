@@ -1,4 +1,5 @@
 "use client";
+import "client-only";
 
 import { Alert, AlertDescription } from "../ui/alert";
 import { Button } from "../ui/button";
@@ -6,7 +7,7 @@ import { RefreshCw, AlertTriangle, CheckCircle } from "lucide-react";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PROVIDERS } from "@/app/lib/workflow/constants";
-import { TIME } from "@/app/lib/workflow/all-constants";
+import { TIME } from "@/app/lib/workflow/constants";
 
 interface TokenStatusProps {
   provider: (typeof PROVIDERS)[keyof typeof PROVIDERS];

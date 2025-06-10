@@ -1,11 +1,12 @@
+import "server-only";
 import { cookies } from "next/headers";
 import { Token, WORKFLOW_CONSTANTS, MS_IN_SECOND, LogEntry, Provider } from "../workflow";
 import {
   clearChunkedCookie,
-  CookieOptions,
   getChunkedCookie,
   setChunkedCookie,
-} from "./cookie-utils";
+  CookieOptions,
+} from "./cookie-server";
 import { decrypt, encrypt } from "./crypto";
 
 // Use process.env.NODE_ENV directly to avoid issues with env import

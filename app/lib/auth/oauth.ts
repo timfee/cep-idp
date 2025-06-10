@@ -1,7 +1,7 @@
 import { env } from "@/app/env";
 import { OAuthConfig, Token, WORKFLOW_CONSTANTS, Provider } from "../workflow";
 import { MS_IN_SECOND, PROVIDERS } from "../workflow/constants";
-import { OAUTH_GRANT_TYPES } from "../workflow/all-constants";
+import { OAUTH_GRANT_TYPES } from "../workflow/constants";
 
 export const googleOAuthConfig: OAuthConfig = {
   clientId: env.GOOGLE_CLIENT_ID,

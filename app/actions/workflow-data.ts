@@ -1,4 +1,5 @@
 "use server";
+import "server-only";
 
 import { getToken } from "@/app/lib/auth/tokens";
 import { isTokenExpired } from "@/app/lib/auth/oauth";
@@ -18,8 +19,8 @@ import {
   STATUS_VALUES,
   VARIABLE_KEYS,
 } from "@/app/lib/workflow/constants";
-import { ROLE_PREFIXES } from "@/app/lib/workflow/all-constants";
-import { getStoredVariables, setStoredVariables } from "@/app/lib/workflow";
+import { ROLE_PREFIXES } from "@/app/lib/workflow/constants";
+import { getStoredVariables, setStoredVariables } from "@/app/lib/workflow/variables-store";
 import { hasOwnProperty } from "@/app/lib/utils";
 import { runStepActions } from "./workflow-execution";
 import { refreshWorkflowState } from "./workflow-state";
@@ -49,13 +50,14 @@ export interface WorkflowData {
 async function initializeVariables(
   workflow: Workflow,
 ): Promise<Record<string, string>> {
-  const vars: Record<string, string> = {};
-  for (const [name, def] of Object.entries(workflow.variables)) {
+  const vars: Record<string, string> = {} as Record<string, string>;
+  for (const name of Object.keys(workflow.variables)) {
+    const def = workflow.variables[name];
     if (!hasOwnProperty(vars, name)) {
       if (def.default) {
-        vars[name] = def.default;
+        (vars as Record<string, string>)[name] = def.default;
       } else if (def.generator) {
-        vars[name] = evaluateGenerator(def.generator);
+        (vars as Record<string, string>)[name] = evaluateGenerator(def.generator);
       }
     }
   }

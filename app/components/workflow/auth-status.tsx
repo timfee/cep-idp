@@ -1,4 +1,5 @@
 "use client";
+import "client-only";
 
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";

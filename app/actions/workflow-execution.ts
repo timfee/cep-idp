@@ -1,9 +1,10 @@
 "use server";
+import "server-only";
 
 import { apiRequest } from "@/app/lib/api/client";
 import { getToken } from "@/app/lib/auth/tokens";
 import { getWorkflowData } from "./workflow-data";
-import { setStoredVariables } from "@/app/lib/workflow";
+import { setStoredVariables } from "@/app/lib/workflow/variables-store";
 import {
   evaluateChecker,
   extractMissingVariables,
@@ -28,7 +29,7 @@ import {
   VARIABLE_KEYS,
 } from "@/app/lib/workflow/constants";
 import { safeAsync } from "@/app/lib/workflow/error-handling";
-import { CONNECTION_IDENTIFIERS, ERROR_MESSAGES } from "@/app/lib/workflow/all-constants";
+import { CONNECTION_IDENTIFIERS, ERROR_MESSAGES } from "@/app/lib/workflow/constants";
 import { revalidatePath } from "next/cache";
 
 function applyExtracts(

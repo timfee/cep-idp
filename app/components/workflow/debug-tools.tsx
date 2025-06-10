@@ -1,4 +1,5 @@
 "use client";
+import "client-only";
 
 import { refreshWorkflowState } from "@/app/actions/workflow-state";
 import { Bug, RefreshCw } from "lucide-react";

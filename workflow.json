@@ -72,7 +72,7 @@
     "admin.getUser": {
       "conn": "googleAdmin",
       "method": "GET",
-      "path": "/users/{email('azuread-provisioning', domainName)}"
+      "path": "/users/{email('azuread-provisioning', primaryDomain)}"
     },
     "admin.postUser": {
       "conn": "googleAdmin",
@@ -266,6 +266,7 @@
     },
     "claimsPolicyId": {},
     "principalId": {},
+    "generatedPassword": {},
     "tenantId": {
       "_comment": "Microsoft tenant ID from environment configuration"
     }
@@ -280,7 +281,8 @@
         {
           "use": "admin.listDomains",
           "extract": {
-            "primaryDomain": "$.domains[?(@.isPrimary)].domainName"
+            "primaryDomain": "$.domains[?(@.isPrimary)].domainName",
+            "domainName": "$.domains[?(@.isPrimary)].domainName"
           }
         },
         {

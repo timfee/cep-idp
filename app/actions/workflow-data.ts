@@ -14,6 +14,7 @@ import {
 } from "@/app/lib/workflow";
 import { JWT_PART_COUNT, PROVIDERS, STATUS_VALUES, VARIABLE_KEYS } from "@/app/lib/workflow/constants";
 import { runStepActions } from "./workflow-execution";
+import { refreshWorkflowState } from "./workflow-state";
 
 export interface AuthState {
   google: {
@@ -161,6 +162,10 @@ export async function getWorkflowData(
     `[Initial Load] Starting getWorkflowData (forceRefresh: ${forceRefresh})`,
   );
 
+  if (forceRefresh) {
+    await refreshWorkflowState();
+  }
+
   const googleToken = await getToken(PROVIDERS.GOOGLE);
   const microsoftToken = await getToken(PROVIDERS.MICROSOFT);
 
@@ -248,8 +253,7 @@ export async function getWorkflowVariables(): Promise<{
     }
   >;
 }> {
-  const workflow = parseWorkflow();
-  const variables: Record<string, string> = {};
+  const { workflow, variables } = await getWorkflowData();
 
   const result: Record<
     string,

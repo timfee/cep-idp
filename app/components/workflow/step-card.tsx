@@ -3,7 +3,13 @@
 import { executeWorkflowStep } from "@/app/actions/workflow-execution";
 import { cn } from "@/app/lib/utils";
 import { LogEntry, Step, StepStatus } from "@/app/lib/workflow";
-import { MIN_LOG_COUNT_FOR_PLURAL, STATUS_VALUES, VARIABLE_KEYS, STEP_NAMES } from "@/app/lib/workflow/constants";
+import {
+  MIN_LOG_COUNT_FOR_PLURAL,
+  STATUS_VALUES,
+  VARIABLE_KEYS,
+  STEP_NAMES,
+  VARIABLE_DISPLAY_MAX_LENGTH,
+} from "@/app/lib/workflow/constants";
 import { substituteVariables } from "@/app/lib/workflow";
 import { PasswordDisplay } from "./password-display";
 import {
@@ -78,6 +84,8 @@ export function StepCard({
           error: result.status.error,
           logs: result.status.logs,
         });
+      } else if (result.error) {
+        setLocalExecutionResult({ status: "failed", error: result.error, logs: [] });
       }
     });
   };
@@ -140,7 +148,9 @@ export function StepCard({
                                 rawValue,
                                 variables,
                               );
-                              display = `${input}: ${substituted.substring(0, 20)}${substituted.length > 20 ? "..." : ""}`;
+                              display = `${input}: ${substituted.substring(0, VARIABLE_DISPLAY_MAX_LENGTH)}${
+                                substituted.length > VARIABLE_DISPLAY_MAX_LENGTH ? "..." : ""
+                              }`;
                             }
 
                             return (

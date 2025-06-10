@@ -49,15 +49,15 @@ export const microsoftOAuthConfig: OAuthConfig = {
 };
 
 export function getOAuthConfig(provider: Provider): OAuthConfig {
-  return provider === PROVIDERS.GOOGLE
-    ? googleOAuthConfig
+  return provider === PROVIDERS.GOOGLE ?
+      googleOAuthConfig
     : microsoftOAuthConfig;
 }
 
 export function generateAuthUrl(
   provider: Provider,
   state: string,
-  baseUrl: string,
+  baseUrl: string
 ): string {
   const config = getOAuthConfig(provider);
   const params = new URLSearchParams();
@@ -80,7 +80,7 @@ export function generateAuthUrl(
 export async function exchangeCodeForToken(
   provider: Provider,
   code: string,
-  baseUrl: string,
+  baseUrl: string
 ): Promise<Token> {
   const config = getOAuthConfig(provider);
 
@@ -96,9 +96,7 @@ export async function exchangeCodeForToken(
 
   const response = await fetch(config.tokenUrl, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: params.toString(),
   });
 
@@ -119,7 +117,7 @@ export async function exchangeCodeForToken(
 
 export async function refreshAccessToken(
   provider: Provider,
-  refreshToken: string,
+  refreshToken: string
 ): Promise<Token> {
   const config = getOAuthConfig(provider);
 
@@ -132,9 +130,7 @@ export async function refreshAccessToken(
 
   const response = await fetch(config.tokenUrl, {
     method: "POST",
-    headers: {
-      "Content-Type": "application/x-www-form-urlencoded",
-    },
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
     body: params.toString(),
   });
 

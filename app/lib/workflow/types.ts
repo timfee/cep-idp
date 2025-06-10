@@ -1,9 +1,6 @@
 import { z } from "zod";
 
-export const ACTION_MODES = {
-  VERIFY: "verify",
-  EXECUTE: "execute",
-} as const;
+export const ACTION_MODES = { VERIFY: "verify", EXECUTE: "execute" } as const;
 export type ActionMode = (typeof ACTION_MODES)[keyof typeof ACTION_MODES];
 
 export const ActionModeEnum = z.enum([

@@ -1,5 +1,5 @@
-import { extractValueFromPath } from "./variables";
 import { CHECKER_TYPES } from "./constants";
+import { extractValueFromPath } from "./variables";
 
 export function evaluateChecker(
   checker: {
@@ -8,7 +8,7 @@ export function evaluateChecker(
     value?: string;
     jsonPath?: string;
   },
-  response: unknown,
+  response: unknown
 ): boolean {
   switch (checker.checker) {
     case CHECKER_TYPES.EXISTS:

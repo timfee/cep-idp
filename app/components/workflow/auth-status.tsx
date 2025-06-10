@@ -50,8 +50,8 @@ function scopeImplies(granted: string, required: string): boolean {
   if (normGranted.includes("readwrite")) {
     const base = normGranted.replace("readwrite", "");
     if (
-      (normRequired.includes("read") || normRequired.includes("write")) &&
-      normRequired.startsWith(base)
+      (normRequired.includes("read") || normRequired.includes("write"))
+      && normRequired.startsWith(base)
     ) {
       return true;
     }
@@ -59,8 +59,8 @@ function scopeImplies(granted: string, required: string): boolean {
 
   // readwrite. -> read. or write. (for cases like 'foo.readwrite.bar')
   if (
-    normGranted.match(/\.readwrite\./) &&
-    normRequired.match(/\.(read|write)\./)
+    normGranted.match(/\.readwrite\./)
+    && normRequired.match(/\.(read|write)\./)
   ) {
     const base = normGranted.replace(".readwrite.", ".");
     if (normRequired.replace(/\.(read|write)\./, ".") === base) return true;
@@ -73,10 +73,10 @@ function scopeImplies(granted: string, required: string): boolean {
 
 function hasAllRequiredScopes(
   grantedScopes: string[],
-  requiredScopes: string[],
+  requiredScopes: string[]
 ): boolean {
   return requiredScopes.every((required) =>
-    grantedScopes.some((granted) => scopeImplies(granted, required)),
+    grantedScopes.some((granted) => scopeImplies(granted, required))
   );
 }
 
@@ -91,19 +91,18 @@ export function AuthStatus({
   const displayName = provider === PROVIDERS.GOOGLE ? "Google" : "Microsoft";
   const hasAllScopes = hasAllRequiredScopes(scopes, requiredScopes);
   const missingScopes = requiredScopes.filter(
-    (required) => !scopes.some((granted) => scopeImplies(granted, required)),
+    (required) => !scopes.some((granted) => scopeImplies(granted, required))
   );
 
   const authUrl = `/api/auth/${provider}`;
 
-  const scopeMessage = hasAllScopes ? (
-    "All required scopes granted"
-  ) : (
-    <>
-      Missing some required scopes:{" "}
-      <span className="font-mono">{missingScopes.join(", ")}</span>
-    </>
-  );
+  const scopeMessage =
+    hasAllScopes ?
+      "All required scopes granted"
+    : <>
+        Missing some required scopes:{" "}
+        <span className="font-mono">{missingScopes.join(", ")}</span>
+      </>;
 
   let actionElement: React.ReactNode;
   if (!isAuthenticated) {
@@ -141,23 +140,20 @@ export function AuthStatus({
         )}
 
         <div className="flex items-center gap-3">
-          {isAuthenticated ? (
+          {isAuthenticated ?
             <Badge
               variant="secondary"
-              className="bg-green-500 text-white dark:bg-blue-600"
-            >
+              className="bg-green-500 text-white dark:bg-blue-600">
               <BadgeCheckIcon />
               All set
             </Badge>
-          ) : (
-            <Badge
+          : <Badge
               variant="secondary"
-              className="bg-yellow-700 text-white dark:bg-blue-600"
-            >
+              className="bg-yellow-700 text-white dark:bg-blue-600">
               <AlertOctagonIcon />
               Attention
             </Badge>
-          )}
+          }
           <div>
             <h3 className="font-medium">{displayName}</h3>
             {isAuthenticated && (

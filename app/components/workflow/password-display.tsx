@@ -42,13 +42,10 @@ export function PasswordDisplay({
             <Button
               size="sm"
               variant="outline"
-              onClick={() => setShowPassword(!showPassword)}
-            >
-              {showPassword ? (
+              onClick={() => setShowPassword(!showPassword)}>
+              {showPassword ?
                 <EyeOff className="h-4 w-4" />
-              ) : (
-                <Eye className="h-4 w-4" />
-              )}
+              : <Eye className="h-4 w-4" />}
             </Button>
             <Button size="sm" variant="outline" onClick={copyToClipboard}>
               <Copy className="h-4 w-4" />

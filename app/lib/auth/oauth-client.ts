@@ -2,7 +2,7 @@ import { Token, WORKFLOW_CONSTANTS } from "../workflow";
 
 export function validateScopes(
   token: Token,
-  requiredScopes: string[],
+  requiredScopes: string[]
 ): boolean {
   return requiredScopes.every((scope) => token.scope.includes(scope));
 }

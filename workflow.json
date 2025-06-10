@@ -16,10 +16,7 @@
       "base": "https://graph.microsoft.com/beta",
       "auth": "Bearer {azureAccessToken}"
     },
-    "public": {
-      "base": "",
-      "auth": "none"
-    }
+    "public": { "base": "", "auth": "none" }
   },
   "roles": {
     "dirDomainRW": [
@@ -59,10 +56,7 @@
       "conn": "googleAdmin",
       "method": "GET",
       "path": "/customer/{customerId}/orgunits",
-      "qs": {
-        "orgUnitPath": "/Automation",
-        "type": "children"
-      }
+      "qs": { "orgUnitPath": "/Automation", "type": "children" }
     },
     "admin.postOU": {
       "conn": "googleAdmin",
@@ -99,10 +93,7 @@
       "conn": "googleAdmin",
       "method": "GET",
       "path": "/customer/{customerId}/roleassignments",
-      "qs": {
-        "roleId": "{adminRoleId}",
-        "assignedTo": "{provisioningUserId}"
-      }
+      "qs": { "roleId": "{adminRoleId}", "assignedTo": "{provisioningUserId}" }
     },
     "admin.postRoleAssign": {
       "conn": "googleAdmin",
@@ -153,17 +144,13 @@
       "conn": "graphGA",
       "method": "GET",
       "path": "/applications",
-      "qs": {
-        "$filter": "applicationTemplateId eq '{provTemplateId}'"
-      }
+      "qs": { "$filter": "applicationTemplateId eq '{provTemplateId}'" }
     },
     "graph.appByTemplateSSO": {
       "conn": "graphGA",
       "method": "GET",
       "path": "/applications",
-      "qs": {
-        "$filter": "applicationTemplateId eq '{ssoTemplateId}'"
-      }
+      "qs": { "$filter": "applicationTemplateId eq '{ssoTemplateId}'" }
     },
     "graph.getSync": {
       "conn": "graphGA",
@@ -209,9 +196,7 @@
       "conn": "graphGA",
       "method": "GET",
       "path": "/servicePrincipals/{ssoServicePrincipalId}/appRoleAssignedTo",
-      "qs": {
-        "$filter": "principalId eq {principalId}"
-      }
+      "qs": { "$filter": "principalId eq {principalId}" }
     },
     "graph.postAppRoleAssign": {
       "conn": "graphGA",
@@ -252,18 +237,12 @@
     "samlProfileId": {},
     "entityId": {},
     "acsUrl": {},
-    "provTemplateId": {
-      "default": "d0d8633b-4174-4d05-89c7-86d229f50f26"
-    },
-    "ssoTemplateId": {
-      "default": "8ba3d1d8-7c8c-4d2d-b179-04d4a68fba02"
-    },
+    "provTemplateId": { "default": "d0d8633b-4174-4d05-89c7-86d229f50f26" },
+    "ssoTemplateId": { "default": "8ba3d1d8-7c8c-4d2d-b179-04d4a68fba02" },
     "provServicePrincipalId": {},
     "ssoServicePrincipalId": {},
     "ssoAppId": {},
-    "jobId": {
-      "default": "Initial"
-    },
+    "jobId": { "default": "Initial" },
     "claimsPolicyId": {},
     "principalId": {},
     "generatedPassword": {},
@@ -295,9 +274,7 @@
         },
         {
           "use": "admin.postDomain",
-          "payload": {
-            "domainName": "{primaryDomain}"
-          },
+          "payload": { "domainName": "{primaryDomain}" },
           "fallback": true
         }
       ],
@@ -309,16 +286,10 @@
       "inputs": ["primaryDomain"],
       "outputs": [],
       "actions": [
-        {
-          "use": "admin.listOUAutomation",
-          "checker": "exists"
-        },
+        { "use": "admin.listOUAutomation", "checker": "exists" },
         {
           "use": "admin.postOU",
-          "payload": {
-            "name": "Automation",
-            "parentOrgUnitPath": "/"
-          },
+          "payload": { "name": "Automation", "parentOrgUnitPath": "/" },
           "fallback": true
         }
       ],
@@ -342,10 +313,7 @@
           "use": "admin.postUser",
           "payload": {
             "primaryEmail": "{email('azuread-provisioning', primaryDomain)}",
-            "name": {
-              "givenName": "Microsoft",
-              "familyName": "Provisioning"
-            },
+            "name": { "givenName": "Microsoft", "familyName": "Provisioning" },
             "password": "{generatePassword(16)}",
             "orgUnitPath": "/Automation"
           },
@@ -413,9 +381,7 @@
               }
             ]
           },
-          "extract": {
-            "adminRoleId": "$.roleId"
-          },
+          "extract": { "adminRoleId": "$.roleId" },
           "fallback": true
         }
       ],
@@ -428,10 +394,7 @@
       "inputs": ["adminRoleId", "primaryDomain"],
       "outputs": [],
       "actions": [
-        {
-          "use": "admin.getRoleAssign",
-          "checker": "exists"
-        },
+        { "use": "admin.getRoleAssign", "checker": "exists" },
         {
           "use": "admin.postRoleAssign",
           "payload": {
@@ -448,12 +411,7 @@
     {
       "name": "Create SAML Profile for SSO",
       "description": "Configures the SAML settings that allow Microsoft Entra ID to authenticate your Google Workspace users.",
-      "verify": [
-        {
-          "use": "ci.listSamlProfiles",
-          "checker": "exists"
-        }
-      ],
+      "verify": [{ "use": "ci.listSamlProfiles", "checker": "exists" }],
       "execute": [
         {
           "use": "ci.createSamlProfile",
@@ -481,19 +439,9 @@
       "description": "Automatically fetches and installs Microsoft's SAML signing certificate",
       "inputs": ["tenantId", "ssoAppId"],
       "depends_on": ["Create Microsoft SSO App"],
-      "verify": [
-        {
-          "use": "ci.getIdpCreds",
-          "checker": "exists"
-        }
-      ],
+      "verify": [{ "use": "ci.getIdpCreds", "checker": "exists" }],
       "execute": [
-        {
-          "use": "web.fetchMetadata",
-          "extract": {
-            "rawXmlResponse": "$"
-          }
-        },
+        { "use": "web.fetchMetadata", "extract": { "rawXmlResponse": "$" } },
         {
           "use": "ci.addIdpCert",
           "payload": {
@@ -506,21 +454,12 @@
     {
       "name": "Create Microsoft Provisioning App",
       "description": "Sets up the Microsoft Entra ID app that will automatically sync users from Azure AD to Google Workspace.",
-      "verify": [
-        {
-          "use": "graph.appByTemplateProv",
-          "checker": "exists"
-        }
-      ],
+      "verify": [{ "use": "graph.appByTemplateProv", "checker": "exists" }],
       "execute": [
         {
           "use": "graph.instantiateProv",
-          "payload": {
-            "displayName": "Google Cloud (Provisioning)"
-          },
-          "extract": {
-            "provServicePrincipalId": "$.servicePrincipal.id"
-          }
+          "payload": { "displayName": "Google Cloud (Provisioning)" },
+          "extract": { "provServicePrincipalId": "$.servicePrincipal.id" }
         }
       ],
       "role": "graphAppRW",
@@ -529,12 +468,7 @@
     {
       "name": "Configure User Provisioning",
       "description": "Provides Microsoft with the service account credentials to access your Google Workspace directory API.",
-      "verify": [
-        {
-          "use": "graph.getSync",
-          "checker": "exists"
-        }
-      ],
+      "verify": [{ "use": "graph.getSync", "checker": "exists" }],
       "execute": [
         {
           "use": "graph.patchSync",
@@ -544,10 +478,7 @@
                 "key": "BaseAddress",
                 "value": "https://admin.googleapis.com/admin/directory/v1"
               },
-              {
-                "key": "SecretKey",
-                "value": "{generatedPassword}"
-              }
+              { "key": "SecretKey", "value": "{generatedPassword}" }
             ]
           }
         }
@@ -565,11 +496,7 @@
           "field": "state=='active'"
         }
       ],
-      "execute": [
-        {
-          "use": "graph.startSyncJob"
-        }
-      ],
+      "execute": [{ "use": "graph.startSyncJob" }],
       "role": "graphSyncRW",
       "depends_on": ["Configure User Provisioning"]
     },
@@ -577,18 +504,11 @@
       "name": "Create Microsoft SSO App",
       "description": "Sets up the Microsoft app that handles single sign-on authentication",
       "outputs": ["ssoServicePrincipalId", "ssoAppId"],
-      "verify": [
-        {
-          "use": "graph.appByTemplateSSO",
-          "checker": "exists"
-        }
-      ],
+      "verify": [{ "use": "graph.appByTemplateSSO", "checker": "exists" }],
       "execute": [
         {
           "use": "graph.instantiateSSO",
-          "payload": {
-            "displayName": "Google Cloud"
-          },
+          "payload": { "displayName": "Google Cloud" },
           "extract": {
             "ssoServicePrincipalId": "$.servicePrincipal.id",
             "ssoAppId": "$.application.appId"
@@ -625,12 +545,7 @@
     {
       "name": "Create Claims Mapping Policy",
       "description": "Defines how Microsoft user attributes map to Google user attributes. By default, maps email to email.",
-      "verify": [
-        {
-          "use": "graph.listPolicies",
-          "checker": "exists"
-        }
-      ],
+      "verify": [{ "use": "graph.listPolicies", "checker": "exists" }],
       "execute": [
         {
           "use": "graph.createPolicy",
@@ -640,9 +555,7 @@
               "{\"ClaimsMappingPolicy\":{\"Version\":1,\"IncludeBasicClaimSet\":true,\"ClaimsMapping\":{\"email\":{\"source\":\"user\",\"id\":\"mail\"}}}}"
             ]
           },
-          "extract": {
-            "claimsPolicyId": "$.id"
-          }
+          "extract": { "claimsPolicyId": "$.id" }
         },
         {
           "use": "graph.linkPolicy",
@@ -665,12 +578,7 @@
     {
       "name": "Enable SSO for Organization",
       "description": "Activates SSO for all users in your Google Workspace organization (except those in /Automation).",
-      "verify": [
-        {
-          "use": "ci.listSsoAssignments",
-          "checker": "exists"
-        }
-      ],
+      "verify": [{ "use": "ci.listSsoAssignments", "checker": "exists" }],
       "execute": [
         {
           "use": "ci.postSsoAssignment",
@@ -687,12 +595,7 @@
     {
       "name": "Disable SSO for Service Accounts",
       "description": "Ensures service accounts in the /Automation folder can still use passwords instead of SSO.",
-      "verify": [
-        {
-          "use": "ci.listSsoAssignments",
-          "checker": "exists"
-        }
-      ],
+      "verify": [{ "use": "ci.listSsoAssignments", "checker": "exists" }],
       "execute": [
         {
           "use": "ci.postSsoAssignment",

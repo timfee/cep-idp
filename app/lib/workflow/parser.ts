@@ -13,25 +13,19 @@ export function parseWorkflow(): Workflow {
           ...step.actions.map((a) => ({
             ...a,
             mode: a.mode ?? [ACTION_MODES.VERIFY, ACTION_MODES.EXECUTE],
-          })),
+          }))
         );
       }
 
       if (step.verify) {
         actions.push(
-          ...step.verify.map((a) => ({
-            ...a,
-            mode: [ACTION_MODES.VERIFY],
-          })),
+          ...step.verify.map((a) => ({ ...a, mode: [ACTION_MODES.VERIFY] }))
         );
       }
 
       if (step.execute) {
         actions.push(
-          ...step.execute.map((a) => ({
-            ...a,
-            mode: [ACTION_MODES.EXECUTE],
-          })),
+          ...step.execute.map((a) => ({ ...a, mode: [ACTION_MODES.EXECUTE] }))
         );
       }
 

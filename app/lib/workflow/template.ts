@@ -1,7 +1,10 @@
-import { EXPECTED_ARG_COUNT_PAIR, VARIABLE_KEYS } from "./constants";
-import { ERROR_MESSAGES } from "./constants";
-import { generatePassword } from "./generators";
+import {
+  ERROR_MESSAGES,
+  EXPECTED_ARG_COUNT_PAIR,
+  VARIABLE_KEYS,
+} from "./constants";
 import { extractCertificateFromXml } from "./extractors";
+import { generatePassword } from "./generators";
 
 /**
  * Replace variable placeholders in a template string.
@@ -18,15 +21,15 @@ export function substituteVariables(
   options: {
     throwOnMissing?: boolean;
     captureGenerated?: Record<string, string>;
-  } = {},
+  } = {}
 ): string {
   return template.replace(/\{([^{}]+)\}/g, (match, expression) => {
     if (expression.includes("(")) {
       try {
         const result = evaluateTemplateExpression(expression, variables);
         if (
-          expression.startsWith("generatePassword(") &&
-          options.captureGenerated
+          expression.startsWith("generatePassword(")
+          && options.captureGenerated
         ) {
           options.captureGenerated[VARIABLE_KEYS.GENERATED_PASSWORD] = result;
         }
@@ -56,7 +59,7 @@ export function substituteObject(
   options: {
     throwOnMissing?: boolean;
     captureGenerated?: Record<string, string>;
-  } = {},
+  } = {}
 ): unknown {
   if (typeof obj === "string") {
     return substituteVariables(obj, variables, options);
@@ -76,7 +79,7 @@ export function substituteObject(
 
 function evaluateTemplateExpression(
   expression: string,
-  variables: Record<string, string>,
+  variables: Record<string, string>
 ): string {
   const match = expression.match(/^(\w+)\(([^)]*?)\)$/);
   if (!match) {
@@ -98,7 +101,7 @@ function evaluateTemplateExpression(
     case "email": {
       if (args.length !== EXPECTED_ARG_COUNT_PAIR) {
         throw new Error(
-          "email() requires exactly 2 arguments: username and domain",
+          "email() requires exactly 2 arguments: username and domain"
         );
       }
       return `${args[0]}@${args[1]}`;
@@ -113,7 +116,9 @@ function evaluateTemplateExpression(
     }
     case "generatePassword": {
       if (args.length !== 1) {
-        throw new Error("generatePassword() requires exactly 1 argument: length");
+        throw new Error(
+          "generatePassword() requires exactly 1 argument: length"
+        );
       }
       const length = parseInt(args[0], 10);
       if (isNaN(length) || length <= 0) {
@@ -124,7 +129,7 @@ function evaluateTemplateExpression(
     case "extractCertificateFromXml": {
       if (args.length !== 1) {
         throw new Error(
-          "extractCertificateFromXml() requires exactly 1 argument: xml string",
+          "extractCertificateFromXml() requires exactly 1 argument: xml string"
         );
       }
       return extractCertificateFromXml(args[0]);
@@ -136,7 +141,7 @@ function evaluateTemplateExpression(
 
 function parseTemplateArgs(
   argsString: string,
-  variables: Record<string, string>,
+  variables: Record<string, string>
 ): string[] {
   if (!argsString.trim()) {
     return [];
@@ -168,11 +173,11 @@ function parseTemplateArgs(
 
 function resolveTemplateArg(
   arg: string,
-  variables: Record<string, string>,
+  variables: Record<string, string>
 ): string {
   if (
-    (arg.startsWith('"') && arg.endsWith('"')) ||
-    (arg.startsWith("'") && arg.endsWith("'"))
+    (arg.startsWith('"') && arg.endsWith('"'))
+    || (arg.startsWith("'") && arg.endsWith("'"))
   ) {
     return arg.slice(1, -1);
   }
@@ -196,7 +201,7 @@ function formatString(template: string, values: string[]): string {
 
 export function extractMissingVariables(
   template: string,
-  variables: Record<string, string>,
+  variables: Record<string, string>
 ): string[] {
   const missing: string[] = [];
   const matches = template.matchAll(/\{([^{}]+)\}/g);
@@ -225,10 +230,10 @@ function extractVariablesFromExpression(expression: string): string[] {
       const args = argsString.split(",").map((arg) => arg.trim());
       for (const arg of args) {
         if (
-          !arg.startsWith('"') &&
-          !arg.startsWith("'") &&
-          !arg.includes("(") &&
-          /^\w+$/.test(arg)
+          !arg.startsWith('"')
+          && !arg.startsWith("'")
+          && !arg.includes("(")
+          && /^\w+$/.test(arg)
         ) {
           extractedVariables.push(arg);
         }
@@ -238,4 +243,10 @@ function extractVariablesFromExpression(expression: string): string[] {
   return extractedVariables;
 }
 
-export { evaluateTemplateExpression, parseTemplateArgs, resolveTemplateArg, formatString, extractVariablesFromExpression };
+export {
+  evaluateTemplateExpression,
+  extractVariablesFromExpression,
+  formatString,
+  parseTemplateArgs,
+  resolveTemplateArg,
+};

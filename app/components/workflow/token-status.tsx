@@ -70,8 +70,7 @@ export function TokenStatus({
           <Button
             size="sm"
             variant="outline"
-            onClick={() => (window.location.href = `/api/auth/${provider}`)}
-          >
+            onClick={() => (window.location.href = `/api/auth/${provider}`)}>
             Re-authenticate
           </Button>
         </AlertDescription>
@@ -88,8 +87,7 @@ export function TokenStatus({
             size="sm"
             variant="ghost"
             onClick={handleRefresh}
-            disabled={isRefreshing}
-          >
+            disabled={isRefreshing}>
             <RefreshCw
               className={`h-3 w-3 mr-1 ${isRefreshing ? "animate-spin" : ""}`}
             />

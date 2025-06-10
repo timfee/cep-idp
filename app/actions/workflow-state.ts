@@ -1,17 +1,17 @@
 "use server";
 import "server-only";
 
-import { revalidatePath } from "next/cache";
+import { refreshAccessToken } from "@/app/lib/auth/oauth";
+import { getToken, setToken } from "@/app/lib/auth/tokens";
 import { parseWorkflow } from "@/app/lib/workflow";
+import { Provider } from "@/app/lib/workflow/constants";
+import type { LogEntry } from "@/app/lib/workflow/types";
 import {
   getStoredVariables,
   setStoredVariables,
 } from "@/app/lib/workflow/variables-store";
-import { getToken, setToken } from "@/app/lib/auth/tokens";
-import { refreshAccessToken } from "@/app/lib/auth/oauth";
-import { Provider } from "@/app/lib/workflow/constants";
-import type { LogEntry } from "@/app/lib/workflow/types";
 import { timingSafeEqual } from "crypto";
+import { revalidatePath } from "next/cache";
 
 /**
  * Force refresh workflow state
@@ -26,11 +26,8 @@ export async function refreshWorkflowState(): Promise<void> {
 export async function setWorkflowVariable(
   name: string,
   value: string,
-  onLog?: (entry: LogEntry) => void,
-): Promise<{
-  success: boolean;
-  error?: string;
-}> {
+  onLog?: (entry: LogEntry) => void
+): Promise<{ success: boolean; error?: string }> {
   try {
     const { validateVariable } = await import("@/app/lib/workflow");
     const workflow = parseWorkflow();
@@ -41,8 +38,8 @@ export async function setWorkflowVariable(
     const isValid = varNames.some((varName) => {
       const varNameBuffer = Buffer.from(varName);
       return (
-        nameBuffer.length === varNameBuffer.length &&
-        timingSafeEqual(nameBuffer, varNameBuffer)
+        nameBuffer.length === varNameBuffer.length
+        && timingSafeEqual(nameBuffer, varNameBuffer)
       );
     });
     if (!isValid) {
@@ -88,7 +85,7 @@ export async function setWorkflowVariable(
 
 export async function refreshAuthToken(
   provider: Provider,
-  onLog?: (entry: LogEntry) => void,
+  onLog?: (entry: LogEntry) => void
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const token = await getToken(provider);
@@ -102,7 +99,7 @@ export async function refreshAuthToken(
 
     const refreshedToken = await refreshAccessToken(
       provider,
-      token.refreshToken,
+      token.refreshToken
     );
     await setToken(provider, refreshedToken);
 
@@ -124,8 +121,9 @@ export async function refreshAuthToken(
 
 export async function markManualStepComplete(stepName: string): Promise<void> {
   const vars = await getStoredVariables();
-  const state = vars.manualStepsState
-    ? JSON.parse(vars.manualStepsState)
+  const state =
+    vars.manualStepsState ?
+      JSON.parse(vars.manualStepsState)
     : ({ completed: [], completedAt: {} } as {
         completed: string[];
         completedAt: Record<string, number>;

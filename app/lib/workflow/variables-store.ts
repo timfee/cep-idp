@@ -1,11 +1,11 @@
 import "server-only";
+import { decrypt, encrypt } from "../auth/crypto";
 import {
-  getChunkedCookie,
-  setChunkedCookie,
   clearChunkedCookie,
   CookieOptions,
+  getChunkedCookie,
+  setChunkedCookie,
 } from "../cookies/server";
-import { encrypt, decrypt } from "../auth/crypto";
 import { WORKFLOW_CONSTANTS } from "./constants";
 import { LogEntry } from "./types";
 
@@ -17,11 +17,11 @@ const COOKIE_OPTIONS: CookieOptions = {
 };
 
 export async function getStoredVariables(
-  onLog?: (entry: LogEntry) => void,
+  onLog?: (entry: LogEntry) => void
 ): Promise<Record<string, string>> {
   const encrypted = await getChunkedCookie(
     WORKFLOW_CONSTANTS.VARIABLES_COOKIE_NAME,
-    onLog,
+    onLog
   );
   if (!encrypted) return {};
   try {
@@ -40,14 +40,14 @@ export async function getStoredVariables(
 
 export async function setStoredVariables(
   vars: Record<string, string>,
-  onLog?: (entry: LogEntry) => void,
+  onLog?: (entry: LogEntry) => void
 ): Promise<void> {
   const encrypted = encrypt(JSON.stringify(vars));
   const result = await setChunkedCookie(
     WORKFLOW_CONSTANTS.VARIABLES_COOKIE_NAME,
     encrypted,
     { ...COOKIE_OPTIONS, maxAge: WORKFLOW_CONSTANTS.VARIABLES_COOKIE_MAX_AGE },
-    onLog,
+    onLog
   );
   if (!result.success) {
     onLog?.({
@@ -59,7 +59,7 @@ export async function setStoredVariables(
 }
 
 export async function clearStoredVariables(
-  onLog?: (entry: LogEntry) => void,
+  onLog?: (entry: LogEntry) => void
 ): Promise<void> {
   await clearChunkedCookie(WORKFLOW_CONSTANTS.VARIABLES_COOKIE_NAME, onLog);
 }

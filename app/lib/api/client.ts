@@ -1,7 +1,13 @@
 import { isTokenExpired } from "../auth/oauth-client";
 import { refreshAccessToken } from "../auth/oauth-server";
 import { setToken } from "../auth/tokens";
-import { substituteObject, substituteVariables, Token, Endpoint, LogEntry } from "../workflow";
+import {
+  Endpoint,
+  LogEntry,
+  substituteObject,
+  substituteVariables,
+  Token,
+} from "../workflow";
 import {
   CONNECTION_IDENTIFIERS,
   HTTP_METHODS_WITH_BODY,
@@ -14,13 +20,13 @@ import { ApiRequestOptions } from "./types";
 function getTokenForConnection(
   endpoint: Endpoint,
   tokens: { google?: Token; microsoft?: Token },
-  _onLog?: (entry: LogEntry) => void,
+  _onLog?: (entry: LogEntry) => void
 ): { token: Token | null; provider: Provider | null } {
   let token: Token | null = null;
   let provider: Provider | null = null;
   if (
-    endpoint.conn.includes(CONNECTION_IDENTIFIERS.GOOGLE) ||
-    endpoint.conn.includes(CONNECTION_IDENTIFIERS.GOOGLE_CI)
+    endpoint.conn.includes(CONNECTION_IDENTIFIERS.GOOGLE)
+    || endpoint.conn.includes(CONNECTION_IDENTIFIERS.GOOGLE_CI)
   ) {
     token = tokens.google ?? null;
     provider = PROVIDERS.GOOGLE;
@@ -34,7 +40,7 @@ function getTokenForConnection(
 async function refreshTokenIfNeeded(
   token: Token,
   provider: Provider,
-  onLog?: (entry: LogEntry) => void,
+  onLog?: (entry: LogEntry) => void
 ): Promise<Token> {
   if (!isTokenExpired(token) || !token.refreshToken) {
     return token;
@@ -50,7 +56,7 @@ async function refreshTokenIfNeeded(
       });
       const refreshedToken = await refreshAccessToken(
         provider,
-        token.refreshToken,
+        token.refreshToken
       );
       await setToken(provider, refreshedToken);
       return refreshedToken;
@@ -64,7 +70,7 @@ async function refreshTokenIfNeeded(
       });
       if (refreshAttempts === WORKFLOW_CONSTANTS.MAX_REFRESH_ATTEMPTS) {
         throw new Error(
-          `${PROVIDERS[provider.toUpperCase() as keyof typeof PROVIDERS]} authentication expired. Please re-authenticate.`,
+          `${PROVIDERS[provider.toUpperCase() as keyof typeof PROVIDERS]} authentication expired. Please re-authenticate.`
         );
       }
     }
@@ -76,7 +82,7 @@ function buildAuthenticatedRequest(
   connection: { auth: string },
   endpoint: Endpoint,
   token: Token,
-  body: unknown,
+  body: unknown
 ): RequestInit {
   const headers: Record<string, string> = {
     "Content-Type": "application/json",
@@ -86,18 +92,20 @@ function buildAuthenticatedRequest(
     .replace("{azureAccessToken}", token.accessToken);
   headers["Authorization"] = authHeader;
 
-  const requestOptions: RequestInit = {
-    method: endpoint.method,
-    headers,
-  };
-  if (body && HTTP_METHODS_WITH_BODY.includes(endpoint.method as (typeof HTTP_METHODS_WITH_BODY)[number])) {
+  const requestOptions: RequestInit = { method: endpoint.method, headers };
+  if (
+    body
+    && HTTP_METHODS_WITH_BODY.includes(
+      endpoint.method as (typeof HTTP_METHODS_WITH_BODY)[number]
+    )
+  ) {
     requestOptions.body = JSON.stringify(body);
   }
   return requestOptions;
 }
 
 async function handlePublicRequest(
-  options: ApiRequestOptions,
+  options: ApiRequestOptions
 ): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
   const {
     endpoint,
@@ -121,7 +129,7 @@ async function handlePublicRequest(
         substituteVariables(value, variables, {
           throwOnMissing: throwOnMissingVars,
           captureGenerated: capturedValues,
-        }),
+        })
       );
     }
     url += `?${params.toString()}`;
@@ -130,7 +138,7 @@ async function handlePublicRequest(
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(
-      `Request failed: ${response.status} - ${response.statusText}`,
+      `Request failed: ${response.status} - ${response.statusText}`
     );
   }
   const contentType = response.headers.get("content-type");
@@ -141,7 +149,7 @@ async function handlePublicRequest(
 }
 
 async function handleAuthenticatedRequest(
-  options: ApiRequestOptions,
+  options: ApiRequestOptions
 ): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
   const {
     endpoint,
@@ -158,7 +166,7 @@ async function handleAuthenticatedRequest(
   const { token: initialToken, provider } = getTokenForConnection(
     endpoint,
     tokens,
-    onLog,
+    onLog
   );
 
   if (!initialToken || !provider) {
@@ -180,8 +188,9 @@ async function handleAuthenticatedRequest(
     url += `?${params.toString()}`;
   }
 
-  const finalBody = body
-    ? substituteObject(body, variables, {
+  const finalBody =
+    body ?
+      substituteObject(body, variables, {
         throwOnMissing: throwOnMissingVars,
         captureGenerated: capturedValues,
       })
@@ -191,7 +200,7 @@ async function handleAuthenticatedRequest(
     connection,
     endpoint,
     token,
-    finalBody,
+    finalBody
   );
 
   const response = await fetch(url, requestOptions);
@@ -201,8 +210,8 @@ async function handleAuthenticatedRequest(
   }
 
   if (
-    response.status === WORKFLOW_CONSTANTS.HTTP_STATUS.NOT_FOUND &&
-    !throwOnMissingVars
+    response.status === WORKFLOW_CONSTANTS.HTTP_STATUS.NOT_FOUND
+    && !throwOnMissingVars
   ) {
     return { data: null, capturedValues };
   }
@@ -221,7 +230,7 @@ async function handleAuthenticatedRequest(
 }
 
 export async function apiRequest(
-  options: ApiRequestOptions,
+  options: ApiRequestOptions
 ): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
   const { endpoint, connections } = options;
   const connection = connections[endpoint.conn];

@@ -26,23 +26,22 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
         workflow.steps
           .filter(
             (step) =>
-              step.role &&
-              (step.role.startsWith(ROLE_PREFIXES.GOOGLE_DIR) ||
-                step.role.startsWith(ROLE_PREFIXES.GOOGLE_CI)),
+              step.role
+              && (step.role.startsWith(ROLE_PREFIXES.GOOGLE_DIR)
+                || step.role.startsWith(ROLE_PREFIXES.GOOGLE_CI))
           )
-          .flatMap((step) => workflow.roles[step.role!] || []),
-      ),
+          .flatMap((step) => workflow.roles[step.role!] || [])
+      )
     );
 
     const allRequiredMicrosoftScopes = Array.from(
       new Set(
         workflow.steps
           .filter(
-            (step) =>
-              step.role && step.role.startsWith(ROLE_PREFIXES.MICROSOFT),
+            (step) => step.role && step.role.startsWith(ROLE_PREFIXES.MICROSOFT)
           )
-          .flatMap((step) => workflow.roles[step.role!] || []),
-      ),
+          .flatMap((step) => workflow.roles[step.role!] || [])
+      )
     );
 
     return (
@@ -56,9 +55,9 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
             <Alert variant="destructive" className="mb-6">
               <AlertTitle>Authentication Error</AlertTitle>
               <AlertDescription>
-                {typeof error === "string"
-                  ? error
-                  : "An error occurred during authentication"}
+                {typeof error === "string" ?
+                  error
+                : "An error occurred during authentication"}
               </AlertDescription>
             </Alert>
           )}

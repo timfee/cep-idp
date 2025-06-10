@@ -4,7 +4,6 @@ import "client-only";
 import { isTokenExpired } from "@/app/lib/auth/oauth-client";
 import type { Step, StepStatus, Workflow } from "@/app/lib/workflow";
 import { ROLE_PREFIXES, STATUS_VALUES } from "@/app/lib/workflow/constants";
-import React from "react";
 import { StepCard } from "./step-card";
 
 interface WorkflowStepsProps {
@@ -28,10 +27,10 @@ export function WorkflowSteps({
     Object.entries(stepStatuses)
       .filter(
         ([, status]) =>
-          status.status === STATUS_VALUES.COMPLETED ||
-          status.status === STATUS_VALUES.SKIPPED,
+          status.status === STATUS_VALUES.COMPLETED
+          || status.status === STATUS_VALUES.SKIPPED
       )
-      .map(([name]) => name),
+      .map(([name]) => name)
   );
 
   // Helper to get required scopes for a step
@@ -46,36 +45,36 @@ export function WorkflowSteps({
 
     const requiredScopes = getRequiredScopes(step);
     const isGoogleStep =
-      step.role.startsWith(ROLE_PREFIXES.GOOGLE_DIR) ||
-      step.role.startsWith(ROLE_PREFIXES.GOOGLE_CI);
+      step.role.startsWith(ROLE_PREFIXES.GOOGLE_DIR)
+      || step.role.startsWith(ROLE_PREFIXES.GOOGLE_CI);
     const isMicrosoftStep = step.role.startsWith(ROLE_PREFIXES.MICROSOFT);
 
     if (isGoogleStep && authStatus.google.authenticated) {
       const notExpired =
-        !authStatus.google.expiresAt ||
-        !isTokenExpired({
+        !authStatus.google.expiresAt
+        || !isTokenExpired({
           accessToken: "",
           expiresAt: authStatus.google.expiresAt || 0,
           scope: [],
         });
       return (
-        notExpired &&
-        requiredScopes.every((scope: string) =>
-          authStatus.google.scopes.includes(scope),
+        notExpired
+        && requiredScopes.every((scope: string) =>
+          authStatus.google.scopes.includes(scope)
         )
       );
     } else if (isMicrosoftStep && authStatus.microsoft.authenticated) {
       const notExpired =
-        !authStatus.microsoft.expiresAt ||
-        !isTokenExpired({
+        !authStatus.microsoft.expiresAt
+        || !isTokenExpired({
           accessToken: "",
           expiresAt: authStatus.microsoft.expiresAt || 0,
           scope: [],
         });
       return (
-        notExpired &&
-        requiredScopes.every((scope: string) =>
-          authStatus.microsoft.scopes.includes(scope),
+        notExpired
+        && requiredScopes.every((scope: string) =>
+          authStatus.microsoft.scopes.includes(scope)
         )
       );
     }
@@ -91,8 +90,9 @@ export function WorkflowSteps({
           logs: [],
         };
 
-        const canExecute = step.depends_on
-          ? step.depends_on.every((dep: string) => completedSteps.has(dep))
+        const canExecute =
+          step.depends_on ?
+            step.depends_on.every((dep: string) => completedSteps.has(dep))
           : true;
 
         const isAuthValid = isAuthValidForStep(step);

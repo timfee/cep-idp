@@ -1,8 +1,8 @@
-import "server-only";
 import { cookies } from "next/headers";
-import { WORKFLOW_CONSTANTS, LogEntry } from "../workflow";
+import "server-only";
+import { LogEntry, WORKFLOW_CONSTANTS } from "../workflow";
 import { COOKIE_METADATA_KEYS } from "../workflow/constants";
-import { splitIntoChunks, estimateCookieSize } from "./utils";
+import { estimateCookieSize, splitIntoChunks } from "./utils";
 
 const CHUNK_DELIMITER = ".chunk.";
 const MAX_COOKIE_SIZE = WORKFLOW_CONSTANTS.MAX_COOKIE_SIZE;
@@ -20,7 +20,7 @@ export async function setChunkedCookie(
   name: string,
   value: string,
   options: CookieOptions = {},
-  onLog?: (entry: LogEntry) => void,
+  onLog?: (entry: LogEntry) => void
 ): Promise<{ success: boolean; error?: string }> {
   const cookieStore = await cookies();
   await clearChunkedCookie(name);
@@ -47,7 +47,7 @@ export async function setChunkedCookie(
   const metadataSize = estimateCookieSize(
     name,
     JSON.stringify(metadata),
-    options,
+    options
   );
   if (metadataSize > MAX_COOKIE_SIZE) {
     return {
@@ -95,7 +95,7 @@ export async function setChunkedCookie(
 
 export async function getChunkedCookie(
   name: string,
-  onLog?: (entry: LogEntry) => void,
+  onLog?: (entry: LogEntry) => void
 ): Promise<string | null> {
   const cookieStore = await cookies();
   const mainCookie = cookieStore.get(name);
@@ -140,7 +140,7 @@ export async function getChunkedCookie(
 
 export async function clearChunkedCookie(
   name: string,
-  onLog?: (entry: LogEntry) => void,
+  onLog?: (entry: LogEntry) => void
 ): Promise<void> {
   const cookieStore = await cookies();
   const mainCookie = cookieStore.get(name);
@@ -177,7 +177,7 @@ export function setChunkedCookieOnResponse(
   name: string,
   value: string,
   options: CookieOptions = {},
-  onLog?: (entry: LogEntry) => void,
+  onLog?: (entry: LogEntry) => void
 ): void {
   const chunks = splitIntoChunks(value);
   const buildCookieString = (cookieName: string, cookieValue: string) => {
@@ -206,13 +206,13 @@ export function setChunkedCookieOnResponse(
     };
     response.headers.append(
       "Set-Cookie",
-      buildCookieString(name, JSON.stringify(metadata)),
+      buildCookieString(name, JSON.stringify(metadata))
     );
     for (let i = 0; i < chunks.length; i++) {
       const chunkName = `${name}${CHUNK_DELIMITER}${i}`;
       response.headers.append(
         "Set-Cookie",
-        buildCookieString(chunkName, chunks[i]),
+        buildCookieString(chunkName, chunks[i])
       );
     }
   }

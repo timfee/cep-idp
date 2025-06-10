@@ -6,16 +6,16 @@ export type ApiError =
 
 // Type guard for structured errors
 export function isStructuredError(
-  obj: unknown,
+  obj: unknown
 ): obj is { error: { code: number; message: string; status?: string } } {
   return (
-    typeof obj === "object" &&
-    obj !== null &&
-    "error" in obj &&
-    typeof (obj as Record<string, unknown>).error === "object" &&
-    obj.error !== null &&
-    "code" in (obj as { error: Record<string, unknown> }).error &&
-    "message" in (obj as { error: Record<string, unknown> }).error
+    typeof obj === "object"
+    && obj !== null
+    && "error" in obj
+    && typeof (obj as Record<string, unknown>).error === "object"
+    && obj.error !== null
+    && "code" in (obj as { error: Record<string, unknown> }).error
+    && "message" in (obj as { error: Record<string, unknown> }).error
   );
 }
 

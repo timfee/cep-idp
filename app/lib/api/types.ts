@@ -1,4 +1,4 @@
-import { Connection, Endpoint, Token, LogEntry } from "../workflow";
+import { Connection, Endpoint, LogEntry, Token } from "../workflow";
 
 export interface ApiRequestOptions {
   endpoint: Endpoint;

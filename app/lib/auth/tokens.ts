@@ -1,19 +1,19 @@
-import "server-only";
 import { cookies } from "next/headers";
-import {
-  Token,
-  WORKFLOW_CONSTANTS,
-  MS_IN_SECOND,
-  LogEntry,
-  Provider,
-} from "../workflow";
-import { OAUTH_STATE_COOKIE_NAME } from "../workflow/constants";
+import "server-only";
 import {
   clearChunkedCookie,
+  CookieOptions,
   getChunkedCookie,
   setChunkedCookie,
-  CookieOptions,
 } from "../cookies/server";
+import {
+  LogEntry,
+  MS_IN_SECOND,
+  Provider,
+  Token,
+  WORKFLOW_CONSTANTS,
+} from "../workflow";
+import { OAUTH_STATE_COOKIE_NAME } from "../workflow/constants";
 import { decrypt, encrypt } from "./crypto";
 
 // Use process.env.NODE_ENV directly to avoid issues with env import
@@ -26,7 +26,7 @@ const COOKIE_OPTIONS: CookieOptions = {
 
 export async function getToken(
   provider: Provider,
-  onLog?: (entry: LogEntry) => void,
+  onLog?: (entry: LogEntry) => void
 ): Promise<Token | null> {
   const cookieName = `${provider}_token`;
   onLog?.({
@@ -66,7 +66,7 @@ export async function getToken(
 export async function setToken(
   provider: Provider,
   token: Token,
-  onLog?: (entry: LogEntry) => void,
+  onLog?: (entry: LogEntry) => void
 ): Promise<void> {
   const cookieName = `${provider}_token`;
   const encrypted = encrypt(JSON.stringify(token));
@@ -113,7 +113,7 @@ export async function deleteToken(provider: Provider): Promise<void> {
 // OAuth state management for CSRF protection
 export async function setOAuthState(
   state: string,
-  provider: string,
+  provider: string
 ): Promise<void> {
   const data = { state, provider, timestamp: Date.now() };
   const encrypted = encrypt(JSON.stringify(data));
@@ -126,7 +126,7 @@ export async function setOAuthState(
 
 export async function validateOAuthState(
   state: string,
-  provider: string,
+  provider: string
 ): Promise<boolean> {
   const cookie = (await cookies()).get(OAUTH_STATE_COOKIE_NAME);
   if (!cookie) return false;
@@ -137,9 +137,9 @@ export async function validateOAuthState(
 
     // Check state matches and not expired (10 min)
     return (
-      data.state === state &&
-      data.provider === provider &&
-      Date.now() - data.timestamp < WORKFLOW_CONSTANTS.OAUTH_STATE_TTL_MS
+      data.state === state
+      && data.provider === provider
+      && Date.now() - data.timestamp < WORKFLOW_CONSTANTS.OAUTH_STATE_TTL_MS
     );
   } catch {
     return false;

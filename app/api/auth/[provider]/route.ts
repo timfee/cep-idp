@@ -1,6 +1,10 @@
 import { encrypt, generateState } from "@/app/lib/auth/crypto";
 import { generateAuthUrl } from "@/app/lib/auth/oauth";
-import { PROVIDERS, Provider, OAUTH_STATE_COOKIE_NAME } from "@/app/lib/workflow/constants";
+import {
+  OAUTH_STATE_COOKIE_NAME,
+  PROVIDERS,
+  Provider,
+} from "@/app/lib/workflow/constants";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {

@@ -1,4 +1,4 @@
-import { Step, Action, ACTION_MODES } from "./types";
+import { Action, ACTION_MODES, Step } from "./types";
 
 export function filterActions(step: Step, verificationOnly: boolean): Action[] {
   if (!step.actions) return [];

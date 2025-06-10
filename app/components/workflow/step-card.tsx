@@ -47,10 +47,7 @@ interface StepCardProps {
   variables: Record<string, string>;
 }
 
-type StepCardState = {
-  isExecuting: boolean;
-  executionError?: string;
-};
+type StepCardState = { isExecuting: boolean; executionError?: string };
 
 type StepCardAction =
   | { type: "EXECUTE_START" }
@@ -59,7 +56,7 @@ type StepCardAction =
 
 function stepCardReducer(
   state: StepCardState,
-  action: StepCardAction,
+  action: StepCardAction
 ): StepCardState {
   switch (action.type) {
     case "EXECUTE_START":
@@ -82,8 +79,9 @@ export function StepCard({
 }: StepCardProps) {
   const [isPending, startTransition] = useTransition();
   const [state, dispatch] = useReducer(stepCardReducer, { isExecuting: false });
-  const effectiveStatus = state.executionError
-    ? { ...status, status: STATUS_VALUES.FAILED, error: state.executionError }
+  const effectiveStatus =
+    state.executionError ?
+      { ...status, status: STATUS_VALUES.FAILED, error: state.executionError }
     : status;
 
   // Debug logging
@@ -95,8 +93,8 @@ export function StepCard({
       if (result.status && result.status.status !== STATUS_VALUES.FAILED) {
         dispatch({ type: "EXECUTE_SUCCESS" });
       } else if (
-        result.status &&
-        result.status.status === STATUS_VALUES.FAILED
+        result.status
+        && result.status.status === STATUS_VALUES.FAILED
       ) {
         dispatch({ type: "EXECUTE_FAILURE", error: result.status.error || "" });
       } else if (result.error) {
@@ -130,9 +128,9 @@ export function StepCard({
   })();
 
   const hasContent =
-    effectiveStatus.error ||
-    effectiveStatus.logs.length > 0 ||
-    effectiveStatus.status === STATUS_VALUES.FAILED;
+    effectiveStatus.error
+    || effectiveStatus.logs.length > 0
+    || effectiveStatus.status === STATUS_VALUES.FAILED;
 
   // Force expand if there's an error
   const forceOpen =
@@ -143,8 +141,7 @@ export function StepCard({
       <Accordion
         type="single"
         collapsible
-        defaultValue={forceOpen ? "item" : undefined}
-      >
+        defaultValue={forceOpen ? "item" : undefined}>
         <AccordionItem value="item" className="border-0">
           <div className="px-6 pt-6">
             <div className="flex items-start justify-between">
@@ -163,12 +160,15 @@ export function StepCard({
                             if (rawValue) {
                               const substituted = substituteVariables(
                                 rawValue,
-                                variables,
+                                variables
                               );
                               display = `${input}: ${substituted.substring(0, VARIABLE_DISPLAY_MAX_LENGTH)}${
-                                substituted.length > VARIABLE_DISPLAY_MAX_LENGTH
-                                  ? "..."
-                                  : ""
+                                (
+                                  substituted.length
+                                  > VARIABLE_DISPLAY_MAX_LENGTH
+                                ) ?
+                                  "..."
+                                : ""
                               }`;
                             }
 
@@ -178,11 +178,10 @@ export function StepCard({
                                 variant={rawValue ? "secondary" : "outline"}
                                 className={cn(
                                   "text-xs font-mono",
-                                  rawValue
-                                    ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-                                    : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
-                                )}
-                              >
+                                  rawValue ?
+                                    "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
+                                  : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                                )}>
                                 {display}
                               </Badge>
                             );
@@ -196,8 +195,7 @@ export function StepCard({
                             <Badge
                               key={output}
                               variant="outline"
-                              className="text-xs font-mono border-green-200 text-green-700 dark:border-green-800 dark:text-green-300"
-                            >
+                              className="text-xs font-mono border-green-200 text-green-700 dark:border-green-800 dark:text-green-300">
                               {output}
                             </Badge>
                           ))}
@@ -219,29 +217,25 @@ export function StepCard({
               </div>
 
               <div className="flex items-center gap-2">
-                {!step.manual &&
-                  effectiveStatus.status === STATUS_VALUES.PENDING &&
-                  canExecute &&
-                  isAuthValid && (
+                {!step.manual
+                  && effectiveStatus.status === STATUS_VALUES.PENDING
+                  && canExecute
+                  && isAuthValid && (
                     <Button
                       onClick={() => handleExecute(step.name)}
                       variant="default"
-                      disabled={isPending}
-                    >
-                      {isPending ? (
+                      disabled={isPending}>
+                      {isPending ?
                         <Loader2 className="h-4 w-4 animate-spin" />
-                      ) : (
-                        "Execute"
-                      )}
+                      : "Execute"}
                     </Button>
                   )}
 
-                {step.manual &&
-                  effectiveStatus.status === STATUS_VALUES.PENDING && (
+                {step.manual
+                  && effectiveStatus.status === STATUS_VALUES.PENDING && (
                     <Button
                       onClick={() => markManualStepComplete(step.name)}
-                      variant="outline"
-                    >
+                      variant="outline">
                       Mark as Complete
                     </Button>
                   )}
@@ -250,21 +244,18 @@ export function StepCard({
                   <Button
                     onClick={() => handleExecute(step.name)}
                     variant="destructive"
-                    disabled={isPending}
-                  >
-                    {isPending ? (
+                    disabled={isPending}>
+                    {isPending ?
                       <Loader2 className="h-4 w-4 animate-spin" />
-                    ) : (
-                      "Retry"
-                    )}
+                    : "Retry"}
                   </Button>
                 )}
               </div>
             </div>
 
-            {!isAuthValid &&
-              step.role &&
-              effectiveStatus.status === STATUS_VALUES.PENDING && (
+            {!isAuthValid
+              && step.role
+              && effectiveStatus.status === STATUS_VALUES.PENDING && (
                 <Alert variant="destructive" className="mt-3">
                   <AlertTriangle className="h-4 w-4" />
                   <AlertDescription>
@@ -275,8 +266,8 @@ export function StepCard({
                 </Alert>
               )}
 
-            {(effectiveStatus.error ||
-              effectiveStatus.status === STATUS_VALUES.FAILED) && (
+            {(effectiveStatus.error
+              || effectiveStatus.status === STATUS_VALUES.FAILED) && (
               <div className="mt-3 p-4 bg-red-100 dark:bg-red-900/30 rounded-lg border border-red-200 dark:border-red-800">
                 <div className="flex gap-3">
                   <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
@@ -295,15 +286,15 @@ export function StepCard({
             )}
           </div>
 
-          {effectiveStatus.status === STATUS_VALUES.COMPLETED &&
-            variables[VARIABLE_KEYS.GENERATED_PASSWORD] &&
-            step.name === STEP_NAMES.CREATE_SERVICE_ACCOUNT && (
+          {effectiveStatus.status === STATUS_VALUES.COMPLETED
+            && variables[VARIABLE_KEYS.GENERATED_PASSWORD]
+            && step.name === STEP_NAMES.CREATE_SERVICE_ACCOUNT && (
               <div className="mt-3">
                 <PasswordDisplay
                   password={variables[VARIABLE_KEYS.GENERATED_PASSWORD]}
                   accountEmail={
-                    variables.provisioningUserEmail ||
-                    "azuread-provisioning@domain"
+                    variables.provisioningUserEmail
+                    || "azuread-provisioning@domain"
                   }
                 />
               </div>
@@ -314,15 +305,14 @@ export function StepCard({
               <span
                 className={cn(
                   "text-sm",
-                  effectiveStatus.status === STATUS_VALUES.FAILED
-                    ? "text-red-600 dark:text-red-400 font-medium"
-                    : "text-zinc-500 dark:text-zinc-400",
-                )}
-              >
+                  effectiveStatus.status === STATUS_VALUES.FAILED ?
+                    "text-red-600 dark:text-red-400 font-medium"
+                  : "text-zinc-500 dark:text-zinc-400"
+                )}>
                 {(() => {
                   if (
-                    effectiveStatus.status === STATUS_VALUES.FAILED &&
-                    effectiveStatus.error
+                    effectiveStatus.status === STATUS_VALUES.FAILED
+                    && effectiveStatus.error
                   ) {
                     return "View error details";
                   }
@@ -355,9 +345,9 @@ export function StepCard({
               {effectiveStatus.logs.length > 0 && (
                 <div className="space-y-1">
                   <h4 className="text-sm font-medium mb-2">
-                    {effectiveStatus.status === STATUS_VALUES.FAILED
-                      ? "Debug Logs"
-                      : "Execution Logs"}
+                    {effectiveStatus.status === STATUS_VALUES.FAILED ?
+                      "Debug Logs"
+                    : "Execution Logs"}
                   </h4>
                   <div className="bg-zinc-50 dark:bg-zinc-900 rounded-lg p-3 text-xs font-mono space-y-1 max-h-64 overflow-y-auto">
                     {effectiveStatus.logs.map((log: LogEntry, i: number) => (
@@ -365,89 +355,92 @@ export function StepCard({
                         key={i}
                         className={cn(
                           "space-y-1",
-                          log.level === "error" &&
-                            "text-red-600 dark:text-red-400",
-                          log.level === "warn" &&
-                            "text-amber-600 dark:text-amber-400",
-                        )}
-                      >
-                        {log.data &&
-                        typeof log.data === "object" &&
-                        "fullUrl" in log.data ? (
-                          // API response log - show condensed format
-                          <div className="space-y-1">
-                            <details className="group">
-                              <summary className="cursor-pointer flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-950/30 rounded-md border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/50">
-                                <span className="text-xs text-zinc-500 dark:text-zinc-600">
-                                  {new Date(log.timestamp).toLocaleTimeString()}
-                                </span>
-                                <span className="text-xs font-mono text-blue-700 dark:text-blue-300">
-                                  {log.message} ⬇︎
-                                </span>
-                              </summary>
-                              <div className="mt-2 ml-4">
-                                <div className="bg-slate-900 dark:bg-slate-950 rounded-md border border-slate-600 relative">
-                                  <div className="flex items-center justify-between px-3 py-2 border-b border-slate-600 bg-slate-800 rounded-t-md">
-                                    <span className="text-xs font-mono text-slate-400">
-                                      API Response
-                                    </span>
-                                    <button
-                                      onClick={() => {
-                                        if (
-                                          log.data &&
-                                          typeof log.data === "object" &&
-                                          "response" in log.data &&
-                                          "fullUrl" in log.data
-                                        ) {
-                                          const responseData =
-                                            log.data.response;
-                                          const fullUrl = log.data.fullUrl;
-                                          const text = `// ${fullUrl}\nexport default ${JSON.stringify(responseData, null, JSON_INDENT)};`;
-                                          navigator.clipboard.writeText(text);
-                                        }
-                                      }}
-                                      className="text-xs text-slate-400 hover:text-slate-200"
-                                    >
-                                      Copy
-                                    </button>
+                          log.level === "error"
+                            && "text-red-600 dark:text-red-400",
+                          log.level === "warn"
+                            && "text-amber-600 dark:text-amber-400"
+                        )}>
+                        {
+                          (
+                            log.data
+                            && typeof log.data === "object"
+                            && "fullUrl" in log.data
+                          ) ?
+                            // API response log - show condensed format
+                            <div className="space-y-1">
+                              <details className="group">
+                                <summary className="cursor-pointer flex items-center gap-2 px-3 py-2 bg-blue-50 dark:bg-blue-950/30 rounded-md border border-blue-200 dark:border-blue-800 hover:bg-blue-100 dark:hover:bg-blue-900/50">
+                                  <span className="text-xs text-zinc-500 dark:text-zinc-600">
+                                    {new Date(
+                                      log.timestamp
+                                    ).toLocaleTimeString()}
+                                  </span>
+                                  <span className="text-xs font-mono text-blue-700 dark:text-blue-300">
+                                    {log.message} ⬇︎
+                                  </span>
+                                </summary>
+                                <div className="mt-2 ml-4">
+                                  <div className="bg-slate-900 dark:bg-slate-950 rounded-md border border-slate-600 relative">
+                                    <div className="flex items-center justify-between px-3 py-2 border-b border-slate-600 bg-slate-800 rounded-t-md">
+                                      <span className="text-xs font-mono text-slate-400">
+                                        API Response
+                                      </span>
+                                      <button
+                                        onClick={() => {
+                                          if (
+                                            log.data
+                                            && typeof log.data === "object"
+                                            && "response" in log.data
+                                            && "fullUrl" in log.data
+                                          ) {
+                                            const responseData =
+                                              log.data.response;
+                                            const fullUrl = log.data.fullUrl;
+                                            const text = `// ${fullUrl}\nexport default ${JSON.stringify(responseData, null, JSON_INDENT)};`;
+                                            navigator.clipboard.writeText(text);
+                                          }
+                                        }}
+                                        className="text-xs text-slate-400 hover:text-slate-200">
+                                        Copy
+                                      </button>
+                                    </div>
+                                    <pre className="p-3 text-xs overflow-x-auto text-slate-100 font-mono leading-relaxed">
+                                      <code>
+                                        {(() => {
+                                          if (
+                                            log.data
+                                            && typeof log.data === "object"
+                                            && "response" in log.data
+                                            && "fullUrl" in log.data
+                                          ) {
+                                            const responseData =
+                                              log.data.response;
+                                            const fullUrl = log.data.fullUrl;
+                                            return `// ${fullUrl}\nexport default ${JSON.stringify(responseData, null, JSON_INDENT)};`;
+                                          }
+                                          return typeof log.data === "string" ?
+                                              log.data
+                                            : JSON.stringify(
+                                                log.data,
+                                                null,
+                                                JSON_INDENT
+                                              );
+                                        })()}
+                                      </code>
+                                    </pre>
                                   </div>
-                                  <pre className="p-3 text-xs overflow-x-auto text-slate-100 font-mono leading-relaxed">
-                                    <code>
-                                      {(() => {
-                                        if (
-                                          log.data &&
-                                          typeof log.data === "object" &&
-                                          "response" in log.data &&
-                                          "fullUrl" in log.data
-                                        ) {
-                                          const responseData =
-                                            log.data.response;
-                                          const fullUrl = log.data.fullUrl;
-                                          return `// ${fullUrl}\nexport default ${JSON.stringify(responseData, null, JSON_INDENT)};`;
-                                        }
-                                        return typeof log.data === "string"
-                                          ? log.data
-                                          : JSON.stringify(
-                                              log.data,
-                                              null,
-                                              JSON_INDENT,
-                                            );
-                                      })()}
-                                    </code>
-                                  </pre>
                                 </div>
-                              </div>
-                            </details>
-                          </div>
-                        ) : (
-                          // Regular log - show normal format
-                          <div className="flex gap-2">
-                            <span className="text-zinc-500 dark:text-zinc-600">
-                              {new Date(log.timestamp).toLocaleTimeString()}
-                            </span>
-                            <span>{log.message}</span>
-                          </div>
-                        )}
+                              </details>
+                            </div>
+                            // Regular log - show normal format
+                          : <div className="flex gap-2">
+                              <span className="text-zinc-500 dark:text-zinc-600">
+                                {new Date(log.timestamp).toLocaleTimeString()}
+                              </span>
+                              <span>{log.message}</span>
+                            </div>
+
+                        }
                       </div>
                     ))}
                   </div>

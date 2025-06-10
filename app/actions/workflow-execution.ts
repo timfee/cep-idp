@@ -3,9 +3,9 @@ import "server-only";
 
 import { apiRequest } from "@/app/lib/api/client";
 import { getToken } from "@/app/lib/auth/tokens";
-import { getWorkflowData } from "./workflow-data";
-import { setStoredVariables } from "@/app/lib/workflow/variables-store";
 import {
+  Action,
+  Endpoint,
   evaluateChecker,
   extractMissingVariables,
   extractValueFromPath,
@@ -18,23 +18,21 @@ import {
   substituteVariables,
   Token,
   Workflow,
-  Action,
-  Endpoint,
 } from "@/app/lib/workflow";
 import {
+  CONNECTION_IDENTIFIERS,
   COPY_FEEDBACK_DURATION_MS,
-  WORKFLOW_CONSTANTS,
+  ERROR_MESSAGES,
   PROVIDERS,
   STATUS_VALUES,
   STEP_NAMES,
   VARIABLE_KEYS,
+  WORKFLOW_CONSTANTS,
 } from "@/app/lib/workflow/constants";
 import { safeAsync } from "@/app/lib/workflow/error-handling";
-import {
-  CONNECTION_IDENTIFIERS,
-  ERROR_MESSAGES,
-} from "@/app/lib/workflow/constants";
+import { setStoredVariables } from "@/app/lib/workflow/variables-store";
 import { revalidatePath } from "next/cache";
+import { getWorkflowData } from "./workflow-data";
 
 function applyExtracts(
   action: Action,
@@ -42,18 +40,18 @@ function applyExtracts(
   variables: Record<string, string>,
   extractedVariables: Record<string, string>,
   onLog: (entry: LogEntry) => void,
-  capturedValues: Record<string, string> = {},
+  capturedValues: Record<string, string> = {}
 ): void {
   if (!action.extract) return;
   for (const [varName, path] of Object.entries(action.extract)) {
     // Special handling for password display marker
     if (
-      varName === VARIABLE_KEYS.GENERATED_PASSWORD &&
-      path === WORKFLOW_CONSTANTS.PASSWORD_EXTRACTION_KEY
+      varName === VARIABLE_KEYS.GENERATED_PASSWORD
+      && path === WORKFLOW_CONSTANTS.PASSWORD_EXTRACTION_KEY
     ) {
       const password =
-        capturedValues[VARIABLE_KEYS.GENERATED_PASSWORD] ??
-        variables[VARIABLE_KEYS.GENERATED_PASSWORD];
+        capturedValues[VARIABLE_KEYS.GENERATED_PASSWORD]
+        ?? variables[VARIABLE_KEYS.GENERATED_PASSWORD];
       if (password) {
         extractedVariables[varName] = password;
         variables[VARIABLE_KEYS.GENERATED_PASSWORD] = password;
@@ -82,7 +80,7 @@ function applyExtracts(
 
 function areOutputsMissing(
   step: Step,
-  extracted: Record<string, string>,
+  extracted: Record<string, string>
 ): boolean {
   return !!step.outputs && step.outputs.some((o) => !extracted[o]);
 }
@@ -91,7 +89,7 @@ function validateActionPrerequisites(
   action: Action,
   endpoint: Endpoint | undefined,
   variables: Record<string, string>,
-  onLog: (entry: LogEntry) => void,
+  onLog: (entry: LogEntry) => void
 ): { isValid: boolean; missingVars?: string[] } {
   if (!endpoint) {
     onLog({
@@ -102,9 +100,8 @@ function validateActionPrerequisites(
     return { isValid: false };
   }
 
-  const missingVars = endpoint.path
-    ? extractMissingVariables(endpoint.path, variables)
-    : [];
+  const missingVars =
+    endpoint.path ? extractMissingVariables(endpoint.path, variables) : [];
   if (missingVars.length > 0) {
     onLog({
       timestamp: Date.now(),
@@ -119,11 +116,12 @@ function validateActionPrerequisites(
 
 function prepareActionPayload(
   action: Action,
-  variables: Record<string, string>,
+  variables: Record<string, string>
 ): { payload: unknown; capturedValues: Record<string, string> } {
   const capturedValues: Record<string, string> = {};
-  const payload = action.payload
-    ? substituteObject(action.payload, variables, {
+  const payload =
+    action.payload ?
+      substituteObject(action.payload, variables, {
         throwOnMissing: !action.fallback,
         captureGenerated: capturedValues,
       })
@@ -137,7 +135,7 @@ async function processActionResponse(
   variables: Record<string, string>,
   extractedVariables: Record<string, string>,
   allCapturedValues: Record<string, string>,
-  onLog: (entry: LogEntry) => void,
+  onLog: (entry: LogEntry) => void
 ): Promise<{ success: boolean; extractedVariables: Record<string, string> }> {
   if (action.longRunning) {
     onLog({
@@ -146,7 +144,7 @@ async function processActionResponse(
       message: "Waiting for long-running operation...",
     });
     await new Promise((resolve) =>
-      setTimeout(resolve, COPY_FEEDBACK_DURATION_MS),
+      setTimeout(resolve, COPY_FEEDBACK_DURATION_MS)
     );
   }
 
@@ -165,7 +163,7 @@ async function processActionResponse(
     variables,
     extractedVariables,
     onLog,
-    allCapturedValues,
+    allCapturedValues
   );
 
   return { success: true, extractedVariables };
@@ -184,7 +182,7 @@ async function handleActionExecution(
   onLog: (entry: LogEntry) => void,
   extractedVariables: Record<string, string>,
   workflow: Workflow,
-  _verificationOnly: boolean,
+  _verificationOnly: boolean
 ): Promise<{
   success: boolean;
   extractedVariables: Record<string, string>;
@@ -195,7 +193,7 @@ async function handleActionExecution(
     action,
     endpoint,
     variables,
-    onLog,
+    onLog
   );
   if (!prereq.isValid || !endpoint) {
     return { success: false, extractedVariables };
@@ -211,10 +209,9 @@ async function handleActionExecution(
     message: `[DEBUG] Variables available for ${action.use}: ${Object.keys(variables).join(", ")}`,
   });
 
-
   const { payload, capturedValues: generatedCaptures } = prepareActionPayload(
     action,
-    variables,
+    variables
   );
 
   onLog({
@@ -234,7 +231,7 @@ async function handleActionExecution(
         throwOnMissingVars: !action.fallback,
         onLog,
       }),
-    "Failed to execute API request",
+    "Failed to execute API request"
   );
 
   if (!apiResult.success) {
@@ -242,10 +239,7 @@ async function handleActionExecution(
   }
 
   const { data: response, capturedValues } = apiResult.data;
-  const allCapturedValues = {
-    ...capturedValues,
-    ...generatedCaptures,
-  };
+  const allCapturedValues = { ...capturedValues, ...generatedCaptures };
 
   const method = endpoint.method;
   const baseUrl = workflow.connections[endpoint.conn].base;
@@ -265,7 +259,7 @@ async function handleActionExecution(
     variables,
     extractedVariables,
     allCapturedValues,
-    onLog,
+    onLog
   );
 
   if (!processResult.success) {
@@ -288,7 +282,7 @@ async function processStepExecution(
   step: Step,
   variables: Record<string, string>,
   tokens: { google?: Token; microsoft?: Token },
-  onLog: (entry: LogEntry) => void,
+  onLog: (entry: LogEntry) => void
 ): Promise<StepStatus> {
   const status: StepStatus = {
     status: STATUS_VALUES.RUNNING,
@@ -312,7 +306,7 @@ async function processStepExecution(
       const missingInputs = step.inputs.filter((input) => !variables[input]);
       if (missingInputs.length > 0) {
         throw new Error(
-          ERROR_MESSAGES.MISSING_INPUTS(step.name, missingInputs),
+          ERROR_MESSAGES.MISSING_INPUTS(step.name, missingInputs)
         );
       }
     }
@@ -322,7 +316,7 @@ async function processStepExecution(
       variables,
       tokens,
       logCollector,
-      false,
+      false
     );
     if (!actionResult.success) {
       throw new Error("Step actions failed");
@@ -333,8 +327,8 @@ async function processStepExecution(
       status.variables = { ...actionResult.extractedVariables };
     }
     if (
-      step.name === STEP_NAMES.CREATE_SERVICE_ACCOUNT &&
-      variables[VARIABLE_KEYS.GENERATED_PASSWORD]
+      step.name === STEP_NAMES.CREATE_SERVICE_ACCOUNT
+      && variables[VARIABLE_KEYS.GENERATED_PASSWORD]
     ) {
       status.variables = {
         ...(status.variables || {}),
@@ -398,7 +392,7 @@ export async function runStepActions(
   variables: Record<string, string>,
   tokens: { google?: Token; microsoft?: Token },
   onLog: (entry: LogEntry) => void,
-  verificationOnly: boolean = false,
+  verificationOnly: boolean = false
 ): Promise<{
   success: boolean;
   extractedVariables: Record<string, string>;
@@ -425,7 +419,7 @@ export async function runStepActions(
         onLog,
         extractedVariables,
         workflow,
-        verificationOnly,
+        verificationOnly
       );
       if (result.success) {
         success = true;
@@ -442,8 +436,8 @@ export async function runStepActions(
         case "structured":
           errorMessage = apiError.message;
           if (
-            apiError.code === WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED ||
-            apiError.status === "UNAUTHENTICATED"
+            apiError.code === WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED
+            || apiError.status === "UNAUTHENTICATED"
           ) {
             needsReauth = true;
           }
@@ -477,17 +471,16 @@ export async function runStepActions(
 
       // Handle different error types
       if (
-        needsReauth ||
-        errorMessage.includes(
-          String(WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED),
-        ) ||
-        errorMessage.includes("Authentication expired")
+        needsReauth
+        || errorMessage.includes(
+          String(WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED)
+        )
+        || errorMessage.includes("Authentication expired")
       ) {
         const failedEndpoint = workflow.endpoints[action.use];
-        const provider = failedEndpoint.conn.includes(
-          CONNECTION_IDENTIFIERS.GOOGLE,
-        )
-          ? "Google"
+        const provider =
+          failedEndpoint.conn.includes(CONNECTION_IDENTIFIERS.GOOGLE) ?
+            "Google"
           : "Microsoft";
         throw new Error(ERROR_MESSAGES.AUTH_EXPIRED(provider));
       } else if (errorMessage.includes("404") && !verificationOnly) {
@@ -513,7 +506,9 @@ export async function runStepActions(
  * @param stepName - Name of the step to execute
  * @returns Result status and updated variables
  */
-export async function executeWorkflowStep(stepName: string): Promise<{
+export async function executeWorkflowStep(
+  stepName: string
+): Promise<{
   success: boolean;
   status?: StepStatus;
   variables?: Record<string, string>;
@@ -537,10 +532,7 @@ export async function executeWorkflowStep(stepName: string): Promise<{
     // Find the step
     const step = workflow.steps.find((s) => s.name === stepName);
     if (!step) {
-      return {
-        success: false,
-        error: "Step not found",
-      };
+      return { success: false, error: "Step not found" };
     }
 
     // Track logs and variables
@@ -552,15 +544,15 @@ export async function executeWorkflowStep(stepName: string): Promise<{
       step,
       updatedVariables,
       tokens,
-      onLog,
+      onLog
     );
 
     await setStoredVariables(updatedVariables);
 
     if (
-      status.status === STATUS_VALUES.COMPLETED &&
-      Object.keys(updatedVariables).length >
-        Object.keys(currentData.variables).length
+      status.status === STATUS_VALUES.COMPLETED
+      && Object.keys(updatedVariables).length
+        > Object.keys(currentData.variables).length
     ) {
       const newVars: Record<string, string> = {};
       for (const [key, value] of Object.entries(updatedVariables)) {

@@ -20,11 +20,7 @@ interface VariableViewerProps {
   variables: Record<string, string>;
   definitions?: Record<
     string,
-    {
-      default?: string;
-      generator?: string;
-      validator?: string;
-    }
+    { default?: string; generator?: string; validator?: string }
   >;
   requiredVariables?: Set<string>;
 }
@@ -99,13 +95,10 @@ export function VariableViewer({
           <h3 className="font-medium">Workflow Variables</h3>
           <button
             onClick={() => setExpanded(!expanded)}
-            className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded transition-colors"
-          >
-            {expanded ? (
+            className="p-1 hover:bg-zinc-100 dark:hover:bg-zinc-800 rounded transition-colors">
+            {expanded ?
               <ChevronUpIcon className="h-4 w-4" />
-            ) : (
-              <ChevronDownIcon className="h-4 w-4" />
-            )}
+            : <ChevronDownIcon className="h-4 w-4" />}
           </button>
         </div>
 
@@ -141,8 +134,7 @@ export function VariableViewer({
                         {isRequired && (
                           <Badge
                             variant="secondary"
-                            className="text-[10px] px-1 py-0"
-                          >
+                            className="text-[10px] px-1 py-0">
                             required
                           </Badge>
                         )}
@@ -150,14 +142,13 @@ export function VariableViewer({
                           variant="outline"
                           className={cn(
                             "text-[10px] px-1 py-0",
-                            source === "generated" &&
-                              "border-purple-200 text-purple-700 dark:border-purple-800 dark:text-purple-300",
-                            source === "default" &&
-                              "border-blue-200 text-blue-700 dark:border-blue-800 dark:text-blue-300",
-                            source === "extracted" &&
-                              "border-green-200 text-green-700 dark:border-green-800 dark:text-green-300",
-                          )}
-                        >
+                            source === "generated"
+                              && "border-purple-200 text-purple-700 dark:border-purple-800 dark:text-purple-300",
+                            source === "default"
+                              && "border-blue-200 text-blue-700 dark:border-blue-800 dark:text-blue-300",
+                            source === "extracted"
+                              && "border-green-200 text-green-700 dark:border-green-800 dark:text-green-300"
+                          )}>
                           {source}
                         </Badge>
                       </div>
@@ -176,13 +167,10 @@ export function VariableViewer({
                     <div className="border-t pt-3 mt-3">
                       <button
                         onClick={() => setShowUndefined(!showUndefined)}
-                        className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors"
-                      >
-                        {showUndefined ? (
+                        className="flex items-center gap-1 text-xs text-zinc-500 hover:text-zinc-700 dark:hover:text-zinc-300 transition-colors">
+                        {showUndefined ?
                           <ChevronUpIcon className="h-3 w-3" />
-                        ) : (
-                          <ChevronDownIcon className="h-3 w-3" />
-                        )}
+                        : <ChevronDownIcon className="h-3 w-3" />}
                         <span>Pending variables ({undefinedVars.length})</span>
                       </button>
                     </div>
@@ -206,8 +194,7 @@ export function VariableViewer({
                               {isRequired && (
                                 <Badge
                                   variant="outline"
-                                  className="text-[10px] px-1 py-0"
-                                >
+                                  className="text-[10px] px-1 py-0">
                                   required
                                 </Badge>
                               )}

@@ -10,226 +10,61 @@ export const sample = {
       roleName: "_SEED_ADMIN_ROLE",
       roleDescription: "Google Workspace Administrator Seed Role",
       rolePrivileges: [
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "00sqyw6436d5zn1",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "04i7ojhp4kgosur",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "02pta16n3efhw69",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "044sinio4cntx2o",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "03cqmetx1vygwki",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "03mzq4wv1nvgcwf",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "037m2jsg3ckz96v",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "03hv69ve4bjwe54",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "03tbugp135xcxz0",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "019c6y1840fzfkt",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "00haapch16h1ysv",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "01ci93xb43sd8me",
-        },
-        {
-          privilegeName: "SUPER_ADMIN",
-          serviceId: "01ci93xb3tmzyin",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "02pta16n4hxgyp2",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "01egqt2p4ez7mib",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "04iylrwe1ih2v48",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "02jxsxqh0hucks4",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "0319y80a15kueje",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "02afmg282jiquyg",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "01yyy98l4k9lq4l",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "0147n2zr1ynkkmf",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "03dy6vkm2sk0pzo",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "03whwml44f3n4vd",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "01baon6m1wv6b0p",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "02et92p02l9sq0n",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "00meukdy0whjvor",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "039kk8xu49mji9t",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "02afmg283v5nmx6",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "01tuee744837sjz",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "0279ka651l5iy5q",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "01x0gk371sq486y",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "02u6wntf2pha1iq",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "04du1wux1mx8g4m",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "01egqt2p2p8gvae",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "01664s550kmxmin",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "037m2jsg46www3g",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "03j2qqm31d4j55e",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "02w5ecyt3pkeyqi",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "034g0dwd247ctst",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "01fob9te41qviqp",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "03as4poj2zjehv7",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "00tyjcwt49hs5nq",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "02szc72q20usrb6",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "00vx122734tbite",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "02nusc191vimzq9",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "03oy7u290lj7dci",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "01ksv4uv2d2noaq",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "01fob9te2rj6rw9",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "00upglbi0qz687j",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "03fwokq01e2ht7x",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "03znysh70xi7xn7",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "00tyjcwt30rsnw6",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "02250f4o31a8q9a",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "034g0dwd213wymo",
-        },
-        {
-          privilegeName: "ROOT_APP_ADMIN",
-          serviceId: "02zbgiuw2wdxo5p",
-        },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "00sqyw6436d5zn1" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "04i7ojhp4kgosur" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "02pta16n3efhw69" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "044sinio4cntx2o" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "03cqmetx1vygwki" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "03mzq4wv1nvgcwf" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "037m2jsg3ckz96v" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "03hv69ve4bjwe54" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "03tbugp135xcxz0" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "019c6y1840fzfkt" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "00haapch16h1ysv" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "01ci93xb43sd8me" },
+        { privilegeName: "SUPER_ADMIN", serviceId: "01ci93xb3tmzyin" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "02pta16n4hxgyp2" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "01egqt2p4ez7mib" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "04iylrwe1ih2v48" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "02jxsxqh0hucks4" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "0319y80a15kueje" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "02afmg282jiquyg" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "01yyy98l4k9lq4l" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "0147n2zr1ynkkmf" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "03dy6vkm2sk0pzo" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "03whwml44f3n4vd" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "01baon6m1wv6b0p" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "02et92p02l9sq0n" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "00meukdy0whjvor" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "039kk8xu49mji9t" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "02afmg283v5nmx6" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "01tuee744837sjz" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "0279ka651l5iy5q" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "01x0gk371sq486y" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "02u6wntf2pha1iq" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "04du1wux1mx8g4m" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "01egqt2p2p8gvae" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "01664s550kmxmin" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "037m2jsg46www3g" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "03j2qqm31d4j55e" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "02w5ecyt3pkeyqi" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "034g0dwd247ctst" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "01fob9te41qviqp" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "03as4poj2zjehv7" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "00tyjcwt49hs5nq" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "02szc72q20usrb6" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "00vx122734tbite" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "02nusc191vimzq9" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "03oy7u290lj7dci" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "01ksv4uv2d2noaq" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "01fob9te2rj6rw9" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "00upglbi0qz687j" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "03fwokq01e2ht7x" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "03znysh70xi7xn7" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "00tyjcwt30rsnw6" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "02250f4o31a8q9a" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "034g0dwd213wymo" },
+        { privilegeName: "ROOT_APP_ADMIN", serviceId: "02zbgiuw2wdxo5p" },
       ],
       isSystemRole: true,
       isSuperAdminRole: true,
@@ -241,10 +76,7 @@ export const sample = {
       roleName: "_GROUPS_ADMIN_ROLE",
       roleDescription: "Groups Administrator",
       rolePrivileges: [
-        {
-          privilegeName: "GROUPS_ALL",
-          serviceId: "00haapch16h1ysv",
-        },
+        { privilegeName: "GROUPS_ALL", serviceId: "00haapch16h1ysv" },
         {
           privilegeName: "GROUPS_MANAGE_LOCKED_LABEL",
           serviceId: "00haapch16h1ysv",
@@ -257,14 +89,8 @@ export const sample = {
           privilegeName: "ORGANIZATION_UNITS_RETRIEVE",
           serviceId: "00haapch16h1ysv",
         },
-        {
-          privilegeName: "USERS_RETRIEVE",
-          serviceId: "00haapch16h1ysv",
-        },
-        {
-          privilegeName: "ADMIN_DASHBOARD",
-          serviceId: "01ci93xb3tmzyin",
-        },
+        { privilegeName: "USERS_RETRIEVE", serviceId: "00haapch16h1ysv" },
+        { privilegeName: "ADMIN_DASHBOARD", serviceId: "01ci93xb3tmzyin" },
       ],
       isSystemRole: true,
       isSuperAdminRole: false,
@@ -280,18 +106,9 @@ export const sample = {
           privilegeName: "ORGANIZATION_UNITS_RETRIEVE",
           serviceId: "00haapch16h1ysv",
         },
-        {
-          privilegeName: "USER_SECURITY_ALL",
-          serviceId: "00haapch16h1ysv",
-        },
-        {
-          privilegeName: "USERS_ALL",
-          serviceId: "00haapch16h1ysv",
-        },
-        {
-          privilegeName: "ADMIN_DASHBOARD",
-          serviceId: "01ci93xb3tmzyin",
-        },
+        { privilegeName: "USER_SECURITY_ALL", serviceId: "00haapch16h1ysv" },
+        { privilegeName: "USERS_ALL", serviceId: "00haapch16h1ysv" },
+        { privilegeName: "ADMIN_DASHBOARD", serviceId: "01ci93xb3tmzyin" },
       ],
       isSystemRole: true,
       isSuperAdminRole: false,
@@ -307,18 +124,9 @@ export const sample = {
           privilegeName: "ORGANIZATION_UNITS_RETRIEVE",
           serviceId: "00haapch16h1ysv",
         },
-        {
-          privilegeName: "USERS_RETRIEVE",
-          serviceId: "00haapch16h1ysv",
-        },
-        {
-          privilegeName: "USERS_RESET_PASSWORD",
-          serviceId: "00haapch16h1ysv",
-        },
-        {
-          privilegeName: "ADMIN_DASHBOARD",
-          serviceId: "01ci93xb3tmzyin",
-        },
+        { privilegeName: "USERS_RETRIEVE", serviceId: "00haapch16h1ysv" },
+        { privilegeName: "USERS_RESET_PASSWORD", serviceId: "00haapch16h1ysv" },
+        { privilegeName: "ADMIN_DASHBOARD", serviceId: "01ci93xb3tmzyin" },
       ],
       isSystemRole: true,
       isSuperAdminRole: false,
@@ -330,42 +138,18 @@ export const sample = {
       roleName: "_SERVICE_ADMIN_ROLE",
       roleDescription: "Services Administrator",
       rolePrivileges: [
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "04i7ojhp4kgosur",
-        },
+        { privilegeName: "APP_ADMIN", serviceId: "04i7ojhp4kgosur" },
         {
           privilegeName: "APPS_INCIDENTS_FULL_ACCESS",
           serviceId: "02pta16n3efhw69",
         },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "044sinio4cntx2o",
-        },
-        {
-          privilegeName: "APP_ACCESS",
-          serviceId: "03cqmetx1vygwki",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "03mzq4wv1nvgcwf",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "037m2jsg3ckz96v",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "03hv69ve4bjwe54",
-        },
-        {
-          privilegeName: "REMOTE_DESKTOP_ADMIN",
-          serviceId: "03tbugp135xcxz0",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "019c6y1840fzfkt",
-        },
+        { privilegeName: "APP_ADMIN", serviceId: "044sinio4cntx2o" },
+        { privilegeName: "APP_ACCESS", serviceId: "03cqmetx1vygwki" },
+        { privilegeName: "APP_ADMIN", serviceId: "03mzq4wv1nvgcwf" },
+        { privilegeName: "APP_ADMIN", serviceId: "037m2jsg3ckz96v" },
+        { privilegeName: "APP_ADMIN", serviceId: "03hv69ve4bjwe54" },
+        { privilegeName: "REMOTE_DESKTOP_ADMIN", serviceId: "03tbugp135xcxz0" },
+        { privilegeName: "APP_ADMIN", serviceId: "019c6y1840fzfkt" },
         {
           privilegeName: "DATATRANSFER_API_PRIVILEGE_GROUP",
           serviceId: "00haapch16h1ysv",
@@ -374,102 +158,39 @@ export const sample = {
           privilegeName: "ORGANIZATION_UNITS_RETRIEVE",
           serviceId: "00haapch16h1ysv",
         },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "01ci93xb43sd8me",
-        },
-        {
-          privilegeName: "ADMIN_DASHBOARD",
-          serviceId: "01ci93xb3tmzyin",
-        },
-        {
-          privilegeName: "SERVICES",
-          serviceId: "01ci93xb3tmzyin",
-        },
-        {
-          privilegeName: "MANAGE_CSE_SETTINGS",
-          serviceId: "02pta16n4hxgyp2",
-        },
+        { privilegeName: "APP_ADMIN", serviceId: "01ci93xb43sd8me" },
+        { privilegeName: "ADMIN_DASHBOARD", serviceId: "01ci93xb3tmzyin" },
+        { privilegeName: "SERVICES", serviceId: "01ci93xb3tmzyin" },
+        { privilegeName: "MANAGE_CSE_SETTINGS", serviceId: "02pta16n4hxgyp2" },
         {
           privilegeName: "MANAGE_SERVICE_ON_OFF",
           serviceId: "04iylrwe1ih2v48",
         },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "02afmg282jiquyg",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "01yyy98l4k9lq4l",
-        },
+        { privilegeName: "APP_ADMIN", serviceId: "02afmg282jiquyg" },
+        { privilegeName: "APP_ADMIN", serviceId: "01yyy98l4k9lq4l" },
         {
           privilegeName: "MANAGE_DIRECTORY_SYNC_SETTINGS",
           serviceId: "0147n2zr1ynkkmf",
         },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "03dy6vkm2sk0pzo",
-        },
+        { privilegeName: "APP_ADMIN", serviceId: "03dy6vkm2sk0pzo" },
         {
           privilegeName: "MANAGE_DYNAMITE_SETTINGS",
           serviceId: "03whwml44f3n4vd",
         },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "01baon6m1wv6b0p",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "02et92p02l9sq0n",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "039kk8xu49mji9t",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "02afmg283v5nmx6",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "01tuee744837sjz",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "0279ka651l5iy5q",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "037m2jsg46www3g",
-        },
-        {
-          privilegeName: "LOGO_PRIVILEGE_GROUP",
-          serviceId: "03j2qqm31d4j55e",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "03as4poj2zjehv7",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "03oy7u290lj7dci",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "01ksv4uv2d2noaq",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "00upglbi0qz687j",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "03fwokq01e2ht7x",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "02zbgiuw2wdxo5p",
-        },
+        { privilegeName: "APP_ADMIN", serviceId: "01baon6m1wv6b0p" },
+        { privilegeName: "APP_ADMIN", serviceId: "02et92p02l9sq0n" },
+        { privilegeName: "APP_ADMIN", serviceId: "039kk8xu49mji9t" },
+        { privilegeName: "APP_ADMIN", serviceId: "02afmg283v5nmx6" },
+        { privilegeName: "APP_ADMIN", serviceId: "01tuee744837sjz" },
+        { privilegeName: "APP_ADMIN", serviceId: "0279ka651l5iy5q" },
+        { privilegeName: "APP_ADMIN", serviceId: "037m2jsg46www3g" },
+        { privilegeName: "LOGO_PRIVILEGE_GROUP", serviceId: "03j2qqm31d4j55e" },
+        { privilegeName: "APP_ADMIN", serviceId: "03as4poj2zjehv7" },
+        { privilegeName: "APP_ADMIN", serviceId: "03oy7u290lj7dci" },
+        { privilegeName: "APP_ADMIN", serviceId: "01ksv4uv2d2noaq" },
+        { privilegeName: "APP_ADMIN", serviceId: "00upglbi0qz687j" },
+        { privilegeName: "APP_ADMIN", serviceId: "03fwokq01e2ht7x" },
+        { privilegeName: "APP_ADMIN", serviceId: "02zbgiuw2wdxo5p" },
       ],
       isSystemRole: true,
       isSuperAdminRole: false,
@@ -481,10 +202,7 @@ export const sample = {
       roleName: "_GROUPS_READER_ROLE",
       roleDescription: "Groups Reader",
       rolePrivileges: [
-        {
-          privilegeName: "GROUPS_RETRIEVE",
-          serviceId: "00haapch16h1ysv",
-        },
+        { privilegeName: "GROUPS_RETRIEVE", serviceId: "00haapch16h1ysv" },
       ],
       isSystemRole: true,
       isSuperAdminRole: false,
@@ -496,10 +214,7 @@ export const sample = {
       roleName: "_GROUPS_EDITOR_ROLE",
       roleDescription: "Groups Editor",
       rolePrivileges: [
-        {
-          privilegeName: "GROUPS_ALL",
-          serviceId: "00haapch16h1ysv",
-        },
+        { privilegeName: "GROUPS_ALL", serviceId: "00haapch16h1ysv" },
       ],
       isSystemRole: true,
       isSuperAdminRole: false,
@@ -511,22 +226,13 @@ export const sample = {
       roleName: "_GCDS_DIRECTORY_MANAGEMENT_ROLE",
       roleDescription: "GCDS Directory Management Role",
       rolePrivileges: [
-        {
-          privilegeName: "GROUPS_ALL",
-          serviceId: "00haapch16h1ysv",
-        },
+        { privilegeName: "GROUPS_ALL", serviceId: "00haapch16h1ysv" },
         {
           privilegeName: "ORGANIZATION_UNITS_ALL",
           serviceId: "00haapch16h1ysv",
         },
-        {
-          privilegeName: "USERS_ALL",
-          serviceId: "00haapch16h1ysv",
-        },
-        {
-          privilegeName: "SCHEMA_MANAGEMENT",
-          serviceId: "00haapch16h1ysv",
-        },
+        { privilegeName: "USERS_ALL", serviceId: "00haapch16h1ysv" },
+        { privilegeName: "SCHEMA_MANAGEMENT", serviceId: "00haapch16h1ysv" },
         {
           privilegeName: "READ_DIRECTORY_SYNC_SETTINGS",
           serviceId: "0147n2zr1ynkkmf",
@@ -542,10 +248,7 @@ export const sample = {
       roleName: "_STORAGE_ADMIN_ROLE",
       roleDescription: "Storage Admin Role",
       rolePrivileges: [
-        {
-          privilegeName: "GROUPS_RETRIEVE",
-          serviceId: "00haapch16h1ysv",
-        },
+        { privilegeName: "GROUPS_RETRIEVE", serviceId: "00haapch16h1ysv" },
         {
           privilegeName: "ORGANIZATION_UNITS_RETRIEVE",
           serviceId: "00haapch16h1ysv",
@@ -554,30 +257,12 @@ export const sample = {
           privilegeName: "ADMIN_REPORTING_ACCESS",
           serviceId: "00haapch16h1ysv",
         },
-        {
-          privilegeName: "USERS_RETRIEVE",
-          serviceId: "00haapch16h1ysv",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "03dy6vkm2sk0pzo",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "01baon6m1wv6b0p",
-        },
-        {
-          privilegeName: "MANAGE_GSC_RULE",
-          serviceId: "01egqt2p2p8gvae",
-        },
-        {
-          privilegeName: "VIEW_GSC_RULE",
-          serviceId: "01egqt2p2p8gvae",
-        },
-        {
-          privilegeName: "SIT_VIEW_METADATA",
-          serviceId: "01egqt2p2p8gvae",
-        },
+        { privilegeName: "USERS_RETRIEVE", serviceId: "00haapch16h1ysv" },
+        { privilegeName: "APP_ADMIN", serviceId: "03dy6vkm2sk0pzo" },
+        { privilegeName: "APP_ADMIN", serviceId: "01baon6m1wv6b0p" },
+        { privilegeName: "MANAGE_GSC_RULE", serviceId: "01egqt2p2p8gvae" },
+        { privilegeName: "VIEW_GSC_RULE", serviceId: "01egqt2p2p8gvae" },
+        { privilegeName: "SIT_VIEW_METADATA", serviceId: "01egqt2p2p8gvae" },
       ],
       isSystemRole: true,
       isSuperAdminRole: false,
@@ -597,10 +282,7 @@ export const sample = {
           privilegeName: "ORGANIZATION_UNITS_RETRIEVE",
           serviceId: "00haapch16h1ysv",
         },
-        {
-          privilegeName: "SCHEMA_RETRIEVE",
-          serviceId: "00haapch16h1ysv",
-        },
+        { privilegeName: "SCHEMA_RETRIEVE", serviceId: "00haapch16h1ysv" },
         {
           privilegeName: "MANAGE_DIRECTORY_SYNC_SETTINGS",
           serviceId: "0147n2zr1ynkkmf",
@@ -620,26 +302,14 @@ export const sample = {
       roleName: "_MOBILE_ADMIN_ROLE",
       roleDescription: "Mobile Administrator",
       rolePrivileges: [
-        {
-          privilegeName: "GROUPS_RETRIEVE",
-          serviceId: "00haapch16h1ysv",
-        },
+        { privilegeName: "GROUPS_RETRIEVE", serviceId: "00haapch16h1ysv" },
         {
           privilegeName: "ORGANIZATION_UNITS_RETRIEVE",
           serviceId: "00haapch16h1ysv",
         },
-        {
-          privilegeName: "USERS_RETRIEVE",
-          serviceId: "00haapch16h1ysv",
-        },
-        {
-          privilegeName: "ADMIN_DASHBOARD",
-          serviceId: "01ci93xb3tmzyin",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "02afmg282jiquyg",
-        },
+        { privilegeName: "USERS_RETRIEVE", serviceId: "00haapch16h1ysv" },
+        { privilegeName: "ADMIN_DASHBOARD", serviceId: "01ci93xb3tmzyin" },
+        { privilegeName: "APP_ADMIN", serviceId: "02afmg282jiquyg" },
       ],
       isSystemRole: true,
       isSuperAdminRole: false,
@@ -651,14 +321,8 @@ export const sample = {
       roleName: "_INVENTORY_REPORTING_ADMIN_ROLE",
       roleDescription: "Admin for Inventory Reporting",
       rolePrivileges: [
-        {
-          privilegeName: "DRIVE_UPDATE_DELETE",
-          serviceId: "03dy6vkm2sk0pzo",
-        },
-        {
-          privilegeName: "APP_ADMIN",
-          serviceId: "03dy6vkm2sk0pzo",
-        },
+        { privilegeName: "DRIVE_UPDATE_DELETE", serviceId: "03dy6vkm2sk0pzo" },
+        { privilegeName: "APP_ADMIN", serviceId: "03dy6vkm2sk0pzo" },
       ],
       isSystemRole: true,
       isSuperAdminRole: false,

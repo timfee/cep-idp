@@ -1,5 +1,4 @@
-import { parseWorkflow } from "../workflow";
-import { Endpoint } from "../workflow";
+import { Endpoint, parseWorkflow } from "../workflow";
 
 export function getEndpoint(name: string): Endpoint | undefined {
   const workflow = parseWorkflow();

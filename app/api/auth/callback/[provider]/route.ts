@@ -1,8 +1,8 @@
-import { setChunkedCookieOnResponse } from "@/app/lib/cookies/server";
 import { encrypt } from "@/app/lib/auth/crypto";
 import { exchangeCodeForToken } from "@/app/lib/auth/oauth";
 import { validateOAuthState } from "@/app/lib/auth/tokens";
-import { WORKFLOW_CONSTANTS, Provider } from "@/app/lib/workflow/constants";
+import { setChunkedCookieOnResponse } from "@/app/lib/cookies/server";
+import { Provider, WORKFLOW_CONSTANTS } from "@/app/lib/workflow/constants";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {

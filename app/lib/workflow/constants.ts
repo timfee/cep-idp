@@ -19,10 +19,7 @@ export const STEP_NAMES = {
 } as const;
 
 // Provider constants
-export const PROVIDERS = {
-  GOOGLE: "google",
-  MICROSOFT: "microsoft",
-} as const;
+export const PROVIDERS = { GOOGLE: "google", MICROSOFT: "microsoft" } as const;
 export type Provider = (typeof PROVIDERS)[keyof typeof PROVIDERS];
 
 // Status values
@@ -75,20 +72,17 @@ export const WORKFLOW_CONSTANTS = {
   // Time constants (replacing magic numbers)
   MAX_REFRESH_ATTEMPTS: 2,
   OAUTH_STATE_TTL_MS:
-    DAYS_IN_MONTH *
-    HOURS_IN_DAY *
-    MINUTES_IN_HOUR *
-    SECONDS_IN_MINUTE *
-    MS_IN_SECOND,
+    DAYS_IN_MONTH
+    * HOURS_IN_DAY
+    * MINUTES_IN_HOUR
+    * SECONDS_IN_MINUTE
+    * MS_IN_SECOND,
   TOKEN_REFRESH_BUFFER_MS: 300000, // 5 minutes
   TOKEN_COOKIE_MAX_AGE:
     DAYS_IN_MONTH * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE, // 30 days
 
   // HTTP Status codes
-  HTTP_STATUS: {
-    UNAUTHORIZED: 401,
-    NOT_FOUND: 404,
-  },
+  HTTP_STATUS: { UNAUTHORIZED: 401, NOT_FOUND: 404 },
 
   MAX_FUNCTION_UPDATES: 4,
 
@@ -158,7 +152,6 @@ export const CONNECTION_IDENTIFIERS = {
   MICROSOFT: "graph",
 } as const;
 
-
 export const LOG_LEVELS = {
   INFO: "info",
   WARN: "warn",
@@ -212,7 +205,4 @@ export const ERROR_MESSAGES = {
     `Resource not found for "${stepName}". This usually means a previous step failed to create the required resource.`,
 } as const;
 
-export const JSON_FORMAT = {
-  INDENT: 2,
-  DATE_LOCALE: "en-US",
-} as const;
+export const JSON_FORMAT = { INDENT: 2, DATE_LOCALE: "en-US" } as const;

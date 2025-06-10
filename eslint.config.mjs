@@ -7,9 +7,7 @@ import { fileURLToPath } from "url";
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
 
-const compat = new FlatCompat({
-  baseDirectory: __dirname,
-});
+const compat = new FlatCompat({ baseDirectory: __dirname });
 
 const eslintConfig = [
   {
@@ -30,13 +28,11 @@ const eslintConfig = [
   ...compat.extends(
     "next/core-web-vitals",
     "next/typescript",
-    "plugin:promise/recommended",
+    "plugin:promise/recommended"
   ),
   sonar.configs.recommended,
   {
-    plugins: {
-      tsdoc,
-    },
+    plugins: { tsdoc },
     rules: {
       "tsdoc/syntax": "warn",
       // eslint-disable-next-line no-magic-numbers
@@ -46,10 +42,7 @@ const eslintConfig = [
   },
   {
     files: ["**/__tests__/**", "test/**"],
-    rules: {
-      "custom/no-console-log": "off",
-      "no-magic-numbers": "off",
-    },
+    rules: { "custom/no-console-log": "off", "no-magic-numbers": "off" },
   },
   {
     rules: {

@@ -1,30 +1,30 @@
 "use server";
 import "server-only";
 
-import { getToken } from "@/app/lib/auth/tokens";
 import { isTokenExpired } from "@/app/lib/auth/oauth";
+import { getToken } from "@/app/lib/auth/tokens";
+import { hasOwnProperty } from "@/app/lib/utils";
 import {
   evaluateGenerator,
   LogEntry,
   parseWorkflow,
   Step,
   StepStatus,
+  Token,
   Variable,
   Workflow,
-  Token,
 } from "@/app/lib/workflow";
 import {
   JWT_PART_COUNT,
   PROVIDERS,
+  ROLE_PREFIXES,
   STATUS_VALUES,
   VARIABLE_KEYS,
 } from "@/app/lib/workflow/constants";
-import { ROLE_PREFIXES } from "@/app/lib/workflow/constants";
 import {
   getStoredVariables,
   setStoredVariables,
 } from "@/app/lib/workflow/variables-store";
-import { hasOwnProperty } from "@/app/lib/utils";
 import { runStepActions } from "./workflow-execution";
 import { refreshWorkflowState } from "./workflow-state";
 
@@ -51,7 +51,7 @@ export interface WorkflowData {
 }
 
 async function initializeVariables(
-  workflow: Workflow,
+  workflow: Workflow
 ): Promise<Record<string, string>> {
   const vars: Record<string, string> = {} as Record<string, string>;
   for (const name of Object.keys(workflow.variables)) {
@@ -61,7 +61,7 @@ async function initializeVariables(
         (vars as Record<string, string>)[name] = def.default;
       } else if (def.generator) {
         (vars as Record<string, string>)[name] = evaluateGenerator(
-          def.generator,
+          def.generator
         );
       }
     }
@@ -71,7 +71,7 @@ async function initializeVariables(
 
 function extractTenantId(
   microsoftToken?: Token | null,
-  onLog?: (entry: LogEntry) => void,
+  onLog?: (entry: LogEntry) => void
 ): string | null {
   if (!microsoftToken) return null;
   try {
@@ -94,7 +94,7 @@ function extractTenantId(
 async function reconstituteStepStatuses(
   workflow: Workflow,
   variables: Record<string, string>,
-  tokens: { google?: Token; microsoft?: Token },
+  tokens: { google?: Token; microsoft?: Token }
 ): Promise<{
   stepStatuses: Map<string, StepStatus>;
   variables: Record<string, string>;
@@ -102,10 +102,7 @@ async function reconstituteStepStatuses(
   const stepStatuses = new Map<string, StepStatus>();
   const workingVariables = { ...variables };
   let manualData: { completed: string[]; completedAt: Record<string, number> } =
-    {
-      completed: [],
-      completedAt: {},
-    };
+    { completed: [], completedAt: {} };
   if (workingVariables.manualStepsState) {
     try {
       manualData = JSON.parse(workingVariables.manualStepsState);
@@ -119,7 +116,7 @@ async function reconstituteStepStatuses(
 
   const areDependenciesMet = (
     step: Step,
-    manualCompleted: string[],
+    manualCompleted: string[]
   ): boolean => {
     if (!step.depends_on) return true;
     return step.depends_on.every((dep) => {
@@ -130,44 +127,45 @@ async function reconstituteStepStatuses(
         return manualCompleted.includes(dep);
       }
 
-      return local
-        ? local.status === STATUS_VALUES.COMPLETED ||
-            local.status === STATUS_VALUES.SKIPPED
+      return local ?
+          local.status === STATUS_VALUES.COMPLETED
+            || local.status === STATUS_VALUES.SKIPPED
         : false;
     });
   };
 
   const isAuthMet = (step: Step): boolean => {
     if (!step.role) return true;
-    const requiredScopes = hasOwnProperty(workflow.roles, step.role)
-      ? workflow.roles[step.role]
+    const requiredScopes =
+      hasOwnProperty(workflow.roles, step.role) ?
+        workflow.roles[step.role]
       : [];
     const isGoogleStep =
-      step.role.startsWith(ROLE_PREFIXES.GOOGLE_DIR) ||
-      step.role.startsWith(ROLE_PREFIXES.GOOGLE_CI);
+      step.role.startsWith(ROLE_PREFIXES.GOOGLE_DIR)
+      || step.role.startsWith(ROLE_PREFIXES.GOOGLE_CI);
     const isMicrosoftStep = step.role.startsWith(ROLE_PREFIXES.MICROSOFT);
     if (isGoogleStep && tokens.google != null) {
       return (
-        !isTokenExpired(tokens.google) &&
-        requiredScopes.every((s) => tokens.google?.scope.includes(s))
+        !isTokenExpired(tokens.google)
+        && requiredScopes.every((s) => tokens.google?.scope.includes(s))
       );
     }
     if (isMicrosoftStep && tokens.microsoft != null) {
       return (
-        !isTokenExpired(tokens.microsoft) &&
-        requiredScopes.every((s) => tokens.microsoft?.scope.includes(s))
+        !isTokenExpired(tokens.microsoft)
+        && requiredScopes.every((s) => tokens.microsoft?.scope.includes(s))
       );
     }
     return false;
   };
 
   const shouldSkipStep = (step: Step): boolean =>
-    !areDependenciesMet(step, manualCompleted) ||
-    !isAuthMet(step) ||
-    (!!step.manual && !manualCompleted.includes(step.name)) ||
-    (step.inputs
-      ? step.inputs.some((i) => !hasOwnProperty(workingVariables, i))
-      : false);
+    !areDependenciesMet(step, manualCompleted)
+    || !isAuthMet(step)
+    || (!!step.manual && !manualCompleted.includes(step.name))
+    || (step.inputs ?
+      step.inputs.some((i) => !hasOwnProperty(workingVariables, i))
+    : false);
 
   const verifyStep = async (step: Step): Promise<void> => {
     const logs: LogEntry[] = [];
@@ -177,7 +175,7 @@ async function reconstituteStepStatuses(
         workingVariables,
         tokens,
         (log) => logs.push(log),
-        true,
+        true
       );
       if (result.success) {
         Object.assign(workingVariables, result.extractedVariables);
@@ -210,20 +208,17 @@ async function reconstituteStepStatuses(
     await verifyStep(step);
   }
 
-  return {
-    stepStatuses,
-    variables: workingVariables,
-  };
+  return { stepStatuses, variables: workingVariables };
 }
 
 /**
  * Get complete workflow data by reconstructing state from verification checks
  */
 export async function getWorkflowData(
-  forceRefresh = false,
+  forceRefresh = false
 ): Promise<WorkflowData> {
   console.log(
-    `[Initial Load] Starting getWorkflowData (forceRefresh: ${forceRefresh})`,
+    `[Initial Load] Starting getWorkflowData (forceRefresh: ${forceRefresh})`
   );
 
   if (forceRefresh) {
@@ -262,8 +257,8 @@ export async function getWorkflowData(
       Array.from(stepStatusesMap.entries()).map(([name, status]) => [
         name,
         status.status,
-      ]),
-    ),
+      ])
+    )
   );
 
   return {
@@ -316,22 +311,14 @@ export async function getAuthStatus(): Promise<AuthState> {
 export async function getWorkflowVariables(): Promise<{
   variables: Record<
     string,
-    {
-      value?: string;
-      definition: Variable;
-      isRequired: boolean;
-    }
+    { value?: string; definition: Variable; isRequired: boolean }
   >;
 }> {
   const { workflow, variables } = await getWorkflowData();
 
   const result: Record<
     string,
-    {
-      value?: string;
-      definition: Variable;
-      isRequired: boolean;
-    }
+    { value?: string; definition: Variable; isRequired: boolean }
   > = {};
 
   // Check which variables are required by steps

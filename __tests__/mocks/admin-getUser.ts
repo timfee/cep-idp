@@ -18,18 +18,8 @@ export const sample = {
   archived: false,
   changePasswordAtNextLogin: false,
   ipWhitelisted: false,
-  emails: [
-    {
-      address: "azuread-provisioning@feeley.xyz",
-      primary: true,
-    },
-  ],
-  languages: [
-    {
-      languageCode: "en",
-      preference: "preferred",
-    },
-  ],
+  emails: [{ address: "azuread-provisioning@feeley.xyz", primary: true }],
+  languages: [{ languageCode: "en", preference: "preferred" }],
   customerId: "C03ly86ew",
   orgUnitPath: "/Automation",
   isMailboxSetup: true,

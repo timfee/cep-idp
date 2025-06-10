@@ -1,17 +1,17 @@
 import { JSONPath } from "jsonpath-plus";
-import { VALIDATION_PATTERNS } from "./constants";
 import { hasOwnProperty } from "../utils";
+import { VALIDATION_PATTERNS } from "./constants";
 
 export function extractCertificateFromXml(xmlString: string): string {
   const signingBlockMatch = xmlString.match(
-    /<KeyDescriptor[^>]*use="signing"[^>]*>[\s\S]*?<\/KeyDescriptor>/,
+    /<KeyDescriptor[^>]*use="signing"[^>]*>[\s\S]*?<\/KeyDescriptor>/
   );
   if (!signingBlockMatch) {
     throw new Error("No signing certificate found in federation metadata");
   }
   const signingBlock = signingBlockMatch[0];
   const certMatch = signingBlock.match(
-    /<X509Certificate[^>]*>([^<]+)<\/X509Certificate>/,
+    /<X509Certificate[^>]*>([^<]+)<\/X509Certificate>/
   );
   if (!certMatch || !certMatch[1]) {
     throw new Error("Could not extract certificate from federation metadata");
@@ -30,9 +30,9 @@ export function extractValueFromPath(obj: unknown, path: string): unknown {
       const results = JSONPath({ path, json: obj, wrap: false });
       if (Array.isArray(results)) {
         if (
-          results.length === 1 &&
-          !path.includes("[*]") &&
-          !path.includes("..")
+          results.length === 1
+          && !path.includes("[*]")
+          && !path.includes("..")
         ) {
           return results[0];
         } else if (results.length === 0) {
@@ -70,14 +70,16 @@ function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
     if (closing !== -1) {
       const inside = expression.slice(prefix.length, closing);
       const [arrayPathRaw, propertyRaw, valueRaw] = inside.split(
-        VALIDATION_PATTERNS.SPLIT_ARGS,
+        VALIDATION_PATTERNS.SPLIT_ARGS
       );
       const remainingPath = expression.slice(closing + 1).replace(/^\./, "");
       const arrayPath = arrayPathRaw.trim();
       const property = propertyRaw.replace(/^'/, "").replace(/'$/, "");
       const array = evaluateSimplePath(obj, arrayPath);
       if (Array.isArray(array)) {
-        let targetValue: string | boolean = valueRaw.trim().replace(/['\"]/g, "");
+        let targetValue: string | boolean = valueRaw
+          .trim()
+          .replace(/['\"]/g, "");
         if (valueRaw.trim() === "true") {
           targetValue = true;
         } else if (valueRaw.trim() === "false") {
@@ -85,8 +87,8 @@ function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
         }
         const found = array.find(
           (item) =>
-            hasOwnProperty(item as Record<string, unknown>, property) &&
-            (item as Record<string, unknown>)[property] === targetValue,
+            hasOwnProperty(item as Record<string, unknown>, property)
+            && (item as Record<string, unknown>)[property] === targetValue
         );
         if (found && remainingPath) {
           return evaluateSimplePath(found, remainingPath);
@@ -120,8 +122,8 @@ function evaluatePredicatePath(obj: unknown, path: string): unknown {
   const found = array.find((item) => {
     const trimmedProperty = property.trim();
     return (
-      hasOwnProperty(item as Record<string, unknown>, trimmedProperty) &&
-      (item as Record<string, unknown>)[trimmedProperty] === targetValue
+      hasOwnProperty(item as Record<string, unknown>, trimmedProperty)
+      && (item as Record<string, unknown>)[trimmedProperty] === targetValue
     );
   });
   if (found && remainingPath) {
@@ -160,12 +162,17 @@ function evaluateSimplePath(obj: unknown, path: string): unknown {
 }
 
 function hasDomainsArray(
-  obj: unknown,
+  obj: unknown
 ): obj is { domains: Array<{ isPrimary?: boolean; domainName?: string }> } {
   return (
-    hasOwnProperty(obj as Record<string, unknown>, "domains") &&
-    Array.isArray((obj as { domains: unknown }).domains)
+    hasOwnProperty(obj as Record<string, unknown>, "domains")
+    && Array.isArray((obj as { domains: unknown }).domains)
   );
 }
 
-export { evaluateTemplateFunction, evaluatePredicatePath, evaluateSimplePath, hasDomainsArray };
+export {
+  evaluatePredicatePath,
+  evaluateSimplePath,
+  evaluateTemplateFunction,
+  hasDomainsArray,
+};

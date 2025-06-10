@@ -91,6 +91,16 @@
       "method": "POST",
       "path": "/users"
     },
+    "admin.listUsers": {
+      "conn": "googleAdmin",
+      "method": "GET",
+      "path": "/users"
+    },
+    "admin.updateUser": {
+      "conn": "googleAdmin",
+      "method": "PUT",
+      "path": "/users/{provisioningUserEmail}"
+    },
     "admin.listRoles": {
       "conn": "googleAdmin",
       "method": "GET",
@@ -352,21 +362,60 @@
       ],
       "actions": [
         {
+          "use": "admin.listUsers",
+          "qs": {
+            "query": "email:*-provisioning*"
+          },
+          "interactive": {
+            "type": "select-or-create",
+            "variable": "provisioningUserEmail",
+            "prompt": "Select existing service account or create new",
+            "extractOptions": "$.users[*].primaryEmail",
+            "requiresPassword": true,
+            "createOption": {
+              "prompt": "Create new service account",
+              "fields": [
+                {
+                  "name": "provisioningUserEmail",
+                  "type": "email",
+                  "label": "Email Address",
+                  "default": "azuread-provisioning@{primaryDomain}",
+                  "validator": "email"
+                },
+                {
+                  "name": "generatedPassword",
+                  "type": "password",
+                  "label": "Password",
+                  "generator": "randomPassword(16)"
+                }
+              ]
+            }
+          }
+        },
+        {
           "use": "admin.getUser",
+          "condition": "provisioningUserEmail_existing",
           "extract": {
-            "provisioningUserId": "$.id",
-            "provisioningUserEmail": "$.primaryEmail"
+            "provisioningUserId": "$.id"
+          }
+        },
+        {
+          "use": "admin.updateUser",
+          "condition": "passwordAction == 'reset'",
+          "payload": {
+            "password": "{generatedPassword}"
           }
         },
         {
           "use": "admin.postUser",
+          "condition": "provisioningUserEmail.isNew",
           "payload": {
-            "primaryEmail": "{email('azuread-provisioning', primaryDomain)}",
+            "primaryEmail": "{provisioningUserEmail}",
             "name": {
               "givenName": "Microsoft",
               "familyName": "Provisioning"
             },
-            "password": "{generatePassword(16)}",
+            "password": "{generatedPassword}",
             "orgUnitPath": "/Automation"
           },
           "extract": {

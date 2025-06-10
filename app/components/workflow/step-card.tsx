@@ -2,6 +2,10 @@
 import "client-only";
 
 import { executeWorkflowStep } from "@/app/actions/workflow-execution";
+import {
+  prepareInteractiveRequest,
+  handleInteractiveResponse,
+} from "@/app/actions/workflow-interactive";
 import { markManualStepComplete } from "@/app/actions/workflow-state";
 import { cn } from "@/app/lib/utils";
 import {
@@ -24,7 +28,7 @@ import {
   Loader2,
   XCircle,
 } from "lucide-react";
-import { useReducer, useTransition } from "react";
+import { useReducer, useTransition, useState } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -36,6 +40,8 @@ import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
 import { PasswordDisplay } from "./password-display";
+import { InteractiveDialog } from "./interactive-dialog";
+import type { InteractiveRequest } from "@/app/lib/workflow";
 
 const JSON_INDENT = 2;
 
@@ -54,6 +60,13 @@ type StepCardAction =
   | { type: "EXECUTE_SUCCESS" }
   | { type: "EXECUTE_FAILURE"; error: string };
 
+/**
+ * Reducer handling execution state transitions for a workflow step card.
+ *
+ * @param state - Current reducer state
+ * @param action - Action describing the state change
+ * @returns Updated reducer state
+ */
 function stepCardReducer(
   state: StepCardState,
   action: StepCardAction
@@ -70,6 +83,11 @@ function stepCardReducer(
   }
 }
 
+/**
+ * Display and manage execution state for a single workflow step.
+ *
+ * @param props - Step details, current status, and environment information
+ */
 export function StepCard({
   step,
   status,
@@ -79,6 +97,7 @@ export function StepCard({
 }: StepCardProps) {
   const [isPending, startTransition] = useTransition();
   const [state, dispatch] = useReducer(stepCardReducer, { isExecuting: false });
+  const [interactiveRequest, setInteractiveRequest] = useState<InteractiveRequest | null>(null);
   const effectiveStatus =
     state.executionError ?
       { ...status, status: STATUS_VALUES.FAILED, error: state.executionError }
@@ -86,10 +105,24 @@ export function StepCard({
 
   // Debug logging
 
+  /**
+   * Execute the given workflow step and manage UI state updates.
+   *
+   * @param stepName - Name of the step to run
+   */
   const handleExecute = (stepName: string) => {
     dispatch({ type: "EXECUTE_START" });
     startTransition(async () => {
       const result = await executeWorkflowStep(stepName);
+
+      if (result.needsInteraction && result.actionIndex !== undefined) {
+        const req = await prepareInteractiveRequest(stepName, result.actionIndex);
+        if (req) {
+          setInteractiveRequest(req);
+          return;
+        }
+      }
+
       if (result.status && result.status.status !== STATUS_VALUES.FAILED) {
         dispatch({ type: "EXECUTE_SUCCESS" });
       } else if (
@@ -103,6 +136,29 @@ export function StepCard({
         dispatch({ type: "EXECUTE_SUCCESS" });
       }
     });
+  };
+
+  /**
+   * Persist the user's interactive response and re-run the step.
+   *
+   * @param response - Selected value and optional metadata from the dialog
+   */
+  const handleInteractiveComplete = async (
+    response: { value: string; metadata?: Record<string, string> }
+  ) => {
+    if (!interactiveRequest) return;
+    const result = await handleInteractiveResponse(
+      interactiveRequest.stepName,
+      interactiveRequest.actionIndex,
+      response
+    );
+
+    if (result.success) {
+      setInteractiveRequest(null);
+      handleExecute(interactiveRequest.stepName);
+    } else {
+      dispatch({ type: "EXECUTE_FAILURE", error: result.error || "Failed to process response" });
+    }
   };
 
   const statusIcon = (() => {
@@ -137,6 +193,7 @@ export function StepCard({
     effectiveStatus.status === STATUS_VALUES.FAILED || effectiveStatus.error;
 
   return (
+    <>
     <Card className="overflow-hidden">
       <Accordion
         type="single"
@@ -451,5 +508,18 @@ export function StepCard({
         </AccordionItem>
       </Accordion>
     </Card>
+
+    {interactiveRequest && (
+      <InteractiveDialog
+        request={interactiveRequest}
+        isOpen={true}
+        onComplete={handleInteractiveComplete}
+        onCancel={() => {
+          setInteractiveRequest(null);
+          dispatch({ type: "EXECUTE_FAILURE", error: "User cancelled" });
+        }}
+      />
+    )}
+    </>
   );
 }

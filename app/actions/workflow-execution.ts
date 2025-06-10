@@ -33,6 +33,49 @@ import { safeAsync } from "@/app/lib/workflow/error-handling";
 import { setStoredVariables } from "@/app/lib/workflow/variables-store";
 import { revalidatePath } from "next/cache";
 import { getWorkflowData } from "./workflow-data";
+import { needsInteractiveInput } from "./workflow-interactive";
+
+/**
+ * Evaluate a simple condition expression against the current workflow
+ * variables.
+ *
+ * Supported expressions:
+ * - `variable.isNew` to check if a variable was newly created
+ * - `a == 'b'` for equality comparisons
+ * - `!variable` for negation
+ * - plain variable names for existence checks
+ *
+ * @param condition - Condition string to evaluate
+ * @param variables - Stored workflow variables
+ * @returns `true` if the condition is satisfied
+ */
+function evaluateCondition(
+  condition: string,
+  variables: Record<string, string>
+): boolean {
+  // Handle .isNew condition
+  if (condition.endsWith(".isNew")) {
+    const varName = condition.replace(".isNew", "");
+    return !variables[`${varName}_existing`];
+  }
+
+  // Handle equality conditions
+  if (condition.includes(" == ")) {
+    const [left, right] = condition.split(" == ").map((s) => s.trim());
+    const leftValue = variables[left] || left;
+    const rightValue = right.replace(/['"]/g, "");
+    return leftValue === rightValue;
+  }
+
+  // Handle negation
+  if (condition.startsWith("!")) {
+    const varName = condition.substring(1);
+    return !variables[varName];
+  }
+
+  // Simple variable existence check
+  return !!variables[condition];
+}
 
 /**
  * Pull values out of an API response according to action configuration.
@@ -181,7 +224,17 @@ async function processActionResponse(
 import { assertNever, parseApiError } from "@/app/lib/workflow/error-types";
 
 /**
- * Execute the sequence of actions defined for a single step.
+ * Execute the sequence of actions defined for a single workflow step.
+ *
+ * @param action - Action definition to execute
+ * @param step - The parent workflow step
+ * @param variables - Current workflow variable map
+ * @param tokens - Authentication tokens for API requests
+ * @param onLog - Callback for emitting log events
+ * @param extractedVariables - Object to collect extracted variable values
+ * @param workflow - Parsed workflow definition
+ * @param _verificationOnly - Flag indicating a verification-only run
+ * @returns Result of the action execution and any extracted variables
  */
 async function handleActionExecution(
   action: Action,
@@ -197,6 +250,40 @@ async function handleActionExecution(
   extractedVariables: Record<string, string>;
   data?: unknown;
 }> {
+  // Check if this is an interactive action that needs user input
+  if (action.interactive && !_verificationOnly) {
+    const actionIndex = step.actions?.findIndex((a) => a === action) ?? -1;
+    const needsInput = await needsInteractiveInput(step.name, actionIndex);
+    if (needsInput) {
+      return {
+        success: false,
+        extractedVariables,
+        data: { needsInteraction: true, actionIndex },
+      };
+    }
+
+    if (action.interactive.type === "select-or-create") {
+      const existingMarker = `${action.interactive.variable}_existing`;
+      if (variables[existingMarker] === "true") {
+        onLog({
+          timestamp: Date.now(),
+          level: "info",
+          message: `Skipping action ${action.use} - existing resource selected`,
+        });
+        return { success: true, extractedVariables };
+      }
+    }
+  }
+
+  // Check condition if specified
+  if (action.condition && !evaluateCondition(action.condition, variables)) {
+    onLog({
+      timestamp: Date.now(),
+      level: "info",
+      message: `Skipping action ${action.use} - condition not met: ${action.condition}`,
+    });
+    return { success: true, extractedVariables };
+  }
   const endpoint = workflow.endpoints[action.use];
   const prereq = validateActionPrerequisites(
     action,
@@ -330,6 +417,13 @@ async function processStepExecution(
       logCollector,
       false
     );
+    if (actionResult.needsInteraction) {
+      status.needsInteraction = true;
+      status.actionIndex = actionResult.actionIndex;
+      status.status = STATUS_VALUES.PENDING;
+      status.logs = logs;
+      return status;
+    }
     if (!actionResult.success) {
       throw new Error("Step actions failed");
     }
@@ -409,6 +503,8 @@ export async function runStepActions(
   success: boolean;
   extractedVariables: Record<string, string>;
   data?: unknown;
+  needsInteraction?: boolean;
+  actionIndex?: number;
 }> {
   if (!step.actions || step.actions.length === 0) {
     return { success: false, extractedVariables: {} };
@@ -433,6 +529,15 @@ export async function runStepActions(
         workflow,
         verificationOnly
       );
+      if (result.data && typeof result.data === "object" && "needsInteraction" in result.data) {
+        return {
+          success: false,
+          extractedVariables,
+          data: lastData,
+          needsInteraction: true,
+          actionIndex: (result.data as { actionIndex: number }).actionIndex,
+        };
+      }
       if (result.success) {
         success = true;
         lastData = result.data;
@@ -522,6 +627,8 @@ export async function executeWorkflowStep(
   status?: StepStatus;
   variables?: Record<string, string>;
   error?: string;
+  needsInteraction?: boolean;
+  actionIndex?: number;
 }> {
   try {
     // Get current workflow data including reconstructed variables
@@ -557,6 +664,15 @@ export async function executeWorkflowStep(
     );
 
     await setStoredVariables(updatedVariables);
+
+    if (status.needsInteraction && status.actionIndex !== undefined) {
+      return {
+        success: false,
+        needsInteraction: true,
+        actionIndex: status.actionIndex,
+        variables: updatedVariables,
+      };
+    }
 
     if (
       status.status === STATUS_VALUES.COMPLETED

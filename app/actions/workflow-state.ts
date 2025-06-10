@@ -1,7 +1,11 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { parseWorkflow } from "@/app/lib/workflow";
+import {
+  parseWorkflow,
+  getStoredVariables,
+  setStoredVariables,
+} from "@/app/lib/workflow";
 import { getToken, setToken } from "@/app/lib/auth/tokens";
 import { refreshAccessToken } from "@/app/lib/auth/oauth";
 import { Provider } from "@/app/lib/workflow/constants";
@@ -16,7 +20,6 @@ function isValidStepName(stepName: string): boolean {
   const workflow = parseWorkflow();
   return workflow.steps.some((s) => s.name === stepName);
 }
-
 
 /**
  * Force refresh workflow state
@@ -60,6 +63,10 @@ export async function setWorkflowVariable(
       }
     }
 
+    const vars = await getStoredVariables(onLog);
+    vars[name] = value;
+    await setStoredVariables(vars, onLog);
+
     // Variable is valid, invalidate cache to refresh UI
     revalidatePath("/");
 
@@ -78,7 +85,6 @@ export async function setWorkflowVariable(
   }
 }
 
-
 export async function refreshAuthToken(
   provider: Provider,
   onLog?: (entry: LogEntry) => void,
@@ -93,7 +99,10 @@ export async function refreshAuthToken(
       return { success: false, error: "No refresh token available" };
     }
 
-    const refreshedToken = await refreshAccessToken(provider, token.refreshToken);
+    const refreshedToken = await refreshAccessToken(
+      provider,
+      token.refreshToken,
+    );
     await setToken(provider, refreshedToken);
 
     revalidatePath("/");

@@ -1,0 +1,55 @@
+import {
+  getChunkedCookie,
+  setChunkedCookie,
+  clearChunkedCookie,
+} from "../auth/cookie-utils";
+import { encrypt, decrypt } from "../auth/crypto";
+import { WORKFLOW_CONSTANTS, LogEntry } from "./constants";
+
+const COOKIE_OPTIONS = {
+  httpOnly: true,
+  secure: process.env.NODE_ENV === "production",
+  sameSite: "lax" as const,
+  path: "/",
+};
+
+export async function getStoredVariables(
+  onLog?: (entry: LogEntry) => void,
+): Promise<Record<string, string>> {
+  const encrypted = await getChunkedCookie(
+    WORKFLOW_CONSTANTS.VARIABLES_COOKIE_NAME,
+    onLog,
+  );
+  if (!encrypted) return {};
+  try {
+    const decrypted = decrypt(encrypted);
+    return JSON.parse(decrypted);
+  } catch (err) {
+    onLog?.({
+      timestamp: Date.now(),
+      level: "error",
+      message: "Failed to decrypt variables",
+      data: err,
+    });
+    return {};
+  }
+}
+
+export async function setStoredVariables(
+  vars: Record<string, string>,
+  onLog?: (entry: LogEntry) => void,
+): Promise<void> {
+  const encrypted = encrypt(JSON.stringify(vars));
+  await setChunkedCookie(
+    WORKFLOW_CONSTANTS.VARIABLES_COOKIE_NAME,
+    encrypted,
+    { ...COOKIE_OPTIONS, maxAge: WORKFLOW_CONSTANTS.VARIABLES_COOKIE_MAX_AGE },
+    onLog,
+  );
+}
+
+export async function clearStoredVariables(
+  onLog?: (entry: LogEntry) => void,
+): Promise<void> {
+  await clearChunkedCookie(WORKFLOW_CONSTANTS.VARIABLES_COOKIE_NAME, onLog);
+}

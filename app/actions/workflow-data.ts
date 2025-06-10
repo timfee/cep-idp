@@ -12,7 +12,13 @@ import {
   Workflow,
   Token,
 } from "@/app/lib/workflow";
-import { JWT_PART_COUNT, PROVIDERS, STATUS_VALUES, VARIABLE_KEYS } from "@/app/lib/workflow/constants";
+import {
+  JWT_PART_COUNT,
+  PROVIDERS,
+  STATUS_VALUES,
+  VARIABLE_KEYS,
+} from "@/app/lib/workflow/constants";
+import { getStoredVariables } from "@/app/lib/workflow";
 import { runStepActions } from "./workflow-execution";
 import { refreshWorkflowState } from "./workflow-state";
 
@@ -93,51 +99,82 @@ async function reconstituteStepStatuses(
     if (!step.depends_on) return true;
     return step.depends_on.every((dep) => {
       const local = stepStatuses.get(dep);
-      return local ? local.status === STATUS_VALUES.COMPLETED || local.status === STATUS_VALUES.SKIPPED : false;
+      return local
+        ? local.status === STATUS_VALUES.COMPLETED ||
+            local.status === STATUS_VALUES.SKIPPED
+        : false;
     });
   };
 
   const isAuthMet = (step: Step): boolean => {
     if (!step.role) return true;
-    const requiredScopes = Object.prototype.hasOwnProperty.call(workflow.roles, step.role)
+    const requiredScopes = Object.prototype.hasOwnProperty.call(
+      workflow.roles,
+      step.role,
+    )
       ? workflow.roles[step.role]
       : [];
-    const isGoogleStep = step.role.startsWith("dir") || step.role.startsWith("ci");
+    const isGoogleStep =
+      step.role.startsWith("dir") || step.role.startsWith("ci");
     const isMicrosoftStep = step.role.startsWith("graph");
     if (isGoogleStep && tokens.google != null) {
-      return !isTokenExpired(tokens.google) && requiredScopes.every((s) => tokens.google?.scope.includes(s));
+      return (
+        !isTokenExpired(tokens.google) &&
+        requiredScopes.every((s) => tokens.google?.scope.includes(s))
+      );
     }
     if (isMicrosoftStep && tokens.microsoft != null) {
-      return !isTokenExpired(tokens.microsoft) && requiredScopes.every((s) => tokens.microsoft?.scope.includes(s));
+      return (
+        !isTokenExpired(tokens.microsoft) &&
+        requiredScopes.every((s) => tokens.microsoft?.scope.includes(s))
+      );
     }
     return false;
   };
-
 
   const shouldSkipStep = (step: Step): boolean =>
     !areDependenciesMet(step) ||
     !isAuthMet(step) ||
     !!step.manual ||
-    (step.inputs ? step.inputs.some((i) => !Object.prototype.hasOwnProperty.call(workingVariables, i)) : false);
+    (step.inputs
+      ? step.inputs.some(
+          (i) => !Object.prototype.hasOwnProperty.call(workingVariables, i),
+        )
+      : false);
 
   const verifyStep = async (step: Step): Promise<void> => {
     const logs: LogEntry[] = [];
-    const result = await runStepActions(step, workingVariables, tokens, (log) => logs.push(log), true);
-    if (result.success) {
-      Object.assign(workingVariables, result.extractedVariables);
-      stepStatuses.set(step.name, {
-        status: STATUS_VALUES.COMPLETED,
-        logs,
-        result: result.data,
-        completedAt: Date.now(),
+    try {
+      const result = await runStepActions(
+        step,
+        workingVariables,
+        tokens,
+        (log) => logs.push(log),
+        true,
+      );
+      if (result.success) {
+        Object.assign(workingVariables, result.extractedVariables);
+        stepStatuses.set(step.name, {
+          status: STATUS_VALUES.COMPLETED,
+          logs,
+          result: result.data,
+          completedAt: Date.now(),
+        });
+      } else {
+        stepStatuses.set(step.name, { status: STATUS_VALUES.PENDING, logs });
+      }
+    } catch (error) {
+      logs.push({
+        timestamp: Date.now(),
+        level: "error",
+        message: `Verification failed for ${step.name}`,
+        data: error,
       });
-    } else {
       stepStatuses.set(step.name, { status: STATUS_VALUES.PENDING, logs });
     }
   };
 
   for (const step of workflow.steps) {
-
     if (shouldSkipStep(step)) {
       stepStatuses.set(step.name, pendingStatus);
       continue;
@@ -169,7 +206,6 @@ export async function getWorkflowData(
   const googleToken = await getToken(PROVIDERS.GOOGLE);
   const microsoftToken = await getToken(PROVIDERS.MICROSOFT);
 
-
   const tokens = {
     google: googleToken ?? undefined,
     microsoft: microsoftToken ?? undefined,
@@ -177,6 +213,8 @@ export async function getWorkflowData(
 
   const workflow = parseWorkflow();
   const variables = await initializeVariables(workflow);
+  const storedVars = await getStoredVariables();
+  Object.assign(variables, storedVars);
 
   const tenantId = extractTenantId(microsoftToken);
   if (tenantId && !variables[VARIABLE_KEYS.TENANT_ID]) {

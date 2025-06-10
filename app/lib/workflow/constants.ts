@@ -23,7 +23,7 @@ export const PROVIDERS = {
   GOOGLE: "google",
   MICROSOFT: "microsoft",
 } as const;
-export type Provider = typeof PROVIDERS[keyof typeof PROVIDERS];
+export type Provider = (typeof PROVIDERS)[keyof typeof PROVIDERS];
 
 // Status values
 export const STATUS_VALUES = {
@@ -74,7 +74,11 @@ export const COOKIE_METADATA_SIZES = {
 export const WORKFLOW_CONSTANTS = {
   // Time constants (replacing magic numbers)
   OAUTH_STATE_TTL_MS:
-    DAYS_IN_MONTH * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE * MS_IN_SECOND,
+    DAYS_IN_MONTH *
+    HOURS_IN_DAY *
+    MINUTES_IN_HOUR *
+    SECONDS_IN_MINUTE *
+    MS_IN_SECOND,
   TOKEN_REFRESH_BUFFER_MS: 300000, // 5 minutes
   TOKEN_COOKIE_MAX_AGE:
     DAYS_IN_MONTH * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE, // 30 days
@@ -103,6 +107,11 @@ export const WORKFLOW_CONSTANTS = {
 
   // Size constants
   MAX_COOKIE_SIZE: 3800,
+
+  // Cookie names and TTL
+  VARIABLES_COOKIE_NAME: "workflow_vars",
+  VARIABLES_COOKIE_MAX_AGE:
+    DAYS_IN_MONTH * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE,
 
   // API constants
   SYNC_INTERVAL: "PT40M", // 40 minutes in ISO 8601

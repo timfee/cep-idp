@@ -3,6 +3,7 @@
 import React from "react";
 import { StepCard } from "./step-card";
 import type { Workflow, Step, StepStatus } from "@/app/lib/workflow";
+import { isTokenExpired } from "@/app/lib/auth/oauth";
 
 interface WorkflowStepsProps {
   workflow: Workflow;
@@ -47,7 +48,12 @@ export function WorkflowSteps({
 
     if (isGoogleStep && authStatus.google.authenticated) {
       const notExpired =
-        !authStatus.google.expiresAt || authStatus.google.expiresAt > Date.now();
+        !authStatus.google.expiresAt ||
+        !isTokenExpired({
+          accessToken: "",
+          expiresAt: authStatus.google.expiresAt || 0,
+          scope: [],
+        });
       return (
         notExpired &&
         requiredScopes.every((scope: string) =>
@@ -57,7 +63,11 @@ export function WorkflowSteps({
     } else if (isMicrosoftStep && authStatus.microsoft.authenticated) {
       const notExpired =
         !authStatus.microsoft.expiresAt ||
-        authStatus.microsoft.expiresAt > Date.now();
+        !isTokenExpired({
+          accessToken: "",
+          expiresAt: authStatus.microsoft.expiresAt || 0,
+          scope: [],
+        });
       return (
         notExpired &&
         requiredScopes.every((scope: string) =>

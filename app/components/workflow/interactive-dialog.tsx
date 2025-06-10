@@ -1,7 +1,10 @@
 "use client";
 import "client-only";
 
+import { InteractiveRequest, validateVariable } from "@/app/lib/workflow";
+import { Key, Loader2, Plus, RefreshCw } from "lucide-react";
 import { useState } from "react";
+import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Button } from "../ui/button";
 import {
   Dialog,
@@ -20,15 +23,14 @@ import {
   SelectTrigger,
   SelectValue,
 } from "../ui/select";
-import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
-import { Loader2, Plus, RefreshCw, Key } from "lucide-react";
-import { InteractiveRequest } from "@/app/lib/workflow";
-import { validateVariable } from "@/app/lib/workflow";
 
 interface InteractiveDialogProps {
   request: InteractiveRequest;
   isOpen: boolean;
-  onComplete: (response: { value: string; metadata?: Record<string, string> }) => void;
+  onComplete: (response: {
+    value: string;
+    metadata?: Record<string, string>;
+  }) => void;
   onCancel: () => void;
 }
 
@@ -50,7 +52,8 @@ const DEFAULT_PASSWORD_LENGTH = 16;
  * @returns A randomly generated password string
  */
 function generatePassword(length: number): string {
-  const chars = "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
+  const chars =
+    "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789!@#$%^&*";
   const values = new Uint32Array(length);
   crypto.getRandomValues(values);
   let password = "";
@@ -123,7 +126,11 @@ export function InteractiveDialog({
         setErrors({ select: "Please select an option" });
         return false;
       }
-      if (config.requiresPassword && passwordMode === "input" && !existingPassword) {
+      if (
+        config.requiresPassword
+        && passwordMode === "input"
+        && !existingPassword
+      ) {
         // eslint-disable-next-line sonarjs/no-hardcoded-passwords
         setErrors({ pwd: "Password is required" });
         return false;
@@ -139,8 +146,13 @@ export function InteractiveDialog({
         if (!value && !field.generator) {
           newErrors[field.name] = "This field is required";
         }
-        if (value && field.validator && !validateVariable(value, field.validator)) {
-          newErrors[field.name] = `Invalid format for ${field.label || field.name}`;
+        if (
+          value
+          && field.validator
+          && !validateVariable(value, field.validator)
+        ) {
+          newErrors[field.name] =
+            `Invalid format for ${field.label || field.name}`;
         }
       }
     }
@@ -187,8 +199,8 @@ export function InteractiveDialog({
         if (createOpt.transform) {
           value = createOpt.transform.replace("{value}", value);
         }
-          // eslint-disable-next-line sonarjs/no-hardcoded-passwords
-          finalFields.passwordAction = "create";
+        // eslint-disable-next-line sonarjs/no-hardcoded-passwords
+        finalFields.passwordAction = "create";
         onComplete({ value, metadata: finalFields });
       }
     }
@@ -200,8 +212,8 @@ export function InteractiveDialog({
         <DialogHeader>
           <DialogTitle>{config.prompt}</DialogTitle>
           <DialogDescription>
-            {config.type === "select-or-create" &&
-              "Choose an existing option or create a new one."}
+            {config.type === "select-or-create"
+              && "Choose an existing option or create a new one."}
           </DialogDescription>
         </DialogHeader>
 
@@ -211,15 +223,13 @@ export function InteractiveDialog({
               <Button
                 variant={mode === "select" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setMode("select")}
-              >
+                onClick={() => setMode("select")}>
                 Select Existing
               </Button>
               <Button
                 variant={mode === "create" ? "default" : "outline"}
                 size="sm"
-                onClick={() => setMode("create")}
-              >
+                onClick={() => setMode("create")}>
                 <Plus className="h-4 w-4 mr-1" />
                 Create New
               </Button>
@@ -256,8 +266,7 @@ export function InteractiveDialog({
                     <Button
                       variant={passwordMode === "input" ? "default" : "outline"}
                       size="sm"
-                      onClick={() => setPasswordMode("input")}
-                    >
+                      onClick={() => setPasswordMode("input")}>
                       <Key className="h-4 w-4 mr-1" />
                       Enter Password
                     </Button>
@@ -267,8 +276,7 @@ export function InteractiveDialog({
                       onClick={() => {
                         setPasswordMode("reset");
                         setExistingPassword("");
-                      }}
-                    >
+                      }}>
                       <RefreshCw className="h-4 w-4 mr-1" />
                       Reset Password
                     </Button>
@@ -294,8 +302,9 @@ export function InteractiveDialog({
                     <Alert>
                       <AlertTitle>Password will be reset</AlertTitle>
                       <AlertDescription>
-                        A new password will be generated and set for this account.
-                        Any applications using the current password will need to be updated.
+                        A new password will be generated and set for this
+                        account. Any applications using the current password
+                        will need to be updated.
                       </AlertDescription>
                     </Alert>
                   )}
@@ -308,13 +317,17 @@ export function InteractiveDialog({
             <div className="space-y-4">
               {config.createOption.fields.map((field) => (
                 <div key={field.name} className="space-y-2">
-                  <Label htmlFor={field.name}>{field.label || field.name}</Label>
+                  <Label htmlFor={field.name}>
+                    {field.label || field.name}
+                  </Label>
                   <div className="flex gap-2">
                     <Input
                       id={field.name}
                       type={field.type || "text"}
                       value={createFields[field.name] || field.default || ""}
-                      onChange={(e) => handleCreateFieldChange(field.name, e.target.value)}
+                      onChange={(e) =>
+                        handleCreateFieldChange(field.name, e.target.value)
+                      }
                       placeholder={field.default}
                       className={errors[field.name] ? "border-red-500" : ""}
                     />
@@ -326,8 +339,7 @@ export function InteractiveDialog({
                         onClick={() => {
                           const generated = generateFieldValue(field);
                           handleCreateFieldChange(field.name, generated);
-                        }}
-                      >
+                        }}>
                         Generate
                       </Button>
                     )}

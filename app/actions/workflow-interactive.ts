@@ -5,12 +5,15 @@ import { apiRequest } from "@/app/lib/api/client";
 import { getToken } from "@/app/lib/auth/tokens";
 import {
   extractValueFromPath,
-  parseWorkflow,
   InteractiveRequest,
   InteractiveResponse,
+  parseWorkflow,
 } from "@/app/lib/workflow";
 import { PROVIDERS } from "@/app/lib/workflow/constants";
-import { getStoredVariables, setStoredVariables } from "@/app/lib/workflow/variables-store";
+import {
+  getStoredVariables,
+  setStoredVariables,
+} from "@/app/lib/workflow/variables-store";
 
 /**
  * Build an {@link InteractiveRequest} describing the user input required for
@@ -61,7 +64,10 @@ export async function prepareInteractiveRequest(
         });
 
         if (apiResult.data) {
-          const extracted = extractValueFromPath(apiResult.data, config.extractOptions);
+          const extracted = extractValueFromPath(
+            apiResult.data,
+            config.extractOptions
+          );
           if (Array.isArray(extracted)) {
             options = extracted.map((item: unknown) => {
               if (typeof item === "string") {
@@ -71,13 +77,13 @@ export async function prepareInteractiveRequest(
                 const obj = item as Record<string, unknown>;
                 return {
                   name:
-                    (obj.name as string) ||
-                    (obj.value as string) ||
-                    String(item),
+                    (obj.name as string)
+                    || (obj.value as string)
+                    || String(item),
                   value:
-                    (obj.value as string) ||
-                    (obj.name as string) ||
-                    String(item),
+                    (obj.value as string)
+                    || (obj.name as string)
+                    || String(item),
                 };
               }
               return { name: String(item), value: String(item) };
@@ -90,12 +96,7 @@ export async function prepareInteractiveRequest(
     }
   }
 
-  return {
-    stepName,
-    actionIndex,
-    config,
-    options,
-  };
+  return { stepName, actionIndex, config, options };
 }
 
 /**

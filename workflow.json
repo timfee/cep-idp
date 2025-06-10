@@ -16,40 +16,25 @@
       "base": "https://graph.microsoft.com/beta",
       "auth": "Bearer {azureAccessToken}"
     },
-    "public": {
-      "base": "",
-      "auth": "none"
-    }
+    "public": { "base": "", "auth": "none" }
   },
   "roles": {
     "dirDomainRW": [
       "https://www.googleapis.com/auth/admin.directory.domain",
       "https://www.googleapis.com/auth/siteverification"
     ],
-    "dirOrgunitRW": [
-      "https://www.googleapis.com/auth/admin.directory.orgunit"
-    ],
-    "dirUserRW": [
-      "https://www.googleapis.com/auth/admin.directory.user"
-    ],
+    "dirOrgunitRW": ["https://www.googleapis.com/auth/admin.directory.orgunit"],
+    "dirUserRW": ["https://www.googleapis.com/auth/admin.directory.user"],
     "dirRoleRW": [
       "https://www.googleapis.com/auth/admin.directory.rolemanagement"
     ],
     "ciInboundSso": [
       "https://www.googleapis.com/auth/cloud-identity.inboundsso"
     ],
-    "graphAppRW": [
-      "Application.ReadWrite.All"
-    ],
-    "graphSyncRW": [
-      "Synchronization.ReadWrite.All"
-    ],
-    "graphPolicyRW": [
-      "Policy.ReadWrite.ApplicationConfiguration"
-    ],
-    "graphAppRole": [
-      "AppRoleAssignment.ReadWrite.All"
-    ]
+    "graphAppRW": ["Application.ReadWrite.All"],
+    "graphSyncRW": ["Synchronization.ReadWrite.All"],
+    "graphPolicyRW": ["Policy.ReadWrite.ApplicationConfiguration"],
+    "graphAppRole": ["AppRoleAssignment.ReadWrite.All"]
   },
   "endpoints": {
     "admin.getDomain": {
@@ -71,10 +56,7 @@
       "conn": "googleAdmin",
       "method": "GET",
       "path": "/customer/{customerId}/orgunits",
-      "qs": {
-        "orgUnitPath": "/Automation",
-        "type": "children"
-      }
+      "qs": { "orgUnitPath": "/Automation", "type": "children" }
     },
     "admin.postOU": {
       "conn": "googleAdmin",
@@ -120,10 +102,7 @@
       "conn": "googleAdmin",
       "method": "GET",
       "path": "/customer/{customerId}/roleassignments",
-      "qs": {
-        "roleId": "{adminRoleId}",
-        "assignedTo": "{provisioningUserId}"
-      }
+      "qs": { "roleId": "{adminRoleId}", "assignedTo": "{provisioningUserId}" }
     },
     "admin.postRoleAssign": {
       "conn": "googleAdmin",
@@ -174,17 +153,13 @@
       "conn": "graphGA",
       "method": "GET",
       "path": "/applications",
-      "qs": {
-        "$filter": "applicationTemplateId eq '{provTemplateId}'"
-      }
+      "qs": { "$filter": "applicationTemplateId eq '{provTemplateId}'" }
     },
     "graph.appByTemplateSSO": {
       "conn": "graphGA",
       "method": "GET",
       "path": "/applications",
-      "qs": {
-        "$filter": "applicationTemplateId eq '{ssoTemplateId}'"
-      }
+      "qs": { "$filter": "applicationTemplateId eq '{ssoTemplateId}'" }
     },
     "graph.getSync": {
       "conn": "graphGA",
@@ -230,9 +205,7 @@
       "conn": "graphGA",
       "method": "GET",
       "path": "/servicePrincipals/{ssoServicePrincipalId}/appRoleAssignedTo",
-      "qs": {
-        "$filter": "principalId eq {principalId}"
-      }
+      "qs": { "$filter": "principalId eq {principalId}" }
     },
     "graph.postAppRoleAssign": {
       "conn": "graphGA",
@@ -283,9 +256,7 @@
     "provServicePrincipalId": {},
     "ssoServicePrincipalId": {},
     "ssoAppId": {},
-    "jobId": {
-      "default": "Initial"
-    },
+    "jobId": { "default": "Initial" },
     "claimsPolicyId": {},
     "principalId": {},
     "generatedPassword": {},
@@ -299,10 +270,7 @@
   "steps": [
     {
       "name": "Verify Primary Domain",
-      "outputs": [
-        "primaryDomain",
-        "domainName"
-      ],
+      "outputs": ["primaryDomain", "domainName"],
       "actions": [
         {
           "use": "admin.listDomains",
@@ -318,9 +286,7 @@
         },
         {
           "use": "admin.postDomain",
-          "payload": {
-            "domainName": "{primaryDomain}"
-          },
+          "payload": { "domainName": "{primaryDomain}" },
           "fallback": true
         }
       ],
@@ -328,33 +294,21 @@
     },
     {
       "name": "Create Automation Organizational Unit",
-      "inputs": [
-        "primaryDomain"
-      ],
+      "inputs": ["primaryDomain"],
       "actions": [
-        {
-          "use": "admin.listOUAutomation",
-          "checker": "exists"
-        },
+        { "use": "admin.listOUAutomation", "checker": "exists" },
         {
           "use": "admin.postOU",
-          "payload": {
-            "name": "Automation",
-            "parentOrgUnitPath": "/"
-          },
+          "payload": { "name": "Automation", "parentOrgUnitPath": "/" },
           "fallback": true
         }
       ],
       "role": "dirOrgunitRW",
-      "depends_on": [
-        "Verify Primary Domain"
-      ]
+      "depends_on": ["Verify Primary Domain"]
     },
     {
       "name": "Create Service Account for Microsoft",
-      "inputs": [
-        "primaryDomain"
-      ],
+      "inputs": ["primaryDomain"],
       "outputs": [
         "provisioningUserId",
         "provisioningUserEmail",
@@ -363,9 +317,7 @@
       "actions": [
         {
           "use": "admin.listUsers",
-          "qs": {
-            "query": "email:*-provisioning*"
-          },
+          "qs": { "query": "email:*-provisioning*" },
           "interactive": {
             "type": "select-or-create",
             "variable": "provisioningUserEmail",
@@ -395,26 +347,19 @@
         {
           "use": "admin.getUser",
           "condition": "provisioningUserEmail_existing",
-          "extract": {
-            "provisioningUserId": "$.id"
-          }
+          "extract": { "provisioningUserId": "$.id" }
         },
         {
           "use": "admin.updateUser",
           "condition": "passwordAction == 'reset'",
-          "payload": {
-            "password": "{generatedPassword}"
-          }
+          "payload": { "password": "{generatedPassword}" }
         },
         {
           "use": "admin.postUser",
           "condition": "provisioningUserEmail.isNew",
           "payload": {
             "primaryEmail": "{provisioningUserEmail}",
-            "name": {
-              "givenName": "Microsoft",
-              "familyName": "Provisioning"
-            },
+            "name": { "givenName": "Microsoft", "familyName": "Provisioning" },
             "password": "{generatedPassword}",
             "orgUnitPath": "/Automation"
           },
@@ -427,20 +372,12 @@
         }
       ],
       "role": "dirUserRW",
-      "depends_on": [
-        "Create Automation Organizational Unit"
-      ]
+      "depends_on": ["Create Automation Organizational Unit"]
     },
     {
       "name": "Setup Microsoft Sync Permissions",
-      "inputs": [
-        "customerId",
-        "primaryDomain"
-      ],
-      "outputs": [
-        "adminRoleId",
-        "directoryServiceId"
-      ],
+      "inputs": ["customerId", "primaryDomain"],
+      "outputs": ["adminRoleId", "directoryServiceId"],
       "actions": [
         {
           "use": "admin.listRoles",
@@ -489,15 +426,10 @@
               }
             ]
           },
-          "extract": {
-            "adminRoleId": "$.roleId"
-          },
+          "extract": { "adminRoleId": "$.roleId" },
           "fallback": true
         },
-        {
-          "use": "admin.getRoleAssign",
-          "checker": "exists"
-        },
+        { "use": "admin.getRoleAssign", "checker": "exists" },
         {
           "use": "admin.postRoleAssign",
           "payload": {
@@ -509,23 +441,12 @@
         }
       ],
       "role": "dirRoleRW",
-      "depends_on": [
-        "Create Service Account for Microsoft"
-      ]
+      "depends_on": ["Create Service Account for Microsoft"]
     },
     {
       "name": "Configure Google SAML Profile",
-      "outputs": [
-        "samlProfileId",
-        "entityId",
-        "acsUrl"
-      ],
-      "verify": [
-        {
-          "use": "ci.listSamlProfiles",
-          "checker": "exists"
-        }
-      ],
+      "outputs": ["samlProfileId", "entityId", "acsUrl"],
+      "verify": [{ "use": "ci.listSamlProfiles", "checker": "exists" }],
       "execute": [
         {
           "use": "ci.createSamlProfile",
@@ -545,9 +466,7 @@
         }
       ],
       "role": "ciInboundSso",
-      "depends_on": [
-        "Setup Microsoft Sync Permissions"
-      ],
+      "depends_on": ["Setup Microsoft Sync Permissions"],
       "apiStatus": "beta"
     },
     {
@@ -558,30 +477,18 @@
         "ssoAppId"
       ],
       "verify": [
-        {
-          "use": "graph.appByTemplateProv",
-          "checker": "exists"
-        },
-        {
-          "use": "graph.appByTemplateSSO",
-          "checker": "exists"
-        }
+        { "use": "graph.appByTemplateProv", "checker": "exists" },
+        { "use": "graph.appByTemplateSSO", "checker": "exists" }
       ],
       "execute": [
         {
           "use": "graph.instantiateProv",
-          "payload": {
-            "displayName": "Google Cloud (Provisioning)"
-          },
-          "extract": {
-            "provServicePrincipalId": "$.servicePrincipal.id"
-          }
+          "payload": { "displayName": "Google Cloud (Provisioning)" },
+          "extract": { "provServicePrincipalId": "$.servicePrincipal.id" }
         },
         {
           "use": "graph.instantiateSSO",
-          "payload": {
-            "displayName": "Google Cloud"
-          },
+          "payload": { "displayName": "Google Cloud" },
           "extract": {
             "ssoServicePrincipalId": "$.servicePrincipal.id",
             "ssoAppId": "$.application.appId"
@@ -589,9 +496,7 @@
         }
       ],
       "role": "graphAppRW",
-      "depends_on": [
-        "Configure Google SAML Profile"
-      ]
+      "depends_on": ["Configure Google SAML Profile"]
     },
     {
       "name": "Configure Microsoft Sync and SSO",
@@ -602,14 +507,9 @@
         "provServicePrincipalId",
         "ssoServicePrincipalId"
       ],
-      "outputs": [
-        "claimsPolicyId"
-      ],
+      "outputs": ["claimsPolicyId"],
       "verify": [
-        {
-          "use": "graph.getSync",
-          "checker": "exists"
-        },
+        { "use": "graph.getSync", "checker": "exists" },
         {
           "use": "graph.getSamlSettings",
           "checker": "eq",
@@ -626,47 +526,27 @@
                 "key": "BaseAddress",
                 "value": "https://admin.googleapis.com/admin/directory/v1"
               },
-              {
-                "key": "SecretKey",
-                "value": "{generatedPassword}"
-              }
+              { "key": "SecretKey", "value": "{generatedPassword}" }
             ]
           }
         },
-        {
-          "use": "graph.startSyncJob"
-        },
+        { "use": "graph.startSyncJob" },
         {
           "use": "graph.patchSamlSettings",
           "payload": {
-            "identifierUris": [
-              "{entityId}"
-            ],
-            "replyUrls": [
-              "{acsUrl}"
-            ]
+            "identifierUris": ["{entityId}"],
+            "replyUrls": ["{acsUrl}"]
           }
         }
       ],
       "role": "graphSyncRW",
-      "depends_on": [
-        "Create Microsoft Apps"
-      ]
+      "depends_on": ["Create Microsoft Apps"]
     },
     {
       "name": "Setup Microsoft Claims Policy",
-      "inputs": [
-        "ssoServicePrincipalId"
-      ],
-      "outputs": [
-        "claimsPolicyId"
-      ],
-      "verify": [
-        {
-          "use": "graph.listPolicies",
-          "checker": "exists"
-        }
-      ],
+      "inputs": ["ssoServicePrincipalId"],
+      "outputs": ["claimsPolicyId"],
+      "verify": [{ "use": "graph.listPolicies", "checker": "exists" }],
       "execute": [
         {
           "use": "graph.createPolicy",
@@ -676,9 +556,7 @@
               "{\"ClaimsMappingPolicy\":{\"Version\":1,\"IncludeBasicClaimSet\":true,\"ClaimsMapping\":{\"email\":{\"source\":\"user\",\"id\":\"mail\"}}}}"
             ]
           },
-          "extract": {
-            "claimsPolicyId": "$.id"
-          }
+          "extract": { "claimsPolicyId": "$.id" }
         },
         {
           "use": "graph.linkPolicy",
@@ -688,35 +566,18 @@
         }
       ],
       "role": "graphPolicyRW",
-      "depends_on": [
-        "Configure Microsoft Sync and SSO"
-      ],
+      "depends_on": ["Configure Microsoft Sync and SSO"],
       "apiStatus": "beta"
     },
     {
       "name": "Complete Google SSO Setup",
-      "inputs": [
-        "tenantId",
-        "ssoAppId",
-        "samlProfileId"
-      ],
+      "inputs": ["tenantId", "ssoAppId", "samlProfileId"],
       "verify": [
-        {
-          "use": "ci.getIdpCreds",
-          "checker": "exists"
-        },
-        {
-          "use": "ci.listSsoAssignments",
-          "checker": "exists"
-        }
+        { "use": "ci.getIdpCreds", "checker": "exists" },
+        { "use": "ci.listSsoAssignments", "checker": "exists" }
       ],
       "execute": [
-        {
-          "use": "web.fetchMetadata",
-          "extract": {
-            "rawXmlResponse": "$"
-          }
-        },
+        { "use": "web.fetchMetadata", "extract": { "rawXmlResponse": "$" } },
         {
           "use": "ci.addIdpCert",
           "payload": {
@@ -741,23 +602,17 @@
         }
       ],
       "role": "ciInboundSso",
-      "depends_on": [
-        "Setup Microsoft Claims Policy"
-      ]
+      "depends_on": ["Setup Microsoft Claims Policy"]
     },
     {
       "name": "Assign Users to SSO App",
       "manual": true,
-      "depends_on": [
-        "Complete Google SSO Setup"
-      ]
+      "depends_on": ["Complete Google SSO Setup"]
     },
     {
       "name": "Test SSO Configuration",
       "manual": true,
-      "depends_on": [
-        "Assign Users to SSO App"
-      ]
+      "depends_on": ["Assign Users to SSO App"]
     }
   ]
 }

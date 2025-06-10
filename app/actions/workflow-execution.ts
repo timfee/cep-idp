@@ -529,7 +529,11 @@ export async function runStepActions(
         workflow,
         verificationOnly
       );
-      if (result.data && typeof result.data === "object" && "needsInteraction" in result.data) {
+      if (
+        result.data
+        && typeof result.data === "object"
+        && "needsInteraction" in result.data
+      ) {
         return {
           success: false,
           extractedVariables,

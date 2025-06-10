@@ -2,9 +2,9 @@
 
 import { apiRequest } from "@/app/lib/api/client";
 import { getToken } from "@/app/lib/auth/tokens";
+import { getWorkflowData } from "./workflow-data";
 import {
   evaluateChecker,
-  evaluateGenerator,
   extractMissingVariables,
   extractValueFromPath,
   filterActions,
@@ -30,11 +30,30 @@ function applyExtracts(
 ): void {
   if (!action.extract) return;
   for (const [varName, path] of Object.entries(action.extract)) {
-    const value = extractValueFromPath(response, path);
-    if (value != null) {
-      extractedVariables[varName] = String(value);
-      variables[varName] = String(value);
-      onLog({ timestamp: Date.now(), level: "info", message: `Extracted variable: ${varName} = ${value}` });
+    // Special handling for password display marker
+    if (
+      varName === "generatedPassword" &&
+      path === WORKFLOW_CONSTANTS.PASSWORD_EXTRACTION_KEY
+    ) {
+      if (variables.generatedPassword) {
+        extractedVariables[varName] = variables.generatedPassword;
+        onLog({
+          timestamp: Date.now(),
+          level: "info",
+          message: `Extracted password for display`,
+        });
+      }
+    } else {
+      const value = extractValueFromPath(response, path);
+      if (value != null) {
+        extractedVariables[varName] = String(value);
+        variables[varName] = String(value);
+        onLog({
+          timestamp: Date.now(),
+          level: "info",
+          message: `Extracted variable: ${varName} = ${value}`,
+        });
+      }
     }
   }
 }
@@ -158,6 +177,7 @@ async function handleActionExecution(
 
   applyExtracts(action, response, variables, extractedVariables, onLog);
   Object.assign(extractedVariables, capturedValues);
+  Object.assign(variables, capturedValues);
 
   if (areOutputsMissing(step, extractedVariables)) {
     onLog({
@@ -212,6 +232,12 @@ async function processStepExecution(
     }
 
     Object.assign(variables, actionResult.extractedVariables);
+    if (Object.keys(actionResult.extractedVariables).length > 0) {
+      status.variables = { ...actionResult.extractedVariables };
+    }
+    if (step.name === "Create Service Account for Microsoft" && variables.generatedPassword) {
+      status.variables = { ...(status.variables || {}), generatedPassword: variables.generatedPassword };
+    }
 
     status.result = actionResult.data;
     status.status = "completed";
@@ -304,7 +330,8 @@ export async function runStepActions(
         errorMessage.includes(String(WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED)) ||
         errorMessage.includes("Authentication expired")
       ) {
-        const provider = endpoint.conn.includes("google") ? "Google" : "Microsoft";
+        const failedEndpoint = workflow.endpoints[action.use];
+        const provider = failedEndpoint.conn.includes("google") ? "Google" : "Microsoft";
         throw new Error(
           `${provider} authentication expired. Please re-authenticate to continue.`,
         );
@@ -333,20 +360,10 @@ export async function executeWorkflowStep(stepName: string): Promise<{
   error?: string;
 }> {
   try {
-    // Get workflow and current variables directly without rebuilding entire state
-    const workflow = parseWorkflow();
-    const updatedVariables: Record<string, string> = {};
-
-    // Initialize variables with defaults if not already set
-    for (const [name, varDef] of Object.entries(workflow.variables)) {
-      if (!updatedVariables[name]) {
-        if (varDef.default) {
-          updatedVariables[name] = varDef.default;
-        } else if (varDef.generator) {
-          updatedVariables[name] = evaluateGenerator(varDef.generator);
-        }
-      }
-    }
+    // Get current workflow data including reconstructed variables
+    const currentData = await getWorkflowData();
+    const workflow = currentData.workflow;
+    const updatedVariables = { ...currentData.variables };
 
     // Get tokens
     const googleToken = await getToken("google");
@@ -377,6 +394,21 @@ export async function executeWorkflowStep(stepName: string): Promise<{
       tokens,
       onLog,
     );
+
+    if (
+      status.status === "completed" &&
+      Object.keys(updatedVariables).length > Object.keys(currentData.variables).length
+    ) {
+      const newVars: Record<string, string> = {};
+      for (const [key, value] of Object.entries(updatedVariables)) {
+        if (!currentData.variables[key]) {
+          newVars[key] = value;
+        }
+      }
+      if (Object.keys(newVars).length > 0) {
+        status.variables = newVars;
+      }
+    }
 
     // Just refresh the UI state, don't rebuild entire workflow
     await refreshWorkflowState();

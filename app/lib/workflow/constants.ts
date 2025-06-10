@@ -76,7 +76,7 @@ export const WORKFLOW_CONSTANTS = {
   MAX_WORKFLOW_ITERATIONS: 2,
 
   // Size constants
-  MAX_COOKIE_SIZE: 3900,
+  MAX_COOKIE_SIZE: 3800,
 
   // API constants
   SYNC_INTERVAL: "PT40M", // 40 minutes in ISO 8601

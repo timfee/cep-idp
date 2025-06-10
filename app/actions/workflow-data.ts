@@ -71,8 +71,12 @@ async function reconstituteStepStatuses(
   workflow: Workflow,
   variables: Record<string, string>,
   tokens: { google?: Token; microsoft?: Token },
-): Promise<Map<string, StepStatus>> {
+): Promise<{
+  stepStatuses: Map<string, StepStatus>;
+  variables: Record<string, string>;
+}> {
   const stepStatuses = new Map<string, StepStatus>();
+  const workingVariables = { ...variables };
 
   const pendingStatus = { status: "pending", logs: [] } as StepStatus;
 
@@ -104,14 +108,14 @@ async function reconstituteStepStatuses(
   const shouldSkipStep = (step: Step): boolean =>
     !areDependenciesMet(step) ||
     !isAuthMet(step) ||
-    step.manual ||
-    (step.inputs && step.inputs.some((i) => !Object.prototype.hasOwnProperty.call(variables, i)));
+    !!step.manual ||
+    (step.inputs ? step.inputs.some((i) => !Object.prototype.hasOwnProperty.call(workingVariables, i)) : false);
 
   const verifyStep = async (step: Step): Promise<void> => {
     const logs: LogEntry[] = [];
-    const result = await runStepActions(step, variables, tokens, (log) => logs.push(log), true);
+    const result = await runStepActions(step, workingVariables, tokens, (log) => logs.push(log), true);
     if (result.success) {
-      Object.assign(variables, result.extractedVariables);
+      Object.assign(workingVariables, result.extractedVariables);
       stepStatuses.set(step.name, {
         status: "completed",
         logs,
@@ -133,7 +137,10 @@ async function reconstituteStepStatuses(
     await verifyStep(step);
   }
 
-  return stepStatuses;
+  return {
+    stepStatuses,
+    variables: workingVariables,
+  };
 }
 
 /**
@@ -163,7 +170,8 @@ export async function getWorkflowData(
     variables.tenantId = tenantId;
   }
 
-  const stepStatusesMap = await reconstituteStepStatuses(workflow, variables, tokens);
+  const { stepStatuses: stepStatusesMap, variables: reconstructedVariables } =
+    await reconstituteStepStatuses(workflow, variables, tokens);
 
   console.log(
     `[Initial Load] Final step statuses:`,
@@ -177,17 +185,17 @@ export async function getWorkflowData(
 
   return {
     workflow,
-    variables,
+    variables: reconstructedVariables,
     stepStatuses: Object.fromEntries(stepStatusesMap),
     auth: {
       google: {
-        authenticated: !!googleToken,
+        authenticated: !!googleToken && !isTokenExpired(googleToken),
         scopes: googleToken?.scope || [],
         expiresAt: googleToken?.expiresAt,
         hasRefreshToken: !!googleToken?.refreshToken,
       },
       microsoft: {
-        authenticated: !!microsoftToken,
+        authenticated: !!microsoftToken && !isTokenExpired(microsoftToken),
         scopes: microsoftToken?.scope || [],
         expiresAt: microsoftToken?.expiresAt,
         hasRefreshToken: !!microsoftToken?.refreshToken,
@@ -205,13 +213,13 @@ export async function getAuthStatus(): Promise<AuthState> {
 
   return {
     google: {
-      authenticated: !!googleToken,
+      authenticated: !!googleToken && !isTokenExpired(googleToken),
       scopes: googleToken?.scope || [],
       expiresAt: googleToken?.expiresAt,
       hasRefreshToken: !!googleToken?.refreshToken,
     },
     microsoft: {
-      authenticated: !!microsoftToken,
+      authenticated: !!microsoftToken && !isTokenExpired(microsoftToken),
       scopes: microsoftToken?.scope || [],
       expiresAt: microsoftToken?.expiresAt,
       hasRefreshToken: !!microsoftToken?.refreshToken,

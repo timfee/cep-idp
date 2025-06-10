@@ -3,7 +3,7 @@
 import { executeWorkflowStep } from "@/app/actions/workflow-execution";
 import { cn } from "@/app/lib/utils";
 import { LogEntry, Step, StepStatus } from "@/app/lib/workflow";
-import { MIN_LOG_COUNT_FOR_PLURAL } from "@/app/lib/workflow/constants";
+import { MIN_LOG_COUNT_FOR_PLURAL, STATUS_VALUES, VARIABLE_KEYS, STEP_NAMES } from "@/app/lib/workflow/constants";
 import { substituteVariables } from "@/app/lib/workflow";
 import { PasswordDisplay } from "./password-display";
 import {
@@ -60,16 +60,6 @@ export function StepCard({
     : status;
 
   // Debug logging
-  console.log(`[DEBUG] StepCard rendered for ${step.name}:`, {
-    propStatus: status.status,
-    localStatus: localExecutionResult.status,
-    effectiveStatus: effectiveStatus.status,
-    hasError: !!effectiveStatus.error,
-    errorMessage: effectiveStatus.error,
-    logsCount: effectiveStatus.logs?.length || 0,
-    canExecute,
-    isAuthValid,
-  });
 
   const handleExecute = (stepName: string) => {
     // Clear any previous local result
@@ -81,7 +71,10 @@ export function StepCard({
       // Update local state with execution result
       if (result.status) {
         setLocalExecutionResult({
-          status: result.status.status as "failed" | "completed",
+          status:
+            result.status.status === STATUS_VALUES.FAILED
+              ? "failed"
+              : "completed",
           error: result.status.error,
           logs: result.status.logs,
         });
@@ -91,20 +84,20 @@ export function StepCard({
 
   const statusIcon = (() => {
     switch (effectiveStatus.status) {
-      case "pending":
+      case STATUS_VALUES.PENDING:
         return <Clock className="h-5 w-5 text-zinc-400" />;
-      case "running":
+      case STATUS_VALUES.RUNNING:
         return (
           <div className="flex items-center gap-2">
             <Loader2 className="h-5 w-5 text-blue-500 animate-spin" />
             <span className="text-sm text-blue-600">Executing...</span>
           </div>
         );
-      case "completed":
+      case STATUS_VALUES.COMPLETED:
         return <CheckCircle className="h-5 w-5 text-green-500" />;
-      case "failed":
+      case STATUS_VALUES.FAILED:
         return <XCircle className="h-5 w-5 text-red-500" />;
-      case "skipped":
+      case STATUS_VALUES.SKIPPED:
         return <CheckCircle className="h-5 w-5 text-zinc-400" />;
       default:
         return <Clock className="h-5 w-5 text-zinc-400" />;
@@ -114,11 +107,11 @@ export function StepCard({
   const hasContent =
     effectiveStatus.error ||
     effectiveStatus.logs.length > 0 ||
-    effectiveStatus.status === "failed";
+    effectiveStatus.status === STATUS_VALUES.FAILED;
 
   // Force expand if there's an error
   const forceOpen =
-    effectiveStatus.status === "failed" || effectiveStatus.error;
+    effectiveStatus.status === STATUS_VALUES.FAILED || effectiveStatus.error;
 
   return (
     <Card className="overflow-hidden">
@@ -198,7 +191,7 @@ export function StepCard({
 
               <div className="flex items-center gap-2">
                 {!step.manual &&
-                  effectiveStatus.status === "pending" &&
+                  effectiveStatus.status === STATUS_VALUES.PENDING &&
                   canExecute &&
                   isAuthValid && (
                     <Button
@@ -214,7 +207,7 @@ export function StepCard({
                     </Button>
                   )}
 
-                {effectiveStatus.status === "failed" && (
+                {effectiveStatus.status === STATUS_VALUES.FAILED && (
                   <Button
                     onClick={() => handleExecute(step.name)}
                     variant="destructive"
@@ -230,7 +223,7 @@ export function StepCard({
               </div>
             </div>
 
-            {!isAuthValid && step.role && effectiveStatus.status === "pending" && (
+            {!isAuthValid && step.role && effectiveStatus.status === STATUS_VALUES.PENDING && (
               <Alert variant="destructive" className="mt-3">
                 <AlertTriangle className="h-4 w-4" />
                 <AlertDescription>
@@ -240,7 +233,7 @@ export function StepCard({
               </Alert>
             )}
 
-            {(effectiveStatus.error || effectiveStatus.status === "failed") && (
+            {(effectiveStatus.error || effectiveStatus.status === STATUS_VALUES.FAILED) && (
               <div className="mt-3 p-4 bg-red-100 dark:bg-red-900/30 rounded-lg border border-red-200 dark:border-red-800">
                 <div className="flex gap-3">
                   <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
@@ -259,12 +252,12 @@ export function StepCard({
             )}
           </div>
 
-          {effectiveStatus.status === "completed" &&
-            variables.generatedPassword &&
-            step.name === "Create Service Account for Microsoft" && (
+          {effectiveStatus.status === STATUS_VALUES.COMPLETED &&
+            variables[VARIABLE_KEYS.GENERATED_PASSWORD] &&
+            step.name === STEP_NAMES.CREATE_SERVICE_ACCOUNT && (
               <div className="mt-3">
                 <PasswordDisplay
-                  password={variables.generatedPassword}
+                  password={variables[VARIABLE_KEYS.GENERATED_PASSWORD]}
                   accountEmail={
                     variables.provisioningUserEmail ||
                     "azuread-provisioning@domain"
@@ -278,14 +271,14 @@ export function StepCard({
               <span
                 className={cn(
                   "text-sm",
-                  effectiveStatus.status === "failed"
+                  effectiveStatus.status === STATUS_VALUES.FAILED
                     ? "text-red-600 dark:text-red-400 font-medium"
                     : "text-zinc-500 dark:text-zinc-400",
                 )}
               >
                 {(() => {
                   if (
-                    effectiveStatus.status === "failed" &&
+                    effectiveStatus.status === STATUS_VALUES.FAILED &&
                     effectiveStatus.error
                   ) {
                     return "View error details";
@@ -304,7 +297,7 @@ export function StepCard({
 
           {hasContent && (
             <AccordionContent className="px-6 pb-6">
-              {effectiveStatus.status === "failed" && (
+              {effectiveStatus.status === STATUS_VALUES.FAILED && (
                 <div className="mb-4 p-3 bg-red-50 dark:bg-red-950/30 rounded-lg border border-red-200 dark:border-red-800">
                   <h4 className="text-sm font-medium text-red-800 dark:text-red-200 mb-2">
                     ❌ Execution Failed
@@ -319,7 +312,7 @@ export function StepCard({
               {effectiveStatus.logs.length > 0 && (
                 <div className="space-y-1">
                   <h4 className="text-sm font-medium mb-2">
-                    {effectiveStatus.status === "failed"
+                    {effectiveStatus.status === STATUS_VALUES.FAILED
                       ? "Debug Logs"
                       : "Execution Logs"}
                   </h4>

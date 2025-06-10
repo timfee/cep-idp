@@ -4,6 +4,7 @@ import { revalidatePath } from "next/cache";
 import { parseWorkflow } from "@/app/lib/workflow";
 import { getToken, setToken } from "@/app/lib/auth/tokens";
 import { refreshAccessToken } from "@/app/lib/auth/oauth";
+import { Provider, LogEntry } from "@/app/lib/workflow/constants";
 
 function isValidVariableName(name: string): boolean {
   const workflow = parseWorkflow();
@@ -29,6 +30,7 @@ export async function refreshWorkflowState(): Promise<void> {
 export async function setWorkflowVariable(
   name: string,
   value: string,
+  onLog?: (entry: LogEntry) => void,
 ): Promise<{
   success: boolean;
   error?: string;
@@ -44,7 +46,7 @@ export async function setWorkflowVariable(
         error: `Variable '${name}' is not defined in the workflow`,
       };
     }
-    const varDef = workflow.variables[name as keyof typeof workflow.variables];
+    const varDef = workflow.variables[name];
 
     // Validate the value if validator is defined
     if (varDef.validator) {
@@ -62,7 +64,12 @@ export async function setWorkflowVariable(
 
     return { success: true };
   } catch (error) {
-    console.error("Failed to set variable:", error);
+    onLog?.({
+      timestamp: Date.now(),
+      level: "error",
+      message: "Failed to set variable",
+      data: error,
+    });
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",
@@ -72,15 +79,16 @@ export async function setWorkflowVariable(
 
 
 export async function refreshAuthToken(
-  provider: "google" | "microsoft",
+  provider: Provider,
+  onLog?: (entry: LogEntry) => void,
 ): Promise<{ success: boolean; error?: string }> {
   try {
     const token = await getToken(provider);
-    if (!token) {
+    if (token == null) {
       return { success: false, error: "No token found" };
     }
 
-    if (!token.refreshToken) {
+    if (token.refreshToken == null) {
       return { success: false, error: "No refresh token available" };
     }
 
@@ -90,7 +98,12 @@ export async function refreshAuthToken(
     revalidatePath("/");
     return { success: true };
   } catch (error) {
-    console.error(`Failed to refresh ${provider} token:`, error);
+    onLog?.({
+      timestamp: Date.now(),
+      level: "error",
+      message: `Failed to refresh ${provider} token`,
+      data: error,
+    });
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error",

@@ -48,7 +48,7 @@ export function VariableViewer({
 
   allVarNames.forEach((key) => {
     if (Object.prototype.hasOwnProperty.call(variables, key)) {
-      definedVars.push([key, variables[key as keyof typeof variables]]);
+      definedVars.push([key, variables[key]]);
     } else if (Object.prototype.hasOwnProperty.call(definitions, key)) {
       undefinedVars.push(key);
     }
@@ -64,7 +64,7 @@ export function VariableViewer({
   });
 
   const getVariableIcon = (key: string) => {
-    const def = definitions[key as keyof typeof definitions];
+    const def = definitions[key];
     if (!def) return <Database className="h-3 w-3" />;
 
     if (def.generator) return <Sparkles className="h-3 w-3" />;
@@ -74,7 +74,7 @@ export function VariableViewer({
   };
 
   const getVariableSource = (key: string) => {
-    const def = definitions[key as keyof typeof definitions];
+    const def = definitions[key];
     if (!def) return "extracted";
 
     if (def.generator) return "generated";
@@ -190,8 +190,7 @@ export function VariableViewer({
                   {(showUndefined || definedVars.length === 0) && (
                     <div className="space-y-2 mt-2">
                       {undefinedVars.map((key) => {
-                        const def =
-                          definitions[key as keyof typeof definitions];
+                        const def = definitions[key];
                         const isRequired = requiredVariables.has(key);
 
                         return (

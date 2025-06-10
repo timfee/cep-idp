@@ -2,6 +2,10 @@ import { JSONPath } from "jsonpath-plus";
 import { randomBytes } from "crypto";
 import { EXPECTED_ARG_COUNT_PAIR, WILDCARD_SUFFIX_LENGTH } from "./constants";
 
+function hasProp(obj: unknown, prop: string): obj is Record<string, unknown> {
+  return typeof obj === "object" && obj !== null && prop in obj;
+}
+
 export function extractCertificateFromXml(xmlString: string): string {
   const signingBlockMatch = xmlString.match(
     /<KeyDescriptor[^>]*use="signing"[^>]*>[\s\S]*?<\/KeyDescriptor>/,
@@ -76,7 +80,7 @@ export function substituteVariables(
     }
 
     if (Object.prototype.hasOwnProperty.call(variables, expression)) {
-      return variables[expression as keyof typeof variables];
+      return variables[expression];
     }
 
     if (options.throwOnMissing) {
@@ -201,7 +205,7 @@ function resolveTemplateArg(
   }
 
   if (Object.prototype.hasOwnProperty.call(variables, arg)) {
-    return variables[arg as keyof typeof variables];
+    return variables[arg];
   }
 
   return arg;
@@ -312,12 +316,8 @@ function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
           targetValue = false;
         }
 
-        const found = array.find((item: unknown) =>
-          item &&
-          typeof item === "object" &&
-          item !== null &&
-          Object.prototype.hasOwnProperty.call(item, property) &&
-          (item as Record<string, unknown>)[property as keyof typeof item] === targetValue,
+        const found = array.find(
+          (item) => hasProp(item, property) && item[property] === targetValue,
         );
 
         if (found && remainingPath) {
@@ -354,16 +354,9 @@ function evaluatePredicatePath(obj: unknown, path: string): unknown {
     targetValue = false;
   }
 
-  const found = array.find((item: unknown) => {
+  const found = array.find((item) => {
     const trimmedProperty = property.trim();
-    return (
-      item &&
-      typeof item === "object" &&
-      item !== null &&
-      Object.prototype.hasOwnProperty.call(item, trimmedProperty) &&
-      (item as Record<string, unknown>)[trimmedProperty as keyof typeof item] ===
-        targetValue
-    );
+    return hasProp(item, trimmedProperty) && item[trimmedProperty] === targetValue;
   });
 
   if (found && remainingPath) {
@@ -392,15 +385,8 @@ function evaluateSimplePath(obj: unknown, path: string): unknown {
         return undefined;
       }
     } else {
-      if (
-        Object.prototype.hasOwnProperty.call(
-          current as Record<string, unknown>,
-          part,
-        )
-      ) {
-        current = (current as Record<string, unknown>)[
-          part as keyof typeof current
-        ];
+      if (hasProp(current, part)) {
+        current = current[part];
       } else {
         return undefined;
       }
@@ -414,10 +400,7 @@ function hasDomainsArray(
   obj: unknown,
 ): obj is { domains: Array<{ isPrimary?: boolean; domainName?: string }> } {
   return (
-    obj != null &&
-    typeof obj === "object" &&
-    "domains" in obj &&
-    Array.isArray((obj as Record<string, unknown>).domains)
+    hasProp(obj, "domains") && Array.isArray(obj.domains)
   );
 }
 

@@ -2,12 +2,12 @@ import { setChunkedCookieOnResponse } from "@/app/lib/auth/cookie-utils";
 import { encrypt } from "@/app/lib/auth/crypto";
 import { exchangeCodeForToken } from "@/app/lib/auth/oauth";
 import { validateOAuthState } from "@/app/lib/auth/tokens";
-import { WORKFLOW_CONSTANTS } from "@/app/lib/workflow/constants";
+import { WORKFLOW_CONSTANTS, Provider } from "@/app/lib/workflow/constants";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const provider = url.pathname.split("/").pop() as "google" | "microsoft";
+  const provider = url.pathname.split("/").pop() as Provider;
   const searchParams = url.searchParams;
 
   const code = searchParams.get("code");

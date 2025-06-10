@@ -1,12 +1,13 @@
 import { encrypt } from "@/app/lib/auth/crypto";
 import { generateAuthUrl, generateState } from "@/app/lib/auth/oauth";
+import { PROVIDERS, Provider } from "@/app/lib/workflow/constants";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
   const url = new URL(request.url);
-  const provider = url.pathname.split("/").pop() as "google" | "microsoft";
+  const provider = url.pathname.split("/").pop() as Provider;
 
-  if (provider !== "google" && provider !== "microsoft") {
+  if (provider !== PROVIDERS.GOOGLE && provider !== PROVIDERS.MICROSOFT) {
     return NextResponse.json({ error: "Invalid provider" }, { status: 400 });
   }
 

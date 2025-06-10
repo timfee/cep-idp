@@ -1,6 +1,6 @@
 import { env } from "@/app/env";
-import { OAuthConfig, Token, WORKFLOW_CONSTANTS } from "../workflow";
-import { MS_IN_SECOND } from "../workflow/constants";
+import { OAuthConfig, Token, WORKFLOW_CONSTANTS, Provider } from "../workflow";
+import { MS_IN_SECOND, PROVIDERS } from "../workflow/constants";
 
 export const googleOAuthConfig: OAuthConfig = {
   clientId: env.GOOGLE_CLIENT_ID,
@@ -43,12 +43,12 @@ export const microsoftOAuthConfig: OAuthConfig = {
   ],
 };
 
-export function getOAuthConfig(provider: "google" | "microsoft"): OAuthConfig {
-  return provider === "google" ? googleOAuthConfig : microsoftOAuthConfig;
+export function getOAuthConfig(provider: Provider): OAuthConfig {
+  return provider === PROVIDERS.GOOGLE ? googleOAuthConfig : microsoftOAuthConfig;
 }
 
 export function generateAuthUrl(
-  provider: "google" | "microsoft",
+  provider: Provider,
   state: string,
   baseUrl: string,
 ): string {
@@ -62,7 +62,7 @@ export function generateAuthUrl(
   params.set("response_type", "code");
   params.set("scope", config.scopes.join(" "));
   params.set("state", state);
-  if (provider === "google") {
+  if (provider === PROVIDERS.GOOGLE) {
     params.set("access_type", "offline");
     params.set("prompt", "consent");
   }
@@ -71,7 +71,7 @@ export function generateAuthUrl(
 }
 
 export async function exchangeCodeForToken(
-  provider: "google" | "microsoft",
+  provider: Provider,
   code: string,
   baseUrl: string,
 ): Promise<Token> {
@@ -111,7 +111,7 @@ export async function exchangeCodeForToken(
 }
 
 export async function refreshAccessToken(
-  provider: "google" | "microsoft",
+  provider: Provider,
   refreshToken: string,
 ): Promise<Token> {
   const config = getOAuthConfig(provider);

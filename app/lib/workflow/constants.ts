@@ -18,6 +18,31 @@ export const STEP_NAMES = {
   TEST_SSO: "Test SSO Configuration",
 } as const;
 
+// Provider constants
+export const PROVIDERS = {
+  GOOGLE: "google",
+  MICROSOFT: "microsoft",
+} as const;
+export type Provider = typeof PROVIDERS[keyof typeof PROVIDERS];
+
+// Status values
+export const STATUS_VALUES = {
+  PENDING: "pending",
+  RUNNING: "running",
+  COMPLETED: "completed",
+  FAILED: "failed",
+  SKIPPED: "skipped",
+} as const;
+
+// Role prefix helpers
+export function isGoogleRole(role: string): boolean {
+  return role.startsWith("dir") || role.startsWith("ci");
+}
+
+export function isMicrosoftRole(role: string): boolean {
+  return role.startsWith("graph");
+}
+
 export const HOURS_IN_DAY = 24;
 export const DAYS_IN_MONTH = 30;
 export const MINUTES_IN_HOUR = 60;
@@ -85,3 +110,9 @@ export const WORKFLOW_CONSTANTS = {
   // Special markers
   PASSWORD_EXTRACTION_KEY: "_generated_password_displayed",
 };
+
+export const VARIABLE_KEYS = {
+  GENERATED_PASSWORD: "generatedPassword",
+  TENANT_ID: "tenantId",
+  PRIMARY_DOMAIN: "primaryDomain",
+} as const;

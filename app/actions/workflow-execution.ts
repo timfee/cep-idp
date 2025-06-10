@@ -18,7 +18,7 @@ import {
   Workflow,
   Action,
 } from "@/app/lib/workflow";
-import { COPY_FEEDBACK_DURATION_MS, WORKFLOW_CONSTANTS } from "@/app/lib/workflow/constants";
+import { COPY_FEEDBACK_DURATION_MS, WORKFLOW_CONSTANTS, PROVIDERS, STATUS_VALUES } from "@/app/lib/workflow/constants";
 import { revalidatePath } from "next/cache";
 
 function applyExtracts(
@@ -35,8 +35,8 @@ function applyExtracts(
       varName === "generatedPassword" &&
       path === WORKFLOW_CONSTANTS.PASSWORD_EXTRACTION_KEY
     ) {
-      if (variables.generatedPassword) {
-        extractedVariables[varName] = variables.generatedPassword;
+      if (variables[VARIABLE_KEYS.GENERATED_PASSWORD]) {
+        extractedVariables[varName] = variables[VARIABLE_KEYS.GENERATED_PASSWORD];
         onLog({
           timestamp: Date.now(),
           level: "info",
@@ -70,6 +70,25 @@ interface StructuredApiError {
   };
 }
 
+interface StructuredApiError {
+  error: { code: number; status?: string; message: string };
+}
+
+function hasProp<K extends string>(obj: unknown, prop: K): obj is Record<K, unknown> {
+  return typeof obj === "object" && obj !== null && prop in obj;
+}
+
+function isStructuredApiError(obj: unknown): obj is StructuredApiError {
+  if (!hasProp(obj, "error")) return false;
+  const err = obj.error;
+  return (
+    typeof err === "object" &&
+    err !== null &&
+    "code" in err &&
+    "message" in err
+  );
+}
+
 function parseApiError(error: unknown): {
   message: string;
   needsReauth: boolean;
@@ -82,9 +101,10 @@ function parseApiError(error: unknown): {
     const start = errorMessage.indexOf("{");
     const end = errorMessage.lastIndexOf("}");
     if (start !== -1 && end !== -1 && end > start) {
-      apiError = JSON.parse(errorMessage.slice(start, end + 1)) as StructuredApiError;
-      if ((apiError as StructuredApiError).error) {
-        const err = (apiError as StructuredApiError).error;
+      const parsed = JSON.parse(errorMessage.slice(start, end + 1));
+      if (isStructuredApiError(parsed)) {
+        apiError = parsed;
+        const err = parsed.error;
         errorMessage = `${err.code}: ${err.message}`;
         if (
           err.code === WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED ||
@@ -116,7 +136,11 @@ async function handleActionExecution(
 ): Promise<{ success: boolean; extractedVariables: Record<string, string>; data?: unknown }> {
   const endpoint = workflow.endpoints[action.use];
   if (!endpoint) {
-    console.error(`Endpoint not found: ${action.use}`);
+    onLog({
+      timestamp: Date.now(),
+      level: "error",
+      message: `Endpoint not found: ${action.use}`,
+    });
     return { success: false, extractedVariables };
   }
 
@@ -124,14 +148,20 @@ async function handleActionExecution(
     variables[key] = value;
   }
 
-  console.log(`[DEBUG] Variables available for ${action.use}:`, Object.keys(variables));
+  onLog({
+    timestamp: Date.now(),
+    level: "info",
+    message: `[DEBUG] Variables available for ${action.use}: ${Object.keys(variables).join(", ")}`,
+  });
 
   if (endpoint.path && !action.fallback) {
     const missingVars = extractMissingVariables(endpoint.path, variables);
     if (missingVars.length > 0) {
-      console.log(
-        `Skipping action ${action.use} - missing variables: ${missingVars.join(", ")}`,
-      );
+      onLog({
+        timestamp: Date.now(),
+        level: "info",
+        message: `Skipping action ${action.use} - missing variables: ${missingVars.join(", ")}`,
+      });
       return { success: false, extractedVariables };
     }
   }
@@ -144,14 +174,15 @@ async function handleActionExecution(
 
   onLog({ timestamp: Date.now(), level: "info", message: `Executing action: ${action.use}` });
 
-  const { data: response, capturedValues } = (await apiRequest({
+  const { data: response, capturedValues } = await apiRequest({
     endpoint,
     connections: workflow.connections,
     variables,
     tokens,
     body: payload,
     throwOnMissingVars: !action.fallback,
-  })) as { data: unknown; capturedValues: Record<string, string> };
+    onLog,
+  });
 
   const method = endpoint.method;
   const baseUrl = workflow.connections[endpoint.conn].base;
@@ -198,7 +229,7 @@ async function processStepExecution(
   onLog: (entry: LogEntry) => void,
 ): Promise<StepStatus> {
   const status: StepStatus = {
-    status: "running",
+    status: STATUS_VALUES.RUNNING,
     logs: [],
     startedAt: Date.now(),
   };
@@ -235,12 +266,12 @@ async function processStepExecution(
     if (Object.keys(actionResult.extractedVariables).length > 0) {
       status.variables = { ...actionResult.extractedVariables };
     }
-    if (step.name === "Create Service Account for Microsoft" && variables.generatedPassword) {
-      status.variables = { ...(status.variables || {}), generatedPassword: variables.generatedPassword };
+    if (step.name === STEP_NAMES.CREATE_SERVICE_ACCOUNT && variables[VARIABLE_KEYS.GENERATED_PASSWORD]) {
+      status.variables = { ...(status.variables || {}), generatedPassword: variables[VARIABLE_KEYS.GENERATED_PASSWORD] };
     }
 
     status.result = actionResult.data;
-    status.status = "completed";
+    status.status = STATUS_VALUES.COMPLETED;
     status.completedAt = Date.now();
     status.logs = logs;
 
@@ -261,7 +292,7 @@ async function processStepExecution(
       }
     }
 
-    status.status = "failed";
+    status.status = STATUS_VALUES.FAILED;
     status.error = errorMessage;
     status.logs = logs;
     onLog({ timestamp: Date.now(), level: "error", message: `Step failed: ${errorMessage}`, data: apiError || error });
@@ -366,8 +397,8 @@ export async function executeWorkflowStep(stepName: string): Promise<{
     const updatedVariables = { ...currentData.variables };
 
     // Get tokens
-    const googleToken = await getToken("google");
-    const microsoftToken = await getToken("microsoft");
+    const googleToken = await getToken(PROVIDERS.GOOGLE);
+    const microsoftToken = await getToken(PROVIDERS.MICROSOFT);
 
     const tokens = {
       google: googleToken ?? undefined,

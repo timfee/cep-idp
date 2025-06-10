@@ -1,6 +1,12 @@
 import "server-only";
 import { cookies } from "next/headers";
-import { Token, WORKFLOW_CONSTANTS, MS_IN_SECOND, LogEntry, Provider } from "../workflow";
+import {
+  Token,
+  WORKFLOW_CONSTANTS,
+  MS_IN_SECOND,
+  LogEntry,
+  Provider,
+} from "../workflow";
 import {
   clearChunkedCookie,
   getChunkedCookie,
@@ -97,9 +103,7 @@ export async function setToken(
   }
 }
 
-export async function deleteToken(
-  provider: Provider,
-): Promise<void> {
+export async function deleteToken(provider: Provider): Promise<void> {
   const cookieName = `${provider}_token`;
   // Use chunked cookie clearer to remove all chunks
   await clearChunkedCookie(cookieName);

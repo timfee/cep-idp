@@ -38,9 +38,12 @@ export async function setWorkflowVariable(
     // Check if variable exists in workflow
     const varNames = Object.keys(workflow.variables);
     const nameBuffer = Buffer.from(name);
-    const isValid = varNames.some(varName => {
+    const isValid = varNames.some((varName) => {
       const varNameBuffer = Buffer.from(varName);
-      return nameBuffer.length === varNameBuffer.length && timingSafeEqual(nameBuffer, varNameBuffer);
+      return (
+        nameBuffer.length === varNameBuffer.length &&
+        timingSafeEqual(nameBuffer, varNameBuffer)
+      );
     });
     if (!isValid) {
       return {
@@ -123,7 +126,10 @@ export async function markManualStepComplete(stepName: string): Promise<void> {
   const vars = await getStoredVariables();
   const state = vars.manualStepsState
     ? JSON.parse(vars.manualStepsState)
-    : { completed: [], completedAt: {} } as { completed: string[]; completedAt: Record<string, number> };
+    : ({ completed: [], completedAt: {} } as {
+        completed: string[];
+        completedAt: Record<string, number>;
+      });
 
   if (!state.completed.includes(stepName)) {
     state.completed.push(stepName);

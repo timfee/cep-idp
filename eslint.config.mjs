@@ -30,7 +30,7 @@ const eslintConfig = [
   ...compat.extends(
     "next/core-web-vitals",
     "next/typescript",
-    "plugin:promise/recommended"
+    "plugin:promise/recommended",
   ),
   sonar.configs.recommended,
   {

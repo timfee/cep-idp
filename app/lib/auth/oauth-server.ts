@@ -57,7 +57,7 @@ export function getOAuthConfig(provider: Provider): OAuthConfig {
 export function generateAuthUrl(
   provider: Provider,
   state: string,
-  baseUrl: string
+  baseUrl: string,
 ): string {
   const config = getOAuthConfig(provider);
   const params = new URLSearchParams();
@@ -80,7 +80,7 @@ export function generateAuthUrl(
 export async function exchangeCodeForToken(
   provider: Provider,
   code: string,
-  baseUrl: string
+  baseUrl: string,
 ): Promise<Token> {
   const config = getOAuthConfig(provider);
 
@@ -119,7 +119,7 @@ export async function exchangeCodeForToken(
 
 export async function refreshAccessToken(
   provider: Provider,
-  refreshToken: string
+  refreshToken: string,
 ): Promise<Token> {
   const config = getOAuthConfig(provider);
 

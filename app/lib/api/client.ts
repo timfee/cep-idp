@@ -12,7 +12,7 @@ import {
 import { ApiRequestOptions } from "./types";
 
 async function handlePublicRequest(
-  options: ApiRequestOptions
+  options: ApiRequestOptions,
 ): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
   const {
     endpoint,
@@ -36,7 +36,7 @@ async function handlePublicRequest(
         substituteVariables(value, variables, {
           throwOnMissing: throwOnMissingVars,
           captureGenerated: capturedValues,
-        })
+        }),
       );
     }
     url += `?${params.toString()}`;
@@ -45,7 +45,7 @@ async function handlePublicRequest(
   const response = await fetch(url);
   if (!response.ok) {
     throw new Error(
-      `Request failed: ${response.status} - ${response.statusText}`
+      `Request failed: ${response.status} - ${response.statusText}`,
     );
   }
   const contentType = response.headers.get("content-type");
@@ -56,7 +56,7 @@ async function handlePublicRequest(
 }
 
 async function handleAuthenticatedRequest(
-  options: ApiRequestOptions
+  options: ApiRequestOptions,
 ): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
   const {
     endpoint,
@@ -101,7 +101,7 @@ async function handleAuthenticatedRequest(
         });
         const refreshedToken = await refreshAccessToken(
           provider,
-          token.refreshToken!
+          token.refreshToken!,
         );
         await setToken(provider, refreshedToken);
         token = refreshedToken;
@@ -116,7 +116,7 @@ async function handleAuthenticatedRequest(
         });
         if (refreshAttempts === WORKFLOW_CONSTANTS.MAX_REFRESH_ATTEMPTS) {
           throw new Error(
-            `${PROVIDERS[provider.toUpperCase() as keyof typeof PROVIDERS]} authentication expired. Please re-authenticate.`
+            `${PROVIDERS[provider.toUpperCase() as keyof typeof PROVIDERS]} authentication expired. Please re-authenticate.`,
           );
         }
       }
@@ -160,7 +160,7 @@ async function handleAuthenticatedRequest(
   if (
     finalBody &&
     HTTP_METHODS_WITH_BODY.includes(
-      endpoint.method as (typeof HTTP_METHODS_WITH_BODY)[number]
+      endpoint.method as (typeof HTTP_METHODS_WITH_BODY)[number],
     )
   ) {
     requestOptions.body = JSON.stringify(finalBody);
@@ -193,7 +193,7 @@ async function handleAuthenticatedRequest(
 }
 
 export async function apiRequest(
-  options: ApiRequestOptions
+  options: ApiRequestOptions,
 ): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
   const { endpoint, connections } = options;
   const connection = connections[endpoint.conn];

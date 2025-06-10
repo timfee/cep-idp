@@ -29,7 +29,10 @@ import {
   VARIABLE_KEYS,
 } from "@/app/lib/workflow/constants";
 import { safeAsync } from "@/app/lib/workflow/error-handling";
-import { CONNECTION_IDENTIFIERS, ERROR_MESSAGES } from "@/app/lib/workflow/constants";
+import {
+  CONNECTION_IDENTIFIERS,
+  ERROR_MESSAGES,
+} from "@/app/lib/workflow/constants";
 import { revalidatePath } from "next/cache";
 
 function applyExtracts(
@@ -83,9 +86,11 @@ function areOutputsMissing(
   return !!step.outputs && step.outputs.some((o) => !extracted[o]);
 }
 
-
-
-import { ApiError, isStructuredError, assertNever } from "@/app/lib/workflow/error-types";
+import {
+  ApiError,
+  isStructuredError,
+  assertNever,
+} from "@/app/lib/workflow/error-types";
 
 function parseApiError(error: unknown): ApiError {
   if (error instanceof Error) {
@@ -282,7 +287,9 @@ async function processStepExecution(
     if (step.inputs && step.inputs.length > 0) {
       const missingInputs = step.inputs.filter((input) => !variables[input]);
       if (missingInputs.length > 0) {
-        throw new Error(ERROR_MESSAGES.MISSING_INPUTS(step.name, missingInputs));
+        throw new Error(
+          ERROR_MESSAGES.MISSING_INPUTS(step.name, missingInputs),
+        );
       }
     }
 
@@ -443,7 +450,9 @@ export async function runStepActions(
         errorMessage.includes("Authentication expired")
       ) {
         const failedEndpoint = workflow.endpoints[action.use];
-        const provider = failedEndpoint.conn.includes(CONNECTION_IDENTIFIERS.GOOGLE)
+        const provider = failedEndpoint.conn.includes(
+          CONNECTION_IDENTIFIERS.GOOGLE,
+        )
           ? "Google"
           : "Microsoft";
         throw new Error(ERROR_MESSAGES.AUTH_EXPIRED(provider));
@@ -514,13 +523,11 @@ export async function executeWorkflowStep(stepName: string): Promise<{
         Object.keys(currentData.variables).length
     ) {
       const newVars: Record<string, string> = {};
-        for (const [key, value] of Object.entries(updatedVariables)) {
-          if (
-            !Object.prototype.hasOwnProperty.call(currentData.variables, key)
-          ) {
-            newVars[key] = value;
-          }
+      for (const [key, value] of Object.entries(updatedVariables)) {
+        if (!Object.prototype.hasOwnProperty.call(currentData.variables, key)) {
+          newVars[key] = value;
         }
+      }
       if (Object.keys(newVars).length > 0) {
         status.variables = newVars;
       }

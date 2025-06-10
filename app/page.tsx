@@ -28,20 +28,21 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
             (step) =>
               step.role &&
               (step.role.startsWith(ROLE_PREFIXES.GOOGLE_DIR) ||
-                step.role.startsWith(ROLE_PREFIXES.GOOGLE_CI))
+                step.role.startsWith(ROLE_PREFIXES.GOOGLE_CI)),
           )
-          .flatMap((step) => workflow.roles[step.role!] || [])
-      )
+          .flatMap((step) => workflow.roles[step.role!] || []),
+      ),
     );
 
     const allRequiredMicrosoftScopes = Array.from(
       new Set(
         workflow.steps
           .filter(
-            (step) => step.role && step.role.startsWith(ROLE_PREFIXES.MICROSOFT)
+            (step) =>
+              step.role && step.role.startsWith(ROLE_PREFIXES.MICROSOFT),
           )
-          .flatMap((step) => workflow.roles[step.role!] || [])
-      )
+          .flatMap((step) => workflow.roles[step.role!] || []),
+      ),
     );
 
     return (

@@ -1,6 +1,6 @@
 export async function safeAsync<T>(
   fn: () => Promise<T>,
-  errorMessage: string
+  errorMessage: string,
 ): Promise<{ success: true; data: T } | { success: false; error: string }> {
   try {
     const data = await fn();

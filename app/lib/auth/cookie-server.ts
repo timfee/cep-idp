@@ -31,7 +31,10 @@ export async function setChunkedCookie(
       cookieStore.set(name, value, options);
       return { success: true };
     } catch (error) {
-      return { success: false, error: error instanceof Error ? error.message : "Failed to set cookie" };
+      return {
+        success: false,
+        error: error instanceof Error ? error.message : "Failed to set cookie",
+      };
     }
   }
 
@@ -41,9 +44,16 @@ export async function setChunkedCookie(
     [COOKIE_METADATA_KEYS.COUNT]: chunks.length,
     [COOKIE_METADATA_KEYS.TIMESTAMP]: Date.now(),
   };
-  const metadataSize = estimateCookieSize(name, JSON.stringify(metadata), options);
+  const metadataSize = estimateCookieSize(
+    name,
+    JSON.stringify(metadata),
+    options,
+  );
   if (metadataSize > MAX_COOKIE_SIZE) {
-    return { success: false, error: `Metadata too large: ${metadataSize} bytes` };
+    return {
+      success: false,
+      error: `Metadata too large: ${metadataSize} bytes`,
+    };
   }
 
   const totalSize = chunks.reduce((sum, chunk, i) => {
@@ -52,7 +62,10 @@ export async function setChunkedCookie(
   }, metadataSize);
 
   if (totalSize > MAX_COOKIE_SIZE * (chunks.length + 1)) {
-    return { success: false, error: `Data too large: ${totalSize} bytes exceeds maximum` };
+    return {
+      success: false,
+      error: `Data too large: ${totalSize} bytes exceeds maximum`,
+    };
   }
 
   try {
@@ -73,7 +86,10 @@ export async function setChunkedCookie(
     }
     return { success: true };
   } catch (error) {
-    return { success: false, error: error instanceof Error ? error.message : "Failed to set cookie" };
+    return {
+      success: false,
+      error: error instanceof Error ? error.message : "Failed to set cookie",
+    };
   }
 }
 
@@ -188,10 +204,16 @@ export function setChunkedCookieOnResponse(
       count: chunks.length,
       timestamp: Date.now(),
     };
-    response.headers.append("Set-Cookie", buildCookieString(name, JSON.stringify(metadata)));
+    response.headers.append(
+      "Set-Cookie",
+      buildCookieString(name, JSON.stringify(metadata)),
+    );
     for (let i = 0; i < chunks.length; i++) {
       const chunkName = `${name}${CHUNK_DELIMITER}${i}`;
-      response.headers.append("Set-Cookie", buildCookieString(chunkName, chunks[i]));
+      response.headers.append(
+        "Set-Cookie",
+        buildCookieString(chunkName, chunks[i]),
+      );
     }
   }
 }

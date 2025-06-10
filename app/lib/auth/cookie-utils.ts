@@ -25,7 +25,7 @@ export function estimateCookieSize(
     path?: string;
     maxAge?: number;
     domain?: string;
-  } = {}
+  } = {},
 ): number {
   let size = name.length + 1 + value.length;
   if (options.path) size += COOKIE_METADATA_SIZES.PATH + options.path.length;
@@ -44,7 +44,7 @@ export function validateCookieSize(
   name: string,
   value: string,
   // eslint-disable-next-line no-magic-numbers
-  options: Parameters<typeof estimateCookieSize>[2]
+  options: Parameters<typeof estimateCookieSize>[2],
 ): boolean {
   const estimatedSize = estimateCookieSize(name, value, options);
   return estimatedSize <= MAX_COOKIE_SIZE;

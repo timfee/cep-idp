@@ -107,4 +107,3 @@ Run linting and static verification before submitting patches:
 npm run lint
 npx tsx verify-fixes.ts
 ```
-

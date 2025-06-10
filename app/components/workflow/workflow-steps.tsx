@@ -29,9 +29,9 @@ export function WorkflowSteps({
       .filter(
         ([, status]) =>
           status.status === STATUS_VALUES.COMPLETED ||
-          status.status === STATUS_VALUES.SKIPPED
+          status.status === STATUS_VALUES.SKIPPED,
       )
-      .map(([name]) => name)
+      .map(([name]) => name),
   );
 
   // Helper to get required scopes for a step
@@ -61,7 +61,7 @@ export function WorkflowSteps({
       return (
         notExpired &&
         requiredScopes.every((scope: string) =>
-          authStatus.google.scopes.includes(scope)
+          authStatus.google.scopes.includes(scope),
         )
       );
     } else if (isMicrosoftStep && authStatus.microsoft.authenticated) {
@@ -75,7 +75,7 @@ export function WorkflowSteps({
       return (
         notExpired &&
         requiredScopes.every((scope: string) =>
-          authStatus.microsoft.scopes.includes(scope)
+          authStatus.microsoft.scopes.includes(scope),
         )
       );
     }

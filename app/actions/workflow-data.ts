@@ -20,7 +20,10 @@ import {
   VARIABLE_KEYS,
 } from "@/app/lib/workflow/constants";
 import { ROLE_PREFIXES } from "@/app/lib/workflow/constants";
-import { getStoredVariables, setStoredVariables } from "@/app/lib/workflow/variables-store";
+import {
+  getStoredVariables,
+  setStoredVariables,
+} from "@/app/lib/workflow/variables-store";
 import { hasOwnProperty } from "@/app/lib/utils";
 import { runStepActions } from "./workflow-execution";
 import { refreshWorkflowState } from "./workflow-state";
@@ -57,7 +60,9 @@ async function initializeVariables(
       if (def.default) {
         (vars as Record<string, string>)[name] = def.default;
       } else if (def.generator) {
-        (vars as Record<string, string>)[name] = evaluateGenerator(def.generator);
+        (vars as Record<string, string>)[name] = evaluateGenerator(
+          def.generator,
+        );
       }
     }
   }
@@ -96,10 +101,11 @@ async function reconstituteStepStatuses(
 }> {
   const stepStatuses = new Map<string, StepStatus>();
   const workingVariables = { ...variables };
-  let manualData: { completed: string[]; completedAt: Record<string, number> } = {
-    completed: [],
-    completedAt: {},
-  };
+  let manualData: { completed: string[]; completedAt: Record<string, number> } =
+    {
+      completed: [],
+      completedAt: {},
+    };
   if (workingVariables.manualStepsState) {
     try {
       manualData = JSON.parse(workingVariables.manualStepsState);
@@ -111,7 +117,10 @@ async function reconstituteStepStatuses(
 
   const pendingStatus: StepStatus = { status: STATUS_VALUES.PENDING, logs: [] };
 
-  const areDependenciesMet = (step: Step, manualCompleted: string[]): boolean => {
+  const areDependenciesMet = (
+    step: Step,
+    manualCompleted: string[],
+  ): boolean => {
     if (!step.depends_on) return true;
     return step.depends_on.every((dep) => {
       const depStep = workflow.steps.find((s) => s.name === dep);
@@ -156,7 +165,9 @@ async function reconstituteStepStatuses(
     !areDependenciesMet(step, manualCompleted) ||
     !isAuthMet(step) ||
     (!!step.manual && !manualCompleted.includes(step.name)) ||
-    (step.inputs ? step.inputs.some((i) => !hasOwnProperty(workingVariables, i)) : false);
+    (step.inputs
+      ? step.inputs.some((i) => !hasOwnProperty(workingVariables, i))
+      : false);
 
   const verifyStep = async (step: Step): Promise<void> => {
     const logs: LogEntry[] = [];

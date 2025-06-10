@@ -44,7 +44,7 @@ checks.forEach((check) => {
     } else {
       console.error(
         `❌ FAIL: Error processing check for ${check.file}:`,
-        error
+        error,
       );
     }
   }

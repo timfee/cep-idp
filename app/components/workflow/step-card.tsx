@@ -59,7 +59,7 @@ type StepCardAction =
 
 function stepCardReducer(
   state: StepCardState,
-  action: StepCardAction
+  action: StepCardAction,
 ): StepCardState {
   switch (action.type) {
     case "EXECUTE_START":
@@ -163,7 +163,7 @@ export function StepCard({
                             if (rawValue) {
                               const substituted = substituteVariables(
                                 rawValue,
-                                variables
+                                variables,
                               );
                               display = `${input}: ${substituted.substring(0, VARIABLE_DISPLAY_MAX_LENGTH)}${
                                 substituted.length > VARIABLE_DISPLAY_MAX_LENGTH
@@ -180,7 +180,7 @@ export function StepCard({
                                   "text-xs font-mono",
                                   rawValue
                                     ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-                                    : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
+                                    : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
                                 )}
                               >
                                 {display}
@@ -316,7 +316,7 @@ export function StepCard({
                   "text-sm",
                   effectiveStatus.status === STATUS_VALUES.FAILED
                     ? "text-red-600 dark:text-red-400 font-medium"
-                    : "text-zinc-500 dark:text-zinc-400"
+                    : "text-zinc-500 dark:text-zinc-400",
                 )}
               >
                 {(() => {
@@ -368,7 +368,7 @@ export function StepCard({
                           log.level === "error" &&
                             "text-red-600 dark:text-red-400",
                           log.level === "warn" &&
-                            "text-amber-600 dark:text-amber-400"
+                            "text-amber-600 dark:text-amber-400",
                         )}
                       >
                         {log.data &&
@@ -430,7 +430,7 @@ export function StepCard({
                                           : JSON.stringify(
                                               log.data,
                                               null,
-                                              JSON_INDENT
+                                              JSON_INDENT,
                                             );
                                       })()}
                                     </code>

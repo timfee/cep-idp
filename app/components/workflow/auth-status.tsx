@@ -73,10 +73,10 @@ function scopeImplies(granted: string, required: string): boolean {
 
 function hasAllRequiredScopes(
   grantedScopes: string[],
-  requiredScopes: string[]
+  requiredScopes: string[],
 ): boolean {
   return requiredScopes.every((required) =>
-    grantedScopes.some((granted) => scopeImplies(granted, required))
+    grantedScopes.some((granted) => scopeImplies(granted, required)),
   );
 }
 
@@ -91,7 +91,7 @@ export function AuthStatus({
   const displayName = provider === PROVIDERS.GOOGLE ? "Google" : "Microsoft";
   const hasAllScopes = hasAllRequiredScopes(scopes, requiredScopes);
   const missingScopes = requiredScopes.filter(
-    (required) => !scopes.some((granted) => scopeImplies(granted, required))
+    (required) => !scopes.some((granted) => scopeImplies(granted, required)),
   );
 
   const authUrl = `/api/auth/${provider}`;

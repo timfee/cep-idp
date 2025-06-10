@@ -13,7 +13,7 @@ export function parseWorkflow(): Workflow {
           ...step.actions.map((a) => ({
             ...a,
             mode: a.mode ?? [ACTION_MODES.VERIFY, ACTION_MODES.EXECUTE],
-          }))
+          })),
         );
       }
 
@@ -22,7 +22,7 @@ export function parseWorkflow(): Workflow {
           ...step.verify.map((a) => ({
             ...a,
             mode: [ACTION_MODES.VERIFY],
-          }))
+          })),
         );
       }
 
@@ -31,7 +31,7 @@ export function parseWorkflow(): Workflow {
           ...step.execute.map((a) => ({
             ...a,
             mode: [ACTION_MODES.EXECUTE],
-          }))
+          })),
         );
       }
 

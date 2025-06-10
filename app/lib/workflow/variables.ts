@@ -1,9 +1,6 @@
 import { JSONPath } from "jsonpath-plus";
 import { randomBytes } from "crypto";
-import {
-  EXPECTED_ARG_COUNT_PAIR,
-  VARIABLE_KEYS,
-} from "./constants";
+import { EXPECTED_ARG_COUNT_PAIR, VARIABLE_KEYS } from "./constants";
 import {
   PASSWORD_CHARS,
   PASSWORD_GENERATOR_REGEX,
@@ -62,14 +59,17 @@ export function evaluateGenerator(generator: string): string {
 export function substituteVariables(
   template: string,
   variables: Record<string, string>,
-  options: { throwOnMissing?: boolean; captureGenerated?: Record<string, string> } = {},
+  options: {
+    throwOnMissing?: boolean;
+    captureGenerated?: Record<string, string>;
+  } = {},
 ): string {
   return template.replace(/\{([^{}]+)\}/g, (match, expression) => {
     if (expression.includes("(")) {
       try {
         const result = evaluateTemplateExpression(expression, variables);
         if (
-          expression.startsWith('generatePassword(') &&
+          expression.startsWith("generatePassword(") &&
           options.captureGenerated
         ) {
           options.captureGenerated[VARIABLE_KEYS.GENERATED_PASSWORD] = result;
@@ -120,16 +120,16 @@ function evaluateTemplateExpression(
       const values = args.slice(1);
       return formatString(template, values);
     }
-      case "email": {
-        if (args.length !== EXPECTED_ARG_COUNT_PAIR) {
+    case "email": {
+      if (args.length !== EXPECTED_ARG_COUNT_PAIR) {
         throw new Error(
           "email() requires exactly 2 arguments: username and domain",
         );
       }
       return `${args[0]}@${args[1]}`;
     }
-      case "url": {
-        if (args.length !== EXPECTED_ARG_COUNT_PAIR) {
+    case "url": {
+      if (args.length !== EXPECTED_ARG_COUNT_PAIR) {
         throw new Error("url() requires exactly 2 arguments: base and path");
       }
       const base = args[0].replace(/\/$/, "");
@@ -233,7 +233,10 @@ function formatString(template: string, values: string[]): string {
 export function substituteObject(
   obj: unknown,
   variables: Record<string, string>,
-  options: { throwOnMissing?: boolean; captureGenerated?: Record<string, string> } = {},
+  options: {
+    throwOnMissing?: boolean;
+    captureGenerated?: Record<string, string>;
+  } = {},
 ): unknown {
   if (typeof obj === "string") {
     return substituteVariables(obj, variables, options);
@@ -307,14 +310,18 @@ function evaluateTemplateFunction(obj: unknown, expression: string): unknown {
     const closing = expression.indexOf(")", prefix.length);
     if (closing !== -1) {
       const inside = expression.slice(prefix.length, closing);
-      const [arrayPathRaw, propertyRaw, valueRaw] = inside.split(VALIDATION_PATTERNS.SPLIT_ARGS);
+      const [arrayPathRaw, propertyRaw, valueRaw] = inside.split(
+        VALIDATION_PATTERNS.SPLIT_ARGS,
+      );
       const remainingPath = expression.slice(closing + 1).replace(/^\./, "");
       const arrayPath = arrayPathRaw.trim();
       const property = propertyRaw.replace(/^'/, "").replace(/'$/, "");
       const array = evaluateSimplePath(obj, arrayPath);
 
       if (Array.isArray(array)) {
-        let targetValue: string | boolean = valueRaw.trim().replace(/['\"]/g, "");
+        let targetValue: string | boolean = valueRaw
+          .trim()
+          .replace(/['\"]/g, "");
         if (valueRaw.trim() === "true") {
           targetValue = true;
         } else if (valueRaw.trim() === "false") {

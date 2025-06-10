@@ -155,7 +155,7 @@ export function VariableViewer({
                             source === "default" &&
                               "border-blue-200 text-blue-700 dark:border-blue-800 dark:text-blue-300",
                             source === "extracted" &&
-                              "border-green-200 text-green-700 dark:border-green-800 dark:text-green-300"
+                              "border-green-200 text-green-700 dark:border-green-800 dark:text-green-300",
                           )}
                         >
                           {source}

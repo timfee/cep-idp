@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { StepStatus, parseWorkflow } from "@/app/lib/workflow";
+import { parseWorkflow } from "@/app/lib/workflow";
 import { getToken, setToken } from "@/app/lib/auth/tokens";
 import { refreshAccessToken } from "@/app/lib/auth/oauth";
 

@@ -2,7 +2,7 @@
 
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
-import { AlertOctagonIcon, BadgeCheckIcon } from "lucide-react";
+import { BadgeCheckIcon } from "lucide-react";
 import Link from "next/link";
 import { WILDCARD_SUFFIX_LENGTH } from "@/app/lib/workflow/constants";
 import { TokenStatus } from "./token-status";
@@ -103,20 +103,32 @@ export function AuthStatus({
   );
 
   let actionElement: React.ReactNode;
+  const isExpired = expiresAt ? Date.now() >= expiresAt : false;
+
   if (!isAuthenticated) {
     actionElement = (
       <Button asChild>
         <Link href={authUrl}>Authenticate</Link>
       </Button>
     );
-  } else if (!hasAllScopes) {
+  } else if (isExpired) {
     actionElement = (
-      <Button asChild color="amber">
+      <Button asChild>
         <Link href={authUrl}>Re-authenticate</Link>
       </Button>
     );
+  } else if (!hasAllScopes) {
+    actionElement = (
+      <Button asChild variant="secondary">
+        <Link href={authUrl}>Update permissions</Link>
+      </Button>
+    );
   } else {
-    actionElement = <Badge color="green">Connected</Badge>;
+    actionElement = (
+      <Badge variant="secondary" className="bg-green-500 text-white">
+        <BadgeCheckIcon className="h-4 w-4" />
+      </Badge>
+    );
   }
 
   return (
@@ -138,26 +150,9 @@ export function AuthStatus({
           )}
 
         <div className="flex items-center gap-3">
-          {isAuthenticated ? (
-            <Badge
-              variant="secondary"
-              className="bg-green-500 text-white dark:bg-blue-600"
-            >
-              <BadgeCheckIcon />
-              All set
-            </Badge>
-          ) : (
-            <Badge
-              variant="secondary"
-              className="bg-yellow-700 text-white dark:bg-blue-600"
-            >
-              <AlertOctagonIcon />
-              Attention
-            </Badge>
-          )}
           <div>
             <h3 className="font-medium">{displayName}</h3>
-            {isAuthenticated && (
+            {isAuthenticated && !isExpired && (
               <p className="text-sm text-zinc-500 dark:text-zinc-400">
                 {scopeMessage}
               </p>

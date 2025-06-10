@@ -81,10 +81,10 @@ async function handleAuthenticatedRequest(options: ApiRequestOptions): Promise<u
         `[API Client] Token refresh failed for ${provider}:`,
         refreshError,
       );
-
-      // Throw a specific error that indicates re-authentication is needed
+      const errorMessage =
+        refreshError instanceof Error ? refreshError.message : "Unknown error";
       throw new Error(
-        `Authentication expired for ${provider}. Please re-authenticate.`,
+        `Authentication expired for ${provider}. ${errorMessage}. Please re-authenticate manually.`,
       );
     }
   }

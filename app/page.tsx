@@ -1,6 +1,7 @@
 import { getWorkflowData } from "./actions/workflow-data";
 import { AuthStatus } from "./components/workflow/auth-status";
 import { WorkflowSteps } from "./components/workflow/workflow-steps";
+import { ErrorBoundary } from "./components/error-boundary";
 import { VariableViewer } from "./components/workflow/variable-viewer";
 import { DebugTools } from "./components/workflow/debug-tools";
 import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
@@ -88,12 +89,14 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
               {/* Workflow Steps */}
               <section className="space-y-4">
                 <h2 className="text-lg font-medium">Workflow Steps</h2>
-                <WorkflowSteps
-                  workflow={workflow}
-                  stepStatuses={stepStatuses}
-                  authStatus={auth}
-                  variables={variables}
-                />
+                <ErrorBoundary>
+                  <WorkflowSteps
+                    workflow={workflow}
+                    stepStatuses={stepStatuses}
+                    authStatus={auth}
+                    variables={variables}
+                  />
+                </ErrorBoundary>
               </section>
             </div>
 

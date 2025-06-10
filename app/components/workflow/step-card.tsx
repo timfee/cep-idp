@@ -260,7 +260,7 @@ export function StepCard({
           </div>
 
           {effectiveStatus.status === "completed" &&
-            effectiveStatus.variables?.generatedPassword &&
+            variables.generatedPassword &&
             step.name === "Create Service Account for Microsoft" && (
               <div className="mt-3">
                 <PasswordDisplay

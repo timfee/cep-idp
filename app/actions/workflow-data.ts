@@ -86,16 +86,21 @@ async function reconstituteStepStatuses(
 
   const isAuthMet = (step: Step): boolean => {
     if (!step.role) return true;
-    const requiredScopes = Object.prototype.hasOwnProperty.call(workflow.roles, step.role)
-      ? workflow.roles[step.role as keyof typeof workflow.roles]
-      : [];
+    const requiredScopes = workflow.roles[step.role as keyof typeof workflow.roles] || [];
     const isGoogleStep = step.role.startsWith("dir") || step.role.startsWith("ci");
     const isMicrosoftStep = step.role.startsWith("graph");
+
     if (isGoogleStep && tokens.google) {
-      return !isTokenExpired(tokens.google) && requiredScopes.every((s) => tokens.google!.scope.includes(s));
+      return (
+        !isTokenExpired(tokens.google) &&
+        requiredScopes.every((s) => tokens.google!.scope.includes(s))
+      );
     }
     if (isMicrosoftStep && tokens.microsoft) {
-      return !isTokenExpired(tokens.microsoft) && requiredScopes.every((s) => tokens.microsoft!.scope.includes(s));
+      return (
+        !isTokenExpired(tokens.microsoft) &&
+        requiredScopes.every((s) => tokens.microsoft!.scope.includes(s))
+      );
     }
     return false;
   };
@@ -181,13 +186,13 @@ export async function getWorkflowData(
     stepStatuses: Object.fromEntries(stepStatusesMap),
     auth: {
       google: {
-        authenticated: !!googleToken,
+        authenticated: !!googleToken && !isTokenExpired(googleToken),
         scopes: googleToken?.scope || [],
         expiresAt: googleToken?.expiresAt,
         hasRefreshToken: !!googleToken?.refreshToken,
       },
       microsoft: {
-        authenticated: !!microsoftToken,
+        authenticated: !!microsoftToken && !isTokenExpired(microsoftToken),
         scopes: microsoftToken?.scope || [],
         expiresAt: microsoftToken?.expiresAt,
         hasRefreshToken: !!microsoftToken?.refreshToken,
@@ -205,13 +210,13 @@ export async function getAuthStatus(): Promise<AuthState> {
 
   return {
     google: {
-      authenticated: !!googleToken,
+      authenticated: !!googleToken && !isTokenExpired(googleToken),
       scopes: googleToken?.scope || [],
       expiresAt: googleToken?.expiresAt,
       hasRefreshToken: !!googleToken?.refreshToken,
     },
     microsoft: {
-      authenticated: !!microsoftToken,
+      authenticated: !!microsoftToken && !isTokenExpired(microsoftToken),
       scopes: microsoftToken?.scope || [],
       expiresAt: microsoftToken?.expiresAt,
       hasRefreshToken: !!microsoftToken?.refreshToken,

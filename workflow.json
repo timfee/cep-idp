@@ -635,7 +635,7 @@
               "{\"ClaimsMappingPolicy\":{\"Version\":1,\"IncludeBasicClaimSet\":true,\"ClaimsMapping\":{\"email\":{\"source\":\"user\",\"id\":\"mail\"}}}}"
             ]
           },
-          "outputs": {
+          "extract": {
             "claimsPolicyId": "$.id"
           }
         },

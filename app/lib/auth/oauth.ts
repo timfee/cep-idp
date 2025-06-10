@@ -154,9 +154,16 @@ export function validateScopes(
 }
 
 export function isTokenExpired(token: Token): boolean {
-  return (
-    Date.now() >= token.expiresAt - WORKFLOW_CONSTANTS.TOKEN_REFRESH_BUFFER_MS
+  if (!token.expiresAt) return true; // Treat missing expiry as expired
+  const bufferMs = WORKFLOW_CONSTANTS.TOKEN_REFRESH_BUFFER_MS;
+  const expiryTime = token.expiresAt - bufferMs;
+  const now = Date.now();
+  console.log(
+    `[Token Expiry] Token expires at: ${new Date(token.expiresAt).toISOString()}, Current time: ${new Date(
+      now,
+    ).toISOString()}, Is expired: ${now >= expiryTime}`,
   );
+  return now >= expiryTime;
 }
 
 export {

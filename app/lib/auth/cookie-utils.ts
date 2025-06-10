@@ -1,7 +1,7 @@
 import { cookies } from "next/headers";
 import { WORKFLOW_CONSTANTS, COOKIE_METADATA_SIZES } from "../workflow";
 
-// Safe limit is around 4093 bytes per cookie, but we'll use constant to leave room for cookie metadata
+// Safe limit is around 4093 bytes per cookie. We use a slightly lower constant for safety.
 const MAX_COOKIE_SIZE = WORKFLOW_CONSTANTS.MAX_COOKIE_SIZE;
 const CHUNK_DELIMITER = ".chunk.";
 
@@ -41,6 +41,13 @@ export async function setChunkedCookie(
 
   // First, clear any existing chunks for this cookie
   await clearChunkedCookie(name);
+
+  const estimatedSize = estimateCookieSize(name, value, options);
+  if (estimatedSize > MAX_COOKIE_SIZE) {
+    console.warn(
+      `[Cookie Utils] ${name} exceeds safe cookie size (${estimatedSize} > ${MAX_COOKIE_SIZE}). Splitting into chunks.`,
+    );
+  }
 
   const chunks = splitIntoChunks(value);
 

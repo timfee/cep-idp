@@ -158,6 +158,13 @@ async function handleActionExecution(
 
   applyExtracts(action, response, variables, extractedVariables, onLog);
   Object.assign(extractedVariables, capturedValues);
+  Object.assign(variables, extractedVariables, capturedValues);
+  console.log('[Variable Update] After extraction:', {
+    action: action.use,
+    extractedVariables,
+    capturedValues,
+    allVariables: { ...variables, ...extractedVariables, ...capturedValues },
+  });
 
   if (areOutputsMissing(step, extractedVariables)) {
     onLog({

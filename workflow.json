@@ -16,25 +16,40 @@
       "base": "https://graph.microsoft.com/beta",
       "auth": "Bearer {azureAccessToken}"
     },
-    "public": { "base": "", "auth": "none" }
+    "public": {
+      "base": "",
+      "auth": "none"
+    }
   },
   "roles": {
     "dirDomainRW": [
       "https://www.googleapis.com/auth/admin.directory.domain",
       "https://www.googleapis.com/auth/siteverification"
     ],
-    "dirOrgunitRW": ["https://www.googleapis.com/auth/admin.directory.orgunit"],
-    "dirUserRW": ["https://www.googleapis.com/auth/admin.directory.user"],
+    "dirOrgunitRW": [
+      "https://www.googleapis.com/auth/admin.directory.orgunit"
+    ],
+    "dirUserRW": [
+      "https://www.googleapis.com/auth/admin.directory.user"
+    ],
     "dirRoleRW": [
       "https://www.googleapis.com/auth/admin.directory.rolemanagement"
     ],
     "ciInboundSso": [
       "https://www.googleapis.com/auth/cloud-identity.inboundsso"
     ],
-    "graphAppRW": ["Application.ReadWrite.All"],
-    "graphSyncRW": ["Synchronization.ReadWrite.All"],
-    "graphPolicyRW": ["Policy.ReadWrite.ApplicationConfiguration"],
-    "graphAppRole": ["AppRoleAssignment.ReadWrite.All"]
+    "graphAppRW": [
+      "Application.ReadWrite.All"
+    ],
+    "graphSyncRW": [
+      "Synchronization.ReadWrite.All"
+    ],
+    "graphPolicyRW": [
+      "Policy.ReadWrite.ApplicationConfiguration"
+    ],
+    "graphAppRole": [
+      "AppRoleAssignment.ReadWrite.All"
+    ]
   },
   "endpoints": {
     "admin.getDomain": {
@@ -56,7 +71,10 @@
       "conn": "googleAdmin",
       "method": "GET",
       "path": "/customer/{customerId}/orgunits",
-      "qs": { "orgUnitPath": "/Automation", "type": "children" }
+      "qs": {
+        "orgUnitPath": "/Automation",
+        "type": "children"
+      }
     },
     "admin.postOU": {
       "conn": "googleAdmin",
@@ -88,12 +106,14 @@
       "method": "GET",
       "path": "/customer/{customerId}/roles/ALL/privileges"
     },
-
     "admin.getRoleAssign": {
       "conn": "googleAdmin",
       "method": "GET",
       "path": "/customer/{customerId}/roleassignments",
-      "qs": { "roleId": "{adminRoleId}", "assignedTo": "{provisioningUserId}" }
+      "qs": {
+        "roleId": "{adminRoleId}",
+        "assignedTo": "{provisioningUserId}"
+      }
     },
     "admin.postRoleAssign": {
       "conn": "googleAdmin",
@@ -144,13 +164,17 @@
       "conn": "graphGA",
       "method": "GET",
       "path": "/applications",
-      "qs": { "$filter": "applicationTemplateId eq '{provTemplateId}'" }
+      "qs": {
+        "$filter": "applicationTemplateId eq '{provTemplateId}'"
+      }
     },
     "graph.appByTemplateSSO": {
       "conn": "graphGA",
       "method": "GET",
       "path": "/applications",
-      "qs": { "$filter": "applicationTemplateId eq '{ssoTemplateId}'" }
+      "qs": {
+        "$filter": "applicationTemplateId eq '{ssoTemplateId}'"
+      }
     },
     "graph.getSync": {
       "conn": "graphGA",
@@ -196,7 +220,9 @@
       "conn": "graphGA",
       "method": "GET",
       "path": "/servicePrincipals/{ssoServicePrincipalId}/appRoleAssignedTo",
-      "qs": { "$filter": "principalId eq {principalId}" }
+      "qs": {
+        "$filter": "principalId eq {principalId}"
+      }
     },
     "graph.postAppRoleAssign": {
       "conn": "graphGA",
@@ -233,16 +259,23 @@
     "provisioningUserEmail": {},
     "adminRoleId": {},
     "directoryServiceId": {},
-
     "samlProfileId": {},
     "entityId": {},
     "acsUrl": {},
-    "provTemplateId": { "default": "d0d8633b-4174-4d05-89c7-86d229f50f26" },
-    "ssoTemplateId": { "default": "8ba3d1d8-7c8c-4d2d-b179-04d4a68fba02" },
+    "provTemplateId": {
+      "default": "d0d8633b-4174-4d05-89c7-86d229f50f26",
+      "_comment": "Gallery ID for Google Cloud Provisioning App"
+    },
+    "ssoTemplateId": {
+      "default": "8ba3d1d8-7c8c-4d2d-b179-04d4a68fba02",
+      "_comment": "Gallery ID for Google Cloud SSO App"
+    },
     "provServicePrincipalId": {},
     "ssoServicePrincipalId": {},
     "ssoAppId": {},
-    "jobId": { "default": "Initial" },
+    "jobId": {
+      "default": "Initial"
+    },
     "claimsPolicyId": {},
     "principalId": {},
     "generatedPassword": {},
@@ -256,9 +289,10 @@
   "steps": [
     {
       "name": "Verify Primary Domain",
-      "description": "Ensures your Google Workspace primary domain is verified and ready for SSO integration. This is required before any other configuration can proceed.",
-      "inputs": [],
-      "outputs": ["primaryDomain"],
+      "outputs": [
+        "primaryDomain",
+        "domainName"
+      ],
       "actions": [
         {
           "use": "admin.listDomains",
@@ -274,7 +308,9 @@
         },
         {
           "use": "admin.postDomain",
-          "payload": { "domainName": "{primaryDomain}" },
+          "payload": {
+            "domainName": "{primaryDomain}"
+          },
           "fallback": true
         }
       ],
@@ -282,25 +318,38 @@
     },
     {
       "name": "Create Automation Organizational Unit",
-      "description": "Creates a special folder '/Automation' in Google Workspace to house service accounts that need to bypass SSO and use passwords instead.",
-      "inputs": ["primaryDomain"],
-      "outputs": [],
+      "inputs": [
+        "primaryDomain"
+      ],
       "actions": [
-        { "use": "admin.listOUAutomation", "checker": "exists" },
+        {
+          "use": "admin.listOUAutomation",
+          "checker": "exists"
+        },
         {
           "use": "admin.postOU",
-          "payload": { "name": "Automation", "parentOrgUnitPath": "/" },
+          "payload": {
+            "name": "Automation",
+            "parentOrgUnitPath": "/"
+          },
           "fallback": true
         }
       ],
       "role": "dirOrgunitRW",
-      "depends_on": ["Verify Primary Domain"]
+      "depends_on": [
+        "Verify Primary Domain"
+      ]
     },
     {
       "name": "Create Service Account for Microsoft",
-      "description": "Creates a dedicated Google account that Microsoft Entra ID will use to sync users and groups to your Google Workspace. The password will be generated automatically.",
-      "inputs": ["primaryDomain"],
-      "outputs": ["provisioningUserId", "provisioningUserEmail"],
+      "inputs": [
+        "primaryDomain"
+      ],
+      "outputs": [
+        "provisioningUserId",
+        "provisioningUserEmail",
+        "generatedPassword"
+      ],
       "actions": [
         {
           "use": "admin.getUser",
@@ -313,7 +362,10 @@
           "use": "admin.postUser",
           "payload": {
             "primaryEmail": "{email('azuread-provisioning', primaryDomain)}",
-            "name": { "givenName": "Microsoft", "familyName": "Provisioning" },
+            "name": {
+              "givenName": "Microsoft",
+              "familyName": "Provisioning"
+            },
             "password": "{generatePassword(16)}",
             "orgUnitPath": "/Automation"
           },
@@ -326,13 +378,20 @@
         }
       ],
       "role": "dirUserRW",
-      "depends_on": ["Create Automation Organizational Unit"]
+      "depends_on": [
+        "Create Automation Organizational Unit"
+      ]
     },
     {
-      "name": "Create Custom Admin Role",
-      "description": "Sets up a limited admin role with only the permissions Microsoft needs for user provisioning (create, read, update users and groups).",
-      "inputs": ["customerId"],
-      "outputs": ["adminRoleId", "directoryServiceId"],
+      "name": "Setup Microsoft Sync Permissions",
+      "inputs": [
+        "customerId",
+        "primaryDomain"
+      ],
+      "outputs": [
+        "adminRoleId",
+        "directoryServiceId"
+      ],
       "actions": [
         {
           "use": "admin.listRoles",
@@ -381,20 +440,15 @@
               }
             ]
           },
-          "extract": { "adminRoleId": "$.roleId" },
+          "extract": {
+            "adminRoleId": "$.roleId"
+          },
           "fallback": true
-        }
-      ],
-      "role": "dirRoleRW",
-      "depends_on": ["Create Service Account for Microsoft"]
-    },
-    {
-      "name": "Assign Admin Role to Service Account",
-      "description": "Grants the Microsoft service account the custom admin permissions it needs to manage users in your Google Workspace.",
-      "inputs": ["adminRoleId", "primaryDomain"],
-      "outputs": [],
-      "actions": [
-        { "use": "admin.getRoleAssign", "checker": "exists" },
+        },
+        {
+          "use": "admin.getRoleAssign",
+          "checker": "exists"
+        },
         {
           "use": "admin.postRoleAssign",
           "payload": {
@@ -406,12 +460,23 @@
         }
       ],
       "role": "dirRoleRW",
-      "depends_on": ["Create Custom Admin Role"]
+      "depends_on": [
+        "Create Service Account for Microsoft"
+      ]
     },
     {
-      "name": "Create SAML Profile for SSO",
-      "description": "Configures the SAML settings that allow Microsoft Entra ID to authenticate your Google Workspace users.",
-      "verify": [{ "use": "ci.listSamlProfiles", "checker": "exists" }],
+      "name": "Configure Google SAML Profile",
+      "outputs": [
+        "samlProfileId",
+        "entityId",
+        "acsUrl"
+      ],
+      "verify": [
+        {
+          "use": "ci.listSamlProfiles",
+          "checker": "exists"
+        }
+      ],
       "execute": [
         {
           "use": "ci.createSamlProfile",
@@ -431,84 +496,43 @@
         }
       ],
       "role": "ciInboundSso",
-      "depends_on": ["Assign Admin Role to Service Account"],
+      "depends_on": [
+        "Setup Microsoft Sync Permissions"
+      ],
       "apiStatus": "beta"
     },
     {
-      "name": "Add Microsoft Identity Certificate",
-      "description": "Automatically fetches and installs Microsoft's SAML signing certificate",
-      "inputs": ["tenantId", "ssoAppId"],
-      "depends_on": ["Create Microsoft SSO App"],
-      "verify": [{ "use": "ci.getIdpCreds", "checker": "exists" }],
-      "execute": [
-        { "use": "web.fetchMetadata", "extract": { "rawXmlResponse": "$" } },
+      "name": "Create Microsoft Apps",
+      "outputs": [
+        "provServicePrincipalId",
+        "ssoServicePrincipalId",
+        "ssoAppId"
+      ],
+      "verify": [
         {
-          "use": "ci.addIdpCert",
-          "payload": {
-            "pemData": "{extractCertificateFromXml(rawXmlResponse)}"
-          }
+          "use": "graph.appByTemplateProv",
+          "checker": "exists"
+        },
+        {
+          "use": "graph.appByTemplateSSO",
+          "checker": "exists"
         }
       ],
-      "role": "ciInboundSso"
-    },
-    {
-      "name": "Create Microsoft Provisioning App",
-      "description": "Sets up the Microsoft Entra ID app that will automatically sync users from Azure AD to Google Workspace.",
-      "verify": [{ "use": "graph.appByTemplateProv", "checker": "exists" }],
       "execute": [
         {
           "use": "graph.instantiateProv",
-          "payload": { "displayName": "Google Cloud (Provisioning)" },
-          "extract": { "provServicePrincipalId": "$.servicePrincipal.id" }
-        }
-      ],
-      "role": "graphAppRW",
-      "depends_on": ["Create SAML Profile for SSO"]
-    },
-    {
-      "name": "Configure User Provisioning",
-      "description": "Provides Microsoft with the service account credentials to access your Google Workspace directory API.",
-      "verify": [{ "use": "graph.getSync", "checker": "exists" }],
-      "execute": [
-        {
-          "use": "graph.patchSync",
           "payload": {
-            "secrets": [
-              {
-                "key": "BaseAddress",
-                "value": "https://admin.googleapis.com/admin/directory/v1"
-              },
-              { "key": "SecretKey", "value": "{generatedPassword}" }
-            ]
+            "displayName": "Google Cloud (Provisioning)"
+          },
+          "extract": {
+            "provServicePrincipalId": "$.servicePrincipal.id"
           }
-        }
-      ],
-      "role": "graphSyncRW",
-      "depends_on": ["Create Microsoft Provisioning App"]
-    },
-    {
-      "name": "Start User Synchronization",
-      "description": "Activates the sync process to begin provisioning users from Microsoft Entra ID to Google Workspace every 40 minutes.",
-      "verify": [
-        {
-          "use": "graph.getSync",
-          "checker": "fieldTruthy",
-          "field": "state=='active'"
-        }
-      ],
-      "execute": [{ "use": "graph.startSyncJob" }],
-      "role": "graphSyncRW",
-      "depends_on": ["Configure User Provisioning"]
-    },
-    {
-      "name": "Create Microsoft SSO App",
-      "description": "Sets up the Microsoft app that handles single sign-on authentication",
-      "outputs": ["ssoServicePrincipalId", "ssoAppId"],
-      "verify": [{ "use": "graph.appByTemplateSSO", "checker": "exists" }],
-      "execute": [
+        },
         {
           "use": "graph.instantiateSSO",
-          "payload": { "displayName": "Google Cloud" },
+          "payload": {
+            "displayName": "Google Cloud"
+          },
           "extract": {
             "ssoServicePrincipalId": "$.servicePrincipal.id",
             "ssoAppId": "$.application.appId"
@@ -516,12 +540,27 @@
         }
       ],
       "role": "graphAppRW",
-      "depends_on": ["Create Microsoft Provisioning App"]
+      "depends_on": [
+        "Configure Google SAML Profile"
+      ]
     },
     {
-      "name": "Configure SAML Settings",
-      "description": "Configures the technical SAML parameters (Entity ID, ACS URL) for secure authentication between Microsoft and Google.",
+      "name": "Configure Microsoft Sync and SSO",
+      "inputs": [
+        "generatedPassword",
+        "entityId",
+        "acsUrl",
+        "provServicePrincipalId",
+        "ssoServicePrincipalId"
+      ],
+      "outputs": [
+        "claimsPolicyId"
+      ],
       "verify": [
+        {
+          "use": "graph.getSync",
+          "checker": "exists"
+        },
         {
           "use": "graph.getSamlSettings",
           "checker": "eq",
@@ -531,21 +570,54 @@
       ],
       "execute": [
         {
+          "use": "graph.patchSync",
+          "payload": {
+            "secrets": [
+              {
+                "key": "BaseAddress",
+                "value": "https://admin.googleapis.com/admin/directory/v1"
+              },
+              {
+                "key": "SecretKey",
+                "value": "{generatedPassword}"
+              }
+            ]
+          }
+        },
+        {
+          "use": "graph.startSyncJob"
+        },
+        {
           "use": "graph.patchSamlSettings",
           "payload": {
-            "identifierUris": ["{entityId}"],
-            "replyUrls": ["{acsUrl}"]
+            "identifierUris": [
+              "{entityId}"
+            ],
+            "replyUrls": [
+              "{acsUrl}"
+            ]
           }
         }
       ],
-      "role": "graphAppRW",
-      "depends_on": ["Create Microsoft SSO App"],
-      "apiStatus": "beta"
+      "role": "graphSyncRW",
+      "depends_on": [
+        "Create Microsoft Apps"
+      ]
     },
     {
-      "name": "Create Claims Mapping Policy",
-      "description": "Defines how Microsoft user attributes map to Google user attributes. By default, maps email to email.",
-      "verify": [{ "use": "graph.listPolicies", "checker": "exists" }],
+      "name": "Setup Microsoft Claims Policy",
+      "inputs": [
+        "ssoServicePrincipalId"
+      ],
+      "outputs": [
+        "claimsPolicyId"
+      ],
+      "verify": [
+        {
+          "use": "graph.listPolicies",
+          "checker": "exists"
+        }
+      ],
       "execute": [
         {
           "use": "graph.createPolicy",
@@ -555,7 +627,9 @@
               "{\"ClaimsMappingPolicy\":{\"Version\":1,\"IncludeBasicClaimSet\":true,\"ClaimsMapping\":{\"email\":{\"source\":\"user\",\"id\":\"mail\"}}}}"
             ]
           },
-          "extract": { "claimsPolicyId": "$.id" }
+          "extract": {
+            "claimsPolicyId": "$.id"
+          }
         },
         {
           "use": "graph.linkPolicy",
@@ -565,21 +639,41 @@
         }
       ],
       "role": "graphPolicyRW",
-      "depends_on": ["Configure SAML Settings"],
+      "depends_on": [
+        "Configure Microsoft Sync and SSO"
+      ],
       "apiStatus": "beta"
     },
     {
-      "name": "Assign Users to SSO App",
-      "description": "For now, this step requires manual configuration in Azure Portal. In most cases, assign 'All Users' to the SSO app.",
-      "inputs": ["ssoServicePrincipalId"],
-      "manual": true,
-      "depends_on": ["Create Claims Mapping Policy"]
-    },
-    {
-      "name": "Enable SSO for Organization",
-      "description": "Activates SSO for all users in your Google Workspace organization (except those in /Automation).",
-      "verify": [{ "use": "ci.listSsoAssignments", "checker": "exists" }],
+      "name": "Complete Google SSO Setup",
+      "inputs": [
+        "tenantId",
+        "ssoAppId",
+        "samlProfileId"
+      ],
+      "verify": [
+        {
+          "use": "ci.getIdpCreds",
+          "checker": "exists"
+        },
+        {
+          "use": "ci.listSsoAssignments",
+          "checker": "exists"
+        }
+      ],
       "execute": [
+        {
+          "use": "web.fetchMetadata",
+          "extract": {
+            "rawXmlResponse": "$"
+          }
+        },
+        {
+          "use": "ci.addIdpCert",
+          "payload": {
+            "pemData": "{extractCertificateFromXml(rawXmlResponse)}"
+          }
+        },
         {
           "use": "ci.postSsoAssignment",
           "payload": {
@@ -587,16 +681,7 @@
             "targetOrgUnit": "/",
             "ssoMode": "SAML_SSO"
           }
-        }
-      ],
-      "role": "ciInboundSso",
-      "depends_on": ["Assign Users to SSO App"]
-    },
-    {
-      "name": "Disable SSO for Service Accounts",
-      "description": "Ensures service accounts in the /Automation folder can still use passwords instead of SSO.",
-      "verify": [{ "use": "ci.listSsoAssignments", "checker": "exists" }],
-      "execute": [
+        },
         {
           "use": "ci.postSsoAssignment",
           "payload": {
@@ -607,13 +692,23 @@
         }
       ],
       "role": "ciInboundSso",
-      "depends_on": ["Enable SSO for Organization"]
+      "depends_on": [
+        "Setup Microsoft Claims Policy"
+      ]
+    },
+    {
+      "name": "Assign Users to SSO App",
+      "manual": true,
+      "depends_on": [
+        "Complete Google SSO Setup"
+      ]
     },
     {
       "name": "Test SSO Configuration",
-      "description": "Verify that users can successfully sign in to Google Workspace using their Microsoft credentials. Test with a regular user account.",
       "manual": true,
-      "depends_on": ["Disable SSO for Service Accounts"]
+      "depends_on": [
+        "Assign Users to SSO App"
+      ]
     }
   ]
 }

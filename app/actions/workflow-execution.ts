@@ -148,16 +148,16 @@ async function handleActionExecution(
     message: `[DEBUG] Variables available for ${action.use}: ${Object.keys(variables).join(", ")}`,
   });
 
-  if (endpoint.path && !action.fallback) {
-    const missingVars = extractMissingVariables(endpoint.path, variables);
-    if (missingVars.length > 0) {
-      onLog({
-        timestamp: Date.now(),
-        level: "info",
-        message: `Skipping action ${action.use} - missing variables: ${missingVars.join(", ")}`,
-      });
-      return { success: false, extractedVariables };
-    }
+  const missingVars = endpoint.path
+    ? extractMissingVariables(endpoint.path, variables)
+    : [];
+  if (missingVars.length > 0) {
+    onLog({
+      timestamp: Date.now(),
+      level: "info",
+      message: `Skipping action ${action.use} - missing variables: ${missingVars.join(", ")}`,
+    });
+    return { success: false, extractedVariables };
   }
 
   const generatedCaptures: Record<string, string> = {};

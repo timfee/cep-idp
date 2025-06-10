@@ -3,6 +3,7 @@
 import { apiRequest } from "@/app/lib/api/client";
 import { getToken } from "@/app/lib/auth/tokens";
 import { getWorkflowData } from "./workflow-data";
+import { setStoredVariables } from "@/app/lib/workflow";
 import {
   evaluateChecker,
   extractMissingVariables,
@@ -34,16 +35,21 @@ function applyExtracts(
   variables: Record<string, string>,
   extractedVariables: Record<string, string>,
   onLog: (entry: LogEntry) => void,
+  capturedValues: Record<string, string> = {},
 ): void {
   if (!action.extract) return;
   for (const [varName, path] of Object.entries(action.extract)) {
     // Special handling for password display marker
     if (
-      varName === "generatedPassword" &&
+      varName === VARIABLE_KEYS.GENERATED_PASSWORD &&
       path === WORKFLOW_CONSTANTS.PASSWORD_EXTRACTION_KEY
     ) {
-      if (variables[VARIABLE_KEYS.GENERATED_PASSWORD]) {
-        extractedVariables[varName] = variables[VARIABLE_KEYS.GENERATED_PASSWORD];
+      const password =
+        capturedValues[VARIABLE_KEYS.GENERATED_PASSWORD] ??
+        variables[VARIABLE_KEYS.GENERATED_PASSWORD];
+      if (password) {
+        extractedVariables[varName] = password;
+        variables[VARIABLE_KEYS.GENERATED_PASSWORD] = password;
         onLog({
           timestamp: Date.now(),
           level: "info",
@@ -67,7 +73,10 @@ function applyExtracts(
   }
 }
 
-function areOutputsMissing(step: Step, extracted: Record<string, string>): boolean {
+function areOutputsMissing(
+  step: Step,
+  extracted: Record<string, string>,
+): boolean {
   return !!step.outputs && step.outputs.some((o) => !extracted[o]);
 }
 
@@ -75,7 +84,10 @@ interface StructuredApiError {
   error: { code: number; status?: string; message: string };
 }
 
-function hasProp<K extends string>(obj: unknown, prop: K): obj is Record<K, unknown> {
+function hasProp<K extends string>(
+  obj: unknown,
+  prop: K,
+): obj is Record<K, unknown> {
   return typeof obj === "object" && obj !== null && prop in obj;
 }
 
@@ -83,10 +95,7 @@ function isStructuredApiError(obj: unknown): obj is StructuredApiError {
   if (!hasProp(obj, "error")) return false;
   const err = obj.error;
   return (
-    typeof err === "object" &&
-    err !== null &&
-    "code" in err &&
-    "message" in err
+    typeof err === "object" && err !== null && "code" in err && "message" in err
   );
 }
 
@@ -134,7 +143,11 @@ async function handleActionExecution(
   extractedVariables: Record<string, string>,
   workflow: Workflow,
   _verificationOnly: boolean,
-): Promise<{ success: boolean; extractedVariables: Record<string, string>; data?: unknown }> {
+): Promise<{
+  success: boolean;
+  extractedVariables: Record<string, string>;
+  data?: unknown;
+}> {
   const endpoint = workflow.endpoints[action.use];
   if (!endpoint) {
     onLog({
@@ -175,7 +188,11 @@ async function handleActionExecution(
       })
     : undefined;
 
-  onLog({ timestamp: Date.now(), level: "info", message: `Executing action: ${action.use}` });
+  onLog({
+    timestamp: Date.now(),
+    level: "info",
+    message: `Executing action: ${action.use}`,
+  });
 
   const { data: response, capturedValues } = await apiRequest({
     endpoint,
@@ -196,11 +213,22 @@ async function handleActionExecution(
   const condensedMessage = `${method} ${fullPath}`;
   const fullResponseData = { fullUrl, response };
 
-  onLog({ timestamp: Date.now(), level: "info", message: condensedMessage, data: fullResponseData });
+  onLog({
+    timestamp: Date.now(),
+    level: "info",
+    message: condensedMessage,
+    data: fullResponseData,
+  });
 
   if (action.longRunning) {
-    onLog({ timestamp: Date.now(), level: "info", message: "Waiting for long-running operation..." });
-    await new Promise((resolve) => setTimeout(resolve, COPY_FEEDBACK_DURATION_MS));
+    onLog({
+      timestamp: Date.now(),
+      level: "info",
+      message: "Waiting for long-running operation...",
+    });
+    await new Promise((resolve) =>
+      setTimeout(resolve, COPY_FEEDBACK_DURATION_MS),
+    );
   }
 
   if (action.checker && response !== null) {
@@ -212,7 +240,14 @@ async function handleActionExecution(
 
   Object.assign(extractedVariables, capturedValues);
   Object.assign(variables, capturedValues);
-  applyExtracts(action, response, variables, extractedVariables, onLog);
+  applyExtracts(
+    action,
+    response,
+    variables,
+    extractedVariables,
+    onLog,
+    capturedValues,
+  );
 
   if (areOutputsMissing(step, extractedVariables)) {
     onLog({
@@ -244,7 +279,11 @@ async function processStepExecution(
   };
 
   try {
-    onLog({ timestamp: Date.now(), level: "info", message: `Starting step: ${step.name}` });
+    onLog({
+      timestamp: Date.now(),
+      level: "info",
+      message: `Starting step: ${step.name}`,
+    });
 
     if (step.inputs && step.inputs.length > 0) {
       const missingInputs = step.inputs.filter((input) => !variables[input]);
@@ -270,8 +309,15 @@ async function processStepExecution(
     if (Object.keys(actionResult.extractedVariables).length > 0) {
       status.variables = { ...actionResult.extractedVariables };
     }
-    if (step.name === STEP_NAMES.CREATE_SERVICE_ACCOUNT && variables[VARIABLE_KEYS.GENERATED_PASSWORD]) {
-      status.variables = { ...(status.variables || {}), generatedPassword: variables[VARIABLE_KEYS.GENERATED_PASSWORD] };
+    if (
+      step.name === STEP_NAMES.CREATE_SERVICE_ACCOUNT &&
+      variables[VARIABLE_KEYS.GENERATED_PASSWORD]
+    ) {
+      status.variables = {
+        ...(status.variables || {}),
+        [VARIABLE_KEYS.GENERATED_PASSWORD]:
+          variables[VARIABLE_KEYS.GENERATED_PASSWORD],
+      };
     }
 
     status.result = actionResult.data;
@@ -279,7 +325,11 @@ async function processStepExecution(
     status.completedAt = Date.now();
     status.logs = logs;
 
-    onLog({ timestamp: Date.now(), level: "info", message: `Step completed: ${step.name}` });
+    onLog({
+      timestamp: Date.now(),
+      level: "info",
+      message: `Step completed: ${step.name}`,
+    });
   } catch (error: unknown) {
     let errorMessage = error instanceof Error ? error.message : String(error);
     let apiError = null;
@@ -299,7 +349,12 @@ async function processStepExecution(
     status.status = STATUS_VALUES.FAILED;
     status.error = errorMessage;
     status.logs = logs;
-    onLog({ timestamp: Date.now(), level: "error", message: `Step failed: ${errorMessage}`, data: apiError || error });
+    onLog({
+      timestamp: Date.now(),
+      level: "error",
+      message: `Step failed: ${errorMessage}`,
+      data: apiError || error,
+    });
   }
 
   return status;
@@ -365,11 +420,15 @@ export async function runStepActions(
       // Handle different error types
       if (
         needsReauth ||
-        errorMessage.includes(String(WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED)) ||
+        errorMessage.includes(
+          String(WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED),
+        ) ||
         errorMessage.includes("Authentication expired")
       ) {
         const failedEndpoint = workflow.endpoints[action.use];
-        const provider = failedEndpoint.conn.includes("google") ? "Google" : "Microsoft";
+        const provider = failedEndpoint.conn.includes("google")
+          ? "Google"
+          : "Microsoft";
         throw new Error(
           `${provider} authentication expired. Please re-authenticate to continue.`,
         );
@@ -434,9 +493,12 @@ export async function executeWorkflowStep(stepName: string): Promise<{
       onLog,
     );
 
+    await setStoredVariables(updatedVariables);
+
     if (
       status.status === "completed" &&
-      Object.keys(updatedVariables).length > Object.keys(currentData.variables).length
+      Object.keys(updatedVariables).length >
+        Object.keys(currentData.variables).length
     ) {
       const newVars: Record<string, string> = {};
       for (const [key, value] of Object.entries(updatedVariables)) {

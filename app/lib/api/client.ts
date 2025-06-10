@@ -92,7 +92,7 @@ async function handleAuthenticatedRequest(
   if (isTokenExpired(token) && token.refreshToken && provider) {
     let refreshAttempts = 0;
 
-    while (refreshAttempts < WORKFLOW_CONSTANTS.MAX_FUNCTION_UPDATES - 2) {
+    while (refreshAttempts < WORKFLOW_CONSTANTS.MAX_REFRESH_ATTEMPTS) {
       try {
         onLog?.({
           timestamp: Date.now(),
@@ -114,7 +114,7 @@ async function handleAuthenticatedRequest(
           message: `Token refresh attempt ${refreshAttempts} failed for ${provider}`,
           data: error,
         });
-        if (refreshAttempts === WORKFLOW_CONSTANTS.MAX_FUNCTION_UPDATES - 2) {
+        if (refreshAttempts === WORKFLOW_CONSTANTS.MAX_REFRESH_ATTEMPTS) {
           throw new Error(
             `${PROVIDERS[provider.toUpperCase() as keyof typeof PROVIDERS]} authentication expired. Please re-authenticate.`
           );

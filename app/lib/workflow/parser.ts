@@ -1,9 +1,8 @@
+import workflow from "@/workflow.json";
 import { Action, ACTION_MODES, Workflow, WorkflowSchema } from "./types";
 
 export function parseWorkflow(): Workflow {
   try {
-    // eslint-disable-next-line @typescript-eslint/no-require-imports
-    const workflow = require("../../../workflow.json");
     const parsed = WorkflowSchema.parse(workflow);
 
     parsed.steps = parsed.steps.map((step) => {

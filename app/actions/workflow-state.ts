@@ -11,6 +11,7 @@ import { getToken, setToken } from "@/app/lib/auth/tokens";
 import { refreshAccessToken } from "@/app/lib/auth/oauth";
 import { Provider } from "@/app/lib/workflow/constants";
 import type { LogEntry } from "@/app/lib/workflow/types";
+import { timingSafeEqual } from "crypto";
 
 /**
  * Force refresh workflow state
@@ -35,7 +36,13 @@ export async function setWorkflowVariable(
     const workflow = parseWorkflow();
 
     // Check if variable exists in workflow
-    if (!Object.prototype.hasOwnProperty.call(workflow.variables, name)) {
+    const varNames = Object.keys(workflow.variables);
+    const nameBuffer = Buffer.from(name);
+    const isValid = varNames.some(varName => {
+      const varNameBuffer = Buffer.from(varName);
+      return nameBuffer.length === varNameBuffer.length && timingSafeEqual(nameBuffer, varNameBuffer);
+    });
+    if (!isValid) {
       return {
         success: false,
         error: `Variable '${name}' is not defined in the workflow`,

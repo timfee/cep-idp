@@ -4,16 +4,19 @@ import "client-only";
 import { executeWorkflowStep } from "@/app/actions/workflow-execution";
 import { markManualStepComplete } from "@/app/actions/workflow-state";
 import { cn } from "@/app/lib/utils";
-import { LogEntry, Step, StepStatus } from "@/app/lib/workflow";
+import {
+  LogEntry,
+  Step,
+  StepStatus,
+  substituteVariables,
+} from "@/app/lib/workflow";
 import {
   MIN_LOG_COUNT_FOR_PLURAL,
   STATUS_VALUES,
-  VARIABLE_KEYS,
   STEP_NAMES,
   VARIABLE_DISPLAY_MAX_LENGTH,
+  VARIABLE_KEYS,
 } from "@/app/lib/workflow/constants";
-import { substituteVariables } from "@/app/lib/workflow";
-import { PasswordDisplay } from "./password-display";
 import {
   AlertTriangle,
   CheckCircle,
@@ -28,10 +31,11 @@ import {
   AccordionItem,
   AccordionTrigger,
 } from "../ui/accordion";
+import { Alert, AlertDescription } from "../ui/alert";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
-import { Alert, AlertDescription } from "../ui/alert";
+import { PasswordDisplay } from "./password-display";
 
 const JSON_INDENT = 2;
 
@@ -53,7 +57,10 @@ type StepCardAction =
   | { type: "EXECUTE_SUCCESS" }
   | { type: "EXECUTE_FAILURE"; error: string };
 
-function stepCardReducer(state: StepCardState, action: StepCardAction): StepCardState {
+function stepCardReducer(
+  state: StepCardState,
+  action: StepCardAction
+): StepCardState {
   switch (action.type) {
     case "EXECUTE_START":
       return { isExecuting: true };
@@ -87,7 +94,10 @@ export function StepCard({
       const result = await executeWorkflowStep(stepName);
       if (result.status && result.status.status !== STATUS_VALUES.FAILED) {
         dispatch({ type: "EXECUTE_SUCCESS" });
-      } else if (result.status && result.status.status === STATUS_VALUES.FAILED) {
+      } else if (
+        result.status &&
+        result.status.status === STATUS_VALUES.FAILED
+      ) {
         dispatch({ type: "EXECUTE_FAILURE", error: result.status.error || "" });
       } else if (result.error) {
         dispatch({ type: "EXECUTE_FAILURE", error: result.error });
@@ -153,10 +163,12 @@ export function StepCard({
                             if (rawValue) {
                               const substituted = substituteVariables(
                                 rawValue,
-                                variables,
+                                variables
                               );
                               display = `${input}: ${substituted.substring(0, VARIABLE_DISPLAY_MAX_LENGTH)}${
-                                substituted.length > VARIABLE_DISPLAY_MAX_LENGTH ? "..." : ""
+                                substituted.length > VARIABLE_DISPLAY_MAX_LENGTH
+                                  ? "..."
+                                  : ""
                               }`;
                             }
 
@@ -168,7 +180,7 @@ export function StepCard({
                                   "text-xs font-mono",
                                   rawValue
                                     ? "bg-blue-100 text-blue-700 dark:bg-blue-900/30 dark:text-blue-300"
-                                    : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400",
+                                    : "bg-gray-100 text-gray-600 dark:bg-gray-800 dark:text-gray-400"
                                 )}
                               >
                                 {display}
@@ -224,14 +236,15 @@ export function StepCard({
                     </Button>
                   )}
 
-                {step.manual && effectiveStatus.status === STATUS_VALUES.PENDING && (
-                  <Button
-                    onClick={() => markManualStepComplete(step.name)}
-                    variant="outline"
-                  >
-                    Mark as Complete
-                  </Button>
-                )}
+                {step.manual &&
+                  effectiveStatus.status === STATUS_VALUES.PENDING && (
+                    <Button
+                      onClick={() => markManualStepComplete(step.name)}
+                      variant="outline"
+                    >
+                      Mark as Complete
+                    </Button>
+                  )}
 
                 {effectiveStatus.status === STATUS_VALUES.FAILED && (
                   <Button
@@ -249,17 +262,21 @@ export function StepCard({
               </div>
             </div>
 
-            {!isAuthValid && step.role && effectiveStatus.status === STATUS_VALUES.PENDING && (
-              <Alert variant="destructive" className="mt-3">
-                <AlertTriangle className="h-4 w-4" />
-                <AlertDescription>
-                  Authentication required. Please re-authenticate with{' '}
-                  {step.role.startsWith('graph') ? 'Microsoft' : 'Google'} to continue.
-                </AlertDescription>
-              </Alert>
-            )}
+            {!isAuthValid &&
+              step.role &&
+              effectiveStatus.status === STATUS_VALUES.PENDING && (
+                <Alert variant="destructive" className="mt-3">
+                  <AlertTriangle className="h-4 w-4" />
+                  <AlertDescription>
+                    Authentication required. Please re-authenticate with{" "}
+                    {step.role.startsWith("graph") ? "Microsoft" : "Google"} to
+                    continue.
+                  </AlertDescription>
+                </Alert>
+              )}
 
-            {(effectiveStatus.error || effectiveStatus.status === STATUS_VALUES.FAILED) && (
+            {(effectiveStatus.error ||
+              effectiveStatus.status === STATUS_VALUES.FAILED) && (
               <div className="mt-3 p-4 bg-red-100 dark:bg-red-900/30 rounded-lg border border-red-200 dark:border-red-800">
                 <div className="flex gap-3">
                   <AlertTriangle className="h-5 w-5 text-red-600 dark:text-red-400 shrink-0 mt-0.5" />
@@ -299,7 +316,7 @@ export function StepCard({
                   "text-sm",
                   effectiveStatus.status === STATUS_VALUES.FAILED
                     ? "text-red-600 dark:text-red-400 font-medium"
-                    : "text-zinc-500 dark:text-zinc-400",
+                    : "text-zinc-500 dark:text-zinc-400"
                 )}
               >
                 {(() => {
@@ -351,7 +368,7 @@ export function StepCard({
                           log.level === "error" &&
                             "text-red-600 dark:text-red-400",
                           log.level === "warn" &&
-                            "text-amber-600 dark:text-amber-400",
+                            "text-amber-600 dark:text-amber-400"
                         )}
                       >
                         {log.data &&
@@ -406,11 +423,15 @@ export function StepCard({
                                           const responseData =
                                             log.data.response;
                                           const fullUrl = log.data.fullUrl;
-                                            return `// ${fullUrl}\nexport default ${JSON.stringify(responseData, null, JSON_INDENT)};`;
+                                          return `// ${fullUrl}\nexport default ${JSON.stringify(responseData, null, JSON_INDENT)};`;
                                         }
                                         return typeof log.data === "string"
                                           ? log.data
-                                            : JSON.stringify(log.data, null, JSON_INDENT);
+                                          : JSON.stringify(
+                                              log.data,
+                                              null,
+                                              JSON_INDENT
+                                            );
                                       })()}
                                     </code>
                                   </pre>

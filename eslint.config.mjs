@@ -1,5 +1,4 @@
 import { FlatCompat } from "@eslint/eslintrc";
-import security from "eslint-plugin-security";
 import sonar from "eslint-plugin-sonarjs";
 import tsdoc from "eslint-plugin-tsdoc";
 import { dirname } from "path";
@@ -33,7 +32,6 @@ const eslintConfig = [
     "next/typescript",
     "plugin:promise/recommended"
   ),
-  security.configs.recommended,
   sonar.configs.recommended,
   {
     plugins: {
@@ -41,7 +39,6 @@ const eslintConfig = [
     },
     rules: {
       "tsdoc/syntax": "warn",
-      "security/detect-object-injection": "off",
       // eslint-disable-next-line no-magic-numbers
       "sonarjs/cognitive-complexity": ["warn", 20],
       "no-magic-numbers": ["warn", { ignore: [-1, 0, 1] }],

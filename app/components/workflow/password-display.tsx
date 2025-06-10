@@ -1,11 +1,11 @@
 "use client";
 import "client-only";
 
+import { COPY_FEEDBACK_DURATION_MS } from "@/app/lib/workflow/constants";
+import { Copy, Eye, EyeOff, ShieldAlert } from "lucide-react";
 import { useState } from "react";
 import { Alert, AlertDescription, AlertTitle } from "../ui/alert";
 import { Button } from "../ui/button";
-import { COPY_FEEDBACK_DURATION_MS } from "@/app/lib/workflow/constants";
-import { Copy, Eye, EyeOff, ShieldAlert } from "lucide-react";
 
 interface PasswordDisplayProps {
   password: string;

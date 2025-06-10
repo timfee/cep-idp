@@ -1,20 +1,20 @@
 "use client";
 import "client-only";
 
-import { useState } from "react";
-import { Card } from "../ui/card";
-import { Badge } from "../ui/badge";
+import { cn, hasOwnProperty } from "@/app/lib/utils";
 import {
+  AlertCircle,
+  CheckCircle,
   ChevronDownIcon,
   ChevronUpIcon,
-  CheckCircle,
-  AlertCircle,
-  Key,
   Database,
-  Sparkles,
   FileText,
+  Key,
+  Sparkles,
 } from "lucide-react";
-import { cn, hasOwnProperty } from "@/app/lib/utils";
+import { useState } from "react";
+import { Badge } from "../ui/badge";
+import { Card } from "../ui/card";
 
 interface VariableViewerProps {
   variables: Record<string, string>;
@@ -155,7 +155,7 @@ export function VariableViewer({
                             source === "default" &&
                               "border-blue-200 text-blue-700 dark:border-blue-800 dark:text-blue-300",
                             source === "extracted" &&
-                              "border-green-200 text-green-700 dark:border-green-800 dark:text-green-300",
+                              "border-green-200 text-green-700 dark:border-green-800 dark:text-green-300"
                           )}
                         >
                           {source}

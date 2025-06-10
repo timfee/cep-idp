@@ -1,10 +1,9 @@
-import { getWorkflowData } from "./actions/workflow-data";
-import { AuthStatus } from "./components/workflow/auth-status";
-import { WorkflowSteps } from "./components/workflow/workflow-steps";
-import { VariableViewer } from "./components/workflow/variable-viewer";
-import { DebugTools } from "./components/workflow/debug-tools";
-import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
 import { PROVIDERS, ROLE_PREFIXES } from "@/app/lib/workflow/constants";
+import { getWorkflowData } from "./actions/workflow-data";
+import { Alert, AlertDescription, AlertTitle } from "./components/ui/alert";
+import { AuthStatus } from "./components/workflow/auth-status";
+import { VariableViewer } from "./components/workflow/variable-viewer";
+import { WorkflowSteps } from "./components/workflow/workflow-steps";
 
 export const dynamic = "force-dynamic";
 
@@ -29,10 +28,10 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
             (step) =>
               step.role &&
               (step.role.startsWith(ROLE_PREFIXES.GOOGLE_DIR) ||
-                step.role.startsWith(ROLE_PREFIXES.GOOGLE_CI)),
+                step.role.startsWith(ROLE_PREFIXES.GOOGLE_CI))
           )
-          .flatMap((step) => workflow.roles[step.role!] || []),
-      ),
+          .flatMap((step) => workflow.roles[step.role!] || [])
+      )
     );
 
     const allRequiredMicrosoftScopes = Array.from(
@@ -41,8 +40,8 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
           .filter(
             (step) => step.role && step.role.startsWith(ROLE_PREFIXES.MICROSOFT)
           )
-          .flatMap((step) => workflow.roles[step.role!] || []),
-      ),
+          .flatMap((step) => workflow.roles[step.role!] || [])
+      )
     );
 
     return (
@@ -62,8 +61,6 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
               </AlertDescription>
             </Alert>
           )}
-
-          <DebugTools />
 
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
             {/* Main content */}

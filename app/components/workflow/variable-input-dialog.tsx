@@ -1,7 +1,12 @@
 "use client";
 import "client-only";
 
+import { setWorkflowVariable } from "@/app/actions/workflow-state";
+import { validateVariable } from "@/app/lib/workflow";
+import { Loader2 } from "lucide-react";
 import { useState } from "react";
+import { Alert, AlertDescription } from "../ui/alert";
+import { Button } from "../ui/button";
 import {
   Dialog,
   DialogContent,
@@ -10,13 +15,8 @@ import {
   DialogHeader,
   DialogTitle,
 } from "../ui/dialog";
-import { Button } from "../ui/button";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
-import { Alert, AlertDescription } from "../ui/alert";
-import { setWorkflowVariable } from "@/app/actions/workflow-state";
-import { validateVariable } from "@/app/lib/workflow";
-import { Loader2 } from "lucide-react";
 
 interface VariableInputDialogProps {
   variableName: string;

@@ -1,11 +1,11 @@
 "use client";
 import "client-only";
 
+import { isTokenExpired } from "@/app/lib/auth/oauth-client";
+import type { Step, StepStatus, Workflow } from "@/app/lib/workflow";
+import { ROLE_PREFIXES, STATUS_VALUES } from "@/app/lib/workflow/constants";
 import React from "react";
 import { StepCard } from "./step-card";
-import type { Workflow, Step, StepStatus } from "@/app/lib/workflow";
-import { isTokenExpired } from "@/app/lib/auth/oauth-client";
-import { STATUS_VALUES, ROLE_PREFIXES } from "@/app/lib/workflow/constants";
 
 interface WorkflowStepsProps {
   workflow: Workflow;
@@ -29,9 +29,9 @@ export function WorkflowSteps({
       .filter(
         ([, status]) =>
           status.status === STATUS_VALUES.COMPLETED ||
-          status.status === STATUS_VALUES.SKIPPED,
+          status.status === STATUS_VALUES.SKIPPED
       )
-      .map(([name]) => name),
+      .map(([name]) => name)
   );
 
   // Helper to get required scopes for a step
@@ -61,7 +61,7 @@ export function WorkflowSteps({
       return (
         notExpired &&
         requiredScopes.every((scope: string) =>
-          authStatus.google.scopes.includes(scope),
+          authStatus.google.scopes.includes(scope)
         )
       );
     } else if (isMicrosoftStep && authStatus.microsoft.authenticated) {
@@ -75,7 +75,7 @@ export function WorkflowSteps({
       return (
         notExpired &&
         requiredScopes.every((scope: string) =>
-          authStatus.microsoft.scopes.includes(scope),
+          authStatus.microsoft.scopes.includes(scope)
         )
       );
     }

@@ -4,7 +4,7 @@ import "client-only";
 import React from "react";
 import { StepCard } from "./step-card";
 import type { Workflow, Step, StepStatus } from "@/app/lib/workflow";
-import { isTokenExpired } from "@/app/lib/auth/oauth";
+import { isTokenExpired } from "@/app/lib/auth/oauth-client";
 import { STATUS_VALUES, ROLE_PREFIXES } from "@/app/lib/workflow/constants";
 
 interface WorkflowStepsProps {

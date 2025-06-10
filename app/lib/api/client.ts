@@ -1,4 +1,5 @@
-import { isTokenExpired, refreshAccessToken } from "../auth/oauth";
+import { isTokenExpired } from "../auth/oauth-client";
+import { refreshAccessToken } from "../auth/oauth-server";
 import { setToken } from "../auth/tokens";
 import { substituteVariables, substituteObject, Token } from "../workflow";
 import { WORKFLOW_CONSTANTS, PROVIDERS, Provider } from "../workflow/constants";

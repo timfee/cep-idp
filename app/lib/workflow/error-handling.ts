@@ -1,3 +1,10 @@
+/**
+ * Run a promise-returning function and capture any thrown error.
+ *
+ * @param fn - Asynchronous function to execute
+ * @param errorMessage - Message logged when an error occurs
+ * @returns Wrapped result indicating success or failure
+ */
 export async function safeAsync<T>(
   fn: () => Promise<T>,
   errorMessage: string

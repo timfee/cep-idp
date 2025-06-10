@@ -1,3 +1,4 @@
+/** Human readable names for each workflow step. */
 export const STEP_NAMES = {
   VERIFY_PRIMARY_DOMAIN: "Verify Primary Domain",
   CREATE_AUTOMATION_OU: "Create Automation Organizational Unit",
@@ -18,11 +19,11 @@ export const STEP_NAMES = {
   TEST_SSO: "Test SSO Configuration",
 } as const;
 
-// Provider constants
+/** OAuth providers supported by the workflow. */
 export const PROVIDERS = { GOOGLE: "google", MICROSOFT: "microsoft" } as const;
 export type Provider = (typeof PROVIDERS)[keyof typeof PROVIDERS];
 
-// Status values
+/** Possible run states for a workflow step. */
 export const STATUS_VALUES = {
   PENDING: "pending",
   RUNNING: "running",
@@ -31,11 +32,22 @@ export const STATUS_VALUES = {
   SKIPPED: "skipped",
 } as const;
 
-// Role prefix helpers
+/**
+ * Determine if a role belongs to the Google API group.
+ *
+ * @param role - Role identifier from workflow
+ * @returns True when role targets Google APIs
+ */
 export function isGoogleRole(role: string): boolean {
   return role.startsWith("dir") || role.startsWith("ci");
 }
 
+/**
+ * Determine if a role targets Microsoft Graph APIs.
+ *
+ * @param role - Role identifier from workflow
+ * @returns True when role targets Microsoft Graph
+ */
 export function isMicrosoftRole(role: string): boolean {
   return role.startsWith("graph");
 }
@@ -69,7 +81,6 @@ export const COOKIE_METADATA_SIZES = {
 } as const;
 
 export const WORKFLOW_CONSTANTS = {
-  // Time constants (replacing magic numbers)
   MAX_REFRESH_ATTEMPTS: 2,
   OAUTH_STATE_TTL_MS:
     DAYS_IN_MONTH
@@ -77,40 +88,33 @@ export const WORKFLOW_CONSTANTS = {
     * MINUTES_IN_HOUR
     * SECONDS_IN_MINUTE
     * MS_IN_SECOND,
-  TOKEN_REFRESH_BUFFER_MS: 300000, // 5 minutes
+  /** Five minutes */
+  TOKEN_REFRESH_BUFFER_MS: 300000,
   TOKEN_COOKIE_MAX_AGE:
-    DAYS_IN_MONTH * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE, // 30 days
-
-  // HTTP Status codes
+    DAYS_IN_MONTH * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE,
+  /** HTTP Status codes used when calling APIs */
   HTTP_STATUS: { UNAUTHORIZED: 401, NOT_FOUND: 404 },
 
   MAX_FUNCTION_UPDATES: 4,
 
-  // UI Constants
   ANIMATION_DURATION_MS: 2000,
   DEBOUNCE_DELAY_MS: 300,
 
-  // String processing
   MIN_PASSWORD_LENGTH: 16,
   JSONPATH_SINGLE_RESULT: 1,
   STRING_SPLIT_PAIR: 2,
 
-  // Iteration limits
   MAX_WORKFLOW_ITERATIONS: 2,
 
-  // Size constants
   MAX_COOKIE_SIZE: 3800,
 
-  // Cookie names and TTL
   VARIABLES_COOKIE_NAME: "workflow_vars",
   VARIABLES_COOKIE_MAX_AGE:
     DAYS_IN_MONTH * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE,
 
-  // API constants
-  SYNC_INTERVAL: "PT40M", // 40 minutes in ISO 8601
+  SYNC_INTERVAL: "PT40M",
   PROVISIONING_BASE_URL: "https://admin.googleapis.com/admin/directory/v1",
 
-  // Special markers
   PASSWORD_EXTRACTION_KEY: "_generated_password_displayed",
 };
 
@@ -122,7 +126,6 @@ export const VARIABLE_KEYS = {
   PRIMARY_DOMAIN: "primaryDomain",
 } as const;
 
-// HTTP Constants
 export const HTTP_METHODS = {
   GET: "GET",
   POST: "POST",
@@ -139,7 +142,6 @@ export const HTTP_METHODS_WITH_BODY = [
   HTTP_METHODS.PUT,
 ] as const;
 
-// Provider detection
 export const ROLE_PREFIXES = {
   GOOGLE_DIR: "dir",
   GOOGLE_CI: "ci",
@@ -159,6 +161,7 @@ export const LOG_LEVELS = {
 } as const;
 export type LogLevel = (typeof LOG_LEVELS)[keyof typeof LOG_LEVELS];
 
+/** Common time constants used throughout the workflow. */
 export const TIME = {
   MS_IN_SECOND: 1000,
   SECONDS_IN_MINUTE: 60,
@@ -168,6 +171,7 @@ export const TIME = {
   TOKEN_EXPIRING_SOON_MINUTES: 30,
 } as const;
 
+/** Keys used when encoding metadata for chunked cookies. */
 export const COOKIE_METADATA_KEYS = {
   CHUNKED: "chunked",
   COUNT: "count",

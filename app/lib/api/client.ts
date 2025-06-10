@@ -17,6 +17,13 @@ import {
 } from "../workflow/constants";
 import { ApiRequestOptions } from "./types";
 
+/**
+ * Resolve which OAuth token should be used for a given endpoint.
+ *
+ * @param endpoint - Endpoint being invoked
+ * @param tokens - Available OAuth tokens
+ * @returns Selected token and its provider, if any
+ */
 function getTokenForConnection(
   endpoint: Endpoint,
   tokens: { google?: Token; microsoft?: Token },
@@ -37,6 +44,14 @@ function getTokenForConnection(
   return { token, provider };
 }
 
+/**
+ * Refresh an OAuth token when nearing expiry.
+ *
+ * @param token - Current token to check
+ * @param provider - Provider associated with the token
+ * @param onLog - Optional log handler
+ * @returns The refreshed or original token
+ */
 async function refreshTokenIfNeeded(
   token: Token,
   provider: Provider,
@@ -78,6 +93,15 @@ async function refreshTokenIfNeeded(
   return token;
 }
 
+/**
+ * Assemble headers and body for an authenticated request.
+ *
+ * @param connection - Connection details containing auth template
+ * @param endpoint - Endpoint information
+ * @param token - Token used for the request
+ * @param body - Optional request payload
+ * @returns Fully formed fetch options
+ */
 function buildAuthenticatedRequest(
   connection: { auth: string },
   endpoint: Endpoint,
@@ -104,6 +128,12 @@ function buildAuthenticatedRequest(
   return requestOptions;
 }
 
+/**
+ * Execute a request against an unauthenticated endpoint.
+ *
+ * @param options - Request configuration
+ * @returns API response data and any captured variables
+ */
 async function handlePublicRequest(
   options: ApiRequestOptions
 ): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
@@ -148,6 +178,12 @@ async function handlePublicRequest(
   return { data: await response.json(), capturedValues };
 }
 
+/**
+ * Perform an authenticated API request using the appropriate token.
+ *
+ * @param options - Request configuration including tokens
+ * @returns API response data and any captured variables
+ */
 async function handleAuthenticatedRequest(
   options: ApiRequestOptions
 ): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
@@ -229,6 +265,13 @@ async function handleAuthenticatedRequest(
   return { data: await response.text(), capturedValues };
 }
 
+/**
+ * Dispatch a workflow API request, falling back to unauthenticated mode if
+ * the selected connection does not require authentication.
+ *
+ * @param options - Request configuration
+ * @returns API response payload and captured variables
+ */
 export async function apiRequest(
   options: ApiRequestOptions
 ): Promise<{ data: unknown; capturedValues: Record<string, string> }> {

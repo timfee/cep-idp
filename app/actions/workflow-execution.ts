@@ -34,6 +34,9 @@ import { setStoredVariables } from "@/app/lib/workflow/variables-store";
 import { revalidatePath } from "next/cache";
 import { getWorkflowData } from "./workflow-data";
 
+/**
+ * Pull values out of an API response according to action configuration.
+ */
 function applyExtracts(
   action: Action,
   response: unknown,
@@ -78,6 +81,7 @@ function applyExtracts(
   }
 }
 
+/** Determine if a step failed to produce required outputs. */
 function areOutputsMissing(
   step: Step,
   extracted: Record<string, string>
@@ -85,6 +89,7 @@ function areOutputsMissing(
   return !!step.outputs && step.outputs.some((o) => !extracted[o]);
 }
 
+/** Ensure that an action can run given its endpoint and variables. */
 function validateActionPrerequisites(
   action: Action,
   endpoint: Endpoint | undefined,
@@ -114,6 +119,7 @@ function validateActionPrerequisites(
   return { isValid: true };
 }
 
+/** Build and substitute an action payload object. */
 function prepareActionPayload(
   action: Action,
   variables: Record<string, string>
@@ -129,6 +135,9 @@ function prepareActionPayload(
   return { payload, capturedValues };
 }
 
+/**
+ * Process the result of an API call and extract variables.
+ */
 async function processActionResponse(
   action: Action,
   response: unknown,
@@ -172,7 +181,7 @@ async function processActionResponse(
 import { assertNever, parseApiError } from "@/app/lib/workflow/error-types";
 
 /**
- * Run actions for a step (simplified approach)
+ * Execute the sequence of actions defined for a single step.
  */
 async function handleActionExecution(
   action: Action,
@@ -278,6 +287,9 @@ async function handleActionExecution(
   return { success: true, extractedVariables, data: response };
 }
 
+/**
+ * Execute a workflow step and collect status information.
+ */
 async function processStepExecution(
   step: Step,
   variables: Record<string, string>,
@@ -498,10 +510,7 @@ export async function runStepActions(
 }
 
 /**
- * Execute a workflow step
- */
-/**
- * Execute a single step of the workflow.
+ * Execute a named workflow step and persist any resulting variables.
  *
  * @param stepName - Name of the step to execute
  * @returns Result status and updated variables
@@ -590,7 +599,7 @@ export async function executeWorkflowStep(
  * Skip a workflow step
  */
 /**
- * Mark the current step as skipped.
+ * Mark the current workflow step as skipped without performing any actions.
  *
  * @returns Whether the skip succeeded
  */

@@ -7,6 +7,9 @@ import { estimateCookieSize, splitIntoChunks } from "./utils";
 const CHUNK_DELIMITER = ".chunk.";
 const MAX_COOKIE_SIZE = WORKFLOW_CONSTANTS.MAX_COOKIE_SIZE;
 
+/**
+ * Options used when creating or manipulating cookies.
+ */
 export interface CookieOptions {
   httpOnly?: boolean;
   secure?: boolean;
@@ -16,6 +19,15 @@ export interface CookieOptions {
   domain?: string;
 }
 
+/**
+ * Store a potentially large cookie by splitting it into multiple chunks.
+ *
+ * @param name - Cookie name
+ * @param value - Cookie value to store
+ * @param options - Standard cookie options
+ * @param onLog - Optional log handler
+ * @returns Success status and optional error message
+ */
 export async function setChunkedCookie(
   name: string,
   value: string,
@@ -93,6 +105,13 @@ export async function setChunkedCookie(
   }
 }
 
+/**
+ * Retrieve and reassemble a chunked cookie value.
+ *
+ * @param name - Cookie name
+ * @param onLog - Optional log handler
+ * @returns The reconstructed value or `null`
+ */
 export async function getChunkedCookie(
   name: string,
   onLog?: (entry: LogEntry) => void
@@ -138,6 +157,12 @@ export async function getChunkedCookie(
   return mainCookie.value;
 }
 
+/**
+ * Remove a previously stored chunked cookie.
+ *
+ * @param name - Cookie name
+ * @param onLog - Optional log handler
+ */
 export async function clearChunkedCookie(
   name: string,
   onLog?: (entry: LogEntry) => void
@@ -172,6 +197,15 @@ export async function clearChunkedCookie(
   }
 }
 
+/**
+ * Attach chunked cookie headers to an outgoing response.
+ *
+ * @param response - HTTP response to modify
+ * @param name - Cookie name
+ * @param value - Cookie value
+ * @param options - Cookie options applied to each chunk
+ * @param onLog - Optional log handler
+ */
 export function setChunkedCookieOnResponse(
   response: Response,
   name: string,

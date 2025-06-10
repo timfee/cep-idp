@@ -24,6 +24,13 @@ const COOKIE_OPTIONS: CookieOptions = {
   path: "/",
 };
 
+/**
+ * Retrieve an OAuth token from cookies and decrypt it.
+ *
+ * @param provider - Token owner (google or microsoft)
+ * @param onLog - Optional log callback
+ * @returns Decrypted token or null
+ */
 export async function getToken(
   provider: Provider,
   onLog?: (entry: LogEntry) => void
@@ -63,6 +70,13 @@ export async function getToken(
   }
 }
 
+/**
+ * Persist an OAuth token in chunked cookie form.
+ *
+ * @param provider - Token owner
+ * @param token - Token data to store
+ * @param onLog - Optional log callback
+ */
 export async function setToken(
   provider: Provider,
   token: Token,
@@ -104,6 +118,11 @@ export async function setToken(
   }
 }
 
+/**
+ * Remove all cookie fragments for a stored token.
+ *
+ * @param provider - Token owner
+ */
 export async function deleteToken(provider: Provider): Promise<void> {
   const cookieName = `${provider}_token`;
   // Use chunked cookie clearer to remove all chunks
@@ -111,6 +130,12 @@ export async function deleteToken(provider: Provider): Promise<void> {
 }
 
 // OAuth state management for CSRF protection
+/**
+ * Store the OAuth `state` value used for CSRF protection.
+ *
+ * @param state - Random state value
+ * @param provider - Provider string to scope state
+ */
 export async function setOAuthState(
   state: string,
   provider: string
@@ -124,6 +149,13 @@ export async function setOAuthState(
   });
 }
 
+/**
+ * Validate that the OAuth state cookie matches the provided value.
+ *
+ * @param state - Received state value
+ * @param provider - Provider string to check against
+ * @returns Whether the cookie matches and is within TTL
+ */
 export async function validateOAuthState(
   state: string,
   provider: string

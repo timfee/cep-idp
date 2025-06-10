@@ -48,12 +48,26 @@ export const microsoftOAuthConfig: OAuthConfig = {
   ],
 };
 
+/**
+ * Retrieve the OAuth configuration for the given provider.
+ *
+ * @param provider - Identity provider key
+ * @returns OAuth endpoints and scopes
+ */
 export function getOAuthConfig(provider: Provider): OAuthConfig {
   return provider === PROVIDERS.GOOGLE ?
       googleOAuthConfig
     : microsoftOAuthConfig;
 }
 
+/**
+ * Build the provider-specific authorization URL.
+ *
+ * @param provider - Identity provider
+ * @param state - OAuth state string
+ * @param baseUrl - Application base URL
+ * @returns URL to redirect the user to
+ */
 export function generateAuthUrl(
   provider: Provider,
   state: string,
@@ -77,6 +91,14 @@ export function generateAuthUrl(
   return `${config.authorizationUrl}?${params.toString()}`;
 }
 
+/**
+ * Exchange an authorization code for an access token.
+ *
+ * @param provider - Identity provider
+ * @param code - Authorization code from callback
+ * @param baseUrl - Application base URL
+ * @returns Newly minted access token
+ */
 export async function exchangeCodeForToken(
   provider: Provider,
   code: string,
@@ -115,6 +137,13 @@ export async function exchangeCodeForToken(
   };
 }
 
+/**
+ * Refresh an existing access token using a stored refresh token.
+ *
+ * @param provider - Identity provider
+ * @param refreshToken - Previously issued refresh token
+ * @returns Updated access token
+ */
 export async function refreshAccessToken(
   provider: Provider,
   refreshToken: string

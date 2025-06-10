@@ -1,5 +1,8 @@
 import { Connection, Endpoint, LogEntry, Token } from "../workflow";
 
+/**
+ * Options describing how a workflow API request should be executed.
+ */
 export interface ApiRequestOptions {
   endpoint: Endpoint;
   connections: Record<string, Connection>;

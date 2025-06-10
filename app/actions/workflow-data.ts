@@ -28,6 +28,7 @@ import {
 import { runStepActions } from "./workflow-execution";
 import { refreshWorkflowState } from "./workflow-state";
 
+/** Basic authentication status for both providers. */
 export interface AuthState {
   google: {
     authenticated: boolean;
@@ -43,6 +44,9 @@ export interface AuthState {
   };
 }
 
+/**
+ * Full snapshot of workflow state used by the UI layer.
+ */
 export interface WorkflowData {
   workflow: Workflow;
   variables: Record<string, string>;
@@ -50,6 +54,12 @@ export interface WorkflowData {
   auth: AuthState;
 }
 
+/**
+ * Populate variables using defaults or generators from the workflow file.
+ *
+ * @param workflow - Parsed workflow definition
+ * @returns Initial variable map
+ */
 async function initializeVariables(
   workflow: Workflow
 ): Promise<Record<string, string>> {
@@ -69,6 +79,13 @@ async function initializeVariables(
   return vars;
 }
 
+/**
+ * Attempt to read the Azure tenant ID from the Microsoft token.
+ *
+ * @param microsoftToken - Token issued by Azure
+ * @param onLog - Optional log handler
+ * @returns Tenant ID or `null`
+ */
 function extractTenantId(
   microsoftToken?: Token | null,
   onLog?: (entry: LogEntry) => void
@@ -91,6 +108,14 @@ function extractTenantId(
   return null;
 }
 
+/**
+ * Re-run verify actions to rebuild step status and derived variables.
+ *
+ * @param workflow - Workflow definition
+ * @param variables - Current variable values
+ * @param tokens - Authentication tokens
+ * @returns Map of step statuses and updated variables
+ */
 async function reconstituteStepStatuses(
   workflow: Workflow,
   variables: Record<string, string>,
@@ -214,6 +239,12 @@ async function reconstituteStepStatuses(
 /**
  * Get complete workflow data by reconstructing state from verification checks
  */
+/**
+ * Load and verify the workflow configuration, returning a hydrated view.
+ *
+ * @param forceRefresh - When true, forces state revalidation
+ * @returns Complete workflow data for the UI
+ */
 export async function getWorkflowData(
   forceRefresh = false
 ): Promise<WorkflowData> {
@@ -283,7 +314,9 @@ export async function getWorkflowData(
 }
 
 /**
- * Get authentication status
+ * Return minimal authentication status for both providers.
+ *
+ * @returns Current auth state for Google and Microsoft
  */
 export async function getAuthStatus(): Promise<AuthState> {
   const googleToken = await getToken(PROVIDERS.GOOGLE);
@@ -307,6 +340,11 @@ export async function getAuthStatus(): Promise<AuthState> {
 
 /**
  * Get available variables and their definitions
+ */
+/**
+ * Collect all workflow variables along with whether each is required.
+ *
+ * @returns Map of variable names to current value and definition
  */
 export async function getWorkflowVariables(): Promise<{
   variables: Record<

@@ -1,7 +1,14 @@
 import { VALIDATION_PATTERNS } from "./constants";
 
+/** Generic validator function signature. */
 type ValidatorFunction = (val: string) => boolean;
 
+/**
+ * Very small domain validation helper used by workflow variables.
+ *
+ * @param value - Domain string to validate
+ * @returns Whether the domain resembles a valid DNS name
+ */
 function isValidDomain(value: string): boolean {
   if (!value.includes(".")) return false;
   const parts = value.split(".");
@@ -16,6 +23,13 @@ const VALIDATOR_FUNCTIONS: Record<string, ValidatorFunction> = {
   [VALIDATION_PATTERNS.DOMAIN.source]: isValidDomain,
 };
 
+/**
+ * Validate a variable value against a named pattern.
+ *
+ * @param value - Input string from the user
+ * @param validator - Name of validator pattern
+ * @returns True when the value satisfies the validator
+ */
 export function validateVariable(value: string, validator?: string): boolean {
   if (!validator) return true;
   const fn = VALIDATOR_FUNCTIONS[validator];

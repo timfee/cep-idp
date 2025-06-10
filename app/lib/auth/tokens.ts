@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { Token, WORKFLOW_CONSTANTS, MS_IN_SECOND } from "../workflow";
+import { Token, WORKFLOW_CONSTANTS, MS_IN_SECOND, LogEntry, Provider } from "../workflow";
 import {
   clearChunkedCookie,
   CookieOptions,
@@ -17,15 +17,15 @@ const COOKIE_OPTIONS: CookieOptions = {
 };
 
 export async function getToken(
-  provider: "google" | "microsoft",
+  provider: Provider,
+  onLog?: (entry: LogEntry) => void,
 ): Promise<Token | null> {
   const cookieName = `${provider}_token`;
-  console.log(
-    `[getToken] NODE_ENV:`,
-    process.env.NODE_ENV,
-    "COOKIE_OPTIONS.secure:",
-    COOKIE_OPTIONS.secure,
-  );
+  onLog?.({
+    timestamp: Date.now(),
+    level: "info",
+    message: `[getToken] NODE_ENV: ${process.env.NODE_ENV}`,
+  });
 
   // Use chunked cookie getter to handle large tokens
   const encryptedValue = await getChunkedCookie(cookieName);
@@ -45,29 +45,38 @@ export async function getToken(
 
     return token;
   } catch (error) {
-    console.error(`Failed to decrypt ${provider} token:`, error);
+    onLog?.({
+      timestamp: Date.now(),
+      level: "error",
+      message: `Failed to decrypt ${provider} token`,
+      data: error,
+    });
     return null;
   }
 }
 
 export async function setToken(
-  provider: "google" | "microsoft",
+  provider: Provider,
   token: Token,
+  onLog?: (entry: LogEntry) => void,
 ): Promise<void> {
   const cookieName = `${provider}_token`;
   const encrypted = encrypt(JSON.stringify(token));
-  console.log(
-    `[setToken] NODE_ENV:`,
-    process.env.NODE_ENV,
-    "COOKIE_OPTIONS.secure:",
-    COOKIE_OPTIONS.secure,
-  );
-  console.log(
-    `[setToken] Setting token for provider: ${provider}, cookie: ${cookieName}`,
-  );
-  console.log(
-    `[setToken] Encrypted value size for ${provider}: ${encrypted.length} bytes`,
-  );
+  onLog?.({
+    timestamp: Date.now(),
+    level: "info",
+    message: `[setToken] NODE_ENV: ${process.env.NODE_ENV}`,
+  });
+  onLog?.({
+    timestamp: Date.now(),
+    level: "info",
+    message: `[setToken] Setting token for provider: ${provider}, cookie: ${cookieName}`,
+  });
+  onLog?.({
+    timestamp: Date.now(),
+    level: "info",
+    message: `[setToken] Encrypted value size for ${provider}: ${encrypted.length} bytes`,
+  });
 
   try {
     // Use chunked cookie setter to handle large tokens
@@ -76,12 +85,17 @@ export async function setToken(
       maxAge: WORKFLOW_CONSTANTS.TOKEN_COOKIE_MAX_AGE,
     });
   } catch (err) {
-    console.error(`[setToken] Failed to set cookie for ${provider}:`, err);
+    onLog?.({
+      timestamp: Date.now(),
+      level: "error",
+      message: `[setToken] Failed to set cookie for ${provider}`,
+      data: err,
+    });
   }
 }
 
 export async function deleteToken(
-  provider: "google" | "microsoft",
+  provider: Provider,
 ): Promise<void> {
   const cookieName = `${provider}_token`;
   // Use chunked cookie clearer to remove all chunks

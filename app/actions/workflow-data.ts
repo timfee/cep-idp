@@ -12,7 +12,7 @@ import {
   Workflow,
   Token,
 } from "@/app/lib/workflow";
-import { JWT_PART_COUNT } from "@/app/lib/workflow/constants";
+import { JWT_PART_COUNT, PROVIDERS, STATUS_VALUES, VARIABLE_KEYS } from "@/app/lib/workflow/constants";
 import { runStepActions } from "./workflow-execution";
 
 export interface AuthState {
@@ -53,7 +53,10 @@ async function initializeVariables(
   return vars;
 }
 
-function extractTenantId(microsoftToken?: Token | null): string | null {
+function extractTenantId(
+  microsoftToken?: Token | null,
+  onLog?: (entry: LogEntry) => void,
+): string | null {
   if (!microsoftToken) return null;
   try {
     const parts = microsoftToken.accessToken.split(".");
@@ -62,7 +65,12 @@ function extractTenantId(microsoftToken?: Token | null): string | null {
       return payload.tid ?? null;
     }
   } catch (error) {
-    console.warn("Failed to extract tenant ID from token:", error);
+    onLog?.({
+      timestamp: Date.now(),
+      level: "warn",
+      message: "Failed to extract tenant ID from token",
+      data: error,
+    });
   }
   return null;
 }
@@ -78,28 +86,28 @@ async function reconstituteStepStatuses(
   const stepStatuses = new Map<string, StepStatus>();
   const workingVariables = { ...variables };
 
-  const pendingStatus = { status: "pending", logs: [] } as StepStatus;
+  const pendingStatus: StepStatus = { status: STATUS_VALUES.PENDING, logs: [] };
 
   const areDependenciesMet = (step: Step): boolean => {
     if (!step.depends_on) return true;
     return step.depends_on.every((dep) => {
       const local = stepStatuses.get(dep);
-      return local ? local.status === "completed" || local.status === "skipped" : false;
+      return local ? local.status === STATUS_VALUES.COMPLETED || local.status === STATUS_VALUES.SKIPPED : false;
     });
   };
 
   const isAuthMet = (step: Step): boolean => {
     if (!step.role) return true;
     const requiredScopes = Object.prototype.hasOwnProperty.call(workflow.roles, step.role)
-      ? workflow.roles[step.role as keyof typeof workflow.roles]
+      ? workflow.roles[step.role]
       : [];
     const isGoogleStep = step.role.startsWith("dir") || step.role.startsWith("ci");
     const isMicrosoftStep = step.role.startsWith("graph");
-    if (isGoogleStep && tokens.google) {
-      return !isTokenExpired(tokens.google) && requiredScopes.every((s) => tokens.google!.scope.includes(s));
+    if (isGoogleStep && tokens.google != null) {
+      return !isTokenExpired(tokens.google) && requiredScopes.every((s) => tokens.google?.scope.includes(s));
     }
-    if (isMicrosoftStep && tokens.microsoft) {
-      return !isTokenExpired(tokens.microsoft) && requiredScopes.every((s) => tokens.microsoft!.scope.includes(s));
+    if (isMicrosoftStep && tokens.microsoft != null) {
+      return !isTokenExpired(tokens.microsoft) && requiredScopes.every((s) => tokens.microsoft?.scope.includes(s));
     }
     return false;
   };
@@ -117,13 +125,13 @@ async function reconstituteStepStatuses(
     if (result.success) {
       Object.assign(workingVariables, result.extractedVariables);
       stepStatuses.set(step.name, {
-        status: "completed",
+        status: STATUS_VALUES.COMPLETED,
         logs,
         result: result.data,
         completedAt: Date.now(),
       });
     } else {
-      stepStatuses.set(step.name, { status: "pending", logs });
+      stepStatuses.set(step.name, { status: STATUS_VALUES.PENDING, logs });
     }
   };
 
@@ -153,8 +161,8 @@ export async function getWorkflowData(
     `[Initial Load] Starting getWorkflowData (forceRefresh: ${forceRefresh})`,
   );
 
-  const googleToken = await getToken("google");
-  const microsoftToken = await getToken("microsoft");
+  const googleToken = await getToken(PROVIDERS.GOOGLE);
+  const microsoftToken = await getToken(PROVIDERS.MICROSOFT);
 
 
   const tokens = {
@@ -166,8 +174,8 @@ export async function getWorkflowData(
   const variables = await initializeVariables(workflow);
 
   const tenantId = extractTenantId(microsoftToken);
-  if (tenantId && !variables.tenantId) {
-    variables.tenantId = tenantId;
+  if (tenantId && !variables[VARIABLE_KEYS.TENANT_ID]) {
+    variables[VARIABLE_KEYS.TENANT_ID] = tenantId;
   }
 
   const { stepStatuses: stepStatusesMap, variables: reconstructedVariables } =
@@ -208,8 +216,8 @@ export async function getWorkflowData(
  * Get authentication status
  */
 export async function getAuthStatus(): Promise<AuthState> {
-  const googleToken = await getToken("google");
-  const microsoftToken = await getToken("microsoft");
+  const googleToken = await getToken(PROVIDERS.GOOGLE);
+  const microsoftToken = await getToken(PROVIDERS.MICROSOFT);
 
   return {
     google: {
@@ -272,7 +280,7 @@ export async function getWorkflowVariables(): Promise<{
   for (const [name, def] of Object.entries(workflow.variables)) {
     result[name] = {
       value: Object.prototype.hasOwnProperty.call(variables, name)
-        ? variables[name as keyof typeof variables]
+        ? variables[name]
         : undefined,
       definition: def,
       isRequired: requiredVars.has(name),

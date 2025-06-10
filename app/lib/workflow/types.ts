@@ -23,7 +23,7 @@ export const ActionSchema = z.object({
   field: z.string().optional(),
   value: z.string().optional(),
   jsonPath: z.string().optional(),
-  payload: z.record(z.any()).optional(),
+  payload: z.record(z.unknown()).optional(),
   extract: z.record(z.string()).optional(),
   longRunning: z.boolean().optional(),
   fallback: z.boolean().optional(),

@@ -1,14 +1,14 @@
 import { isTokenExpired, refreshAccessToken } from "../auth/oauth";
 import { setToken } from "../auth/tokens";
 import { substituteVariables, substituteObject, Token } from "../workflow";
-import { WORKFLOW_CONSTANTS } from "../workflow/constants";
+import { WORKFLOW_CONSTANTS, PROVIDERS, Provider } from "../workflow/constants";
 import { ApiRequestOptions } from "./types";
 
 async function handlePublicRequest(
   options: ApiRequestOptions,
 ): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
   const { endpoint, connections, variables, throwOnMissingVars = true } = options;
-  const connection = connections[endpoint.conn as keyof typeof connections];
+  const connection = connections[endpoint.conn];
   const capturedValues: Record<string, string> = {};
   const path = substituteVariables(endpoint.path, variables, {
     throwOnMissing: throwOnMissingVars,
@@ -44,53 +44,54 @@ async function handlePublicRequest(
 async function handleAuthenticatedRequest(
   options: ApiRequestOptions,
 ): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
-  const { endpoint, connections, variables, tokens, body, throwOnMissingVars = true } = options;
-  const connection = connections[endpoint.conn as keyof typeof connections];
+  const { endpoint, connections, variables, tokens, body, throwOnMissingVars = true, onLog } = options;
+  const connection = connections[endpoint.conn];
   const capturedValues: Record<string, string> = {};
 
   let token: Token | null = null;
-  let provider: "google" | "microsoft" | null = null;
+  let provider: Provider | null = null;
 
   if (endpoint.conn.includes("google") || endpoint.conn.includes("CI")) {
     token = tokens.google ?? null;
-    provider = "google";
+    provider = PROVIDERS.GOOGLE;
   } else if (endpoint.conn.includes("graph")) {
     token = tokens.microsoft ?? null;
-    provider = "microsoft";
+    provider = PROVIDERS.MICROSOFT;
   }
 
-  if (!token) {
+  if (token == null) {
     throw new Error(`No token available for connection: ${endpoint.conn}`);
   }
 
   // Check and refresh token if needed
   if (isTokenExpired(token) && token.refreshToken && provider) {
-    try {
-      console.log(
-        `[API Client] Token expired for ${provider}, attempting refresh...`,
-      );
-      const refreshedToken = await refreshAccessToken(
-        provider,
-        token.refreshToken,
-      );
+    let refreshAttempts = 0;
 
-      // CRITICAL: Persist the refreshed token
-      await setToken(provider, refreshedToken);
-
-      // Use the refreshed token for this request
-      token = refreshedToken;
-
-      console.log(`[API Client] Token refreshed successfully for ${provider}`);
-    } catch (refreshError) {
-      console.error(
-        `[API Client] Token refresh failed for ${provider}:`,
-        refreshError,
-      );
-
-      // Throw a specific error that indicates re-authentication is needed
-      throw new Error(
-        `Authentication expired for ${provider}. Please re-authenticate.`,
-      );
+    while (refreshAttempts < 2) {
+      try {
+        onLog?.({
+          timestamp: Date.now(),
+          level: "info",
+          message: `Refreshing token for ${provider}, attempt ${refreshAttempts + 1}`,
+        });
+        const refreshedToken = await refreshAccessToken(provider, token.refreshToken);
+        await setToken(provider, refreshedToken);
+        token = refreshedToken;
+        break;
+      } catch (error) {
+        refreshAttempts++;
+        onLog?.({
+          timestamp: Date.now(),
+          level: "error",
+          message: `Token refresh attempt ${refreshAttempts} failed for ${provider}`,
+          data: error,
+        });
+        if (refreshAttempts === 2) {
+          throw new Error(
+            `${PROVIDERS[provider.toUpperCase() as keyof typeof PROVIDERS]} authentication expired. Please re-authenticate.`
+          );
+        }
+      }
     }
   }
 
@@ -160,7 +161,7 @@ export async function apiRequest(
   options: ApiRequestOptions,
 ): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
   const { endpoint, connections } = options;
-  const connection = connections[endpoint.conn as keyof typeof connections];
+  const connection = connections[endpoint.conn];
   if (!connection) {
     throw new Error(`Connection not found: ${endpoint.conn}`);
   }

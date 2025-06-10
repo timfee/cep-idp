@@ -1,5 +1,5 @@
 import { cookies } from "next/headers";
-import { WORKFLOW_CONSTANTS, COOKIE_METADATA_SIZES } from "../workflow";
+import { WORKFLOW_CONSTANTS, COOKIE_METADATA_SIZES, LogEntry } from "../workflow";
 
 // Safe limit is around 4093 bytes per cookie, but we'll use constant to leave room for cookie metadata
 const MAX_COOKIE_SIZE = WORKFLOW_CONSTANTS.MAX_COOKIE_SIZE;
@@ -36,6 +36,7 @@ export async function setChunkedCookie(
   name: string,
   value: string,
   options: CookieOptions = {},
+  onLog?: (entry: LogEntry) => void,
 ): Promise<void> {
   const cookieStore = await cookies();
 
@@ -50,9 +51,11 @@ export async function setChunkedCookie(
     cookieStore.set(name, value, options);
   } else {
     // Value needs to be chunked
-    console.log(
-      `[Cookie Utils] Splitting ${name} into ${chunks.length} chunks`,
-    );
+    onLog?.({
+      timestamp: Date.now(),
+      level: "info",
+      message: `[Cookie Utils] Splitting ${name} into ${chunks.length} chunks`,
+    });
 
     // Set the main cookie with metadata about chunks
     const metadata = {
@@ -65,9 +68,11 @@ export async function setChunkedCookie(
     // Set each chunk
     for (let i = 0; i < chunks.length; i++) {
       const chunkName = `${name}${CHUNK_DELIMITER}${i}`;
-      console.log(
-        `[Cookie Utils] Setting chunk ${i}: ${chunkName} (${chunks[i].length} bytes)`,
-      );
+      onLog?.({
+        timestamp: Date.now(),
+        level: "info",
+        message: `[Cookie Utils] Setting chunk ${i}: ${chunkName} (${chunks[i].length} bytes)`,
+      });
       cookieStore.set(chunkName, chunks[i], options);
     }
   }
@@ -76,7 +81,10 @@ export async function setChunkedCookie(
 /**
  * Gets a potentially chunked cookie and reconstructs it
  */
-export async function getChunkedCookie(name: string): Promise<string | null> {
+export async function getChunkedCookie(
+  name: string,
+  onLog?: (entry: LogEntry) => void,
+): Promise<string | null> {
   const cookieStore = await cookies();
   const mainCookie = cookieStore.get(name);
 
@@ -90,9 +98,11 @@ export async function getChunkedCookie(name: string): Promise<string | null> {
 
     if (metadata.chunked && typeof metadata.count === "number") {
       // This is a chunked cookie, reconstruct it
-      console.log(
-        `[Cookie Utils] Reconstructing ${name} from ${metadata.count} chunks`,
-      );
+      onLog?.({
+        timestamp: Date.now(),
+        level: "info",
+        message: `[Cookie Utils] Reconstructing ${name} from ${metadata.count} chunks`,
+      });
 
       const chunks: string[] = [];
       for (let i = 0; i < metadata.count; i++) {
@@ -100,7 +110,11 @@ export async function getChunkedCookie(name: string): Promise<string | null> {
         const chunk = cookieStore.get(chunkName);
 
         if (!chunk) {
-          console.error(`[Cookie Utils] Missing chunk ${i} for ${name}`);
+          onLog?.({
+            timestamp: Date.now(),
+            level: "error",
+            message: `[Cookie Utils] Missing chunk ${i} for ${name}`,
+          });
           return null;
         }
 
@@ -108,9 +122,11 @@ export async function getChunkedCookie(name: string): Promise<string | null> {
       }
 
       const reconstructed = chunks.join("");
-      console.log(
-        `[Cookie Utils] Reconstructed ${name}: ${reconstructed.length} bytes`,
-      );
+      onLog?.({
+        timestamp: Date.now(),
+        level: "info",
+        message: `[Cookie Utils] Reconstructed ${name}: ${reconstructed.length} bytes`,
+      });
       return reconstructed;
     }
   } catch {
@@ -124,7 +140,10 @@ export async function getChunkedCookie(name: string): Promise<string | null> {
 /**
  * Clears a potentially chunked cookie and all its chunks
  */
-export async function clearChunkedCookie(name: string): Promise<void> {
+export async function clearChunkedCookie(
+  name: string,
+  onLog?: (entry: LogEntry) => void,
+): Promise<void> {
   const cookieStore = await cookies();
 
   // Get the main cookie to check if it's chunked
@@ -136,9 +155,11 @@ export async function clearChunkedCookie(name: string): Promise<void> {
 
       if (metadata.chunked && typeof metadata.count === "number") {
         // Clear all chunks
-        console.log(
-          `[Cookie Utils] Clearing ${metadata.count} chunks for ${name}`,
-        );
+        onLog?.({
+          timestamp: Date.now(),
+          level: "info",
+          message: `[Cookie Utils] Clearing ${metadata.count} chunks for ${name}`,
+        });
         for (let i = 0; i < metadata.count; i++) {
           const chunkName = `${name}${CHUNK_DELIMITER}${i}`;
           cookieStore.delete(chunkName);
@@ -171,6 +192,7 @@ export function setChunkedCookieOnResponse(
   name: string,
   value: string,
   options: CookieOptions = {},
+  onLog?: (entry: LogEntry) => void,
 ): void {
   const chunks = splitIntoChunks(value);
 
@@ -192,9 +214,11 @@ export function setChunkedCookieOnResponse(
     response.headers.append("Set-Cookie", buildCookieString(name, value));
   } else {
     // Multiple chunks
-    console.log(
-      `[Cookie Utils] Setting ${chunks.length} chunks on response for ${name}`,
-    );
+    onLog?.({
+      timestamp: Date.now(),
+      level: "info",
+      message: `[Cookie Utils] Setting ${chunks.length} chunks on response for ${name}`,
+    });
 
     // Set metadata cookie
     const metadata = {

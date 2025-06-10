@@ -2,7 +2,6 @@ import { JSONPath } from "jsonpath-plus";
 import { randomBytes } from "crypto";
 import {
   EXPECTED_ARG_COUNT_PAIR,
-  WILDCARD_SUFFIX_LENGTH,
   VARIABLE_KEYS,
 } from "./constants";
 import {
@@ -379,7 +378,10 @@ function evaluatePredicatePath(obj: unknown, path: string): unknown {
 
 function evaluateSimplePath(obj: unknown, path: string): unknown {
   if (path.startsWith("$")) {
-    path = path.substring(WILDCARD_SUFFIX_LENGTH);
+    path = path.slice(1);
+    if (path.startsWith(".")) {
+      path = path.slice(1);
+    }
   }
 
   const parts = path.split(".");

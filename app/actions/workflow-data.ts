@@ -280,8 +280,9 @@ export async function getWorkflowData(
   // Persist variables reconstructed from verification so they are available
   // during subsequent executions. This acts as a central variable store
   // ensuring all extracted values survive between requests.
-  await setStoredVariables(reconstructedVariables);
-
+  if (forceRefresh) {
+    await setStoredVariables(reconstructedVariables);
+  }
   console.log(
     `[Initial Load] Final step statuses:`,
     Object.fromEntries(

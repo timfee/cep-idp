@@ -5,8 +5,6 @@ import { AuthStatus } from "./components/workflow/auth-status";
 import { VariableViewer } from "./components/workflow/variable-viewer";
 import { WorkflowSteps } from "./components/workflow/workflow-steps";
 
-export const dynamic = "force-dynamic";
-
 interface PageProps {
   searchParams: Promise<{ [key: string]: string | string[] | undefined }>;
 }

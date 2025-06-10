@@ -43,7 +43,8 @@ export function estimateCookieSize(
 export function validateCookieSize(
   name: string,
   value: string,
-  options: Parameters<typeof estimateCookieSize>[number]
+  // eslint-disable-next-line no-magic-numbers
+  options: Parameters<typeof estimateCookieSize>[2]
 ): boolean {
   const estimatedSize = estimateCookieSize(name, value, options);
   return estimatedSize <= MAX_COOKIE_SIZE;

@@ -56,7 +56,10 @@
       "conn": "googleAdmin",
       "method": "GET",
       "path": "/customer/{customerId}/orgunits",
-      "qs": { "type": "all" }
+      "qs": { "type": "all" },
+      "extract": {
+        "orgUnits": "organizationUnits"
+      }
     },
     "admin.listOUAutomation": {
       "conn": "googleAdmin",

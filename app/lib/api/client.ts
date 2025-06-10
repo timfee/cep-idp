@@ -4,7 +4,9 @@ import { substituteVariables, substituteObject, Token } from "../workflow";
 import { WORKFLOW_CONSTANTS } from "../workflow/constants";
 import { ApiRequestOptions } from "./types";
 
-async function handlePublicRequest(options: ApiRequestOptions): Promise<unknown> {
+async function handlePublicRequest(
+  options: ApiRequestOptions,
+): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
   const { endpoint, connections, variables, throwOnMissingVars = true } = options;
   const connection = connections[endpoint.conn as keyof typeof connections];
   const capturedValues: Record<string, string> = {};
@@ -39,18 +41,21 @@ async function handlePublicRequest(options: ApiRequestOptions): Promise<unknown>
   return { data: await response.json(), capturedValues };
 }
 
-async function handleAuthenticatedRequest(options: ApiRequestOptions): Promise<unknown> {
+async function handleAuthenticatedRequest(
+  options: ApiRequestOptions,
+): Promise<{ data: unknown; capturedValues: Record<string, string> }> {
   const { endpoint, connections, variables, tokens, body, throwOnMissingVars = true } = options;
   const connection = connections[endpoint.conn as keyof typeof connections];
+  const capturedValues: Record<string, string> = {};
 
   let token: Token | null = null;
   let provider: "google" | "microsoft" | null = null;
 
   if (endpoint.conn.includes("google") || endpoint.conn.includes("CI")) {
-    token = tokens.google;
+    token = tokens.google ?? null;
     provider = "google";
   } else if (endpoint.conn.includes("graph")) {
-    token = tokens.microsoft;
+    token = tokens.microsoft ?? null;
     provider = "microsoft";
   }
 
@@ -131,8 +136,11 @@ async function handleAuthenticatedRequest(options: ApiRequestOptions): Promise<u
     throw new Error(`Authentication failed: Token may be expired or invalid`);
   }
 
-  if (response.status === WORKFLOW_CONSTANTS.HTTP_STATUS.NOT_FOUND && !throwOnMissingVars) {
-    return null;
+  if (
+    response.status === WORKFLOW_CONSTANTS.HTTP_STATUS.NOT_FOUND &&
+    !throwOnMissingVars
+  ) {
+    return { data: null, capturedValues };
   }
 
   if (!response.ok) {

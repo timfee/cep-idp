@@ -19,6 +19,19 @@ const MAPPING_JSON_PATH = path.resolve(__dirname, '../app/__tests__/fixtures/end
 const LOG_PATH = path.resolve(__dirname, '../app/__tests__/fixtures/test_execution_log.txt');
 
 async function main() {
+  // Prune any stale error fixtures before running new tests
+  const fixturesRoot = path.resolve(__dirname, '../app/__tests__/fixtures');
+  function clearErrorFixtures(dir) {
+    for (const ent of fs.readdirSync(dir, { withFileTypes: true })) {
+      const p = path.join(dir, ent.name);
+      if (ent.isDirectory()) {
+        clearErrorFixtures(p);
+      } else if (ent.isFile() && p.endsWith('.ERROR.json')) {
+        fs.unlinkSync(p);
+      }
+    }
+  }
+  if (fs.existsSync(fixturesRoot)) clearErrorFixtures(fixturesRoot);
   const workflow = JSON.parse(fs.readFileSync(WORKFLOW_PATH, 'utf8'));
   const googleToken = JSON.parse(fs.readFileSync(TOKEN_GOOGLE_PATH, 'utf8'));
   const msToken = JSON.parse(fs.readFileSync(TOKEN_MICROSOFT_PATH, 'utf8'));

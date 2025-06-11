@@ -1,0 +1,28 @@
+GET /customer/my_customer/domains
+GET /customer/my_customer/domains/feeley.xyz
+GET /customer/my_customer/orgunits?type=all
+GET /applicationTemplates
+GET /inboundSamlSsoProfiles -> 401
+GET /customers/my_customer/inboundSamlSsoProfiles -> 404
+GET /inboundSamlSsoProfiles?filter=customer=='customers/my_customer'
+POST /inboundSamlSsoProfiles
+GET /inboundSamlSsoProfiles/{id}/idpCredentials
+POST /inboundSamlSsoProfiles/{id}/idpCredentials:add -> 400
+GET /customer/my_customer/orgunits?orgUnitPath=/Automation&type=children
+GET /customer/my_customer/orgunits/Automation
+POST /customer/my_customer/orgunits
+GET /users/azuread-provisioning@feeley.xyz
+GET /customer/my_customer/roles
+GET /customer/my_customer/roles/ALL/privileges
+GET /customer/my_customer/roleassignments?roleId=732289776484353&assignedTo=116949259093507633648
+GET /applications?$filter=applicationTemplateId eq 'd0d8633b-4174-4d05-89c7-86d229f50f26'
+GET /applications?$filter=applicationTemplateId eq '8ba3d1d8-7c8c-4d2d-b179-04d4a68fba02'
+GET /servicePrincipals/d5bf8487-b04a-4ce5-ab6b-c84debf31506/synchronization -> 404
+POST /servicePrincipals/d5bf8487-b04a-4ce5-ab6b-c84debf31506/synchronization/jobs/Initial/start -> 400
+GET /beta/servicePrincipals/11111111-1111-1111-1111-111111111111/samlSingleSignOnSettings -> 404
+PATCH /beta/servicePrincipals/11111111-1111-1111-1111-111111111111/samlSingleSignOnSettings -> 404
+GET /beta/servicePrincipals/11111111-1111-1111-1111-111111111111/tokenIssuancePolicies -> 404
+POST /beta/policies/tokenIssuancePolicies -> 400
+POST /beta/servicePrincipals/11111111-1111-1111-1111-111111111111/tokenIssuancePolicies/$ref -> 400
+GET https://login.microsoftonline.com/common/federationmetadata/2007-06/federationmetadata.xml
+

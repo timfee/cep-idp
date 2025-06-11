@@ -68,7 +68,7 @@
     "admin.getOU": {
       "conn": "googleAdmin",
       "method": "GET",
-      "path": "/customer/{customerId}/orgunits/{ouPath}"
+      "path": "/customer/{customerId}/orgunits/{split(ouPath,'/')[1]}"
     },
     "admin.postOU": {
       "conn": "googleAdmin",
@@ -119,7 +119,8 @@
     "ci.listSamlProfiles": {
       "conn": "googleCI",
       "method": "GET",
-      "path": "/inboundSamlSsoProfiles"
+      "path": "/inboundSamlSsoProfiles",
+      "qs": { "filter": "customer=='customers/{customerId}'" }
     },
     "ci.createSamlProfile": {
       "conn": "googleCI",
@@ -161,13 +162,15 @@
       "conn": "graphGA",
       "method": "GET",
       "path": "/applications",
-      "qs": { "$filter": "applicationTemplateId eq '{provTemplateId}'" }
+      "qs": { "$filter": "applicationTemplateId eq '{provTemplateId}'" },
+      "headers": { "ConsistencyLevel": "eventual" }
     },
     "graph.appByTemplateSSO": {
       "conn": "graphGA",
       "method": "GET",
       "path": "/applications",
-      "qs": { "$filter": "applicationTemplateId eq '{ssoTemplateId}'" }
+      "qs": { "$filter": "applicationTemplateId eq '{ssoTemplateId}'" },
+      "headers": { "ConsistencyLevel": "eventual" }
     },
     "graph.listAppTemplates": {
       "conn": "graphGA",
@@ -249,8 +252,8 @@
     "entityId": {},
     "acsUrl": {},
     "provTemplateId": {
-      "default": "d0d8633b-4174-4d05-89c7-86d229f50f26",
-      "_comment": "Gallery ID for Google Cloud Provisioning App (fallback if dynamic lookup fails)"
+      "default": "01303a13-8322-4e06-bee5-80d612907131",
+      "_comment": "Gallery ID for Google Cloud / G Suite Connector by Microsoft"
     },
     "provTemplateName": {
       "default": "Google Cloud / G Suite Connector",

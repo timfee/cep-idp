@@ -1,0 +1,3 @@
+// POST https://graph.microsoft.com/beta/policies/tokenIssuancePolicies
+// Status: 400
+{"error":{"code":"Request_BadRequest","message":"Property definition has an invalid value.","details":[{"code":"InvalidValue","message":"Property definition has an invalid value.","target":"definition"}],"innerError":{"date":"2025-06-11T22:07:39","request-id":"28f4fe1c-0dbf-4ec1-b8e8-ea0f43511fed","client-request-id":"28f4fe1c-0dbf-4ec1-b8e8-ea0f43511fed"}}}

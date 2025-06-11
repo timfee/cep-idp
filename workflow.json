@@ -315,56 +315,56 @@
         {
           "use": "admin.postOU",
           "payload": { "name": "Automation", "parentOrgUnitPath": "/" },
-          "condition": "!ouPath",
-          "extract": { "ouPath": "$.orgUnitPath" }
+          "extract": { "ouPath": "$.orgUnitPath" },
+          "fallback": true
         }
       ]
     },
-      {
-        "name": "Create Service Account for Microsoft",
-        "inputs": ["primaryDomain", "ouPath"],
-        "outputs": [
-          "provisioningUserId",
-          "provisioningUserEmail",
-          "generatedPassword"
-        ],
-        "actions": [
-          {
-            "use": "admin.getUser",
-            "extract": {
-              "provisioningUserId": "$.id",
-              "provisioningUserEmail": "$.primaryEmail"
-            }
-          },
-          {
-            "use": "admin.updateUser",
-            "payload": {
-              "password": "{generateDeterministicPassword(primaryDomain)}"
-            },
-            "extract": {
-              "generatedPassword": "{generateDeterministicPassword(primaryDomain)}"
-            },
-            "fallback": true
-          },
-          {
-            "use": "admin.postUser",
-            "payload": {
-              "primaryEmail": "{email('azuread-provisioning', primaryDomain)}",
-              "name": { "givenName": "Microsoft", "familyName": "Provisioning" },
-              "password": "{generateDeterministicPassword(primaryDomain)}",
-              "orgUnitPath": "{ouPath}"
-            },
-            "extract": {
-              "provisioningUserId": "$.id",
-              "provisioningUserEmail": "$.primaryEmail",
-              "generatedPassword": "{generateDeterministicPassword(primaryDomain)}"
-            },
-            "fallback": true
+    {
+      "name": "Create Service Account for Microsoft",
+      "inputs": ["primaryDomain", "ouPath"],
+      "outputs": [
+        "provisioningUserId",
+        "provisioningUserEmail",
+        "generatedPassword"
+      ],
+      "actions": [
+        {
+          "use": "admin.getUser",
+          "extract": {
+            "provisioningUserId": "$.id",
+            "provisioningUserEmail": "$.primaryEmail"
           }
-        ],
-        "role": "dirUserRW",
-        "depends_on": ["Create Automation Organizational Unit"]
-      },
+        },
+        {
+          "use": "admin.updateUser",
+          "payload": {
+            "password": "{generateDeterministicPassword(primaryDomain)}"
+          },
+          "extract": {
+            "generatedPassword": "{generateDeterministicPassword(primaryDomain)}"
+          },
+          "fallback": true
+        },
+        {
+          "use": "admin.postUser",
+          "payload": {
+            "primaryEmail": "{email('azuread-provisioning', primaryDomain)}",
+            "name": { "givenName": "Microsoft", "familyName": "Provisioning" },
+            "password": "{generateDeterministicPassword(primaryDomain)}",
+            "orgUnitPath": "{ouPath}"
+          },
+          "extract": {
+            "provisioningUserId": "$.id",
+            "provisioningUserEmail": "$.primaryEmail",
+            "generatedPassword": "{generateDeterministicPassword(primaryDomain)}"
+          },
+          "fallback": true
+        }
+      ],
+      "role": "dirUserRW",
+      "depends_on": ["Create Automation Organizational Unit"]
+    },
     {
       "name": "Setup Microsoft Sync Permissions",
       "inputs": ["customerId", "primaryDomain"],

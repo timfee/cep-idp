@@ -264,6 +264,7 @@ export async function getWorkflowData(
     microsoft: microsoftToken ?? undefined,
   };
 
+  console.log(tokens);
   const workflow = parseWorkflow();
   const variables = await initializeVariables(workflow);
   const storedVars = await getStoredVariables();

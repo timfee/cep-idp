@@ -139,7 +139,8 @@
     "ci.listSsoAssignments": {
       "conn": "googleCI",
       "method": "GET",
-      "path": "/inboundSsoAssignments"
+      "path": "/inboundSsoAssignments",
+      "qs": { "samlSsoProfile": "{samlProfileId}" }
     },
     "ci.postSsoAssignment": {
       "conn": "googleCI",
@@ -208,17 +209,6 @@
       "conn": "graphBeta",
       "method": "POST",
       "path": "/servicePrincipals/{ssoServicePrincipalId}/tokenIssuancePolicies/$ref"
-    },
-    "graph.getAppRoleAssign": {
-      "conn": "graphGA",
-      "method": "GET",
-      "path": "/servicePrincipals/{ssoServicePrincipalId}/appRoleAssignedTo",
-      "qs": { "$filter": "principalId eq '{principalId}'" }
-    },
-    "graph.postAppRoleAssign": {
-      "conn": "graphGA",
-      "method": "POST",
-      "path": "/servicePrincipals/{ssoServicePrincipalId}/appRoleAssignedTo"
     },
     "web.fetchMetadata": {
       "conn": "public",

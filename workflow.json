@@ -169,6 +169,12 @@
       "path": "/applications",
       "qs": { "$filter": "applicationTemplateId eq '{ssoTemplateId}'" }
     },
+    "graph.listAppTemplates": {
+      "conn": "graphGA",
+      "method": "GET",
+      "path": "/applicationTemplates",
+      "qs": { "$filter": "displayName eq '{displayName}'" }
+    },
     "graph.getSync": {
       "conn": "graphGA",
       "method": "GET",
@@ -244,12 +250,18 @@
     "entityId": {},
     "acsUrl": {},
     "provTemplateId": {
-      "default": "d0d8633b-4174-4d05-89c7-86d229f50f26",
-      "_comment": "Gallery ID for Google Cloud Provisioning App"
+      "_comment": "Template ID for Google Cloud (Provisioning) App, looked up by display name"
+    },
+    "provTemplateName": {
+      "default": "Google Cloud / G Suite Connector",
+      "_comment": "Display name to lookup the provisioning application template"
     },
     "ssoTemplateId": {
-      "default": "8ba3d1d8-7c8c-4d2d-b179-04d4a68fba02",
-      "_comment": "Gallery ID for Google Cloud SSO App"
+      "_comment": "Template ID for Google Cloud SSO App, looked up by display name"
+    },
+    "ssoTemplateName": {
+      "default": "Google Cloud",
+      "_comment": "Display name to lookup the SSO application template"
     },
     "provServicePrincipalId": {},
     "ssoServicePrincipalId": {},
@@ -461,19 +473,25 @@
         "ssoServicePrincipalId",
         "ssoAppId"
       ],
-      "verify": [
-        { "use": "graph.appByTemplateProv", "checker": "exists" },
-        { "use": "graph.appByTemplateSSO", "checker": "exists" }
-      ],
       "execute": [
         {
+          "use": "graph.listAppTemplates",
+          "qs": { "displayName": "{provTemplateName}" },
+          "extract": { "provTemplateId": "$.value[0].id" }
+        },
+        {
+          "use": "graph.listAppTemplates",
+          "qs": { "displayName": "{ssoTemplateName}" },
+          "extract": { "ssoTemplateId": "$.value[0].id" }
+        },
+        {
           "use": "graph.instantiateProv",
-          "payload": { "displayName": "Google Cloud (Provisioning)" },
+          "payload": { "displayName": "{provTemplateName}" },
           "extract": { "provServicePrincipalId": "$.servicePrincipal.id" }
         },
         {
           "use": "graph.instantiateSSO",
-          "payload": { "displayName": "Google Cloud" },
+          "payload": { "displayName": "{ssoTemplateName}" },
           "extract": {
             "ssoServicePrincipalId": "$.servicePrincipal.id",
             "ssoAppId": "$.application.appId"
@@ -538,7 +556,13 @@
           "payload": {
             "displayName": "Google Workspace Basic Claims",
             "definition": [
-              "{\"ClaimsMappingPolicy\":{\"Version\":1,\"IncludeBasicClaimSet\":true,\"ClaimsMapping\":{\"email\":{\"source\":\"user\",\"id\":\"mail\"}}}}"
+              {
+                "ClaimsMappingPolicy": {
+                  "Version": 1,
+                  "IncludeBasicClaimSet": true,
+                  "ClaimsMapping": { "email": { "source": "user", "id": "mail" } }
+                }
+              }
             ]
           },
           "extract": { "claimsPolicyId": "$.id" }
@@ -572,7 +596,7 @@
         {
           "use": "ci.postSsoAssignment",
           "payload": {
-            "samlSsoProfile": "{samlProfileId}",
+            "ssoProfile": "{samlProfileId}",
             "targetOrgUnit": "/",
             "ssoMode": "SAML_SSO"
           }
@@ -580,7 +604,7 @@
         {
           "use": "ci.postSsoAssignment",
           "payload": {
-            "samlSsoProfile": "{samlProfileId}",
+            "ssoProfile": "{samlProfileId}",
             "targetOrgUnit": "/Automation",
             "ssoMode": "SSO_OFF"
           }

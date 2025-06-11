@@ -1,0 +1,14 @@
+// GET https://graph.microsoft.com/beta/servicePrincipals//samlSingleSignOnSettings
+// Status: 400 Bad Request
+// Issues Fixed: None
+{
+  "error": {
+    "code": "Request_BadRequest",
+    "message": "Invalid object identifier 'samlSingleSignOnSettings'.",
+    "innerError": {
+      "date": "2025-06-11T18:45:51",
+      "request-id": "029429e5-5b3f-4d25-9e83-ff6769d680ed",
+      "client-request-id": "029429e5-5b3f-4d25-9e83-ff6769d680ed"
+    }
+  }
+}

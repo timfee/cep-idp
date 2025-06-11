@@ -1,0 +1,3 @@
+// GET https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/federationmetadata/2007-06/federationmetadata.xml?appid=undefined
+// Error: fetch failed
+null

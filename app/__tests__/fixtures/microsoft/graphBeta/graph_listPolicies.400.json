@@ -1,0 +1,14 @@
+// GET https://graph.microsoft.com/beta/servicePrincipals//tokenIssuancePolicies
+// Status: 400 Bad Request
+// Issues Fixed: None
+{
+  "error": {
+    "code": "Request_BadRequest",
+    "message": "Invalid object identifier 'tokenIssuancePolicies'.",
+    "innerError": {
+      "date": "2025-06-11T18:45:52",
+      "request-id": "e82fbe4d-12d5-417c-9c0c-9d77d3ccd8d3",
+      "client-request-id": "e82fbe4d-12d5-417c-9c0c-9d77d3ccd8d3"
+    }
+  }
+}

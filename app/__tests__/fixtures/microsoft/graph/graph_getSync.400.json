@@ -1,0 +1,14 @@
+// GET https://graph.microsoft.com/v1.0/servicePrincipals//synchronization
+// Status: 400 Bad Request
+// Issues Fixed: None
+{
+  "error": {
+    "code": "Request_BadRequest",
+    "message": "Invalid object identifier 'synchronization'.",
+    "innerError": {
+      "date": "2025-06-11T18:45:51",
+      "request-id": "1866108d-b5d4-4af3-b7ef-b79db8ca35bf",
+      "client-request-id": "1866108d-b5d4-4af3-b7ef-b79db8ca35bf"
+    }
+  }
+}

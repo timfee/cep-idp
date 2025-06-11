@@ -1,0 +1,3 @@
+// PATCH https://graph.microsoft.com/v1.0/servicePrincipals/undefined/synchronization
+// Error: fetch failed
+null

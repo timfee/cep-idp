@@ -1,0 +1,20 @@
+// POST https://cloudidentity.googleapis.com/v1/inboundSamlSsoProfiles
+// Status: 200 OK
+// Issues Fixed: None
+{
+  "done": true,
+  "response": {
+    "@type": "type.googleapis.com/google.apps.cloudidentity.inboundsamlssoprofiles.v1.InboundSamlSsoProfile",
+    "name": "inboundSamlSsoProfiles/02h2lrpd1o0kmbk",
+    "customer": "customers/C03ly86ew",
+    "displayName": "Azure AD",
+    "idpConfig": {
+      "entityId": "https://sts.windows.net/ef36b7bd-231b-421e-ac50-8f2995a39eee/",
+      "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
+    },
+    "spConfig": {
+      "entityId": "https://accounts.google.com/samlrp/02h2lrpd1o0kmbk",
+      "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/02h2lrpd1o0kmbk/acs"
+    }
+  }
+}

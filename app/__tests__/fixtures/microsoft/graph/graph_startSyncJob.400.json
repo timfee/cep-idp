@@ -1,0 +1,14 @@
+// POST https://graph.microsoft.com/v1.0/servicePrincipals//synchronization/jobs/Initial/start
+// Status: 400 Bad Request
+// Issues Fixed: None
+{
+  "error": {
+    "code": "BadRequest",
+    "message": "Write requests (excluding DELETE) must contain the Content-Type header declaration.",
+    "innerError": {
+      "date": "2025-06-11T18:45:51",
+      "request-id": "1769fd09-9e4e-4533-9552-f021dfee8d48",
+      "client-request-id": "1769fd09-9e4e-4533-9552-f021dfee8d48"
+    }
+  }
+}

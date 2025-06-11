@@ -1,0 +1,14 @@
+// POST https://graph.microsoft.com/v1.0/applicationTemplates/8ba3d1d8-7c8c-4d2d-b179-04d4a68fba02/instantiate
+// Status: 400 Bad Request
+// Issues Fixed: None
+{
+  "error": {
+    "code": "BadRequest",
+    "message": "App with appId: 8ba3d1d8-7c8c-4d2d-b179-04d4a68fba02 does not exist",
+    "innerError": {
+      "date": "2025-06-11T18:45:51",
+      "request-id": "24ea97eb-bb6d-4a35-9ca4-0dd4c71375a3",
+      "client-request-id": "24ea97eb-bb6d-4a35-9ca4-0dd4c71375a3"
+    }
+  }
+}

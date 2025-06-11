@@ -1,0 +1,14 @@
+// GET https://graph.microsoft.com/v1.0/applications?%24filter=applicationTemplateId+eq+%27d0d8633b-4174-4d05-89c7-86d229f50f26%27
+// Status: 401 Unauthorized
+// Issues Fixed: None
+{
+  "error": {
+    "code": "InvalidAuthenticationToken",
+    "message": "Lifetime validation failed, the token is expired.",
+    "innerError": {
+      "date": "2025-06-11T18:40:32",
+      "request-id": "c52ad100-88a8-441e-a8e8-57690b2acb39",
+      "client-request-id": "c52ad100-88a8-441e-a8e8-57690b2acb39"
+    }
+  }
+}

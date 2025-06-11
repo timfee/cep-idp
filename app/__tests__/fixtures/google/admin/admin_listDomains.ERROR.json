@@ -1,0 +1,3 @@
+// GET https://admin.googleapis.com/admin/directory/v1/customer/my_customer/domains
+// Error: fetch failed
+null

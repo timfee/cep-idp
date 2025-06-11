@@ -1,0 +1,14 @@
+// PATCH https://graph.microsoft.com/v1.0/servicePrincipals//synchronization
+// Status: 401 Unauthorized
+// Issues Fixed: None
+{
+  "error": {
+    "code": "InvalidAuthenticationToken",
+    "message": "Lifetime validation failed, the token is expired.",
+    "innerError": {
+      "date": "2025-06-11T18:40:32",
+      "request-id": "a6884fc1-a8dc-4e10-808d-346682595460",
+      "client-request-id": "a6884fc1-a8dc-4e10-808d-346682595460"
+    }
+  }
+}

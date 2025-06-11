@@ -1,0 +1,3 @@
+// POST https://graph.microsoft.com/beta/servicePrincipals/undefined/tokenIssuancePolicies/$ref
+// Error: fetch failed
+null

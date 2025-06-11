@@ -1,0 +1,18 @@
+// GET https://admin.googleapis.com/admin/directory/v1/customer/my_customer/roleassignments?roleId=732289777484356&assignedTo=116949259093507633648
+// Status: 200 OK
+// Issues Fixed: None
+{
+  "kind": "admin#directory#roleAssignments",
+  "etag": "\"4kY5xF2bP9VuOt_lSydUBmcnVRehnx0y-sSIeNM7DPc/0VcFYfn4PH3iy4yGZycVF-YpPrI\"",
+  "items": [
+    {
+      "kind": "admin#directory#roleAssignment",
+      "etag": "\"4kY5xF2bP9VuOt_lSydUBmcnVRehnx0y-sSIeNM7DPc/wUEYIj7cKy_QdxYhHvpL1fuyyb0\"",
+      "roleAssignmentId": "732289777484353",
+      "roleId": "732289777484356",
+      "assignedTo": "116949259093507633648",
+      "assigneeType": "user",
+      "scopeType": "CUSTOMER"
+    }
+  ]
+}

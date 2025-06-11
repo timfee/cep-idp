@@ -1,0 +1,14 @@
+// POST https://graph.microsoft.com/beta/servicePrincipals//tokenIssuancePolicies/$ref
+// Status: 400 Bad Request
+// Issues Fixed: None
+{
+  "error": {
+    "code": "BadRequest",
+    "message": "Unsupported segment type. ODataQuery: /servicePrincipals/tokenIssuancePolicies/$ref",
+    "innerError": {
+      "date": "2025-06-11T18:45:52",
+      "request-id": "3d1c644b-7e18-4077-9608-dcecf5f43df3",
+      "client-request-id": "3d1c644b-7e18-4077-9608-dcecf5f43df3"
+    }
+  }
+}

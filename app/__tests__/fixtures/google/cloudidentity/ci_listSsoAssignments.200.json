@@ -1,0 +1,4 @@
+// GET https://cloudidentity.googleapis.com/v1/inboundSsoAssignments
+// Status: 200 OK
+// Issues Fixed: None
+{}

@@ -1,0 +1,11 @@
+// GET https://admin.googleapis.com/admin/directory/v1/customer/my_customer/orgunits/Automation
+// Status: 200
+{
+  "kind": "admin#directory#orgUnit",
+  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/b9hMel-ga5mw2Ib3ymdomrF8Oyk\"",
+  "name": "Automation",
+  "orgUnitPath": "/Automation",
+  "orgUnitId": "id:03ph8a2z1o5ftgk",
+  "parentOrgUnitPath": "/",
+  "parentOrgUnitId": "id:00gjdgxs2b2c6my"
+}

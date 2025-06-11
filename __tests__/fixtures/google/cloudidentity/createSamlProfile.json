@@ -1,0 +1,19 @@
+// POST https://cloudidentity.googleapis.com/v1/inboundSamlSsoProfiles
+// Status: 200
+{
+  "done": true,
+  "response": {
+    "@type": "type.googleapis.com/google.apps.cloudidentity.inboundsamlssoprofiles.v1.InboundSamlSsoProfile",
+    "name": "inboundSamlSsoProfiles/01flkqm54idu48w",
+    "customer": "customers/C03ly86ew",
+    "displayName": "Azure AD Test",
+    "idpConfig": {
+      "entityId": "https://example.com/idp",
+      "singleSignOnServiceUri": "https://example.com/sso"
+    },
+    "spConfig": {
+      "entityId": "https://accounts.google.com/samlrp/01flkqm54idu48w",
+      "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/01flkqm54idu48w/acs"
+    }
+  }
+}

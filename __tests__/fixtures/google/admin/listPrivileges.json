@@ -1,0 +1,2080 @@
+// GET https://admin.googleapis.com/admin/directory/v1/customer/my_customer/roles/ALL/privileges
+// Status: 200
+{
+  "kind": "admin#directory#privileges",
+  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/CYDdOoLSg58W-35U5TMIoX26WKs\"",
+  "items": [
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/lO4hByFEpTRfp4OIm1VliFh8nGk\"",
+      "serviceId": "01fob9te2rj6rw9",
+      "privilegeName": "REPORTS_ACCESS",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/8zAz1lHqSipXqZ_YrksXgAaiWXU\"",
+      "serviceId": "03znysh70xi7xn7",
+      "privilegeName": "MANAGE_TRUNK_NUMBERS",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/b_Vl-t5L77mwakFAvL_fNaCa-EM\"",
+      "serviceId": "02et92p02l9sq0n",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": true
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/W2UZMeoqZ9__xnCxqWupmLXTeN0\"",
+      "serviceId": "00tyjcwt30rsnw6",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": true
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/BkvojTSR_GPA9NivwovV0Qlqlm8\"",
+      "serviceId": "00tyjcwt49hs5nq",
+      "serviceName": "play_for_work",
+      "privilegeName": "MANAGE_ENTERPRISE_PRIVATE_APPS",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/l3mP5LVwu5mUzpHpCwuZ6dUl8sQ\"",
+      "serviceId": "00tyjcwt49hs5nq",
+      "serviceName": "play_for_work",
+      "privilegeName": "MANAGE_EXTERNALLY_HOSTED_APK_UPLOAD_IN_PLAY",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/ejYt-RzlcalPfDu25EIcmUB1ztA\"",
+      "serviceId": "00tyjcwt49hs5nq",
+      "serviceName": "play_for_work",
+      "privilegeName": "MANAGE_PLAY_FOR_WORK_STORE",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/dYkqwgtU4v3BCMqn190GMSHp7mc\"",
+      "serviceId": "03dy6vkm2sk0pzo",
+      "serviceName": "docs",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/BzfxHmz9Cg3g2e1HIvkSjkA1l_g\"",
+          "serviceId": "03dy6vkm2sk0pzo",
+          "serviceName": "docs",
+          "privilegeName": "DOCS_TEMPLATE_ADMIN",
+          "isOuScopable": false
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/E41NLpcYLR01z55OhU9wk1DOORI\"",
+          "serviceId": "03dy6vkm2sk0pzo",
+          "serviceName": "docs",
+          "privilegeName": "MANAGE_CLASSIC_GOOGLE_SITES",
+          "isOuScopable": false
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/rWOrmehPySKVHz9lo2APXjBnrkc\"",
+          "serviceId": "03dy6vkm2sk0pzo",
+          "serviceName": "docs",
+          "privilegeName": "MIGRATE_TO_TEAM_DRIVE",
+          "isOuScopable": false
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/K3XxelVN6QiLC6vVlFkRrKOgtwg\"",
+          "serviceId": "03dy6vkm2sk0pzo",
+          "serviceName": "docs",
+          "privilegeName": "VIEW_SITE_DETAILS",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/bMRCoRZaqzu-I2sJKrb9bp_ir1k\"",
+      "serviceId": "01ksv4uv2d2noaq",
+      "serviceName": "sites",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/SITHDsg50fvgfPopA0vmvBjcg0E\"",
+      "serviceId": "044sinio4cntx2o",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/5t5nIS-xFKagxX6O_ONNRsyOUqs\"",
+      "serviceId": "02jxsxqh0hucks4",
+      "privilegeName": "DATA_REGIONS_SETTINGS",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/742uRKc140TRojyxtEYAiIj2TdQ\"",
+          "serviceId": "02jxsxqh0hucks4",
+          "privilegeName": "DATA_REGIONS_REPORTING",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/pp-vwGvmedBMC-un9iCHrqw7ItM\"",
+      "serviceId": "03j2qqm31d4j55e",
+      "privilegeName": "LOGO_PRIVILEGE_GROUP",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/LQjfjnGD8P4LtdP_26ZqHibpFms\"",
+      "serviceId": "04i7ojhp4kgosur",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": true
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/HR_PvV-gp7vZ4D92xWQefAA3fwM\"",
+      "serviceId": "01ci93xb3tmzyin",
+      "serviceName": "admin",
+      "privilegeName": "ADMIN_DASHBOARD",
+      "isOuScopable": true
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/R_Ne6l7F1PqoT-QH1doYY1l-JLA\"",
+      "serviceId": "01ci93xb3tmzyin",
+      "serviceName": "admin",
+      "privilegeName": "ADMIN_DOMAIN_SETTINGS",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/x4AXVA61-CDyEVsik5S5JmlT7Cc\"",
+      "serviceId": "01ci93xb3tmzyin",
+      "serviceName": "admin",
+      "privilegeName": "SERVICES",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/sJBbXMqlGy5sH1EyLKZHg35l5Lg\"",
+      "serviceId": "01ci93xb43sd8me",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": true,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/ZkgsZuTHflHkREOcLrC_ZzviR70\"",
+          "serviceId": "01ci93xb43sd8me",
+          "privilegeName": "DELEGATES_READ",
+          "isOuScopable": true
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/hlPpOoE5iIFTk9Qbq7fo5nz5QIE\"",
+          "serviceId": "01ci93xb43sd8me",
+          "privilegeName": "DELEGATES_WRITE",
+          "isOuScopable": true
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/SgFzcEp6ojGHGaXTfOOv6yNfDRs\"",
+      "serviceId": "03whwml44f3n4vd",
+      "privilegeName": "MANAGE_DYNAMITE_SETTINGS",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/l9Zo3h7NzWvk3THdFW2WV7QncFs\"",
+      "serviceId": "03whwml44f3n4vd",
+      "privilegeName": "MANAGE_DYNAMITE_SPACES",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/DKSgrlsGpLN5HUzTAG_xVfd-1Jc\"",
+          "serviceId": "03whwml44f3n4vd",
+          "privilegeName": "READ_DYNAMITE_SPACES",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/vv-xS8ZDxM7HKV2kynhepJEC0OE\"",
+      "serviceId": "03whwml44f3n4vd",
+      "privilegeName": "MODERATE_DYNAMITE_REPORT",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/HB9Lg60KXkWcwWDfJAdhHZiY1uQ\"",
+      "serviceId": "03as4poj2zjehv7",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/rBZxHVmvZhJtDosBC4FL-5OUYNE\"",
+      "serviceId": "0147n2zr1ynkkmf",
+      "privilegeName": "MANAGE_DIRECTORY_SYNC_SETTINGS",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/YYTi67mA1CIB_my2MJvR25-0Quw\"",
+          "serviceId": "0147n2zr1ynkkmf",
+          "privilegeName": "READ_DIRECTORY_SYNC_SETTINGS",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/57hrzSJav7AiuoHbViaK95pzlJw\"",
+      "serviceId": "00vx122734tbite",
+      "privilegeName": "SECURITY_SETTINGS",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/TaeVyUAiYLOGEQClAWENJV4bwOA\"",
+          "serviceId": "00vx122734tbite",
+          "privilegeName": "INBOUND_SSO_SETTINGS",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/EfXDFuMZFdpux1noZWzgFKptGwg\"",
+      "serviceId": "03fwokq01e2ht7x",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/RHkcgazii4MGewuKnZHsEm5WdMU\"",
+          "serviceId": "03fwokq01e2ht7x",
+          "privilegeName": "UDM_NETWORK_ADMIN",
+          "isOuScopable": true
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/7Pu-mm2w81CM_cxpRcdAwoGL6ds\"",
+      "serviceId": "019c6y1840fzfkt",
+      "serviceName": "classroom",
+      "privilegeName": "ADMIN_OVERSIGHT_MANAGE_CLASSES",
+      "isOuScopable": true
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/mA3A3SMxwmNzL6CRsb31TVyIh7k\"",
+      "serviceId": "019c6y1840fzfkt",
+      "serviceName": "classroom",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": true
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/ig98pnY3O_Y7QQ-bfzUQf2Pfd3g\"",
+      "serviceId": "019c6y1840fzfkt",
+      "serviceName": "classroom",
+      "privilegeName": "BACKFILL_DRIVE_READWRITE",
+      "isOuScopable": true
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/_w7vL4od-JEqztbfpZausvahx5U\"",
+      "serviceId": "019c6y1840fzfkt",
+      "serviceName": "classroom",
+      "privilegeName": "EDU_ANALYTICS_DATA_ACCESS",
+      "isOuScopable": true
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/F1WT8jbdGnErZNGCsLjxcgykku4\"",
+      "serviceId": "03tbugp135xcxz0",
+      "privilegeName": "REMOTE_DESKTOP_ADMIN",
+      "isOuScopable": true,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/ExRevqD_0AgJxAzBlXvN7lLDhfw\"",
+          "serviceId": "03tbugp135xcxz0",
+          "privilegeName": "MANAGE_APP_SETTINGS",
+          "isOuScopable": true
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/RI-Vl8bNl69-F6vdqNBXFzBgWYk\"",
+          "serviceId": "03tbugp135xcxz0",
+          "privilegeName": "MANAGE_EDU_SETTINGS",
+          "isOuScopable": true
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/p-h9IUuR4nBLMyTn56O2YEGeSWI\"",
+          "serviceId": "03tbugp135xcxz0",
+          "privilegeName": "MANAGE_REMOTE_ACCESS_SETTINGS",
+          "isOuScopable": true
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/tp1HCYfJ05oeA_3MlI0Co5TS1Gs\"",
+          "serviceId": "03tbugp135xcxz0",
+          "privilegeName": "MANAGE_REMOTE_SUPPORT_SETTINGS",
+          "isOuScopable": true
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/Sq4LUBhUgl3jVmSOX0ibFDzf3JM\"",
+      "serviceId": "037m2jsg3ckz96v",
+      "serviceName": "calendar",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/cndBLsEVrwI8WmFZjrizoA0utzE\"",
+          "serviceId": "037m2jsg3ckz96v",
+          "serviceName": "calendar",
+          "privilegeName": "CALENDAR_RESOURCE",
+          "isOuScopable": false,
+          "childPrivileges": [
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/gWr3ToTtqRfOxwrpdFXqCqDF0IE\"",
+              "serviceId": "037m2jsg3ckz96v",
+              "serviceName": "calendar",
+              "privilegeName": "CALENDAR_RESOURCE_MANAGE",
+              "isOuScopable": false,
+              "childPrivileges": [
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/zLxMdqxGkuFVEReMtu4Pz3IOy50\"",
+                  "serviceId": "037m2jsg3ckz96v",
+                  "serviceName": "calendar",
+                  "privilegeName": "CALENDAR_RESOURCE_READ",
+                  "isOuScopable": false
+                }
+              ]
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/wHr7s6FttD9cofA2l9WtgZW5ExE\"",
+              "serviceId": "037m2jsg3ckz96v",
+              "serviceName": "calendar",
+              "privilegeName": "ROOM_INSIGHTS_DASHBOARD_ACCESS",
+              "isOuScopable": false
+            }
+          ]
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/yuPx8EPHh7DWJLsm68Fbl0HxuP4\"",
+          "serviceId": "037m2jsg3ckz96v",
+          "serviceName": "calendar",
+          "privilegeName": "CALENDAR_SETTINGS",
+          "isOuScopable": false,
+          "childPrivileges": [
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/Fth-G1RBmqP2085-P6DUf2GEgjA\"",
+              "serviceId": "037m2jsg3ckz96v",
+              "serviceName": "calendar",
+              "privilegeName": "CALENDAR_SETTINGS_READ",
+              "isOuScopable": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/l658yFNf-vj2c6o-fvKstj-PQTI\"",
+      "serviceId": "037m2jsg3ckz96v",
+      "serviceName": "calendar",
+      "privilegeName": "CALENDAR_SUPER_ADMIN",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/lbqER0karQHuF8UFc6fj9u4T6QY\"",
+      "serviceId": "037m2jsg46www3g",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/c2WULno1nqM8TldofZ-euW876as\"",
+      "serviceId": "02zbgiuw2wdxo5p",
+      "serviceName": "youtube",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/-IiyH2PntHVCcaODI2Qsu0nAHEw\"",
+      "serviceId": "01egqt2p2p8gvae",
+      "serviceName": "security_center",
+      "privilegeName": "ACTIVITY_RULES",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/aeWSDlmyVp0Jj42UQMTWR-Hk6EY\"",
+          "serviceId": "01egqt2p2p8gvae",
+          "serviceName": "security_center",
+          "privilegeName": "MANAGE_GSC_RULE",
+          "isOuScopable": false
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/lj-u7XWs-Ktx7bT3AME2PaZpUwA\"",
+          "serviceId": "01egqt2p2p8gvae",
+          "serviceName": "security_center",
+          "privilegeName": "VIEW_GSC_RULE",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/rwHKsshnBLaBaQuEJwa9ttA6UIg\"",
+      "serviceId": "01egqt2p2p8gvae",
+      "serviceName": "security_center",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/l8wDw921senazz44zuz76LnKK8I\"",
+          "serviceId": "01egqt2p2p8gvae",
+          "serviceName": "security_center",
+          "privilegeName": "AUDIT_INVESTIGATION_ACCESS",
+          "isOuScopable": false,
+          "childPrivileges": [
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/ofCBzvzwD5YRo_N7jb-jBfjyC60\"",
+              "serviceId": "01egqt2p2p8gvae",
+              "serviceName": "security_center",
+              "privilegeName": "SIT_MANAGE",
+              "isOuScopable": false,
+              "childPrivileges": [
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/6ao7gvkrJveoEkbVxMo7_HdE00w\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_CHAT_UPDATE_DELETE",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/TQEasdzG-5RNEEf9NQUtaAO5JB4\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_CHROME_UPDATE_DELETE",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/_uw048y1BDm3_5YJWIz3g31nnlo\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_DEVICE_UPDATE_DELETE",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/Hnql_dLeZxqt7BaJ9P3Ufzs96VQ\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_DRIVE_UPDATE_DELETE",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/l3xVPxq9ze9-Z479Z2FQ191-O_k\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_GMAIL_UPDATE_DELETE",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/DFZ-7pO9ApAEFavWfqkKsihwOhw\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_MEET_UPDATE_DELETE",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/3k4l-pHnpRYGDuFVYojnLyQSg8s\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_OAUTH_UPDATE_DELETE",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/YFw3JCydU7uc-YA39biv-CQA6NM\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_RULE_UPDATE_DELETE",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/EZcSyCCwimlGwR68D_7ViI3krP8\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_USER_UPDATE_DELETE",
+                  "isOuScopable": false
+                }
+              ]
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/6vASh2jYmdZhiuLIaZ8XMHeiSCM\"",
+              "serviceId": "01egqt2p2p8gvae",
+              "serviceName": "security_center",
+              "privilegeName": "SIT_VIEW_METADATA",
+              "isOuScopable": false,
+              "childPrivileges": [
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/2kNsl0XWnW4ZS4b_OkhdRwIbBys\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_ADMIN_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/zOz7Doib4__ys75hFDh-SIj6YcY\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_AUDITOR_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/R5yK0RUpAR0xVF56Tw5q0eFppzM\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_AXT_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/EJqCL4szyTXeU8HJggB5rq0zqlA\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_CAA_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/hp1effG_0O-sXznmPvCOg6uuRyc\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_CALENDAR_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/s2wvxZMaOqZ_LjY5FObdhi_mgTI\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_CHAT_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/7cFS9SsGUYYlG-uKr2rgQvv0J0Y\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_CHROME_SYNC_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/MLpHgXqeBZVTfY3bmVio3jq6wIs\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_CHROME_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/17ohSY8ZVpIlJjeyrfx85qYK474\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_CLASSROOM_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/tm9Jf1RFpCbaZi6UfmzLIJV0uZ4\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_CLOUD_SEARCH_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/6nbCDErmrEqOLVDXhxQACHzSao0\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_CONTACTS_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/wBFi_AvQdLZfI7uOlZD00K35CEg\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_COURSEKIT_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/bKulqQqyu0rfVFU90Gvc_9ebgmY\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_CURRENTS_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/cFl3J4Zhj8lhTTILqO6asMF6Wh4\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_DATASTUDIO_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/L1iAc46z2vflpGgtuLYsytNZgro\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_DATA_LOCATION_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/jIgpkW_blmyhzMlPvL4e2Yddjxc\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_DATA_MIGRATION_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/oPxH-iz570YXQX9p5QCShkPePZw\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_DEVICE_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/9XIaos7p0TT4saR3RfUW77Z3ZoM\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_DIRECTORY_SYNC_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/3yzmV4n85HRiUI9iD-d5BS33gMw\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_DRIVE_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/F1KznHPOg9GICd0m-uZMM4f7lQQ\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_GEN_AI_PLATFORM_APP_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/4SFsZC-hbV74nouO-W_I27thPDM\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_GMAIL_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/K2nW8w2By9iqvY9WZ--bdNWq0JI\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_GOOGLE_PROFILES_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/njd6UGH4gc84eSz8EwZ58JGIXlY\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_GRADUATION_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/XodPtsNWntK0pci40r8rG7R4jps\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_GROUPSALT_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/OshQZudiEKdOQkOc_0Un8UNFsag\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_GROUPS_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/0dKdxdorQLRf0r3c2ffLRBZrreA\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_HODOR_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/NFB9cm9bwcEcTFd0nSUGIJUdUg8\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_JAMBOARD_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/GiZvpYszKGBYrxdKXiI1QOQDHdQ\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_KEEP_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/6IAKZ0JNWqkurUackOVFRTBAWAI\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_LDAP_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/LFZvQrTQBV2Z2Ex90aCKEpVgfxE\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_MEET_HARDWARE_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/fqHliVfMHDXb1u9Jd--vlM6s6MY\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_MEET_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/Zct3q8Zhcz5DBft4xrp6EHicqLA\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_OAUTH_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/QnFuDQF-QCs08w3vLkUbDNQDHEI\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_PASSWORD_VAULT_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/jI6TrUimUBSM5_XGfREH8Ir2FIw\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_RULE_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/e32ccb-Z9SCjAB_x_-NFkJbmzlc\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_SAML_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/ffvtNoErrbWGKnO7utaRY7O75LQ\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_SCIM_DS_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/m1iZoo_Cp6ezCRYj-jshluR2Bcw\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_TASKS_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/RLz7xua_UT9ODzXxNmvFT1u-YbE\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_USER_LEVEL_TAKEOUT_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/x2i0qcl5CB1JOsFfnFAbEb8Nu5o\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_USER_VIEW_METADATA",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/2S5UedbkQZqrZI8GgS-ymlf5svo\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_VOICE_VIEW_METADATA",
+                  "isOuScopable": false
+                }
+              ]
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/BZkFyYmfImiiLoXKAqyOoN_JpP0\"",
+              "serviceId": "01egqt2p2p8gvae",
+              "serviceName": "security_center",
+              "privilegeName": "SIT_VIEW_SENSITIVE_CONTENT",
+              "isOuScopable": false,
+              "childPrivileges": [
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/MWyywi6zGq1DlWdTn5aHSnpnQwU\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_CHAT_VIEW_DETAILED_CONTENT",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/0NAwWbDi5s-bIiUJAELlEP43RGo\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_CHROME_VIEW_DETAILED_CONTENT",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/APfPtQ9bsRi44vjmwhD02DW7Mbg\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_GMAIL_VIEW_DETAILED_CONTENT",
+                  "isOuScopable": false
+                },
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/BvnAPqU4ZXDrmSUNvuSXSlTIsBk\"",
+                  "serviceId": "01egqt2p2p8gvae",
+                  "serviceName": "security_center",
+                  "privilegeName": "SIT_RULE_VIEW_DETAILED_CONTENT",
+                  "isOuScopable": false
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/Pzw3OBwOdD3GRQmrxl7XEtu1ZgY\"",
+          "serviceId": "01egqt2p2p8gvae",
+          "serviceName": "security_center",
+          "privilegeName": "DASHBOARD_ACCESS",
+          "isOuScopable": false
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/BQt1q_6sJbClgpLv0iEURn95J2E\"",
+          "serviceId": "01egqt2p2p8gvae",
+          "serviceName": "security_center",
+          "privilegeName": "GSC_VIEW_VIRUSTOTAL_REPORT",
+          "isOuScopable": false
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/m3ZHZyB2TpmXYem51Z9C7VwJJGg\"",
+          "serviceId": "01egqt2p2p8gvae",
+          "serviceName": "security_center",
+          "privilegeName": "SECURITY_HEALTH_DASHBOARD_ACCESS",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/R1gKIUEpPblePAXyU4pTRAifg3U\"",
+      "serviceId": "03cqmetx1vygwki",
+      "privilegeName": "APP_ACCESS",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/fQMHPySeLfp5adbUad1bCetrNew\"",
+      "serviceId": "03hv69ve4bjwe54",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": true,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/IzkqLmW2ET2ROT5cOnQcr7ato90\"",
+          "serviceId": "03hv69ve4bjwe54",
+          "privilegeName": "MANAGE_CHROME_BROWSERS",
+          "isOuScopable": true,
+          "childPrivileges": [
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/S1ro4ItckEkS3LAalaHei7XuhEU\"",
+              "serviceId": "03hv69ve4bjwe54",
+              "privilegeName": "MANAGED_CHROME_BROWSERS_READ_ONLY",
+              "isOuScopable": true
+            }
+          ]
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/HB_LsnLmTxZnAL1r4htxkNctDhY\"",
+          "serviceId": "03hv69ve4bjwe54",
+          "privilegeName": "MANAGE_CHROME_USER_SETTINGS",
+          "isOuScopable": true,
+          "childPrivileges": [
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/dOwWxAZ8XE2DPHQbwDASe3NfH_c\"",
+              "serviceId": "03hv69ve4bjwe54",
+              "privilegeName": "MANAGE_CHROME_APPLICATION_SETTINGS",
+              "isOuScopable": true
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/J7kqweP-8MeQCGJsad2s0dGSD7Q\"",
+              "serviceId": "03hv69ve4bjwe54",
+              "privilegeName": "MANAGE_CHROME_WEB_SETTINGS",
+              "isOuScopable": true
+            }
+          ]
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/PFQFXZ1Ucb71MNiWgB3y7nluQjk\"",
+          "serviceId": "03hv69ve4bjwe54",
+          "privilegeName": "MANAGE_DEVICES",
+          "isOuScopable": true,
+          "childPrivileges": [
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/2GJEbt4vVUN9yzK2Ridw6sLYaeA\"",
+              "serviceId": "03hv69ve4bjwe54",
+              "privilegeName": "CHROME_DEVICE_ACTION_LOG_COLLECTION",
+              "isOuScopable": true
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/jlP3Xat5Dqu746SwqkfU6F4Flp8\"",
+              "serviceId": "03hv69ve4bjwe54",
+              "privilegeName": "DEVICE_ACTION_CRD",
+              "isOuScopable": true
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/Bj3ncg4WD_ivu9Mrexb-wRgd6-8\"",
+              "serviceId": "03hv69ve4bjwe54",
+              "privilegeName": "DEVICE_ACTION_REBOOT",
+              "isOuScopable": true
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/b5-Mo13ce8d22kCtNrloRSX-OQc\"",
+              "serviceId": "03hv69ve4bjwe54",
+              "privilegeName": "DEVICE_ACTION_SCREENSHOT",
+              "isOuScopable": true
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/Yeix-Xnj1y-jFFcJFUzkBNKHK2M\"",
+              "serviceId": "03hv69ve4bjwe54",
+              "privilegeName": "MANAGE_DEVICES_READ_ONLY",
+              "isOuScopable": true,
+              "childPrivileges": [
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/Lv0gb7sB8fEJgD5DlZm8E7afpx0\"",
+                  "serviceId": "03hv69ve4bjwe54",
+                  "privilegeName": "TELEMETRY_API",
+                  "isOuScopable": true,
+                  "childPrivileges": [
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/lgfkhKBO8e8EUtYPYBzPJzT3GPw\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_APPS_REPORT",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/dw2HJINgGtoalHjRAlv7m8d04bY\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_AUDIO_REPORT",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/6YFRS8wKG3nxbhTCJ2NrhO-PkWM\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_BATTERY_INFO",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/0H-dQha61K7CdbBt58ZxomzuFSg\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_BATTERY_REPORT",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/WOmPyTy0HtNZjTsTUDSo-f17Qlo\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_BUS_DEVICE_INFO",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/oPVPV7oSXBxl6bF1TzNRId2O-I4\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_CPU_INFO",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/5NjuCZsh6il61Zc84VCZvrkGmY8\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_CPU_REPORT",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/kzvvHJLRxPBJTLgCy_HzQGgOKZw\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_CRASH_REPORT",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/mypFDLpkuLY7EMXUAJjWXxBEtr0\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_DEVICE",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/6ktlCLEVRuQYDHFknVtZehCYTL0\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_DEVICE_ACTIVITY_REPORT",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/BbopBk0vK8iisKzxM9qeqyou2WM\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_GRAPHICS_INFO",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/JlYb6E01rzLlJdV5sxBtbwR6jLY\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_GRAPHICS_REPORT",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/2y55HR4iooiomK2pyvZ2Vqj3oz4\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_KIOSK_VISION_INFO",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/d5hRXOOyHUYvtjnUoScKnbKwnb4\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_KIOSK_VISION_REPORT",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/mnbAZjBgc3yk11kg1uO7rRDVbtE\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_MEMORY_INFO",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/VbNhng-LJuyUWbGaG9wgbFnnoAI\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_MEMORY_REPORT",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/svFFRRswpWBAHtXjbcTljKrcm4s\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_NETWORK_INFO",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/Jq2T1V4Qu4YqXwjIEG-1JAHH8aU\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_NETWORK_REPORT",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/Nzviq4uefkJYz0buANnMidimU0U\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_OS_REPORT",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/naQ6zKAAf_6VW1ahAT0ybpB55Yo\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_PERIPHERALS_REPORT",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/68y1izHodjOBPtE8rDpjr-kqPRQ\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_STORAGE_INFO",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/X8gaiGyfqVUSb4rf6ndaAiqxMSA\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_STORAGE_REPORT",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/tJ69cMP2O5-EtNTLRhti-etib2k\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_USER",
+                      "isOuScopable": true
+                    },
+                    {
+                      "kind": "admin#directory#privilege",
+                      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/5jIV7IA3GStDSe494BrWA0sogKw\"",
+                      "serviceId": "03hv69ve4bjwe54",
+                      "privilegeName": "TELEMETRY_API_WEB_REPORT",
+                      "isOuScopable": true
+                    }
+                  ]
+                }
+              ]
+            }
+          ]
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/B3ZKBrmLEq_lX9ewmnUSYGDqLi0\"",
+          "serviceId": "03hv69ve4bjwe54",
+          "privilegeName": "MANAGE_DEVICE_SETTINGS",
+          "isOuScopable": true
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/tBCZ1T1MwPrFIUcEenX3cwImERU\"",
+          "serviceId": "03hv69ve4bjwe54",
+          "privilegeName": "MANAGE_PRINTERS",
+          "isOuScopable": true
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/0SIwvGHBYm0KeHYz0DoTElHasMs\"",
+          "serviceId": "03hv69ve4bjwe54",
+          "privilegeName": "VIEW_CHROME_REPORTS",
+          "isOuScopable": true,
+          "childPrivileges": [
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/d5Y3JBu8X2ndxv3_f2WpmBf42Uk\"",
+              "serviceId": "03hv69ve4bjwe54",
+              "privilegeName": "VIEW_CHROME_CRASH_REPORTS",
+              "isOuScopable": true
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/bTxVgUwR6QXEpxRfuL2_6f-D3Cg\"",
+              "serviceId": "03hv69ve4bjwe54",
+              "privilegeName": "VIEW_CHROME_EXTENSIONS_REPORT",
+              "isOuScopable": true
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/nB5l9G8GU7BaNbGdiF695I7kbCU\"",
+              "serviceId": "03hv69ve4bjwe54",
+              "privilegeName": "VIEW_CHROME_INSIGHTS_REPORT",
+              "isOuScopable": true
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/zrwNUVBpGxWhZwJuCo5p_RiOnFc\"",
+              "serviceId": "03hv69ve4bjwe54",
+              "privilegeName": "VIEW_CHROME_LEGACY_TECH_REPORT",
+              "isOuScopable": true
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/S-cMOpexrFqREUJrOAtWubUMhXg\"",
+              "serviceId": "03hv69ve4bjwe54",
+              "privilegeName": "VIEW_CHROME_PRINTERS_REPORT",
+              "isOuScopable": true
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/cLSCRHtwGzzMhQKXji1HEEc6vd0\"",
+              "serviceId": "03hv69ve4bjwe54",
+              "privilegeName": "VIEW_CHROME_VERSION_REPORT",
+              "isOuScopable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/QhgEIOYuHRNIofVZGx5Td-iz0W0\"",
+      "serviceId": "03hv69ve4bjwe54",
+      "privilegeName": "SERVICE_DATA_DOWNLOADER",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/dwAJHap409LxZwXac8cF5eA7MdE\"",
+      "serviceId": "01x0gk371sq486y",
+      "privilegeName": "MANAGE_CHROME_INSIGHT_SETTINGS",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/9JW3-ZpvoagIPR56fYG7zlpXY8w\"",
+      "serviceId": "01x0gk371sq486y",
+      "privilegeName": "VIEW_AND_MANAGE_CHROME_OCR_SETTING",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/bI-Z4vf7q8Ah9CNfwjrx1Uok8H0\"",
+      "serviceId": "01x0gk371sq486y",
+      "privilegeName": "VIEW_CHROME_INSIGHT_SETTINGS",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/abTTX4OVtBldh2mM5Sqq8PmMCSg\"",
+      "serviceId": "02w5ecyt3pkeyqi",
+      "privilegeName": "MANAGE_ENTERPRISE_PRIVATE_APPS",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/ot72kjQIdXS_H4nFA4y9Q37D9ho\"",
+      "serviceId": "02w5ecyt3pkeyqi",
+      "privilegeName": "MANAGE_EXTERNALLY_HOSTED_APK_UPLOAD_IN_PLAY",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/0pXB8E7QTg03vLTGIizjP3RJ_KM\"",
+      "serviceId": "02w5ecyt3pkeyqi",
+      "privilegeName": "MANAGE_PLAY_FOR_WORK_STORE",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/5pUngD8JhPdNBXzB7HE8VTmeRaQ\"",
+      "serviceId": "01baon6m1wv6b0p",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/W2aFM1UNkgL34ZPb5UlxoosKYvw\"",
+      "serviceId": "02afmg282jiquyg",
+      "serviceName": "device_management",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": true
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/8PIl87JDIjutxZ9DlgeGusIAOnk\"",
+      "serviceId": "02afmg283v5nmx6",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/TBHyUtS6nn_mpqyp6C9rZgoF2QY\"",
+          "serviceId": "02afmg283v5nmx6",
+          "privilegeName": "ADMIN_QUALITY_DASHBOARD_ACCESS",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/DIQGvIhHo_qOenFJzW2R1wuT48Q\"",
+      "serviceId": "039kk8xu49mji9t",
+      "serviceName": "gmail",
+      "privilegeName": "ACCESS_ADMIN_QUARANTINE",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/ciZih6mbCbBUx1XCVbczjyqPVaA\"",
+      "serviceId": "039kk8xu49mji9t",
+      "serviceName": "gmail",
+      "privilegeName": "ACCESS_EMAIL_LOG_SEARCH",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/aS7ZiLJOBpd1ULwKsck8AXLpDNM\"",
+      "serviceId": "039kk8xu49mji9t",
+      "serviceName": "gmail",
+      "privilegeName": "ACCESS_RESTRICTED_QUARANTINE",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/Tnz3UJoSvuTBzxEXCeh5HdpORR8\"",
+      "serviceId": "039kk8xu49mji9t",
+      "serviceName": "gmail",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/Dy7MSCFu4peVQzbmto_rhMJtFM4\"",
+      "serviceId": "03mzq4wv1nvgcwf",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/JszQyUISSc24vPBvWqIMvk6Lp7k\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "ADMIN_REPORTING_ACCESS",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/RkCt76D8vEjR9-Su9LeVqIMyIWk\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "REPORTING_AUDIT_ACCESS",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/IUhZsMA7pAw79FM5ycEHzAj0jhU\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "API_APPS_ENTERPRISE_CUSTOMER",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/faRIieNemkE9In-O6k99dGawD_k\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "API_APPS_ENTERPRISE_CUSTOMER_READ",
+          "isOuScopable": false,
+          "childPrivileges": [
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/3IOZbWVIJmXTdj-lLUCt-fl89tI\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "API_APPS_ENTERPRISE_CUSTOMER_READ_BRANDING_SETTINGS",
+              "isOuScopable": false
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/ePFIBbI_-yqtk4uJPmEMj1fnduE\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "API_APPS_ENTERPRISE_CUSTOMER_READ_CONTACT_INFO",
+              "isOuScopable": false
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/ot4G6kDFzIJoUsaE3NI8xXKTwz0\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "API_APPS_ENTERPRISE_CUSTOMER_READ_ONBOARD_SETTINGS",
+              "isOuScopable": false
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/ya-6p2aGubx-DNiVoPNjfRayJFc\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "API_APPS_ENTERPRISE_CUSTOMER_READ_PROFILE_SETTINGS",
+              "isOuScopable": false
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/GEsyPRUDu5KpFcQJV-r9szFeEpU\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "API_APPS_ENTERPRISE_CUSTOMER_READ_SUPPORT_SETTINGS",
+              "isOuScopable": false
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/BJ_aI2-xt_MUQ5t6OStaCd397F8\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "API_APPS_ENTERPRISE_CUSTOMER_READ_TIME_ZONE_SETTINGS",
+              "isOuScopable": false
+            }
+          ]
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/p-8sDVs7EkjcAGPGtn2tk2tZPYU\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "API_APPS_ENTERPRISE_CUSTOMER_UPDATE",
+          "isOuScopable": false,
+          "childPrivileges": [
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/HxOdpXM8MOhWRJ8Z6b7K3zip_tw\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "API_APPS_ENTERPRISE_CUSTOMER_UPDATE_BRANDING_SETTINGS",
+              "isOuScopable": false
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/n56JtYnpD8XoIqq7jE3UJN144A4\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "API_APPS_ENTERPRISE_CUSTOMER_UPDATE_CONTACT_INFO",
+              "isOuScopable": false
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/3_dcWrXC710NbrcS29lnhvFsrX0\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "API_APPS_ENTERPRISE_CUSTOMER_UPDATE_ONBOARD_SETTINGS",
+              "isOuScopable": false
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/RLm4NlOgeu6YyCQGgE8OfdDNFv0\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "API_APPS_ENTERPRISE_CUSTOMER_UPDATE_PROFILE_SETTINGS",
+              "isOuScopable": false
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/3ERxEfhMTLAr-8Df9pGpetYh7sQ\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "API_APPS_ENTERPRISE_CUSTOMER_UPDATE_SUPPORT_SETTINGS",
+              "isOuScopable": false
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/bnmMd83RzwfNKMu4E9uk-K2kNik\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "API_APPS_ENTERPRISE_CUSTOMER_UPDATE_TIME_ZONE_SETTINGS",
+              "isOuScopable": false
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/qTdjBFz0gohbk7_IkJB8iBxZHPs\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "USER_SECURITY_ALL",
+      "isOuScopable": true
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/yLchIKaqo0F_2-MJkQ1Dos9-GDY\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "BILLING",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/F1g6xU4M3HNGLgeTOLg0WLvi0i4\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "BILLING_READ",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/vL3Mr9elAgowiN7NU4jUnjaokn4\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "DATATRANSFER_API_PRIVILEGE_GROUP",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/CDJJp6fdmm69OzddiqusH471H7c\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "DOMAIN_MANAGEMENT",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/OtkyRJwTgsDbacsu_fAOEkfXE4Q\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "DOMAIN_REGISTRATION_MANAGEMENT",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/BEBBNkfFPjJtonJxjR5nR6-Lo9Q\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "FULL_MIGRATION_ACCESS",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/dI-v6WsZDAirux40FTLYdMgcG_o\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "EXECUTE_MIGRATION",
+          "isOuScopable": false,
+          "childPrivileges": [
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/vWzwoDxXrjISafjf76pVN8RF7Tg\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "MODIFY_MIGRATION",
+              "isOuScopable": false,
+              "childPrivileges": [
+                {
+                  "kind": "admin#directory#privilege",
+                  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/NdhEbE5buv7oge9p9rLfK8wmfWo\"",
+                  "serviceId": "00haapch16h1ysv",
+                  "serviceName": "admin_apis",
+                  "privilegeName": "VIEW_MIGRATION",
+                  "isOuScopable": false
+                }
+              ]
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/BEWYO-V-37X7UrGZSjEtHk2ySx0\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "GROUPS_ALL",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/-weVxR4tphFD_f5cY2J67Ej5cnA\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "GROUPS_CREATE",
+          "isOuScopable": false
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/sOOdjsYcVs6VkFapJ9GvoepYb3w\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "GROUPS_DELETE",
+          "isOuScopable": false
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/5ohPSQt_SSCRgCUlPu_HE9XR8y4\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "GROUPS_RETRIEVE",
+          "isOuScopable": false
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/-cWZR9TMELJ3VwOpK__lof3CRKo\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "GROUPS_UPDATE",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/uj_cdaXCyLKD1-icFizCFlH5c_w\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "GROUPS_MANAGE_LOCKED_LABEL",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/rtrxkgWjuy6zzl-pAu2DGl4kOj8\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "GROUPS_MANAGE_SECURITY_LABEL",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/LLVTPjLQltlpmZYLDPKwVMunyBo\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "LICENSING",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/PHRdQ6dJKUPrn1ybB-G-VZuUIDA\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "LICENSING_READ",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/3tY5SFxeLTMRG9xcAU19X5DHHaA\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "ORGANIZATION_UNITS_ALL",
+      "isOuScopable": true,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/uBxZR5YgmPf9JNkRwsKAvgd0q0w\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "ORGANIZATION_UNITS_CREATE",
+          "isOuScopable": true
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/UlZmNIoGDszlqIUYLrlWfbriPZY\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "ORGANIZATION_UNITS_DELETE",
+          "isOuScopable": true
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/k6ZcSWO3K198bfMaodxbXZnqQQE\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "ORGANIZATION_UNITS_RETRIEVE",
+          "isOuScopable": true
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/f50ntM97S2-RIMMSCX5sYZNNFlo\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "ORGANIZATION_UNITS_UPDATE",
+          "isOuScopable": true
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/0EcoDqRS19aMAB56mUKdfceACpU\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "SAML2_SERVICE_PROVIDER",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/5JQ-ZNi3JTt33oCT6995IzLoOTQ\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "SCHEMA_MANAGEMENT",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/SSJ9HoJqfnPH0bwjsDtnEwwSx5o\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "SCHEMA_RETRIEVE",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/vQboH4cYnqvTdo1_LaVIRX0XXg4\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "SUPPORT_PRIVILEGE_GROUP",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/dafE18b0lEqXqvGOLqgy-2hOoEM\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "TRUSTED_DOMAIN_WHITELIST_WRITE",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/u2Pe_QiNItdE9C29a89KTUGZwP0\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "TRUSTED_DOMAIN_WHITELIST_READ",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/09ungkDcxOGa3dPWyK9yDcD2D3c\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "UPGRADE_CONSUMER_CONVERSION",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/N7MLQxX6VRdV_-LUsmNHm-mXZ7g\"",
+      "serviceId": "00haapch16h1ysv",
+      "serviceName": "admin_apis",
+      "privilegeName": "USERS_ALL",
+      "isOuScopable": true,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/_EwUpbUxOWRchDOLthCHXSIXfU8\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "USERS_CREATE",
+          "isOuScopable": true
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/VrPNeHSLlnDFNuekbj7FihGGXds\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "USERS_DELETE",
+          "isOuScopable": true
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/Gfb1BNFCQYMpoXP5kDFYaAxlRLA\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "USERS_RETRIEVE",
+          "isOuScopable": true
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/MUKzUOa37XWIpUoKXfKRt55cYHQ\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "USERS_UPDATE_CUSTOM_ATTRIBUTES_USER_PRIVILEGE_GROUP",
+          "isOuScopable": true
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/Zhw3ChTbjJml8x3tWQ3fArx4ZQ8\"",
+          "serviceId": "00haapch16h1ysv",
+          "serviceName": "admin_apis",
+          "privilegeName": "USERS_UPDATE",
+          "isOuScopable": true,
+          "childPrivileges": [
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/rL_F59Vg8sWQOcsHHWJ8Wwm0yhc\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "USERS_ADD_NICKNAME",
+              "isOuScopable": true
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/LMEMNnXTsYvl3S-g6HYBXgU25-Q\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "USERS_FORCE_PASSWORD_CHANGE",
+              "isOuScopable": true
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/zPWWFJF3OJ4WitnItfmCG0D7lyA\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "USERS_MOVE",
+              "isOuScopable": true
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/2ftvr43QDvhauQrbWTRZqCQTcCQ\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "USERS_ALIAS",
+              "isOuScopable": true
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/GZlngzILW5ViYA8VleovaIvbkbE\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "USERS_RESET_PASSWORD",
+              "isOuScopable": true
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/C1v3E2d3y7R8I52p_YoJbxD1328\"",
+              "serviceId": "00haapch16h1ysv",
+              "serviceName": "admin_apis",
+              "privilegeName": "USERS_SUSPEND",
+              "isOuScopable": true
+            }
+          ]
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/l6FdeHAu7Q5uCwWBf8xQ5NmXriw\"",
+      "serviceId": "0319y80a15kueje",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/XK7B8bMTHsdpllc05FlTeha95X0\"",
+      "serviceId": "00upglbi0qz687j",
+      "serviceName": "takeout",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/tYVQkVezetKypJYEDJ3Eyaym7Xw\"",
+      "serviceId": "01tuee744837sjz",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/nPhbVviFwDMW-frZTDCPH8XjwpM\"",
+      "serviceId": "02szc72q20usrb6",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": true
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/BUgsVao6K7mon9lUOD7bKRG_p0s\"",
+      "serviceId": "0279ka651l5iy5q",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/eLZhGLDDSkjW1x27hyFDFeVDvns\"",
+          "serviceId": "0279ka651l5iy5q",
+          "privilegeName": "ADMIN_QUALITY_DASHBOARD_ACCESS",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/xwD-166f3itakgNaBApLQQdFc9Y\"",
+      "serviceId": "01yyy98l4k9lq4l",
+      "serviceName": "directory",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/EjA1aMGvsRr7TBU9LRan97z7IkQ\"",
+          "serviceId": "01yyy98l4k9lq4l",
+          "serviceName": "directory",
+          "privilegeName": "CUSTOM_DIRECTORY_READWRITE",
+          "isOuScopable": false
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/HmA-uUW7fXtW3FkMbn6VAMxDNv0\"",
+          "serviceId": "01yyy98l4k9lq4l",
+          "serviceName": "directory",
+          "privilegeName": "DIRECTORY_SETTINGS_READONLY",
+          "isOuScopable": false,
+          "childPrivileges": [
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/pSkDay9F4gnyskRrCtTvUt8z2dA\"",
+              "serviceId": "01yyy98l4k9lq4l",
+              "serviceName": "directory",
+              "privilegeName": "CUSTOM_DIRECTORY_READONLY",
+              "isOuScopable": false
+            },
+            {
+              "kind": "admin#directory#privilege",
+              "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/Yh36RVvmOzvE9hZAAR5d5tkhUa4\"",
+              "serviceId": "01yyy98l4k9lq4l",
+              "serviceName": "directory",
+              "privilegeName": "PROFILE_EDITABILITY_READONLY",
+              "isOuScopable": false
+            }
+          ]
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/AFwb9XvJcPi3Dy1ce6zKPB84pAc\"",
+          "serviceId": "01yyy98l4k9lq4l",
+          "serviceName": "directory",
+          "privilegeName": "PROFILE_EDITABILITY_READWRITE",
+          "isOuScopable": false
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/goDSstn9FJK6j05IDUFAh8IlX0E\"",
+          "serviceId": "01yyy98l4k9lq4l",
+          "serviceName": "directory",
+          "privilegeName": "SHARED_CONTACTS_READWRITE",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/efS5n2yCrkqHFUXTOn6pJENJHxw\"",
+      "serviceId": "04iylrwe1ih2v48",
+      "privilegeName": "MANAGE_SERVICE_ON_OFF",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/ajPQmMrRWEAyGkp4ZgE7fKoBCU8\"",
+      "serviceId": "02pta16n3efhw69",
+      "privilegeName": "APPS_INCIDENTS_FULL_ACCESS",
+      "isOuScopable": false,
+      "childPrivileges": [
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/eriQpEaUabYqV57fFeJ4u6o9PSA\"",
+          "serviceId": "02pta16n3efhw69",
+          "privilegeName": "APPS_INCIDENTS_READONLY",
+          "isOuScopable": false
+        },
+        {
+          "kind": "admin#directory#privilege",
+          "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/AcMzZE0YrzV8aeuJP9bEkcoJegk\"",
+          "serviceId": "02pta16n3efhw69",
+          "privilegeName": "APPS_INCIDENTS_VIEW_VIRUSTOTAL_REPORTS",
+          "isOuScopable": false
+        }
+      ]
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/M7Js_QkugNA1Kd_5BEDd3vtDiNc\"",
+      "serviceId": "02pta16n4hxgyp2",
+      "privilegeName": "MANAGE_CSE_SETTINGS",
+      "isOuScopable": false
+    },
+    {
+      "kind": "admin#directory#privilege",
+      "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/xkC3ss-0k98xLfAIpiBnTGIZ-0s\"",
+      "serviceId": "03oy7u290lj7dci",
+      "privilegeName": "APP_ADMIN",
+      "isOuScopable": false
+    }
+  ]
+}

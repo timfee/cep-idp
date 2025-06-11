@@ -1,3 +1,0 @@
-// GET https://graph.microsoft.com/v1.0/applications?%24filter=applicationTemplateId+eq+%278ba3d1d8-7c8c-4d2d-b179-04d4a68fba02%27
-// Error: fetch failed
-null

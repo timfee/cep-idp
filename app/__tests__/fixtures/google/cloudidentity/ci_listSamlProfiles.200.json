@@ -4,6 +4,32 @@
 {
   "inboundSamlSsoProfiles": [
     {
+      "name": "inboundSamlSsoProfiles/027dkwhd3bz1xq8",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD",
+      "idpConfig": {
+        "entityId": "https://sts.windows.net/ef36b7bd-231b-421e-ac50-8f2995a39eee/",
+        "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
+      },
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/027dkwhd3bz1xq8",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/027dkwhd3bz1xq8/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/01z5vtyk1zptk3k",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD",
+      "idpConfig": {
+        "entityId": "https://sts.windows.net/ef36b7bd-231b-421e-ac50-8f2995a39eee/",
+        "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
+      },
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/01z5vtyk1zptk3k",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/01z5vtyk1zptk3k/acs"
+      }
+    },
+    {
       "name": "inboundSamlSsoProfiles/00nu0yxn0h27oxs",
       "customer": "customers/C03ly86ew",
       "displayName": "Azure AD SSO",
@@ -11,6 +37,19 @@
       "spConfig": {
         "entityId": "https://accounts.google.com/samlrp/00nu0yxn0h27oxs",
         "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/00nu0yxn0h27oxs/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/02h2lrpd1o0kmbk",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD",
+      "idpConfig": {
+        "entityId": "https://sts.windows.net/ef36b7bd-231b-421e-ac50-8f2995a39eee/",
+        "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
+      },
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/02h2lrpd1o0kmbk",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/02h2lrpd1o0kmbk/acs"
       }
     },
     {

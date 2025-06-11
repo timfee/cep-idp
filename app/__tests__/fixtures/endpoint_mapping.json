@@ -6,7 +6,7 @@
   "admin.listRoles": "google/admin/admin_listRoles.200.json",
   "admin.getRoleAssign": "google/admin/admin_getRoleAssign.200.json",
   "ci.listSamlProfiles": "google/cloudidentity/ci_listSamlProfiles.200.json",
-  "ci.createSamlProfile": "google/cloudidentity/ci_createSamlProfile.200.json",
+  "ci.createSamlProfile": "google/cloudidentity/ci_createSamlProfile.503.json",
   "graph.appByTemplateProv": "microsoft/graph/graph_appByTemplateProv.200.json",
   "graph.appByTemplateSSO": "microsoft/graph/graph_appByTemplateSSO.200.json",
   "graph.instantiateProv": "microsoft/graph/graph_instantiateProv.400.json",
@@ -20,7 +20,7 @@
   "graph.createPolicy": "microsoft/graphBeta/graph_createPolicy.400.json",
   "graph.linkPolicy": "microsoft/graphBeta/graph_linkPolicy.400.json",
   "ci.getIdpCreds": "google/cloudidentity/ci_getIdpCreds.400.json",
-  "ci.listSsoAssignments": "google/cloudidentity/ci_listSsoAssignments.200.json",
+  "ci.listSsoAssignments": "google/cloudidentity/ci_listSsoAssignments.400.json",
   "web.fetchMetadata": "public/web_fetchMetadata.200.json",
   "ci.addIdpCert": "google/cloudidentity/ci_addIdpCert.400.json",
   "ci.postSsoAssignment": "google/cloudidentity/ci_postSsoAssignment.400.json"

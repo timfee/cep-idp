@@ -5,7 +5,7 @@
   "done": true,
   "response": {
     "@type": "type.googleapis.com/google.apps.cloudidentity.inboundsamlssoprofiles.v1.InboundSamlSsoProfile",
-    "name": "inboundSamlSsoProfiles/02h2lrpd1o0kmbk",
+    "name": "inboundSamlSsoProfiles/027dkwhd3bz1xq8",
     "customer": "customers/C03ly86ew",
     "displayName": "Azure AD",
     "idpConfig": {
@@ -13,8 +13,8 @@
       "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
     },
     "spConfig": {
-      "entityId": "https://accounts.google.com/samlrp/02h2lrpd1o0kmbk",
-      "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/02h2lrpd1o0kmbk/acs"
+      "entityId": "https://accounts.google.com/samlrp/027dkwhd3bz1xq8",
+      "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/027dkwhd3bz1xq8/acs"
     }
   }
 }

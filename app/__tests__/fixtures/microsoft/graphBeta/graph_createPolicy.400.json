@@ -4,18 +4,11 @@
 {
   "error": {
     "code": "Request_BadRequest",
-    "message": "Property definition has an invalid value.",
-    "details": [
-      {
-        "code": "InvalidValue",
-        "message": "Property definition has an invalid value.",
-        "target": "definition"
-      }
-    ],
+    "message": "An unexpected 'StartObject' node was found for property named '' when reading from the JSON reader. A 'PrimitiveValue' node was expected.",
     "innerError": {
-      "date": "2025-06-11T18:59:20",
-      "request-id": "80396001-6bf6-4f94-9cde-8410d24ceae3",
-      "client-request-id": "80396001-6bf6-4f94-9cde-8410d24ceae3"
+      "date": "2025-06-11T19:17:38",
+      "request-id": "394ae516-c787-405b-bd85-829d9fffb95f",
+      "client-request-id": "394ae516-c787-405b-bd85-829d9fffb95f"
     }
   }
 }

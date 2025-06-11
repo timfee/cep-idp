@@ -6,9 +6,9 @@
     "code": "BadRequest",
     "message": "Write requests (excluding DELETE) must contain the Content-Type header declaration.",
     "innerError": {
-      "date": "2025-06-11T18:59:20",
-      "request-id": "8ba54c1f-30c8-4536-9c0a-e1e940b22c44",
-      "client-request-id": "8ba54c1f-30c8-4536-9c0a-e1e940b22c44"
+      "date": "2025-06-11T19:17:38",
+      "request-id": "66d8c4ea-1ccc-4293-9844-ef5d66106995",
+      "client-request-id": "66d8c4ea-1ccc-4293-9844-ef5d66106995"
     }
   }
 }

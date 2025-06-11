@@ -1,4 +1,4 @@
-// GET https://cloudidentity.googleapis.com/v1/inboundSsoAssignments
+// GET https://cloudidentity.googleapis.com/v1/inboundSsoAssignments?parent=
 // Status: 401 Unauthorized
 // Issues Fixed: None
 {

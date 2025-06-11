@@ -176,7 +176,8 @@
     "graph.patchSync": {
       "conn": "graphGA",
       "method": "PATCH",
-      "path": "/servicePrincipals/{provServicePrincipalId}/synchronization"
+      "path": "/servicePrincipals/{provServicePrincipalId}/synchronization",
+      "headers": { "Content-Type": "application/json" }
     },
     "graph.startSyncJob": {
       "conn": "graphGA",
@@ -212,7 +213,7 @@
       "conn": "graphGA",
       "method": "GET",
       "path": "/servicePrincipals/{ssoServicePrincipalId}/appRoleAssignedTo",
-      "qs": { "$filter": "principalId eq {principalId}" }
+      "qs": { "$filter": "principalId eq '{principalId}'" }
     },
     "graph.postAppRoleAssign": {
       "conn": "graphGA",
@@ -269,6 +270,9 @@
     "generatedPassword": {},
     "tenantId": {
       "_comment": "Microsoft tenant ID from environment configuration"
+    },
+    "rawXmlResponse": {
+      "_comment": "Raw XML response fetched from federation metadata endpoint"
     },
     "manualStepsState": {
       "_comment": "JSON string storing completed manual steps"

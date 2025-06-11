@@ -129,18 +129,18 @@
     "ci.getIdpCreds": {
       "conn": "googleCI",
       "method": "GET",
-      "path": "/inboundSamlSsoProfiles/{samlProfileId}/idpCredentials"
+      "path": "/inboundSamlSsoProfiles/{split(samlProfileId,'/')[1]}/idpCredentials"
     },
     "ci.addIdpCert": {
       "conn": "googleCI",
       "method": "POST",
-      "path": "/inboundSamlSsoProfiles/{samlProfileId}/idpCredentials:add"
+      "path": "/inboundSamlSsoProfiles/{split(samlProfileId,'/')[1]}/idpCredentials:add"
     },
     "ci.listSsoAssignments": {
       "conn": "googleCI",
       "method": "GET",
       "path": "/inboundSsoAssignments",
-      "qs": { "parent": "{samlProfileId}" }
+      "qs": { "parent": "{split(samlProfileId,'/')[1]}" }
     },
     "ci.postSsoAssignment": {
       "conn": "googleCI",
@@ -249,14 +249,16 @@
     "entityId": {},
     "acsUrl": {},
     "provTemplateId": {
-      "_comment": "Template ID for Google Cloud (Provisioning) App, looked up by display name"
+      "default": "d0d8633b-4174-4d05-89c7-86d229f50f26",
+      "_comment": "Gallery ID for Google Cloud Provisioning App (fallback if dynamic lookup fails)"
     },
     "provTemplateName": {
       "default": "Google Cloud / G Suite Connector",
       "_comment": "Display name to lookup the provisioning application template"
     },
     "ssoTemplateId": {
-      "_comment": "Template ID for Google Cloud SSO App, looked up by display name"
+      "default": "8ba3d1d8-7c8c-4d2d-b179-04d4a68fba02",
+      "_comment": "Gallery ID for Google Cloud SSO App (fallback if dynamic lookup fails)"
     },
     "ssoTemplateName": {
       "default": "Google Cloud",

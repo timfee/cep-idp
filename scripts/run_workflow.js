@@ -208,6 +208,7 @@ function evaluateExpression(expr, vars) {
     url: (base, p) => `${base}/${p}`,
     concat: (a, b) => `${a}${b}`,
     extractCertificateFromXml: extractCertificate,
+    split: (str, delim) => (typeof str === 'string' ? str.split(delim) : []),
   };
   const argNames = Object.keys(sandbox);
   const argValues = Object.values(sandbox);

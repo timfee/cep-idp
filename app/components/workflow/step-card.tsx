@@ -2,13 +2,8 @@
 import "client-only";
 
 import { executeWorkflowStep } from "@/app/actions/workflow-execution";
-import {
-  handleInteractiveResponse,
-  prepareInteractiveRequest,
-} from "@/app/actions/workflow-interactive";
 import { markManualStepComplete } from "@/app/actions/workflow-state";
 import { cn } from "@/app/lib/utils";
-import type { InteractiveRequest } from "@/app/lib/workflow";
 import {
   LogEntry,
   Step,
@@ -29,7 +24,7 @@ import {
   Loader2,
   XCircle,
 } from "lucide-react";
-import { useReducer, useState, useTransition } from "react";
+import { useReducer, useTransition } from "react";
 import {
   Accordion,
   AccordionContent,
@@ -40,7 +35,6 @@ import { Alert, AlertDescription } from "../ui/alert";
 import { Badge } from "../ui/badge";
 import { Button } from "../ui/button";
 import { Card } from "../ui/card";
-import { InteractiveDialog } from "./interactive-dialog";
 import { PasswordDisplay } from "./password-display";
 
 const JSON_INDENT = 2;
@@ -97,8 +91,6 @@ export function StepCard({
 }: StepCardProps) {
   const [isPending, startTransition] = useTransition();
   const [state, dispatch] = useReducer(stepCardReducer, { isExecuting: false });
-  const [interactiveRequest, setInteractiveRequest] =
-    useState<InteractiveRequest | null>(null);
   const effectiveStatus =
     state.executionError ?
       { ...status, status: STATUS_VALUES.FAILED, error: state.executionError }
@@ -116,16 +108,6 @@ export function StepCard({
     startTransition(async () => {
       const result = await executeWorkflowStep(stepName);
 
-      if (result.needsInteraction && result.actionIndex !== undefined) {
-        const req = await prepareInteractiveRequest(
-          stepName,
-          result.actionIndex
-        );
-        if (req) {
-          setInteractiveRequest(req);
-          return;
-        }
-      }
 
       if (result.status && result.status.status !== STATUS_VALUES.FAILED) {
         dispatch({ type: "EXECUTE_SUCCESS" });
@@ -140,33 +122,6 @@ export function StepCard({
         dispatch({ type: "EXECUTE_SUCCESS" });
       }
     });
-  };
-
-  /**
-   * Persist the user's interactive response and re-run the step.
-   *
-   * @param response - Selected value and optional metadata from the dialog
-   */
-  const handleInteractiveComplete = async (response: {
-    value: string;
-    metadata?: Record<string, string>;
-  }) => {
-    if (!interactiveRequest) return;
-    const result = await handleInteractiveResponse(
-      interactiveRequest.stepName,
-      interactiveRequest.actionIndex,
-      response
-    );
-
-    if (result.success) {
-      setInteractiveRequest(null);
-      handleExecute(interactiveRequest.stepName);
-    } else {
-      dispatch({
-        type: "EXECUTE_FAILURE",
-        error: result.error || "Failed to process response",
-      });
-    }
   };
 
   const statusIcon = (() => {
@@ -523,17 +478,6 @@ export function StepCard({
         </Accordion>
       </Card>
 
-      {interactiveRequest && (
-        <InteractiveDialog
-          request={interactiveRequest}
-          isOpen={true}
-          onComplete={handleInteractiveComplete}
-          onCancel={() => {
-            setInteractiveRequest(null);
-            dispatch({ type: "EXECUTE_FAILURE", error: "User cancelled" });
-          }}
-        />
-      )}
     </>
   );
 }

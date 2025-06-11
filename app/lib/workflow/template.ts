@@ -4,7 +4,7 @@ import {
   VARIABLE_KEYS,
 } from "./constants";
 import { extractCertificateFromXml } from "./extractors";
-import { generatePassword } from "./generators";
+import { generatePassword, generateDeterministicPassword } from "./generators";
 
 /**
  * Replace variable placeholders in a template string.
@@ -148,6 +148,14 @@ function evaluateTemplateExpression(
         throw new Error("generatePassword() length must be a positive number");
       }
       return generatePassword(length);
+    }
+    case "generateDeterministicPassword": {
+      if (args.length !== 1) {
+        throw new Error(
+          "generateDeterministicPassword() requires exactly 1 argument: seed"
+        );
+      }
+      return generateDeterministicPassword(args[0]);
     }
     case "extractCertificateFromXml": {
       if (args.length !== 1) {

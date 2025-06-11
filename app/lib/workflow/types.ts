@@ -28,36 +28,6 @@ export const ActionSchema = z.object({
   longRunning: z.boolean().optional(),
   fallback: z.boolean().optional(),
   mode: z.array(ActionModeEnum).optional(),
-  interactive: z
-    .object({
-      type: z.enum(["select", "create", "select-or-create"]),
-      variable: z.string(),
-      prompt: z.string(),
-      extractOptions: z.string().optional(),
-      default: z.string().optional(),
-      createOption: z
-        .union([
-          z.boolean(),
-          z.object({
-            prompt: z.string(),
-            fields: z.array(
-              z.object({
-                name: z.string(),
-                type: z.enum(["text", "password", "email"]).optional(),
-                validator: z.string().optional(),
-                generator: z.string().optional(),
-                default: z.string().optional(),
-                label: z.string().optional(),
-              })
-            ),
-            transform: z.string().optional(),
-          }),
-        ])
-        .optional(),
-      requiresPassword: z.boolean().optional(),
-    })
-    .optional(),
-  condition: z.string().optional(),
 });
 
 /** Schema describing a workflow step. */
@@ -139,8 +109,6 @@ export interface StepStatus {
   startedAt?: number;
   completedAt?: number;
   variables?: Record<string, string>;
-  needsInteraction?: boolean;
-  actionIndex?: number;
 }
 
 /** Single log line emitted during step execution. */
@@ -161,35 +129,3 @@ export interface OAuthConfig {
   scopes: string[];
 }
 
-export interface InteractiveRequest {
-  stepName: string;
-  actionIndex: number;
-  config: {
-    type: "select" | "create" | "select-or-create";
-    variable: string;
-    prompt: string;
-    extractOptions?: string;
-    default?: string;
-    createOption?:
-      | boolean
-      | {
-          prompt: string;
-          fields: Array<{
-            name: string;
-            type?: "text" | "password" | "email";
-            validator?: string;
-            generator?: string;
-            default?: string;
-            label?: string;
-          }>;
-          transform?: string;
-        };
-    requiresPassword?: boolean;
-  };
-  options?: Array<{ name: string; value: string }>;
-}
-
-export interface InteractiveResponse {
-  value: string;
-  metadata?: Record<string, string>;
-}

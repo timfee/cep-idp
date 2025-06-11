@@ -175,6 +175,11 @@ async function main() {
 }
 
 function templateString(str, vars) {
+  const s = str.trim();
+  // Skip full-pass templating for JSON-like object literals to avoid parsing errors
+  if (s.startsWith('{"')) {
+    return str;
+  }
   return str.replace(/{([^}]+)}/g, (_, expr) => String(evaluateExpression(expr, vars)));
 }
 

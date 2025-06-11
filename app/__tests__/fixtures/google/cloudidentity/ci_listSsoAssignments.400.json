@@ -1,0 +1,20 @@
+// GET https://cloudidentity.googleapis.com/v1/inboundSsoAssignments?samlSsoProfile=
+// Status: 400 Bad Request
+// Issues Fixed: None
+{
+  "error": {
+    "code": 400,
+    "message": "Invalid JSON payload received. Unknown name \"samlSsoProfile\": Cannot bind query parameter. Field 'samlSsoProfile' could not be found in request message.",
+    "status": "INVALID_ARGUMENT",
+    "details": [
+      {
+        "@type": "type.googleapis.com/google.rpc.BadRequest",
+        "fieldViolations": [
+          {
+            "description": "Invalid JSON payload received. Unknown name \"samlSsoProfile\": Cannot bind query parameter. Field 'samlSsoProfile' could not be found in request message."
+          }
+        ]
+      }
+    ]
+  }
+}

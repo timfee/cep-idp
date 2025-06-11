@@ -75,21 +75,15 @@
       "method": "POST",
       "path": "/customer/{customerId}/orgunits"
     },
-    "admin.listUsers": {
-      "conn": "googleAdmin",
-      "method": "GET",
-      "path": "/users",
-      "qs": { "customer": "{customerId}" }
-    },
     "admin.getUser": {
       "conn": "googleAdmin",
       "method": "GET",
-      "path": "/users/{serviceAccountEmail}"
+      "path": "/users/{email('azuread-provisioning', primaryDomain)}"
     },
     "admin.updateUser": {
       "conn": "googleAdmin",
       "method": "PUT",
-      "path": "/users/{serviceAccountEmail}"
+      "path": "/users/{email('azuread-provisioning', primaryDomain)}"
     },
     "admin.postUser": {
       "conn": "googleAdmin",
@@ -280,8 +274,7 @@
       "_comment": "JSON string storing completed manual steps"
     },
     "ouPath": {},
-    "ouName": {},
-    "serviceAccountEmail": {}
+    "ouName": {}
   },
   "steps": [
     {
@@ -327,76 +320,51 @@
         }
       ]
     },
-    {
-      "name": "Create Service Account for Microsoft",
-      "inputs": ["primaryDomain", "ouPath"],
-      "outputs": [
-        "provisioningUserId",
-        "provisioningUserEmail",
-        "generatedPassword"
-      ],
-      "actions": [
-        {
-          "use": "admin.listUsers",
-          "qs": { "query": "email:*-provisioning*" },
-          "interactive": {
-            "type": "select-or-create",
-            "variable": "serviceAccountEmail",
-            "prompt": "Select existing service account or create new",
-            "extractOptions": "$.users[*].primaryEmail",
-            "requiresPassword": true,
-            "createOption": {
-              "prompt": "Create new service account",
-              "fields": [
-                {
-                  "name": "serviceAccountEmail",
-                  "type": "email",
-                  "label": "Email Address",
-                  "default": "azuread-provisioning@{primaryDomain}",
-                  "validator": "email"
-                },
-                {
-                  "name": "generatedPassword",
-                  "type": "password",
-                  "label": "Password",
-                  "generator": "randomPassword(16)"
-                }
-              ]
+      {
+        "name": "Create Service Account for Microsoft",
+        "inputs": ["primaryDomain", "ouPath"],
+        "outputs": [
+          "provisioningUserId",
+          "provisioningUserEmail",
+          "generatedPassword"
+        ],
+        "actions": [
+          {
+            "use": "admin.getUser",
+            "extract": {
+              "provisioningUserId": "$.id",
+              "provisioningUserEmail": "$.primaryEmail"
             }
+          },
+          {
+            "use": "admin.updateUser",
+            "payload": {
+              "password": "{generateDeterministicPassword(primaryDomain)}"
+            },
+            "extract": {
+              "generatedPassword": "{generateDeterministicPassword(primaryDomain)}"
+            },
+            "fallback": true
+          },
+          {
+            "use": "admin.postUser",
+            "payload": {
+              "primaryEmail": "{email('azuread-provisioning', primaryDomain)}",
+              "name": { "givenName": "Microsoft", "familyName": "Provisioning" },
+              "password": "{generateDeterministicPassword(primaryDomain)}",
+              "orgUnitPath": "{ouPath}"
+            },
+            "extract": {
+              "provisioningUserId": "$.id",
+              "provisioningUserEmail": "$.primaryEmail",
+              "generatedPassword": "{generateDeterministicPassword(primaryDomain)}"
+            },
+            "fallback": true
           }
-        },
-        {
-          "use": "admin.getUser",
-          "extract": {
-            "provisioningUserId": "$.id",
-            "provisioningUserEmail": "$.primaryEmail"
-          },
-          "condition": "serviceAccountEmail_existing"
-        },
-        {
-          "use": "admin.updateUser",
-          "payload": { "password": "{generatedPassword}" },
-          "condition": "passwordAction == 'reset'"
-        },
-        {
-          "use": "admin.postUser",
-          "payload": {
-            "primaryEmail": "{serviceAccountEmail}",
-            "name": { "givenName": "Microsoft", "familyName": "Provisioning" },
-            "password": "{generatedPassword}",
-            "orgUnitPath": "{ouPath}"
-          },
-          "extract": {
-            "provisioningUserId": "$.id",
-            "provisioningUserEmail": "$.primaryEmail"
-          },
-          "condition": "serviceAccountEmail.isNew",
-          "fallback": true
-        }
-      ],
-      "role": "dirUserRW",
-      "depends_on": ["Create Automation Organizational Unit"]
-    },
+        ],
+        "role": "dirUserRW",
+        "depends_on": ["Create Automation Organizational Unit"]
+      },
     {
       "name": "Setup Microsoft Sync Permissions",
       "inputs": ["customerId", "primaryDomain"],

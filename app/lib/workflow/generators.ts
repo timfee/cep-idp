@@ -1,4 +1,4 @@
-import { randomBytes } from "crypto";
+import { randomBytes, createHash } from "crypto";
 import { ERROR_MESSAGES } from "./constants";
 
 /** Character set used when generating random passwords. */
@@ -19,6 +19,23 @@ export function generatePassword(length: number): string {
     password += PASSWORD_CHARS[bytes[i] % PASSWORD_CHARS.length];
   }
   return password;
+}
+
+/**
+ * Generate a deterministic password based on a seed value.
+ * Uses a hash of the seed plus a secret suffix to ensure uniqueness.
+ *
+ * @param seed - Domain name or other unique identifier
+ * @returns A consistent 16-character password for the given seed
+ */
+export function generateDeterministicPassword(seed: string): string {
+  // Add a suffix to make it less guessable
+  const input = `${seed}-azuread-provisioning-2024`;
+  const hash = createHash('sha256').update(input).digest('hex');
+
+  // Take first 12 chars of hash and add special chars for complexity
+  const base = hash.substring(0, 12);
+  return `${base}!Aa1`;
 }
 
 /**

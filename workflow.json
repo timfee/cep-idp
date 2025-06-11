@@ -140,7 +140,7 @@
       "conn": "googleCI",
       "method": "GET",
       "path": "/inboundSsoAssignments",
-      "qs": { "samlSsoProfile": "{samlProfileId}" }
+      "qs": { "parent": "{samlProfileId}" }
     },
     "ci.postSsoAssignment": {
       "conn": "googleCI",
@@ -172,8 +172,7 @@
     "graph.listAppTemplates": {
       "conn": "graphGA",
       "method": "GET",
-      "path": "/applicationTemplates",
-      "qs": { "$filter": "displayName eq '{displayName}'" }
+      "path": "/applicationTemplates"
     },
     "graph.getSync": {
       "conn": "graphGA",
@@ -476,12 +475,12 @@
       "execute": [
         {
           "use": "graph.listAppTemplates",
-          "qs": { "displayName": "{provTemplateName}" },
+          "qs": { "$filter": "displayName eq '{provTemplateName}'" },
           "extract": { "provTemplateId": "$.value[0].id" }
         },
         {
           "use": "graph.listAppTemplates",
-          "qs": { "displayName": "{ssoTemplateName}" },
+          "qs": { "$filter": "displayName eq '{ssoTemplateName}'" },
           "extract": { "ssoTemplateId": "$.value[0].id" }
         },
         {

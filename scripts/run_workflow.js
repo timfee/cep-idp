@@ -66,11 +66,12 @@ async function main() {
       const base = conn.base || '';
       const rawPath = templateString(ep.path, variables);
       const fullUrl = rawPath.startsWith('http') ? rawPath : `${base}${rawPath}`;
-      // Query string
+      // Query string: merge endpoint-level and action-level qs
       let urlWithQs = fullUrl;
-      if (ep.qs) {
-        const qs = templateObject(ep.qs, variables);
-        const params = new URLSearchParams(qs).toString();
+      const mergedQs = { ...(ep.qs || {}), ...(action.qs || {}) };
+      if (Object.keys(mergedQs).length) {
+        const qsObj = templateObject(mergedQs, variables);
+        const params = new URLSearchParams(qsObj).toString();
         urlWithQs += params ? `?${params}` : '';
       }
       // Headers

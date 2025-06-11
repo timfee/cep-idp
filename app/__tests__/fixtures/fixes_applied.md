@@ -6,7 +6,7 @@
 
 ### ci.listSsoAssignments
 - **Issue**: Listing SSO assignments without filtering always returned a top-level empty object ("{}"), making it impossible to detect existing assignments.
-- **Fix**: Changed the query parameter to `parent` so assignments are correctly tied to the newly created `samlProfileId`.
+- **Fix**: Changed query parameter from `samlSsoProfile` to `parent` so assignments are correctly tied to the newly created `samlProfileId`.
 
 ### graph.getAppRoleAssign & graph.postAppRoleAssign
 - **Issue**: Defined but unused endpoints for app role assignments; `principalId` was never populated.

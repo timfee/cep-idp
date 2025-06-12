@@ -1,0 +1,11 @@
+// POST https://admin.googleapis.com/admin/directory/v1/customer/my_customer/roleassignments
+// Status: 200
+{
+  "kind": "admin#directory#roleAssignment",
+  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/20FGvUmnVDMIxJn4vI1S5skdjeM\"",
+  "roleAssignmentId": "732289777484355",
+  "roleId": "732289777484359",
+  "assignedTo": "116949259093507633648",
+  "assigneeType": "user",
+  "scopeType": "CUSTOMER"
+}

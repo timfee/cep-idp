@@ -1,5 +1,4 @@
 import { env } from "@/app/env";
-import "server-only";
 import { OAuthConfig, Provider, Token } from "../workflow";
 import {
   MS_IN_SECOND,

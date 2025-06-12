@@ -34,7 +34,7 @@ An administrator at a large enterprise (e.g., Chrome Admin, Security Admin, IT P
 
 ## 3. Core Features & User Flow
 
-The application guides the CEP Champion through the federation setup, gracefully handling the complexities of a multi-admin environment.  It is implemented as a
+The application guides the CEP Champion through the federation setup, gracefully handling the complexities of a multi-admin environment. It is implemented as a
 Next.js application with a workflow engine defined in `workflow.json`.
 
 ### 3.1. User Flow
@@ -62,6 +62,33 @@ Next.js application with a workflow engine defined in `workflow.json`.
 
 ## 5. Obtaining Test Tokens
 
-For manual API testing, run `./tokens/get_tokens.sh`.  This script reads
-credentials from `tokens/google_config.json` and `tokens/microsoft_config.json`
-and writes the resulting tokens to `tokens/*.txt` and `tokens/*.json`.
+Jest automatically fetches fresh tokens when tests run. Before executing `pnpm test`, set the following environment variables:
+
+```env
+GOOGLE_SERVICE_ACCOUNT_KEY=<Google service account JSON>
+GOOGLE_ADMIN_EMAIL=<admin email to impersonate>
+MS_TENANT_ID=<Azure tenant id>
+MS_CLIENT_ID=<Azure application id>
+MS_CLIENT_SECRET=<Azure client secret>
+```
+
+Tokens will be available as `process.env.GOOGLE_ACCESS_TOKEN` and `process.env.MICROSOFT_ACCESS_TOKEN` during tests.
+Scopes and endpoints are taken from the OAuth configuration in `app/lib/auth/oauth-server.ts` to stay consistent with the application.
+
+## 6. Test Environment Cleanup
+
+The Jest environment tears down any test artifacts once the suite finishes. If you create temporary users, organizational units, or SSO applications, provide their identifiers so cleanup can run automatically:
+
+```env
+# Google
+GOOGLE_TEST_USER=<user email>
+GOOGLE_TEST_OU=<org unit path>
+GOOGLE_SSO_PROFILE_ID=<saml profile id>
+GOOGLE_SSO_ASSIGNMENT_ID=<assignment id>
+
+# Microsoft
+MS_TEST_APP_ID=<application id>
+MS_TEST_SP_ID=<service principal id>
+```
+
+During global teardown, these resources are deleted using the access tokens obtained at setup.

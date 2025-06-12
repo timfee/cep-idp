@@ -125,6 +125,11 @@ The heart of the workflow is the **steps** array. Each step represents a discret
 - **`depends_on`** – other steps that must complete first
 - **`manual`** – if true, the user marks completion manually
 
+A step must define automation using either a single **`actions`** list or one or
+both of **`verify`** and **`execute`**. Manual steps may omit actions entirely.
+The workflow parser rejects steps that include both styles at once or, for
+non-manual steps, omit automation completely.
+
 ### 7.1 Actions
 
 An action references an endpoint and can optionally include a payload, extraction rules and checker settings. When the engine runs a step it performs all actions listed under `verify` first. If every checker passes, the step is considered complete. Otherwise the `execute` actions run to apply the necessary changes.

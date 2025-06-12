@@ -400,6 +400,82 @@ async function processStepExecution(
 }
 
 /**
+ * Handle errors thrown during action execution.
+ */
+function handleActionError(
+  error: unknown,
+  action: Action,
+  step: Step,
+  workflow: Workflow,
+  verificationOnly: boolean,
+  onLog: (entry: LogEntry) => void
+): { breakLoop: boolean } {
+  const apiError = parseApiError(error);
+  let errorMessage = "";
+  let needsReauth = false;
+
+  switch (apiError.kind) {
+    case "structured":
+      errorMessage = apiError.message;
+      if (
+        apiError.code === WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED
+        || apiError.status === "UNAUTHENTICATED"
+      ) {
+        needsReauth = true;
+      }
+      break;
+    case "text":
+      errorMessage = apiError.message;
+      break;
+    case "unknown":
+      errorMessage = "Unknown error";
+      break;
+    default:
+      assertNever(apiError);
+  }
+
+  onLog({
+    timestamp: Date.now(),
+    level: "error",
+    message: `Action ${action.use} failed: ${errorMessage}`,
+    data: apiError,
+  });
+
+  if (action.fallback) {
+    onLog({
+      timestamp: Date.now(),
+      level: "info",
+      message: `Fallback action failed, trying next action...`,
+    });
+    return { breakLoop: false };
+  }
+
+  if (
+    needsReauth
+    || errorMessage.includes(
+      String(WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED)
+    )
+    || errorMessage.includes("Authentication expired")
+  ) {
+    const failedEndpoint = workflow.endpoints[action.use];
+    const provider =
+      failedEndpoint.conn.includes(CONNECTION_IDENTIFIERS.GOOGLE) ?
+        "Google"
+      : "Microsoft";
+    throw new Error(ERROR_MESSAGES.AUTH_EXPIRED(provider));
+  }
+
+  if (errorMessage.includes("404") && !verificationOnly) {
+    throw new Error(ERROR_MESSAGES.RESOURCE_NOT_FOUND(step.name));
+  }
+  if (errorMessage.includes("404")) {
+    return { breakLoop: true };
+  }
+
+  throw new Error(errorMessage);
+}
+
+/**
  * Execute all actions for a workflow step.
  *
  * @param step - Step definition to execute
@@ -450,68 +526,17 @@ export async function runStepActions(
         Object.assign(extractedVariables, result.extractedVariables);
       }
     } catch (error: unknown) {
-      const apiError = parseApiError(error);
-      let errorMessage = "";
-      let needsReauth = false;
-
-      switch (apiError.kind) {
-        case "structured":
-          errorMessage = apiError.message;
-          if (
-            apiError.code === WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED
-            || apiError.status === "UNAUTHENTICATED"
-          ) {
-            needsReauth = true;
-          }
-          break;
-        case "text":
-          errorMessage = apiError.message;
-          break;
-        case "unknown":
-          errorMessage = "Unknown error";
-          break;
-        default:
-          assertNever(apiError);
-      }
-
-      onLog({
-        timestamp: Date.now(),
-        level: "error",
-        message: `Action ${action.use} failed: ${errorMessage}`,
-        data: apiError,
-      });
-
-      // If this is a fallback action, continue to next action
-      if (action.fallback) {
-        onLog({
-          timestamp: Date.now(),
-          level: "info",
-          message: `Fallback action failed, trying next action...`,
-        });
-        continue;
-      }
-
-      // Handle different error types
-      if (
-        needsReauth
-        || errorMessage.includes(
-          String(WORKFLOW_CONSTANTS.HTTP_STATUS.UNAUTHORIZED)
-        )
-        || errorMessage.includes("Authentication expired")
-      ) {
-        const failedEndpoint = workflow.endpoints[action.use];
-        const provider =
-          failedEndpoint.conn.includes(CONNECTION_IDENTIFIERS.GOOGLE) ?
-            "Google"
-          : "Microsoft";
-        throw new Error(ERROR_MESSAGES.AUTH_EXPIRED(provider));
-      } else if (errorMessage.includes("404") && !verificationOnly) {
-        throw new Error(ERROR_MESSAGES.RESOURCE_NOT_FOUND(step.name));
-      } else if (errorMessage.includes("404")) {
+      const result = handleActionError(
+        error,
+        action,
+        step,
+        workflow,
+        verificationOnly,
+        onLog
+      );
+      if (result.breakLoop) {
         success = false;
         break;
-      } else {
-        throw new Error(errorMessage);
       }
     }
   }

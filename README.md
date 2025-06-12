@@ -67,6 +67,9 @@ Jest automatically fetches fresh tokens when tests run. Before executing `pnpm t
 ```env
 GOOGLE_SERVICE_ACCOUNT_KEY=<Google service account JSON>
 GOOGLE_ADMIN_EMAIL=<admin email to impersonate>
+# or to use Workload Identity
+# GOOGLE_WORKLOAD_IDENTITY=1
+# GOOGLE_SERVICE_ACCOUNT_EMAIL=<service account email>
 MS_TENANT_ID=<Azure tenant id>
 MS_CLIENT_ID=<Azure application id>
 MS_CLIENT_SECRET=<Azure client secret>

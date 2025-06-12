@@ -23,6 +23,14 @@ Set the following environment variables before running the tests:
 export GOOGLE_SERVICE_ACCOUNT_KEY=$(cat key.json)
 export GOOGLE_ADMIN_EMAIL=admin@example.com
 ```
+Alternatively, if your tests run on a machine configured with
+[Workload Identity](https://cloud.google.com/workload-identity), set:
+
+```bash
+export GOOGLE_WORKLOAD_IDENTITY=1
+export GOOGLE_SERVICE_ACCOUNT_EMAIL=cep-test@YOUR_PROJECT.iam.gserviceaccount.com
+export GOOGLE_ADMIN_EMAIL=admin@example.com
+```
 
 ## Generating Microsoft Credentials
 

@@ -1,34 +1,16 @@
 import crypto from "crypto";
 import { GoogleAuth } from "google-auth-library";
-const googleScopes = [
-  "openid",
-  "email",
-  "profile",
-  "https://www.googleapis.com/auth/admin.directory.user",
-  "https://www.googleapis.com/auth/admin.directory.orgunit",
-  "https://www.googleapis.com/auth/admin.directory.domain",
-  "https://www.googleapis.com/auth/admin.directory.rolemanagement",
-  "https://www.googleapis.com/auth/cloud-identity.inboundsso",
-  "https://www.googleapis.com/auth/siteverification",
-  "https://www.googleapis.com/auth/admin.directory.rolemanagement",
-];
+import {
+  googleOAuthConfig,
+  microsoftOAuthConfig,
+} from "../app/lib/auth/oauth-server";
 
-const microsoftScopes = [
-  "openid",
-  "profile",
-  "email",
-  "offline_access",
-  "User.Read",
-  "Directory.Read.All",
-  "Application.ReadWrite.All",
-  "AppRoleAssignment.ReadWrite.All",
-  "Policy.ReadWrite.ApplicationConfiguration",
-  "offline_access",
-];
+const googleScopes = googleOAuthConfig.scopes;
 
-const googleTokenUrl = "https://oauth2.googleapis.com/token";
-const microsoftTokenUrl =
-  "https://login.microsoftonline.com/organizations/oauth2/v2.0/token";
+const microsoftScopes = microsoftOAuthConfig.scopes;
+
+const googleTokenUrl = googleOAuthConfig.tokenUrl;
+const microsoftTokenUrl = microsoftOAuthConfig.tokenUrl;
 
 interface GoogleKey {
   client_email: string;

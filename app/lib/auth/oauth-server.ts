@@ -1,4 +1,4 @@
-import { env } from "@/app/env";
+import { env } from "../../env";
 import { OAuthConfig, Provider, Token } from "../workflow";
 import {
   MS_IN_SECOND,

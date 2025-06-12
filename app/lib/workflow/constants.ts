@@ -112,6 +112,8 @@ export const WORKFLOW_CONSTANTS = {
   PASSWORD_EXTRACTION_KEY: "_generated_password_displayed",
 };
 
+export const DETERMINISTIC_PASSWORD_BASE_LENGTH = 12;
+
 export const OAUTH_STATE_COOKIE_NAME = "oauth_state";
 
 export const VARIABLE_KEYS = {

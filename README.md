@@ -34,7 +34,8 @@ An administrator at a large enterprise (e.g., Chrome Admin, Security Admin, IT P
 
 ## 3. Core Features & User Flow
 
-The application guides the CEP Champion through the federation setup, gracefully handling the complexities of a multi-admin environment.
+The application guides the CEP Champion through the federation setup, gracefully handling the complexities of a multi-admin environment.  It is implemented as a
+Next.js application with a workflow engine defined in `workflow.json`.
 
 ### 3.1. User Flow
 
@@ -43,3 +44,24 @@ The application guides the CEP Champion through the federation setup, gracefully
    - Nice to have: Steps that cannot be completed with the Champion's current permissions are disabled with a short message explaining why. For example: _"This action requires the 'Role Management Administrator' privilege in Google Workspace. Please run this step with a user who has this privilege, or delegate this task to the appropriate administrator."_
 3. **Stateful Progression:** The application's state (completed steps, extracted variables like domain names and IDs) is maintained using client-side state management. Because the status of each step can be ascertained by READ API calls, it’s not critical to persist the entirety of the workflow in any sophisticated way.
 4. **Completion:** The workflow is complete once all technical steps are marked “completed.”
+
+## 4. Getting Started
+
+1. Install dependencies with `pnpm install`.
+2. Create a `.env.local` file with credentials for both providers:
+
+   ```env
+   AUTH_SECRET=<random string>
+   GOOGLE_CLIENT_ID=<OAuth client id>
+   GOOGLE_CLIENT_SECRET=<OAuth client secret>
+   MICROSOFT_CLIENT_ID=<Azure app id>
+   MICROSOFT_CLIENT_SECRET=<Azure client secret>
+   ```
+
+3. Start the development server with `pnpm dev`.
+
+## 5. Obtaining Test Tokens
+
+For manual API testing, run `./tokens/get_tokens.sh`.  This script reads
+credentials from `tokens/google_config.json` and `tokens/microsoft_config.json`
+and writes the resulting tokens to `tokens/*.txt` and `tokens/*.json`.

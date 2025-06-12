@@ -1,6 +1,15 @@
 # API Authentication Instructions
 
-After running `./tokens/get_tokens.sh`, you'll have access tokens for both Google and Microsoft APIs.
+Before running `./tokens/get_tokens.sh`, create two credential files:
+
+- `google_config.json` – a Google service account key with domain wide
+  delegation enabled
+- `microsoft_config.json` – an Azure application record containing `tenant_id`,
+  `client_id`, and `client_secret`
+
+After running the script you'll have access tokens for both Google and Microsoft APIs.
+
+The script depends on `jq` and `curl` being installed.
 
 ## Token Files Location
 

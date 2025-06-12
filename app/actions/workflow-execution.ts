@@ -207,7 +207,6 @@ async function handleActionExecution(
   extractedVariables: Record<string, string>;
   data?: unknown;
 }> {
-  
   const endpoint = workflow.endpoints[action.use];
   const prereq = validateActionPrerequisites(
     action,

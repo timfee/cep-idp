@@ -1,0 +1,32 @@
+{
+  "_metadata": {
+    "url": "https://admin.googleapis.com/admin/directory/v1/users/azuread-provisioning@feeley.xyz",
+    "headers": { "Content-Type": "application/json" }
+  },
+  "kind": "admin#directory#user",
+  "id": "116949259093507633648",
+  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/jftPliqzZ_PlaKa5RO8Mmjc1ITs\"",
+  "primaryEmail": "azuread-provisioning@feeley.xyz",
+  "name": {
+    "givenName": "Microsoft",
+    "familyName": "Provisioning",
+    "fullName": "Microsoft Provisioning"
+  },
+  "isAdmin": false,
+  "isDelegatedAdmin": true,
+  "lastLoginTime": "1970-01-01T00:00:00.000Z",
+  "creationTime": "2025-06-09T15:48:16.000Z",
+  "agreedToTerms": false,
+  "suspended": false,
+  "archived": false,
+  "changePasswordAtNextLogin": false,
+  "ipWhitelisted": false,
+  "emails": [{ "address": "azuread-provisioning@feeley.xyz", "primary": true }],
+  "languages": [{ "languageCode": "en", "preference": "preferred" }],
+  "customerId": "C03ly86ew",
+  "orgUnitPath": "/Automation",
+  "isMailboxSetup": true,
+  "isEnrolledIn2Sv": false,
+  "isEnforcedIn2Sv": false,
+  "includeInGlobalAddressList": true
+}

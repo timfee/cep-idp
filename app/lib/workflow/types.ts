@@ -128,4 +128,3 @@ export interface OAuthConfig {
   tokenUrl: string;
   scopes: string[];
 }
-

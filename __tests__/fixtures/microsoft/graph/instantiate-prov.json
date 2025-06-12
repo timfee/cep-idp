@@ -1,0 +1,161 @@
+{
+  "_metadata": {
+    "url": "https://graph.microsoft.com/v1.0/applicationTemplates/01303a13-8322-4e06-bee5-80d612907131/instantiate",
+    "headers": { "Content-Type": "application/json" }
+  },
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#microsoft.graph.applicationServicePrincipal",
+  "application": {
+    "id": "6b4c2a1e-c0cb-4cdc-aed5-96f2be848495",
+    "appId": "544910c1-3299-46d3-b056-55290dc9c1fe",
+    "applicationTemplateId": "01303a13-8322-4e06-bee5-80d612907131",
+    "createdDateTime": "2025-06-11T21:33:07Z",
+    "deletedDateTime": null,
+    "displayName": "Test Provisioning App",
+    "description": null,
+    "groupMembershipClaims": null,
+    "identifierUris": [],
+    "isFallbackPublicClient": false,
+    "signInAudience": "AzureADMyOrg",
+    "tags": [],
+    "tokenEncryptionKeyId": null,
+    "defaultRedirectUri": null,
+    "samlMetadataUrl": null,
+    "serviceManagementReference": null,
+    "optionalClaims": null,
+    "addIns": [],
+    "api": {
+      "acceptMappedClaims": null,
+      "knownClientApplications": [],
+      "requestedAccessTokenVersion": null,
+      "oauth2PermissionScopes": [
+        {
+          "adminConsentDescription": "Allow the application to access Test Provisioning App on behalf of the signed-in user.",
+          "adminConsentDisplayName": "Access Test Provisioning App",
+          "id": "b8b3ec23-9256-4a6b-bc61-d537f0ec4037",
+          "isEnabled": true,
+          "type": "User",
+          "userConsentDescription": "Allow the application to access Test Provisioning App on your behalf.",
+          "userConsentDisplayName": "Access Test Provisioning App",
+          "value": "user_impersonation"
+        }
+      ],
+      "preAuthorizedApplications": []
+    },
+    "appRoles": [
+      {
+        "allowedMemberTypes": ["User"],
+        "displayName": "msiam_access",
+        "id": "8eea5c46-96fe-4398-b9c2-02ac04d931ca",
+        "isEnabled": true,
+        "description": "msiam_access",
+        "value": null,
+        "origin": "Application"
+      },
+      {
+        "allowedMemberTypes": ["User"],
+        "displayName": "Default Organization",
+        "id": "9e79c739-f165-49e8-8745-fe08f1634b3b",
+        "isEnabled": true,
+        "description": "Default Organization",
+        "value": null,
+        "origin": "Application"
+      }
+    ],
+    "info": {
+      "logoUrl": null,
+      "marketingUrl": null,
+      "privacyStatementUrl": null,
+      "supportUrl": null,
+      "termsOfServiceUrl": null
+    },
+    "keyCredentials": [],
+    "parentalControlSettings": {
+      "countriesBlockedForMinors": [],
+      "legalAgeGroupRule": "Allow"
+    },
+    "passwordCredentials": [],
+    "publicClient": { "redirectUris": [] },
+    "requiredResourceAccess": [],
+    "verifiedPublisher": {
+      "displayName": null,
+      "verifiedPublisherId": null,
+      "addedDateTime": null
+    },
+    "web": {
+      "homePageUrl": "https://www.google.com?metadata=googleapps|ISV9.1|primary|z",
+      "redirectUris": ["https://www.google.com/a/*", "https://www.google.com"],
+      "logoutUrl": null
+    }
+  },
+  "servicePrincipal": {
+    "id": "d5bf8487-b04a-4ce5-ab6b-c84debf31506",
+    "deletedDateTime": null,
+    "accountEnabled": true,
+    "appId": "544910c1-3299-46d3-b056-55290dc9c1fe",
+    "applicationTemplateId": "01303a13-8322-4e06-bee5-80d612907131",
+    "appDisplayName": "Test Provisioning App",
+    "alternativeNames": [],
+    "appOwnerOrganizationId": "ef36b7bd-231b-421e-ac50-8f2995a39eee",
+    "displayName": "Test Provisioning App",
+    "appRoleAssignmentRequired": true,
+    "loginUrl": null,
+    "logoutUrl": null,
+    "homepage": "https://www.google.com?metadata=googleapps|ISV9.1|primary|z",
+    "notificationEmailAddresses": [],
+    "preferredSingleSignOnMode": null,
+    "preferredTokenSigningKeyThumbprint": null,
+    "replyUrls": ["https://www.google.com"],
+    "servicePrincipalNames": ["544910c1-3299-46d3-b056-55290dc9c1fe"],
+    "servicePrincipalType": "Application",
+    "tags": ["WindowsAzureActiveDirectoryIntegratedApp"],
+    "tokenEncryptionKeyId": null,
+    "samlSingleSignOnSettings": null,
+    "addIns": [],
+    "appRoles": [
+      {
+        "allowedMemberTypes": ["User"],
+        "displayName": "msiam_access",
+        "id": "8eea5c46-96fe-4398-b9c2-02ac04d931ca",
+        "isEnabled": true,
+        "description": "msiam_access",
+        "value": null,
+        "origin": "Application"
+      },
+      {
+        "allowedMemberTypes": ["User"],
+        "displayName": "Default Organization",
+        "id": "9e79c739-f165-49e8-8745-fe08f1634b3b",
+        "isEnabled": true,
+        "description": "Default Organization",
+        "value": null,
+        "origin": "Application"
+      }
+    ],
+    "info": {
+      "logoUrl": null,
+      "marketingUrl": null,
+      "privacyStatementUrl": null,
+      "supportUrl": null,
+      "termsOfServiceUrl": null
+    },
+    "keyCredentials": [],
+    "oauth2PermissionScopes": [
+      {
+        "adminConsentDescription": "Allow the application to access Test Provisioning App on behalf of the signed-in user.",
+        "adminConsentDisplayName": "Access Test Provisioning App",
+        "id": "b8b3ec23-9256-4a6b-bc61-d537f0ec4037",
+        "isEnabled": true,
+        "type": "User",
+        "userConsentDescription": "Allow the application to access Test Provisioning App on your behalf.",
+        "userConsentDisplayName": "Access Test Provisioning App",
+        "value": "user_impersonation"
+      }
+    ],
+    "passwordCredentials": [],
+    "verifiedPublisher": {
+      "displayName": null,
+      "verifiedPublisherId": null,
+      "addedDateTime": null
+    }
+  }
+}

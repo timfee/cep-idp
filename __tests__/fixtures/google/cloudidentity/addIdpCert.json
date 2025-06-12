@@ -1,9 +1,0 @@
-// POST https://cloudidentity.googleapis.com/v1/inboundSamlSsoProfiles/02tixnqn2j98a2o/idpCredentials:add
-// Status: 400
-{
-  "error": {
-    "code": 400,
-    "message": "Error(6): Invalid Pem data: \"Must be a valid X509 certificate in PEM format.\".",
-    "status": "INVALID_ARGUMENT"
-  }
-}

@@ -1,1 +1,0 @@
-{"error":{"code":"BadRequest","message":"Write requests are only supported on contained entities or navigation properties with bindings.","innerError":{"date":"2025-06-11T22:07:43","request-id":"0b9dd474-967a-4c8e-8433-66c5fec8efbc","client-request-id":"0b9dd474-967a-4c8e-8433-66c5fec8efbc"}}}

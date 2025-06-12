@@ -1,0 +1,14 @@
+{
+  "_metadata": {
+    "url": "https://cloudidentity.googleapis.com/v1/inboundSsoAssignments",
+    "headers": { "Content-Type": "application/json" }
+  },
+  "done": true,
+  "response": {
+    "@type": "type.googleapis.com/google.apps.cloudidentity.inboundssoassignments.v1.InboundSsoAssignment",
+    "name": "inboundSsoAssignments/aQzAzbHk4NmV3LU8wM3BoOGEyejNzeXI4OG0",
+    "customer": "customers/C03ly86ew",
+    "targetOrgUnit": "orgUnits/03ph8a2z3syr88m",
+    "ssoMode": "SSO_OFF"
+  }
+}

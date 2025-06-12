@@ -1,0 +1,20 @@
+{
+  "_metadata": {
+    "url": "https://cloudidentity.googleapis.com/v1/inboundSsoAssignments?parent=inboundSamlSsoProfiles/01flkqm54idu48w",
+    "headers": { "Content-Type": "application/json" }
+  },
+  "inboundSsoAssignments": [
+    {
+      "name": "inboundSsoAssignments/aQzAzbHk4NmV3LU8wMGdqZGd4czJiMmM2bXk",
+      "customer": "customers/C03ly86ew",
+      "targetOrgUnit": "orgUnits/00gjdgxs2b2c6my",
+      "ssoMode": "SSO_OFF"
+    },
+    {
+      "name": "inboundSsoAssignments/aQzAzbHk4NmV3LU8wM3BoOGEyejFvNWZ0Z2s",
+      "customer": "customers/C03ly86ew",
+      "targetOrgUnit": "orgUnits/03ph8a2z1o5ftgk",
+      "ssoMode": "SSO_OFF"
+    }
+  ]
+}

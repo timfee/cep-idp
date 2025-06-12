@@ -1,0 +1,17 @@
+{
+  "_metadata": {
+    "url": "https://admin.googleapis.com/admin/directory/v1/customer/my_customer/domains",
+    "headers": { "Content-Type": "application/json" }
+  },
+  "error": {
+    "code": 409,
+    "message": "Domain is already set up.",
+    "errors": [
+      {
+        "message": "Domain is already set up.",
+        "domain": "global",
+        "reason": "duplicate"
+      }
+    ]
+  }
+}

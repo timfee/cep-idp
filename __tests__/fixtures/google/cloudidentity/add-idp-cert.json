@@ -1,0 +1,11 @@
+{
+  "_metadata": {
+    "url": "https://cloudidentity.googleapis.com/v1/inboundSamlSsoProfiles/01flkqm54idu48w/idpCredentials:add",
+    "headers": { "Content-Type": "application/json" }
+  },
+  "error": {
+    "code": 400,
+    "message": "Error(6): Invalid Pem data: \"Must be a valid X509 certificate in PEM format.\".",
+    "status": "INVALID_ARGUMENT"
+  }
+}

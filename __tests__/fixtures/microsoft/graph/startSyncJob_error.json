@@ -1,3 +1,0 @@
-// POST https://graph.microsoft.com/v1.0/servicePrincipals/d5bf8487-b04a-4ce5-ab6b-c84debf31506/synchronization/jobs/Initial/start
-// Status: 400
-{"error":{"code":"RequestResourceIdentifierInvalid","message":"Resource identifier 'Initial' is invalid","details":[],"innerError":{"date":"2025-06-11T22:07:19","request-id":"c6ea0576-261d-4a64-9e48-1cc061d7805e","client-request-id":"c6ea0576-261d-4a64-9e48-1cc061d7805e"}}}

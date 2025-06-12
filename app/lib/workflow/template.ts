@@ -4,7 +4,7 @@ import {
   VARIABLE_KEYS,
 } from "./constants";
 import { extractCertificateFromXml } from "./extractors";
-import { generatePassword, generateDeterministicPassword } from "./generators";
+import { generateDeterministicPassword, generatePassword } from "./generators";
 
 /**
  * Replace variable placeholders in a template string.

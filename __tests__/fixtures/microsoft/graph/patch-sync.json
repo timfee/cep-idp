@@ -1,0 +1,7 @@
+{
+  "_metadata": {
+    "url": "https://graph.microsoft.com/v1.0/servicePrincipals/d5bf8487-b04a-4ce5-ab6b-c84debf31506/synchronization",
+    "headers": { "Content-Type": "application/json" }
+  },
+  "status": 204
+}

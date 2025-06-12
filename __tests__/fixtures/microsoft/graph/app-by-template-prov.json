@@ -1,0 +1,808 @@
+{
+  "_metadata": {
+    "url": "https://graph.microsoft.com/v1.0/applications?=applicationTemplateId%20eq%20'01303a13-8322-4e06-bee5-80d612907131'",
+    "headers": { "Content-Type": "application/json" }
+  },
+  "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#applications",
+  "value": [
+    {
+      "id": "18ec10f1-8b78-45a8-bafb-ad59c9e8e82e",
+      "deletedDateTime": null,
+      "appId": "6db4c317-3b31-401a-927e-c731bbb4d6b1",
+      "applicationTemplateId": "8b1025e4-1dd2-430b-a150-2ef79cd700f5",
+      "disabledByMicrosoftStatus": null,
+      "createdDateTime": "2025-06-03T23:02:03Z",
+      "displayName": "Google Workspace SAML SSO",
+      "description": null,
+      "groupMembershipClaims": null,
+      "identifierUris": [],
+      "isDeviceOnlyAuthSupported": null,
+      "isFallbackPublicClient": false,
+      "nativeAuthenticationApisEnabled": null,
+      "notes": null,
+      "publisherDomain": "cep-netnew.cc",
+      "serviceManagementReference": null,
+      "signInAudience": "AzureADMyOrg",
+      "tags": [],
+      "tokenEncryptionKeyId": null,
+      "uniqueName": null,
+      "samlMetadataUrl": null,
+      "defaultRedirectUri": null,
+      "certification": null,
+      "optionalClaims": null,
+      "servicePrincipalLockConfiguration": null,
+      "requestSignatureVerification": null,
+      "addIns": [],
+      "api": {
+        "acceptMappedClaims": null,
+        "knownClientApplications": [],
+        "requestedAccessTokenVersion": null,
+        "oauth2PermissionScopes": [
+          {
+            "adminConsentDescription": "Allow the application to access Google Workspace SAML SSO on behalf of the signed-in user.",
+            "adminConsentDisplayName": "Access Google Workspace SAML SSO",
+            "id": "22e3a854-ba7e-4284-a46b-2aba3a7b4438",
+            "isEnabled": true,
+            "type": "User",
+            "userConsentDescription": "Allow the application to access Google Workspace SAML SSO on your behalf.",
+            "userConsentDisplayName": "Access Google Workspace SAML SSO",
+            "value": "user_impersonation"
+          }
+        ],
+        "preAuthorizedApplications": []
+      },
+      "appRoles": [
+        {
+          "allowedMemberTypes": ["User"],
+          "description": "msiam_access",
+          "displayName": "msiam_access",
+          "id": "7dfd756e-8c27-4472-b2b7-38c17fc5de5e",
+          "isEnabled": true,
+          "origin": "Application",
+          "value": null
+        }
+      ],
+      "info": {
+        "logoUrl": null,
+        "marketingUrl": null,
+        "privacyStatementUrl": null,
+        "supportUrl": null,
+        "termsOfServiceUrl": null
+      },
+      "keyCredentials": [],
+      "parentalControlSettings": {
+        "countriesBlockedForMinors": [],
+        "legalAgeGroupRule": "Allow"
+      },
+      "passwordCredentials": [],
+      "publicClient": { "redirectUris": [] },
+      "requiredResourceAccess": [],
+      "verifiedPublisher": {
+        "displayName": null,
+        "verifiedPublisherId": null,
+        "addedDateTime": null
+      },
+      "web": {
+        "homePageUrl": "https://signin.aws.amazon.com/saml?metadata=aws|ISV9.1|primary|z",
+        "logoutUrl": null,
+        "redirectUris": ["https://signin.aws.amazon.com/saml"],
+        "implicitGrantSettings": {
+          "enableAccessTokenIssuance": false,
+          "enableIdTokenIssuance": true
+        },
+        "redirectUriSettings": [
+          { "uri": "https://signin.aws.amazon.com/saml", "index": null }
+        ]
+      },
+      "spa": { "redirectUris": [] }
+    },
+    {
+      "id": "1e5fa616-a59c-4527-94ef-84ef50803862",
+      "deletedDateTime": null,
+      "appId": "5a5bd331-8316-41f5-ae96-72a88b92dfe8",
+      "applicationTemplateId": "8b1025e4-1dd2-430b-a150-2ef79cd700f5",
+      "disabledByMicrosoftStatus": null,
+      "createdDateTime": "2025-06-03T23:01:23Z",
+      "displayName": "Google Workspace User Provisioning",
+      "description": null,
+      "groupMembershipClaims": null,
+      "identifierUris": [],
+      "isDeviceOnlyAuthSupported": null,
+      "isFallbackPublicClient": false,
+      "nativeAuthenticationApisEnabled": null,
+      "notes": null,
+      "publisherDomain": "cep-netnew.cc",
+      "serviceManagementReference": null,
+      "signInAudience": "AzureADMyOrg",
+      "tags": [],
+      "tokenEncryptionKeyId": null,
+      "uniqueName": null,
+      "samlMetadataUrl": null,
+      "defaultRedirectUri": null,
+      "certification": null,
+      "optionalClaims": null,
+      "servicePrincipalLockConfiguration": null,
+      "requestSignatureVerification": null,
+      "addIns": [],
+      "api": {
+        "acceptMappedClaims": null,
+        "knownClientApplications": [],
+        "requestedAccessTokenVersion": null,
+        "oauth2PermissionScopes": [
+          {
+            "adminConsentDescription": "Allow the application to access Google Workspace User Provisioning on behalf of the signed-in user.",
+            "adminConsentDisplayName": "Access Google Workspace User Provisioning",
+            "id": "a3593416-718f-4949-bc1f-21e5e1730a33",
+            "isEnabled": true,
+            "type": "User",
+            "userConsentDescription": "Allow the application to access Google Workspace User Provisioning on your behalf.",
+            "userConsentDisplayName": "Access Google Workspace User Provisioning",
+            "value": "user_impersonation"
+          }
+        ],
+        "preAuthorizedApplications": []
+      },
+      "appRoles": [
+        {
+          "allowedMemberTypes": ["User"],
+          "description": "msiam_access",
+          "displayName": "msiam_access",
+          "id": "7dfd756e-8c27-4472-b2b7-38c17fc5de5e",
+          "isEnabled": true,
+          "origin": "Application",
+          "value": null
+        }
+      ],
+      "info": {
+        "logoUrl": null,
+        "marketingUrl": null,
+        "privacyStatementUrl": null,
+        "supportUrl": null,
+        "termsOfServiceUrl": null
+      },
+      "keyCredentials": [],
+      "parentalControlSettings": {
+        "countriesBlockedForMinors": [],
+        "legalAgeGroupRule": "Allow"
+      },
+      "passwordCredentials": [],
+      "publicClient": { "redirectUris": [] },
+      "requiredResourceAccess": [],
+      "verifiedPublisher": {
+        "displayName": null,
+        "verifiedPublisherId": null,
+        "addedDateTime": null
+      },
+      "web": {
+        "homePageUrl": "https://signin.aws.amazon.com/saml?metadata=aws|ISV9.1|primary|z",
+        "logoutUrl": null,
+        "redirectUris": ["https://signin.aws.amazon.com/saml"],
+        "implicitGrantSettings": {
+          "enableAccessTokenIssuance": false,
+          "enableIdTokenIssuance": true
+        },
+        "redirectUriSettings": [
+          { "uri": "https://signin.aws.amazon.com/saml", "index": null }
+        ]
+      },
+      "spa": { "redirectUris": [] }
+    },
+    {
+      "id": "3d7084d5-59db-49b1-ba84-7171c20db93b",
+      "deletedDateTime": null,
+      "appId": "8db7a986-cc07-44de-843b-71c4d4467113",
+      "applicationTemplateId": "01303a13-8322-4e06-bee5-80d612907131",
+      "disabledByMicrosoftStatus": null,
+      "createdDateTime": "2025-05-20T20:22:39Z",
+      "displayName": "Google Cloud (Provisioning)",
+      "description": null,
+      "groupMembershipClaims": null,
+      "identifierUris": [],
+      "isDeviceOnlyAuthSupported": null,
+      "isFallbackPublicClient": false,
+      "nativeAuthenticationApisEnabled": null,
+      "notes": null,
+      "publisherDomain": "timcepnetnew.onmicrosoft.com",
+      "serviceManagementReference": null,
+      "signInAudience": "AzureADMyOrg",
+      "tags": [],
+      "tokenEncryptionKeyId": null,
+      "uniqueName": null,
+      "samlMetadataUrl": null,
+      "defaultRedirectUri": null,
+      "certification": null,
+      "optionalClaims": null,
+      "servicePrincipalLockConfiguration": null,
+      "requestSignatureVerification": null,
+      "addIns": [],
+      "api": {
+        "acceptMappedClaims": null,
+        "knownClientApplications": [],
+        "requestedAccessTokenVersion": null,
+        "oauth2PermissionScopes": [
+          {
+            "adminConsentDescription": "Allow the application to access Google Cloud (Provisioning) on behalf of the signed-in user.",
+            "adminConsentDisplayName": "Access Google Cloud (Provisioning)",
+            "id": "b5fc8b5b-e6bd-43f0-bc17-6672fc98be36",
+            "isEnabled": true,
+            "type": "User",
+            "userConsentDescription": "Allow the application to access Google Cloud (Provisioning) on your behalf.",
+            "userConsentDisplayName": "Access Google Cloud (Provisioning)",
+            "value": "user_impersonation"
+          }
+        ],
+        "preAuthorizedApplications": []
+      },
+      "appRoles": [
+        {
+          "allowedMemberTypes": ["User"],
+          "description": "msiam_access",
+          "displayName": "msiam_access",
+          "id": "8eea5c46-96fe-4398-b9c2-02ac04d931ca",
+          "isEnabled": true,
+          "origin": "Application",
+          "value": null
+        },
+        {
+          "allowedMemberTypes": ["User"],
+          "description": "Default Organization",
+          "displayName": "Default Organization",
+          "id": "9e79c739-f165-49e8-8745-fe08f1634b3b",
+          "isEnabled": true,
+          "origin": "Application",
+          "value": null
+        }
+      ],
+      "info": {
+        "logoUrl": null,
+        "marketingUrl": null,
+        "privacyStatementUrl": null,
+        "supportUrl": null,
+        "termsOfServiceUrl": null
+      },
+      "keyCredentials": [],
+      "parentalControlSettings": {
+        "countriesBlockedForMinors": [],
+        "legalAgeGroupRule": "Allow"
+      },
+      "passwordCredentials": [],
+      "publicClient": { "redirectUris": [] },
+      "requiredResourceAccess": [],
+      "verifiedPublisher": {
+        "displayName": null,
+        "verifiedPublisherId": null,
+        "addedDateTime": null
+      },
+      "web": {
+        "homePageUrl": "https://www.google.com?metadata=googleapps|ISV9.1|primary|z",
+        "logoutUrl": null,
+        "redirectUris": [
+          "https://www.google.com/a/*",
+          "https://www.google.com"
+        ],
+        "implicitGrantSettings": {
+          "enableAccessTokenIssuance": false,
+          "enableIdTokenIssuance": true
+        },
+        "redirectUriSettings": [
+          { "uri": "https://www.google.com/a/*", "index": null },
+          { "uri": "https://www.google.com", "index": null }
+        ]
+      },
+      "spa": { "redirectUris": [] }
+    },
+    {
+      "id": "5c7858c7-529c-40d9-944d-ec0510e25361",
+      "deletedDateTime": null,
+      "appId": "28f2e988-0021-4521-b215-202dc300de38",
+      "applicationTemplateId": null,
+      "disabledByMicrosoftStatus": null,
+      "createdDateTime": "2025-05-30T23:53:09Z",
+      "displayName": "tim-test",
+      "description": null,
+      "groupMembershipClaims": null,
+      "identifierUris": [],
+      "isDeviceOnlyAuthSupported": null,
+      "isFallbackPublicClient": null,
+      "nativeAuthenticationApisEnabled": null,
+      "notes": null,
+      "publisherDomain": "cep-netnew.cc",
+      "serviceManagementReference": null,
+      "signInAudience": "AzureADMultipleOrgs",
+      "tags": ["apiConsumer", "webApp"],
+      "tokenEncryptionKeyId": null,
+      "uniqueName": null,
+      "samlMetadataUrl": null,
+      "defaultRedirectUri": null,
+      "certification": null,
+      "optionalClaims": null,
+      "requestSignatureVerification": null,
+      "addIns": [],
+      "api": {
+        "acceptMappedClaims": null,
+        "knownClientApplications": [],
+        "requestedAccessTokenVersion": null,
+        "oauth2PermissionScopes": [],
+        "preAuthorizedApplications": []
+      },
+      "appRoles": [],
+      "info": {
+        "logoUrl": null,
+        "marketingUrl": null,
+        "privacyStatementUrl": null,
+        "supportUrl": null,
+        "termsOfServiceUrl": null
+      },
+      "keyCredentials": [],
+      "parentalControlSettings": {
+        "countriesBlockedForMinors": [],
+        "legalAgeGroupRule": "Allow"
+      },
+      "passwordCredentials": [
+        {
+          "customKeyIdentifier": null,
+          "displayName": "Password uploaded on Fri May 30 2025",
+          "endDateTime": "2025-11-27T01:46:10.384Z",
+          "hint": "hff",
+          "keyId": "3abac6a5-ad4a-4d27-a719-d19455e48462",
+          "secretText": null,
+          "startDateTime": "2025-05-31T00:46:10.384Z"
+        },
+        {
+          "customKeyIdentifier": null,
+          "displayName": "Password uploaded on Fri May 30 2025",
+          "endDateTime": "2027-05-30T23:53:37.63Z",
+          "hint": "N6K",
+          "keyId": "54488201-1347-4a1a-8b73-2848de8bcfd1",
+          "secretText": null,
+          "startDateTime": "2025-05-30T23:53:37.63Z"
+        }
+      ],
+      "publicClient": { "redirectUris": [] },
+      "requiredResourceAccess": [
+        {
+          "resourceAppId": "00000003-0000-0000-c000-000000000000",
+          "resourceAccess": [
+            { "id": "bdfbf15f-ee85-4955-8675-146e8e5296b5", "type": "Scope" },
+            { "id": "e4c9e354-4dc5-45b8-9e7c-e1393b0b1a20", "type": "Scope" },
+            { "id": "c5366453-9fb0-48a5-a156-24f0c49a4b84", "type": "Scope" },
+            { "id": "4e46008b-f24c-477d-8fff-7bb4ec7aafe0", "type": "Scope" },
+            { "id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d", "type": "Scope" },
+            { "id": "204e0828-b5ca-4ad8-b9f3-f32a958e7cc4", "type": "Scope" }
+          ]
+        }
+      ],
+      "verifiedPublisher": {
+        "displayName": null,
+        "verifiedPublisherId": null,
+        "addedDateTime": null
+      },
+      "web": {
+        "homePageUrl": null,
+        "logoutUrl": null,
+        "redirectUris": [
+          "http://localhost:3000/api/auth/callback/microsoft",
+          "http://localhost:3000/api/auth/callback/microsoft-entra-id"
+        ],
+        "implicitGrantSettings": {
+          "enableAccessTokenIssuance": true,
+          "enableIdTokenIssuance": true
+        },
+        "redirectUriSettings": [
+          {
+            "uri": "http://localhost:3000/api/auth/callback/microsoft",
+            "index": null
+          },
+          {
+            "uri": "http://localhost:3000/api/auth/callback/microsoft-entra-id",
+            "index": null
+          }
+        ]
+      },
+      "servicePrincipalLockConfiguration": {
+        "isEnabled": true,
+        "allProperties": true,
+        "credentialsWithUsageVerify": true,
+        "credentialsWithUsageSign": true,
+        "identifierUris": false,
+        "tokenEncryptionKeyId": true
+      },
+      "spa": { "redirectUris": [] }
+    },
+    {
+      "id": "96c64c9e-2837-434a-a043-ddeee14597f1",
+      "deletedDateTime": null,
+      "appId": "e35ca80d-a06e-4fbf-ac5b-0dcf4fb5005b",
+      "applicationTemplateId": null,
+      "disabledByMicrosoftStatus": null,
+      "createdDateTime": "2025-05-31T00:38:40Z",
+      "displayName": "test",
+      "description": null,
+      "groupMembershipClaims": null,
+      "identifierUris": [],
+      "isDeviceOnlyAuthSupported": null,
+      "isFallbackPublicClient": null,
+      "nativeAuthenticationApisEnabled": null,
+      "notes": null,
+      "publisherDomain": "cep-netnew.cc",
+      "serviceManagementReference": null,
+      "signInAudience": "AzureADandPersonalMicrosoftAccount",
+      "tags": [],
+      "tokenEncryptionKeyId": null,
+      "uniqueName": null,
+      "samlMetadataUrl": null,
+      "defaultRedirectUri": null,
+      "certification": null,
+      "optionalClaims": null,
+      "requestSignatureVerification": null,
+      "addIns": [],
+      "api": {
+        "acceptMappedClaims": null,
+        "knownClientApplications": [],
+        "requestedAccessTokenVersion": 2,
+        "oauth2PermissionScopes": [],
+        "preAuthorizedApplications": []
+      },
+      "appRoles": [],
+      "info": {
+        "logoUrl": null,
+        "marketingUrl": null,
+        "privacyStatementUrl": null,
+        "supportUrl": null,
+        "termsOfServiceUrl": null
+      },
+      "keyCredentials": [],
+      "parentalControlSettings": {
+        "countriesBlockedForMinors": [],
+        "legalAgeGroupRule": "Allow"
+      },
+      "passwordCredentials": [
+        {
+          "customKeyIdentifier": null,
+          "displayName": "Password uploaded on Fri May 30 2025",
+          "endDateTime": "2025-11-27T01:39:02.42Z",
+          "hint": "Y~M",
+          "keyId": "0b4435b2-be46-4e83-9507-18e369d93f0b",
+          "secretText": null,
+          "startDateTime": "2025-05-31T00:39:02.42Z"
+        }
+      ],
+      "publicClient": { "redirectUris": [] },
+      "requiredResourceAccess": [
+        {
+          "resourceAppId": "00000003-0000-0000-c000-000000000000",
+          "resourceAccess": [
+            { "id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d", "type": "Scope" }
+          ]
+        }
+      ],
+      "verifiedPublisher": {
+        "displayName": null,
+        "verifiedPublisherId": null,
+        "addedDateTime": null
+      },
+      "web": {
+        "homePageUrl": null,
+        "logoutUrl": null,
+        "redirectUris": [],
+        "implicitGrantSettings": {
+          "enableAccessTokenIssuance": false,
+          "enableIdTokenIssuance": false
+        },
+        "redirectUriSettings": []
+      },
+      "servicePrincipalLockConfiguration": {
+        "isEnabled": true,
+        "allProperties": true,
+        "credentialsWithUsageVerify": true,
+        "credentialsWithUsageSign": true,
+        "identifierUris": false,
+        "tokenEncryptionKeyId": true
+      },
+      "spa": { "redirectUris": [] }
+    },
+    {
+      "id": "c52672d8-658d-4738-9100-09b241967728",
+      "deletedDateTime": null,
+      "appId": "27243dbb-9238-4c4e-98aa-d2e854d9c363",
+      "applicationTemplateId": "8b1025e4-1dd2-430b-a150-2ef79cd700f5",
+      "disabledByMicrosoftStatus": null,
+      "createdDateTime": "2025-06-03T17:04:48Z",
+      "displayName": "Google Workspace SAML SSO",
+      "description": null,
+      "groupMembershipClaims": null,
+      "identifierUris": [],
+      "isDeviceOnlyAuthSupported": null,
+      "isFallbackPublicClient": false,
+      "nativeAuthenticationApisEnabled": null,
+      "notes": null,
+      "publisherDomain": "cep-netnew.cc",
+      "serviceManagementReference": null,
+      "signInAudience": "AzureADMyOrg",
+      "tags": [],
+      "tokenEncryptionKeyId": null,
+      "uniqueName": null,
+      "samlMetadataUrl": null,
+      "defaultRedirectUri": null,
+      "certification": null,
+      "optionalClaims": null,
+      "servicePrincipalLockConfiguration": null,
+      "requestSignatureVerification": null,
+      "addIns": [],
+      "api": {
+        "acceptMappedClaims": null,
+        "knownClientApplications": [],
+        "requestedAccessTokenVersion": null,
+        "oauth2PermissionScopes": [
+          {
+            "adminConsentDescription": "Allow the application to access Google Workspace SAML SSO on behalf of the signed-in user.",
+            "adminConsentDisplayName": "Access Google Workspace SAML SSO",
+            "id": "78b7aa63-6d21-4318-b680-9cb0641c9056",
+            "isEnabled": true,
+            "type": "User",
+            "userConsentDescription": "Allow the application to access Google Workspace SAML SSO on your behalf.",
+            "userConsentDisplayName": "Access Google Workspace SAML SSO",
+            "value": "user_impersonation"
+          }
+        ],
+        "preAuthorizedApplications": []
+      },
+      "appRoles": [
+        {
+          "allowedMemberTypes": ["User"],
+          "description": "msiam_access",
+          "displayName": "msiam_access",
+          "id": "7dfd756e-8c27-4472-b2b7-38c17fc5de5e",
+          "isEnabled": true,
+          "origin": "Application",
+          "value": null
+        }
+      ],
+      "info": {
+        "logoUrl": null,
+        "marketingUrl": null,
+        "privacyStatementUrl": null,
+        "supportUrl": null,
+        "termsOfServiceUrl": null
+      },
+      "keyCredentials": [],
+      "parentalControlSettings": {
+        "countriesBlockedForMinors": [],
+        "legalAgeGroupRule": "Allow"
+      },
+      "passwordCredentials": [],
+      "publicClient": { "redirectUris": [] },
+      "requiredResourceAccess": [],
+      "verifiedPublisher": {
+        "displayName": null,
+        "verifiedPublisherId": null,
+        "addedDateTime": null
+      },
+      "web": {
+        "homePageUrl": "https://signin.aws.amazon.com/saml?metadata=aws|ISV9.1|primary|z",
+        "logoutUrl": null,
+        "redirectUris": ["https://signin.aws.amazon.com/saml"],
+        "implicitGrantSettings": {
+          "enableAccessTokenIssuance": false,
+          "enableIdTokenIssuance": true
+        },
+        "redirectUriSettings": [
+          { "uri": "https://signin.aws.amazon.com/saml", "index": null }
+        ]
+      },
+      "spa": { "redirectUris": [] }
+    },
+    {
+      "id": "dcb2d28f-3bfe-40e2-8e03-91a30464159e",
+      "deletedDateTime": null,
+      "appId": "da8790bf-7b6d-457d-9f8d-a3c073b97070",
+      "applicationTemplateId": null,
+      "disabledByMicrosoftStatus": null,
+      "createdDateTime": "2025-06-11T19:53:10Z",
+      "displayName": "tester",
+      "description": null,
+      "groupMembershipClaims": null,
+      "identifierUris": [],
+      "isDeviceOnlyAuthSupported": null,
+      "isFallbackPublicClient": null,
+      "nativeAuthenticationApisEnabled": null,
+      "notes": null,
+      "publisherDomain": "cep-netnew.cc",
+      "serviceManagementReference": null,
+      "signInAudience": "AzureADMultipleOrgs",
+      "tags": [],
+      "tokenEncryptionKeyId": null,
+      "uniqueName": null,
+      "samlMetadataUrl": null,
+      "defaultRedirectUri": null,
+      "certification": null,
+      "optionalClaims": null,
+      "requestSignatureVerification": null,
+      "addIns": [],
+      "api": {
+        "acceptMappedClaims": null,
+        "knownClientApplications": [],
+        "requestedAccessTokenVersion": null,
+        "oauth2PermissionScopes": [],
+        "preAuthorizedApplications": []
+      },
+      "appRoles": [],
+      "info": {
+        "logoUrl": null,
+        "marketingUrl": null,
+        "privacyStatementUrl": null,
+        "supportUrl": null,
+        "termsOfServiceUrl": null
+      },
+      "keyCredentials": [],
+      "parentalControlSettings": {
+        "countriesBlockedForMinors": [],
+        "legalAgeGroupRule": "Allow"
+      },
+      "passwordCredentials": [
+        {
+          "customKeyIdentifier": null,
+          "displayName": "Password uploaded on Wed Jun 11 2025",
+          "endDateTime": "2025-12-08T20:54:34.164Z",
+          "hint": "u7K",
+          "keyId": "f5724836-4050-4096-b957-7e36a62fbc8a",
+          "secretText": null,
+          "startDateTime": "2025-06-11T19:54:34.164Z"
+        }
+      ],
+      "publicClient": { "redirectUris": [] },
+      "requiredResourceAccess": [
+        {
+          "resourceAppId": "00000003-0000-0000-c000-000000000000",
+          "resourceAccess": [
+            { "id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d", "type": "Scope" },
+            { "id": "1bfefb4e-e0b5-418b-a88f-73c46d2cc8e9", "type": "Role" },
+            { "id": "06b708a9-e830-4db3-a914-8e69da51d44f", "type": "Role" },
+            { "id": "19dbc75e-c2e2-444c-a770-ec69d8559fc7", "type": "Role" },
+            { "id": "be74164b-cff1-491c-8741-e671cb536e13", "type": "Role" },
+            { "id": "9b50c33d-700f-43b1-b2eb-87e89b703581", "type": "Role" },
+            { "id": "741f803b-c850-494e-b5df-cde7c675a1ca", "type": "Role" }
+          ]
+        },
+        {
+          "resourceAppId": "797f4846-ba00-4fd7-ba43-dac1f8f63013",
+          "resourceAccess": [
+            { "id": "41094075-9dad-400e-a0bd-54e686782033", "type": "Scope" }
+          ]
+        }
+      ],
+      "verifiedPublisher": {
+        "displayName": null,
+        "verifiedPublisherId": null,
+        "addedDateTime": null
+      },
+      "web": {
+        "homePageUrl": null,
+        "logoutUrl": null,
+        "redirectUris": [],
+        "implicitGrantSettings": {
+          "enableAccessTokenIssuance": false,
+          "enableIdTokenIssuance": false
+        },
+        "redirectUriSettings": []
+      },
+      "servicePrincipalLockConfiguration": {
+        "isEnabled": true,
+        "allProperties": true,
+        "credentialsWithUsageVerify": true,
+        "credentialsWithUsageSign": true,
+        "identifierUris": false,
+        "tokenEncryptionKeyId": true
+      },
+      "spa": { "redirectUris": [] }
+    },
+    {
+      "id": "ef9f2ca7-ce96-4cb7-97b1-76d2cabdce8c",
+      "deletedDateTime": null,
+      "appId": "1f0cf5b4-06b9-4add-bda2-f3bbc32810a3",
+      "applicationTemplateId": "01303a13-8322-4e06-bee5-80d612907131",
+      "disabledByMicrosoftStatus": null,
+      "createdDateTime": "2025-05-20T20:32:19Z",
+      "displayName": "Google Cloud",
+      "description": null,
+      "groupMembershipClaims": null,
+      "identifierUris": [
+        "https://accounts.google.com/samlrp/010xi5tr1szon40",
+        "google.com"
+      ],
+      "isDeviceOnlyAuthSupported": null,
+      "isFallbackPublicClient": false,
+      "nativeAuthenticationApisEnabled": null,
+      "notes": null,
+      "publisherDomain": "timcepnetnew.onmicrosoft.com",
+      "serviceManagementReference": null,
+      "signInAudience": "AzureADMyOrg",
+      "tags": [],
+      "tokenEncryptionKeyId": null,
+      "uniqueName": null,
+      "samlMetadataUrl": null,
+      "defaultRedirectUri": "https://accounts.google.com/samlrp/010xi5tr1szon40/acs",
+      "certification": null,
+      "optionalClaims": null,
+      "servicePrincipalLockConfiguration": null,
+      "requestSignatureVerification": null,
+      "addIns": [],
+      "api": {
+        "acceptMappedClaims": null,
+        "knownClientApplications": [],
+        "requestedAccessTokenVersion": null,
+        "oauth2PermissionScopes": [
+          {
+            "adminConsentDescription": "Allow the application to access Google Cloud on behalf of the signed-in user.",
+            "adminConsentDisplayName": "Access Google Cloud",
+            "id": "73f7e37d-f89b-4d88-94ca-3914d2daeb26",
+            "isEnabled": true,
+            "type": "User",
+            "userConsentDescription": "Allow the application to access Google Cloud on your behalf.",
+            "userConsentDisplayName": "Access Google Cloud",
+            "value": "user_impersonation"
+          }
+        ],
+        "preAuthorizedApplications": []
+      },
+      "appRoles": [
+        {
+          "allowedMemberTypes": ["User"],
+          "description": "msiam_access",
+          "displayName": "msiam_access",
+          "id": "8eea5c46-96fe-4398-b9c2-02ac04d931ca",
+          "isEnabled": true,
+          "origin": "Application",
+          "value": null
+        },
+        {
+          "allowedMemberTypes": ["User"],
+          "description": "Default Organization",
+          "displayName": "Default Organization",
+          "id": "9e79c739-f165-49e8-8745-fe08f1634b3b",
+          "isEnabled": true,
+          "origin": "Application",
+          "value": null
+        }
+      ],
+      "info": {
+        "logoUrl": null,
+        "marketingUrl": null,
+        "privacyStatementUrl": null,
+        "supportUrl": null,
+        "termsOfServiceUrl": null
+      },
+      "keyCredentials": [],
+      "parentalControlSettings": {
+        "countriesBlockedForMinors": [],
+        "legalAgeGroupRule": "Allow"
+      },
+      "passwordCredentials": [],
+      "publicClient": { "redirectUris": [] },
+      "requiredResourceAccess": [],
+      "verifiedPublisher": {
+        "displayName": null,
+        "verifiedPublisherId": null,
+        "addedDateTime": null
+      },
+      "web": {
+        "homePageUrl": "https://www.google.com?metadata=googleapps|ISV9.1|primary|z",
+        "logoutUrl": null,
+        "redirectUris": [
+          "https://accounts.google.com/samlrp/010xi5tr1szon40/acs"
+        ],
+        "implicitGrantSettings": {
+          "enableAccessTokenIssuance": false,
+          "enableIdTokenIssuance": true
+        },
+        "redirectUriSettings": [
+          {
+            "uri": "https://accounts.google.com/samlrp/010xi5tr1szon40/acs",
+            "index": null
+          }
+        ]
+      },
+      "spa": { "redirectUris": [] }
+    }
+  ]
+}

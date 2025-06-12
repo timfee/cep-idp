@@ -1,4 +1,4 @@
-import { randomBytes, createHash } from "crypto";
+import { createHash, randomBytes } from "crypto";
 import { ERROR_MESSAGES } from "./constants";
 
 /** Character set used when generating random passwords. */
@@ -31,7 +31,7 @@ export function generatePassword(length: number): string {
 export function generateDeterministicPassword(seed: string): string {
   // Add a suffix to make it less guessable
   const input = `${seed}-azuread-provisioning-2024`;
-  const hash = createHash('sha256').update(input).digest('hex');
+  const hash = createHash("sha256").update(input).digest("hex");
 
   // Take first 12 chars of hash and add special chars for complexity
   const base = hash.substring(0, 12);

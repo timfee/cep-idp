@@ -1,0 +1,14 @@
+{
+  "_metadata": {
+    "url": "https://graph.microsoft.com/beta/policies/tokenIssuancePolicies",
+    "headers": { "Content-Type": "application/json" }
+  },
+  "@odata.context": "https://graph.microsoft.com/beta/$metadata#policies/tokenIssuancePolicies/$entity",
+  "id": "d9eaf732-1f95-4140-b08b-405f9891ba82",
+  "deletedDateTime": null,
+  "definition": [
+    "{\"TokenClaimsPolicy\":{\"Version\":1,\"IncludeBasicClaimSet\":true}}"
+  ],
+  "displayName": "CodexTestPolicy",
+  "isOrganizationDefault": false
+}

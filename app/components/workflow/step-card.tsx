@@ -108,7 +108,6 @@ export function StepCard({
     startTransition(async () => {
       const result = await executeWorkflowStep(stepName);
 
-
       if (result.status && result.status.status !== STATUS_VALUES.FAILED) {
         dispatch({ type: "EXECUTE_SUCCESS" });
       } else if (
@@ -477,7 +476,6 @@ export function StepCard({
           </AccordionItem>
         </Accordion>
       </Card>
-
     </>
   );
 }

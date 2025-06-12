@@ -1,0 +1,234 @@
+{
+  "_metadata": {
+    "url": "https://cloudidentity.googleapis.com/v1/inboundSamlSsoProfiles?filter=customer=='customers/C03ly86ew'",
+    "headers": { "Content-Type": "application/json" }
+  },
+  "inboundSamlSsoProfiles": [
+    {
+      "name": "inboundSamlSsoProfiles/02tixnqn2j98a2o",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD",
+      "idpConfig": {
+        "entityId": "https://sts.windows.net/ef36b7bd-231b-421e-ac50-8f2995a39eee/",
+        "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
+      },
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/02tixnqn2j98a2o",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/02tixnqn2j98a2o/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/0131kr7d1i70jy8",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD",
+      "idpConfig": {
+        "entityId": "https://sts.windows.net/ef36b7bd-231b-421e-ac50-8f2995a39eee/",
+        "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
+      },
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/0131kr7d1i70jy8",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/0131kr7d1i70jy8/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/01o2jybx3ukaeio",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD",
+      "idpConfig": {
+        "entityId": "https://sts.windows.net/ef36b7bd-231b-421e-ac50-8f2995a39eee/",
+        "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
+      },
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/01o2jybx3ukaeio",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/01o2jybx3ukaeio/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/027dkwhd3bz1xq8",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD",
+      "idpConfig": {
+        "entityId": "https://sts.windows.net/ef36b7bd-231b-421e-ac50-8f2995a39eee/",
+        "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
+      },
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/027dkwhd3bz1xq8",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/027dkwhd3bz1xq8/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/01z5vtyk1zptk3k",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD",
+      "idpConfig": {
+        "entityId": "https://sts.windows.net/ef36b7bd-231b-421e-ac50-8f2995a39eee/",
+        "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
+      },
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/01z5vtyk1zptk3k",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/01z5vtyk1zptk3k/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/00nu0yxn0h27oxs",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD SSO",
+      "idpConfig": {},
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/00nu0yxn0h27oxs",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/00nu0yxn0h27oxs/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/02h2lrpd1o0kmbk",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD",
+      "idpConfig": {
+        "entityId": "https://sts.windows.net/ef36b7bd-231b-421e-ac50-8f2995a39eee/",
+        "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
+      },
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/02h2lrpd1o0kmbk",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/02h2lrpd1o0kmbk/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/01z3q8lw3w5osn4",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD",
+      "idpConfig": {
+        "entityId": "https://sts.windows.net/ef36b7bd-231b-421e-ac50-8f2995a39eee/",
+        "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
+      },
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/01z3q8lw3w5osn4",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/01z3q8lw3w5osn4/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/02mbsck91703280",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD",
+      "idpConfig": {
+        "entityId": "https://sts.windows.net/ef36b7bd-231b-421e-ac50-8f2995a39eee/",
+        "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
+      },
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/02mbsck91703280",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/02mbsck91703280/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/02zzj9ne2t7eyo0",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD",
+      "idpConfig": {
+        "entityId": "https://sts.windows.net/ef36b7bd-231b-421e-ac50-8f2995a39eee/",
+        "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
+      },
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/02zzj9ne2t7eyo0",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/02zzj9ne2t7eyo0/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/03q75wvt2y90nwg",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD SSO",
+      "idpConfig": {},
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/03q75wvt2y90nwg",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/03q75wvt2y90nwg/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/01kcl0mb4jx4i68",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD",
+      "idpConfig": {
+        "entityId": "https://sts.windows.net/ef36b7bd-231b-421e-ac50-8f2995a39eee/",
+        "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
+      },
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/01kcl0mb4jx4i68",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/01kcl0mb4jx4i68/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/03311g5t1zvoykg",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD SSO",
+      "idpConfig": {},
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/03311g5t1zvoykg",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/03311g5t1zvoykg/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/02yi6h1n3ulaccg",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD SSO",
+      "idpConfig": {},
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/02yi6h1n3ulaccg",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/02yi6h1n3ulaccg/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/027fnj3l215g4xs",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD SSO",
+      "idpConfig": {},
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/027fnj3l215g4xs",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/027fnj3l215g4xs/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/00q2poqc38u96o0",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD",
+      "idpConfig": {
+        "entityId": "https://sts.windows.net/ef36b7bd-231b-421e-ac50-8f2995a39eee/",
+        "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
+      },
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/00q2poqc38u96o0",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/00q2poqc38u96o0/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/03e4cdfr0rzn11c",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD SSO",
+      "idpConfig": {},
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/03e4cdfr0rzn11c",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/03e4cdfr0rzn11c/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/03vw5hyo2hv4qv4",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD",
+      "idpConfig": {
+        "entityId": "https://sts.windows.net/ef36b7bd-231b-421e-ac50-8f2995a39eee/",
+        "singleSignOnServiceUri": "https://login.microsoftonline.com/ef36b7bd-231b-421e-ac50-8f2995a39eee/saml2"
+      },
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/03vw5hyo2hv4qv4",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/03vw5hyo2hv4qv4/acs"
+      }
+    },
+    {
+      "name": "inboundSamlSsoProfiles/04csilst0xv83cw",
+      "customer": "customers/C03ly86ew",
+      "displayName": "Azure AD SSO",
+      "idpConfig": {},
+      "spConfig": {
+        "entityId": "https://accounts.google.com/samlrp/04csilst0xv83cw",
+        "assertionConsumerServiceUri": "https://accounts.google.com/samlrp/04csilst0xv83cw/acs"
+      }
+    }
+  ]
+}

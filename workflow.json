@@ -260,7 +260,7 @@
       "_comment": "Display name to lookup the provisioning application template"
     },
     "ssoTemplateId": {
-      "default": "8ba3d1d8-7c8c-4d2d-b179-04d4a68fba02",
+      "default": "8b1025e4-1dd2-430b-a150-2ef79cd700f5",
       "_comment": "Gallery ID for Google Cloud SSO App (fallback if dynamic lookup fails)"
     },
     "ssoTemplateName": {
@@ -564,7 +564,9 @@
                 "ClaimsMappingPolicy": {
                   "Version": 1,
                   "IncludeBasicClaimSet": true,
-                  "ClaimsMapping": { "email": { "source": "user", "id": "mail" } }
+                  "ClaimsMapping": {
+                    "email": { "source": "user", "id": "mail" }
+                  }
                 }
               }
             ]

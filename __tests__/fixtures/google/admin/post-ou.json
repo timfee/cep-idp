@@ -1,0 +1,13 @@
+{
+  "_metadata": {
+    "url": "https://admin.googleapis.com/admin/directory/v1/customer/my_customer/orgunits",
+    "headers": { "Content-Type": "application/json" }
+  },
+  "kind": "admin#directory#orgUnit",
+  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/BiOYoTSDCIqR7oZukgfuEux2hgo\"",
+  "name": "CodexTest2",
+  "orgUnitPath": "/CodexTest2",
+  "orgUnitId": "id:03ph8a2z3334lg8",
+  "parentOrgUnitPath": "/",
+  "parentOrgUnitId": "id:00gjdgxs2b2c6my"
+}

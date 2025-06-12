@@ -1,5 +1,3 @@
-// GET https://graph.microsoft.com/v1.0/applications?$filter=applicationTemplateId%20eq%20'01303a13-8322-4e06-bee5-80d612907131'
-// Status: 200
 {
   "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#applications",
   "value": [

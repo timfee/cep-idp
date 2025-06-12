@@ -1,0 +1,41 @@
+// PATCH https://admin.googleapis.com/admin/directory/v1/users/azuread-provisioning@feeley.xyz
+// Status: 200
+{
+  "id": "116949259093507633648",
+  "primaryEmail": "azuread-provisioning@feeley.xyz",
+  "isAdmin": false,
+  "isDelegatedAdmin": true,
+  "agreedToTerms": false,
+  "suspended": false,
+  "changePasswordAtNextLogin": false,
+  "ipWhitelisted": false,
+  "name": {
+    "fullName": "Microsoft Provisioning",
+    "familyName": "Provisioning",
+    "givenName": "Microsoft"
+  },
+  "kind": "admin#directory#user",
+  "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/ztbfsg4WhTV40mHt3-UPz-syeK0\"",
+  "emails": [
+    {
+      "address": "azuread-provisioning@feeley.xyz",
+      "primary": true
+    }
+  ],
+  "isMailboxSetup": true,
+  "customerId": "C03ly86ew",
+  "lastLoginTime": "1970-01-01T00:00:00.000Z",
+  "thumbnailPhotoUrl": "//lh3.googleusercontent.com/a/ACg8ocJGVLzMak_QlEFwITtfu40G1U0eV1cyiBINZKbx4PoKzzVNrg=mo",
+  "languages": [
+    {
+      "languageCode": "en",
+      "preference": "preferred"
+    }
+  ],
+  "creationTime": "2025-06-09T15:48:16.000Z",
+  "includeInGlobalAddressList": true,
+  "thumbnailPhotoEtag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/_56mmF27ahfV1G8qxtXPR2qFSJs\"",
+  "archived": false,
+  "recoveryEmail": "",
+  "orgUnitPath": "/Automation"
+}

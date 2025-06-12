@@ -1,0 +1,34 @@
+// GET https://cloudidentity.googleapis.com/v1/inboundSsoAssignments?filter=customer=='customers/my_customer'
+HTTP/1.1 200 OK
+date: Thu, 12 Jun 2025 01:06:00 GMT
+server: envoy
+
+HTTP/1.1 200 OK
+content-type: application/json; charset=UTF-8
+vary: X-Origin,Referer,Origin,Accept-Encoding
+date: Thu, 12 Jun 2025 01:06:02 GMT
+server: envoy
+x-xss-protection: 0
+x-frame-options: SAMEORIGIN
+x-content-type-options: nosniff
+alt-svc: h3=":443"; ma=2592000,h3-29=":443"; ma=2592000
+accept-ranges: none
+x-envoy-upstream-service-time: 1565
+transfer-encoding: chunked
+
+{
+  "inboundSsoAssignments": [
+    {
+      "name": "inboundSsoAssignments/aQzAzbHk4NmV3LU8wMGdqZGd4czJiMmM2bXk",
+      "customer": "customers/C03ly86ew",
+      "targetOrgUnit": "orgUnits/00gjdgxs2b2c6my",
+      "ssoMode": "SSO_OFF"
+    },
+    {
+      "name": "inboundSsoAssignments/aQzAzbHk4NmV3LU8wM3BoOGEyejFvNWZ0Z2s",
+      "customer": "customers/C03ly86ew",
+      "targetOrgUnit": "orgUnits/03ph8a2z1o5ftgk",
+      "ssoMode": "SSO_OFF"
+    }
+  ]
+}

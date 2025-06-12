@@ -17,8 +17,10 @@ GET /customer/my_customer/roles/ALL/privileges
 GET /customer/my_customer/roleassignments?roleId=732289776484353&assignedTo=116949259093507633648
 GET /applications?$filter=applicationTemplateId eq 'd0d8633b-4174-4d05-89c7-86d229f50f26'
 GET /applications?$filter=applicationTemplateId eq '8ba3d1d8-7c8c-4d2d-b179-04d4a68fba02'
-GET /servicePrincipals/d5bf8487-b04a-4ce5-ab6b-c84debf31506/synchronization -> 404
+GET /servicePrincipals/d5bf8487-b04a-4ce5-ab6b-c84debf31506/synchronization -> 200
 POST /servicePrincipals/d5bf8487-b04a-4ce5-ab6b-c84debf31506/synchronization/jobs/Initial/start -> 400
+POST /servicePrincipals/d5bf8487-b04a-4ce5-ab6b-c84debf31506/synchronization/jobs/GoogV2OutDelta.ef36b7bd231b421eac508f2995a39eee.544910c1-3299-46d3-b056-55290dc9c1fe/start -> 204
+PATCH /servicePrincipals/d5bf8487-b04a-4ce5-ab6b-c84debf31506/synchronization -> 204
 GET /beta/servicePrincipals/11111111-1111-1111-1111-111111111111/samlSingleSignOnSettings -> 404
 PATCH /beta/servicePrincipals/11111111-1111-1111-1111-111111111111/samlSingleSignOnSettings -> 404
 GET /beta/servicePrincipals/11111111-1111-1111-1111-111111111111/tokenIssuancePolicies -> 404
@@ -26,3 +28,6 @@ POST /beta/policies/tokenIssuancePolicies -> 400
 POST /beta/servicePrincipals/11111111-1111-1111-1111-111111111111/tokenIssuancePolicies/$ref -> 400
 GET https://login.microsoftonline.com/common/federationmetadata/2007-06/federationmetadata.xml
 
+DELETE /customer/my_customer/domains/test-automation.feeley.xyz
+POST /customer/my_customer/domains -> 200
+POST /customer/my_customer/domains -> 409

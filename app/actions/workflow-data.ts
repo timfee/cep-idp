@@ -4,6 +4,11 @@ import "server-only";
 import { isTokenExpired } from "@/app/lib/auth/oauth";
 import { getToken } from "@/app/lib/auth/tokens";
 import { hasOwnProperty } from "@/app/lib/utils";
+
+// Import types only to assist consumers while avoiding runtime impact.
+// Bring in for future type adjustments – disable sonar unused import for now
+// eslint-disable-next-line sonarjs/unused-import, @typescript-eslint/no-unused-vars
+import type { StepDefinition as _StepDefinition } from "@/app/lib/workflow/types";
 import {
   evaluateGenerator,
   LogEntry,

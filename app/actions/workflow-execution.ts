@@ -19,6 +19,13 @@ import {
   Token,
   Workflow,
 } from "@/app/lib/workflow";
+
+import { createApiContext } from "@/app/lib/workflow/api-adapter";
+import {
+  StepDefinition,
+  StepContext,
+  StepResult,
+} from "@/app/lib/workflow/types";
 import {
   CONNECTION_IDENTIFIERS,
   COPY_FEEDBACK_DURATION_MS,
@@ -29,6 +36,8 @@ import {
   VARIABLE_KEYS,
   WORKFLOW_CONSTANTS,
 } from "@/app/lib/workflow/constants";
+
+import type { HttpMethod } from "@/app/lib/workflow/constants";
 import { safeAsync } from "@/app/lib/workflow/error-handling";
 import { setStoredVariables } from "@/app/lib/workflow/variables-store";
 import { revalidatePath } from "next/cache";
@@ -90,7 +99,7 @@ function areOutputsMissing(
 }
 
 /** Ensure that an action can run given its endpoint and variables. */
-function validateActionPrerequisites(
+function DEPRECATED_validateActionPrerequisites(
   action: Action,
   endpoint: Endpoint | undefined,
   variables: Record<string, string>,
@@ -138,7 +147,7 @@ function prepareActionPayload(
 /**
  * Process the result of an API call and extract variables.
  */
-async function processActionResponse(
+async function DEPRECATED_processActionResponse(
   action: Action,
   response: unknown,
   variables: Record<string, string>,
@@ -193,7 +202,7 @@ import { assertNever, parseApiError } from "@/app/lib/workflow/error-types";
  * @param _verificationOnly - Flag indicating a verification-only run
  * @returns Result of the action execution and any extracted variables
  */
-async function handleActionExecution(
+async function DEPRECATED_handleActionExecution(
   action: Action,
   step: Step,
   variables: Record<string, string>,
@@ -208,7 +217,7 @@ async function handleActionExecution(
   data?: unknown;
 }> {
   const endpoint = workflow.endpoints[action.use];
-  const prereq = validateActionPrerequisites(
+  const prereq = DEPRECATED_validateActionPrerequisites(
     action,
     endpoint,
     variables,
@@ -272,7 +281,7 @@ async function handleActionExecution(
     data: { fullUrl, response },
   });
 
-  const processResult = await processActionResponse(
+  const processResult = await DEPRECATED_processActionResponse(
     action,
     response,
     variables,
@@ -485,7 +494,13 @@ function handleActionError(
  * @param verificationOnly - Whether to execute only verification actions
  * @returns Result of execution and any extracted variables
  */
-export async function runStepActions(
+// ---------------------------------------------------------------------------
+// Legacy JSON-workflow implementation – retained for backward compatibility
+// while step handlers are migrated. The function is **not** exported. The new
+// runStepActions wrapper delegates here when a classic JSON step is detected.
+// ---------------------------------------------------------------------------
+
+async function DEPRECATED_runJsonStepActions(
   step: Step,
   variables: Record<string, string>,
   tokens: { google?: Token; microsoft?: Token },
@@ -507,9 +522,10 @@ export async function runStepActions(
 
   let lastData: unknown = undefined;
   let success = false;
+
   for (const action of actionsToRun) {
     try {
-      const result = await handleActionExecution(
+      const result = await DEPRECATED_handleActionExecution(
         action,
         step,
         workingVariables,
@@ -519,6 +535,7 @@ export async function runStepActions(
         workflow,
         verificationOnly
       );
+
       if (result.success) {
         success = true;
         lastData = result.data;
@@ -542,6 +559,86 @@ export async function runStepActions(
   }
 
   return { success, extractedVariables, data: lastData };
+}
+
+// ---------------------------------------------------------------------------
+// New unified runStepActions facade – detects modern StepDefinition handlers
+// and delegates to either the typed handler or the legacy JSON action runner.
+// ---------------------------------------------------------------------------
+
+export async function runStepActions(
+  step: Step | StepDefinition,
+  variables: Record<string, string>,
+  tokens: { google?: Token; microsoft?: Token },
+  onLog: (entry: LogEntry) => void,
+  verificationOnly: boolean = false
+): Promise<{
+  success: boolean;
+  extractedVariables: Record<string, string>;
+  data?: unknown;
+}> {
+  // ---------------------------------------------------------------------
+  // New typed step: execute dedicated handler
+  // ---------------------------------------------------------------------
+  if ("handler" in step) {
+    const apiContext = createApiContext(tokens, variables);
+    // Adapt to the StepContext expected signature (method as string)
+    const apiWrapper: StepContext["api"] = {
+      request: (connection, method, path, options) =>
+        apiContext.request(connection, method as HttpMethod, path, options),
+    };
+    const extractedVars: Record<string, string> = {};
+
+    const ctx: StepContext = {
+      vars: { ...variables },
+      api: apiWrapper,
+      setVars: (updates) => {
+        Object.assign(extractedVars, updates);
+        Object.assign(variables, updates);
+      },
+      log: (level, message, data) => {
+        onLog({ timestamp: Date.now(), level, message, data });
+      },
+    };
+
+    try {
+      onLog({
+        timestamp: Date.now(),
+        level: "info",
+        message: `Executing step handler: ${step.name}`,
+      });
+
+      const result: StepResult = await step.handler(ctx);
+
+      return {
+        success: result.success,
+        extractedVariables: extractedVars,
+        data: result,
+      };
+    } catch (error) {
+      onLog({
+        timestamp: Date.now(),
+        level: "error",
+        message: `Step handler failed: ${step.name}`,
+        data: error,
+      });
+      return {
+        success: false,
+        extractedVariables: extractedVars,
+      };
+    }
+  }
+
+  // ---------------------------------------------------------------------
+  // Legacy JSON step: delegate to deprecated implementation
+  // ---------------------------------------------------------------------
+  return DEPRECATED_runJsonStepActions(
+    step as Step,
+    variables,
+    tokens,
+    onLog,
+    verificationOnly
+  );
 }
 
 /**

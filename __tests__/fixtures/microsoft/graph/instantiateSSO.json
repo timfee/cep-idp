@@ -39,9 +39,7 @@
     },
     "appRoles": [
       {
-        "allowedMemberTypes": [
-          "User"
-        ],
+        "allowedMemberTypes": ["User"],
         "displayName": "msiam_access",
         "id": "7dfd756e-8c27-4472-b2b7-38c17fc5de5e",
         "isEnabled": true,
@@ -63,9 +61,7 @@
       "legalAgeGroupRule": "Allow"
     },
     "passwordCredentials": [],
-    "publicClient": {
-      "redirectUris": []
-    },
+    "publicClient": { "redirectUris": [] },
     "requiredResourceAccess": [],
     "verifiedPublisher": {
       "displayName": null,
@@ -74,9 +70,7 @@
     },
     "web": {
       "homePageUrl": "https://signin.aws.amazon.com/saml?metadata=aws|ISV9.1|primary|z",
-      "redirectUris": [
-        "https://signin.aws.amazon.com/saml"
-      ],
+      "redirectUris": ["https://signin.aws.amazon.com/saml"],
       "logoutUrl": null
     }
   },
@@ -97,24 +91,16 @@
     "notificationEmailAddresses": [],
     "preferredSingleSignOnMode": null,
     "preferredTokenSigningKeyThumbprint": null,
-    "replyUrls": [
-      "https://signin.aws.amazon.com/saml"
-    ],
-    "servicePrincipalNames": [
-      "7b33a842-eefb-4a3b-8d16-01b3e93e237f"
-    ],
+    "replyUrls": ["https://signin.aws.amazon.com/saml"],
+    "servicePrincipalNames": ["7b33a842-eefb-4a3b-8d16-01b3e93e237f"],
     "servicePrincipalType": "Application",
-    "tags": [
-      "WindowsAzureActiveDirectoryIntegratedApp"
-    ],
+    "tags": ["WindowsAzureActiveDirectoryIntegratedApp"],
     "tokenEncryptionKeyId": null,
     "samlSingleSignOnSettings": null,
     "addIns": [],
     "appRoles": [
       {
-        "allowedMemberTypes": [
-          "User"
-        ],
+        "allowedMemberTypes": ["User"],
         "displayName": "msiam_access",
         "id": "7dfd756e-8c27-4472-b2b7-38c17fc5de5e",
         "isEnabled": true,

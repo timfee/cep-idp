@@ -1,33 +1,29 @@
-import dotenv from "dotenv";
 import type { Config } from "jest";
-import { pathsToModuleNameMapper } from "ts-jest";
-import fs from "fs";
-import path from "path";
+import nextJest from "next/jest.js";
 
-// Load the TypeScript configuration manually to avoid import assertion issues
-const tsConfig = JSON.parse(
-  fs.readFileSync(path.join(__dirname, "tsconfig.json"), "utf8")
-);
+import { createDefaultEsmPreset, pathsToModuleNameMapper } from "ts-jest";
+import tsConfig from "./tsconfig.json" with { type: "json" };
 
-dotenv.config({ path: ".env.local" });
+const createJestConfig = nextJest({ dir: "./" });
 
-const config: Config = {
-  preset: "ts-jest/presets/default-esm",
+/**
+ * Custom Jest config to match our Next.js setup.
+ * next/jest will handle ESM modules and TypeScript transforms automatically.
+ */
+const customConfig: Config = {
   testEnvironment: "node",
-  extensionsToTreatAsEsm: [".ts", ".tsx"],
   moduleNameMapper: {
+    // stub Next.js server-only imports
+    "^server-only$": "<rootDir>/test-utils/serverOnlyStub.ts",
+    // map tsconfig paths (e.g. '@/...' → '<rootDir>/...')
     ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths ?? {}, {
       prefix: "<rootDir>/",
     }),
-    "^@/app/env$": "<rootDir>/test-utils/envStub.ts",
-    "^server-only$": "<rootDir>/test-utils/serverOnlyStub.ts",
   },
-  transformIgnorePatterns: [
-    "/node_modules/(?!(?:@t3-oss/env-nextjs|@t3-oss/env-core)/)",
-  ],
   globalSetup: "<rootDir>/jest.globalSetup.ts",
   globalTeardown: "<rootDir>/jest.globalTeardown.ts",
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+  extensionsToTreatAsEsm: [".ts", ".tsx", ".js", ".jsx"],
 };
 
-export default config;
+export default createJestConfig(createDefaultEsmPreset(customConfig));

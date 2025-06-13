@@ -7,10 +7,7 @@
   "roleName": "CodexTestRole",
   "roleDescription": "",
   "rolePrivileges": [
-    {
-      "privilegeName": "GROUPS_ALL",
-      "serviceId": "00haapch16h1ysv"
-    }
+    { "privilegeName": "GROUPS_ALL", "serviceId": "00haapch16h1ysv" }
   ],
   "isSystemRole": false,
   "isSuperAdminRole": false

@@ -1,5 +1,4 @@
-import crypto from "crypto";
-import { GoogleAuth } from "google-auth-library";
+import { GoogleAuth, JWT } from "google-auth-library";
 import {
   googleOAuthConfig,
   microsoftOAuthConfig,
@@ -17,14 +16,6 @@ interface GoogleKey {
   private_key: string;
 }
 
-function base64url(input: string) {
-  return Buffer.from(input)
-    .toString("base64")
-    .replace(/\+/g, "-")
-    .replace(/\//g, "_")
-    .replace(/=+$/, "");
-}
-
 export async function getGoogleAccessToken() {
   const keyJson = process.env.GOOGLE_SERVICE_ACCOUNT_KEY;
   const serviceAccount = process.env.GOOGLE_SERVICE_ACCOUNT_EMAIL;
@@ -40,43 +31,19 @@ export async function getGoogleAccessToken() {
 
   if (keyJson) {
     const key = JSON.parse(keyJson) as GoogleKey;
-    const now = Math.floor(Date.now() / 1000);
-    const exp = now + 3600;
-
-    const header = base64url(JSON.stringify({ alg: "RS256", typ: "JWT" }));
-    const claim = base64url(
-      JSON.stringify({
-        iss: key.client_email,
-        sub: adminEmail,
-        scope: scopes,
-        aud: tokenUrl,
-        exp,
-        iat: now,
-      })
-    );
-
-    const signer = crypto.createSign("RSA-SHA256");
-    signer.update(`${header}.${claim}`);
-    const signature = signer.sign(key.private_key, "base64");
-    const jwt = `${header}.${claim}.${base64url(signature)}`;
-
+    const client = new JWT({
+      email: key.client_email,
+      key: key.private_key,
+      scopes: scopes.split(" "),
+      subject: adminEmail,
+    });
     try {
-      const res = await fetch(tokenUrl, {
-        method: "POST",
-        headers: { "Content-Type": "application/x-www-form-urlencoded" },
-        body: new URLSearchParams({
-          grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-          assertion: jwt,
-        }),
-      });
-
-      const data = (await res.json()) as any;
-      if (!res.ok) {
-        console.warn(`Google token error: ${JSON.stringify(data)}`);
-        return;
+      const authRes = await client.authorize();
+      if (authRes.access_token) {
+        process.env.GOOGLE_ACCESS_TOKEN = authRes.access_token;
+      } else {
+        console.warn(`Google token error: ${JSON.stringify(authRes)}`);
       }
-
-      process.env.GOOGLE_ACCESS_TOKEN = data.access_token;
     } catch (err) {
       console.warn("Google token request failed", err);
     }
@@ -143,7 +110,8 @@ export async function getMicrosoftAccessToken() {
     return;
   }
 
-  const scopes = microsoftScopes.join(" ");
+  // Use the Microsoft Graph API default scope for client credentials grant
+  const clientScope = "https://graph.microsoft.com/.default";
   const tokenUrl = microsoftTokenUrl.replace("organizations", tenantId);
 
   try {
@@ -154,7 +122,7 @@ export async function getMicrosoftAccessToken() {
         grant_type: "client_credentials",
         client_id: clientId,
         client_secret: clientSecret,
-        scope: scopes,
+        scope: clientScope,
       }),
     });
 

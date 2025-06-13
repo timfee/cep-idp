@@ -32,7 +32,7 @@ Connections define the base URL and authentication string for each API. Actions 
 }
 ```
 
-The `{googleAccessToken}` and `{azureAccessToken}` placeholders are variables populated at runtime. See the [Variables](#4-variables) section for interpolation rules.
+The `{googleAccessToken}` and `{azureAccessToken}` placeholders are variables populated at runtime. See the _Variables_ section for interpolation rules.
 
 ## 3. Roles
 

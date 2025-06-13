@@ -56,9 +56,7 @@ export const ActionSchema = z
     checker: z
       .string()
       .optional()
-      .describe(
-        "Name of a checker expression used to validate the response"
-      ),
+      .describe("Name of a checker expression used to validate the response"),
     field: z
       .string()
       .optional()
@@ -80,9 +78,7 @@ export const ActionSchema = z
     extract: z
       .record(z.string())
       .optional()
-      .describe(
-        "Map of variables to extract from the response using JsonPath"
-      ),
+      .describe("Map of variables to extract from the response using JsonPath"),
     longRunning: z
       .boolean()
       .optional()
@@ -98,9 +94,7 @@ export const ActionSchema = z
     mode: z
       .array(ActionModeEnum)
       .optional()
-      .describe(
-        "Explicit execution mode. Defaults to both verify and execute"
-      ),
+      .describe("Explicit execution mode. Defaults to both verify and execute"),
   })
   .describe("Definition of a workflow action");
 
@@ -111,9 +105,7 @@ export const StepSchema = z
     inputs: z
       .array(z.string())
       .optional()
-      .describe(
-        "Variables that must be populated before this step can run"
-      ),
+      .describe("Variables that must be populated before this step can run"),
     outputs: z
       .array(z.string())
       .optional()
@@ -205,9 +197,7 @@ export const ConnectionSchema = z
     base: z.string().describe("Base URL of the API host"),
     auth: z
       .string()
-      .describe(
-        "Authorization header template, e.g. 'Bearer {accessToken}'"
-      ),
+      .describe("Authorization header template, e.g. 'Bearer {accessToken}'"),
   })
   .describe("Connection information used when performing requests");
 
@@ -227,9 +217,7 @@ export const WorkflowSchema = z
       .describe("Reusable endpoint templates referenced by actions"),
     checkers: z
       .record(z.string())
-      .describe(
-        "Expressions used to evaluate API responses inside actions"
-      ),
+      .describe("Expressions used to evaluate API responses inside actions"),
     variables: z
       .record(VariableSchema)
       .describe("All variables referenced throughout the workflow"),
@@ -252,9 +240,7 @@ export const TokenSchema = z
     expiresAt: z
       .number()
       .describe("Unix timestamp (ms) indicating when the token expires"),
-    scope: z
-      .array(z.string())
-      .describe("OAuth scopes granted by the token"),
+    scope: z.array(z.string()).describe("OAuth scopes granted by the token"),
   })
   .describe("Persisted OAuth token metadata");
 

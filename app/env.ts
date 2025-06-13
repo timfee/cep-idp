@@ -1,6 +1,8 @@
 import { createEnv } from "@t3-oss/env-nextjs";
 import { z } from "zod";
 
+// Parse and validate environment variables for both server and shared contexts.
+// In production/dev, throws on missing required values. In tests, returns whatever is set.
 export const env = createEnv({
   server: {
     AUTH_SECRET: z.string().min(1),

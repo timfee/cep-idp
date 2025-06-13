@@ -23,6 +23,7 @@
     "@radix-ui/react-tooltip": "^1.2.7",
     "class-variance-authority": "^0.7.1",
     "client-only": "^0.0.1",
+    "dotenv": "^16.5.0",
     "eslint-plugin-react-hooks": "^5.2.0",
     "jsonpath-plus": "^10.3.0",
     "lucide-react": "^0.514.0",

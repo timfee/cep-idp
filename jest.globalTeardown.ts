@@ -1,5 +1,7 @@
-import { teardownTestEnvironment } from './test-utils/testEnv';
+import { teardownTestEnvironment } from "./test-utils/testEnv";
 
-export default async () => {
+const globalTeardown = async () => {
   await teardownTestEnvironment();
 };
+
+export default globalTeardown;

@@ -1,4 +1,4 @@
-import { getGoogleAccessToken, getMicrosoftAccessToken } from './tokenUtils';
+import { getGoogleAccessToken, getMicrosoftAccessToken } from "./tokenUtils";
 
 async function deleteGoogleUser() {
   const email = process.env.GOOGLE_TEST_USER;
@@ -6,13 +6,10 @@ async function deleteGoogleUser() {
   if (!email || !token) return;
   await fetch(
     `https://admin.googleapis.com/admin/directory/v1/users/${encodeURIComponent(
-      email,
+      email
     )}`,
-    {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    },
-  ).catch((err) => console.warn('deleteGoogleUser', err));
+    { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
+  ).catch((err) => console.warn("deleteGoogleUser", err));
 }
 
 async function deleteGoogleOrgUnit() {
@@ -21,13 +18,10 @@ async function deleteGoogleOrgUnit() {
   if (!ou || !token) return;
   await fetch(
     `https://admin.googleapis.com/admin/directory/v1/customer/my_customer/orgunits/${encodeURIComponent(
-      ou,
+      ou
     )}`,
-    {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    },
-  ).catch((err) => console.warn('deleteGoogleOrgUnit', err));
+    { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
+  ).catch((err) => console.warn("deleteGoogleOrgUnit", err));
 }
 
 async function deleteGoogleSsoAssignment() {
@@ -37,11 +31,8 @@ async function deleteGoogleSsoAssignment() {
   if (!profile || !assignment || !token) return;
   await fetch(
     `https://cloudidentity.googleapis.com/v1/inboundSamlSsoProfiles/${profile}/assignments/${assignment}`,
-    {
-      method: 'DELETE',
-      headers: { Authorization: `Bearer ${token}` },
-    },
-  ).catch((err) => console.warn('deleteGoogleSsoAssignment', err));
+    { method: "DELETE", headers: { Authorization: `Bearer ${token}` } }
+  ).catch((err) => console.warn("deleteGoogleSsoAssignment", err));
 }
 
 async function deleteMicrosoftApp() {
@@ -49,9 +40,9 @@ async function deleteMicrosoftApp() {
   const token = process.env.MICROSOFT_ACCESS_TOKEN;
   if (!appId || !token) return;
   await fetch(`https://graph.microsoft.com/v1.0/applications/${appId}`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
-  }).catch((err) => console.warn('deleteMicrosoftApp', err));
+  }).catch((err) => console.warn("deleteMicrosoftApp", err));
 }
 
 async function deleteMicrosoftServicePrincipal() {
@@ -59,9 +50,9 @@ async function deleteMicrosoftServicePrincipal() {
   const token = process.env.MICROSOFT_ACCESS_TOKEN;
   if (!spId || !token) return;
   await fetch(`https://graph.microsoft.com/v1.0/servicePrincipals/${spId}`, {
-    method: 'DELETE',
+    method: "DELETE",
     headers: { Authorization: `Bearer ${token}` },
-  }).catch((err) => console.warn('deleteMicrosoftServicePrincipal', err));
+  }).catch((err) => console.warn("deleteMicrosoftServicePrincipal", err));
 }
 
 export async function setupTestEnvironment() {

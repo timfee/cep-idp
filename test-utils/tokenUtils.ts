@@ -80,7 +80,9 @@ export async function getGoogleAccessToken() {
   if (useWorkload && serviceAccount) {
     const now = Math.floor(Date.now() / 1000);
     const exp = now + 3600;
-    const auth = new GoogleAuth({ scopes: "https://www.googleapis.com/auth/iam" });
+    const auth = new GoogleAuth({
+      scopes: "https://www.googleapis.com/auth/iam",
+    });
     const client = await auth.getClient();
     const signRes = await client.request<{ signedJwt: string }>({
       url: `https://iamcredentials.googleapis.com/v1/projects/-/serviceAccounts/${serviceAccount}:signJwt`,
@@ -116,7 +118,9 @@ export async function getGoogleAccessToken() {
     return;
   }
 
-  console.warn("GOOGLE_SERVICE_ACCOUNT_KEY not provided and workload identity not enabled");
+  console.warn(
+    "GOOGLE_SERVICE_ACCOUNT_KEY not provided and workload identity not enabled"
+  );
 }
 
 export async function getMicrosoftAccessToken() {
@@ -129,24 +133,18 @@ export async function getMicrosoftAccessToken() {
   }
 
   const scopes = microsoftScopes.join(" ");
-  const tokenUrl = microsoftTokenUrl.replace(
-    "organizations",
-    tenantId
-  );
+  const tokenUrl = microsoftTokenUrl.replace("organizations", tenantId);
 
-  const res = await fetch(
-    tokenUrl,
-    {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        grant_type: "client_credentials",
-        client_id: clientId,
-        client_secret: clientSecret,
-        scope: scopes,
-      }),
-    }
-  );
+  const res = await fetch(tokenUrl, {
+    method: "POST",
+    headers: { "Content-Type": "application/x-www-form-urlencoded" },
+    body: new URLSearchParams({
+      grant_type: "client_credentials",
+      client_id: clientId,
+      client_secret: clientSecret,
+      scope: scopes,
+    }),
+  });
 
   const data = (await res.json()) as any;
   if (!res.ok) {

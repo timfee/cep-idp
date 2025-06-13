@@ -3,6 +3,7 @@ export const STEP_NAMES = {
   VERIFY_PRIMARY_DOMAIN: "Verify Primary Domain",
   CREATE_AUTOMATION_OU: "Create Automation Organizational Unit",
   CREATE_SERVICE_ACCOUNT: "Create Service Account for Microsoft",
+  CREATE_CUSTOM_ADMIN_ROLE: "Create Custom Admin Role",
   SETUP_SYNC_PERMISSIONS: "Setup Microsoft Sync Permissions",
   CONFIGURE_GOOGLE_SAML_PROFILE: "Configure Google SAML Profile",
   CREATE_MICROSOFT_APPS: "Create Microsoft Apps",

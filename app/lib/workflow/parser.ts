@@ -1,45 +1,61 @@
-import workflow from "@/workflow.json";
-import { Action, ACTION_MODES, Workflow, WorkflowSchema } from "./types";
+import { z } from "zod";
 
-/**
- * Parse the workflow.json file and normalise action definitions.
- *
- * @returns Workflow object ready for execution
- */
-export function parseWorkflow(): Workflow {
-  try {
-    const parsed = WorkflowSchema.parse(workflow);
+import { connections, roles, variableDefinitions } from "./config";
+import {
+  StepDefinition,
+  StepResultSchema,
+  StepContextSchema,
+  WorkflowSchema,
+} from "./types";
 
-    parsed.steps = parsed.steps.map((step) => {
-      const actions: Action[] = [];
+import {
+  verifyPrimaryDomain,
+  createAutomationOU,
+  createServiceAccount,
+  createCustomAdminRole,
+  setupSyncPermissions,
+  configureGoogleSamlProfile,
+  createMicrosoftApps,
+  configureMicrosoftSyncSSO,
+  setupClaimsPolicy,
+  completeGoogleSsoSetup,
+  assignUsersToSSO,
+  testSSOConfiguration,
+} from "./steps";
 
-      if (step.actions) {
-        actions.push(
-          ...step.actions.map((a) => ({
-            ...a,
-            mode: a.mode ?? [ACTION_MODES.VERIFY, ACTION_MODES.EXECUTE],
-          }))
-        );
-      }
+const steps: StepDefinition[] = [
+  verifyPrimaryDomain,
+  createAutomationOU,
+  createServiceAccount,
+  createCustomAdminRole,
+  setupSyncPermissions,
+  configureGoogleSamlProfile,
+  createMicrosoftApps,
+  configureMicrosoftSyncSSO,
+  setupClaimsPolicy,
+  completeGoogleSsoSetup,
+  assignUsersToSSO,
+  testSSOConfiguration,
+];
 
-      if (step.verify) {
-        actions.push(
-          ...step.verify.map((a) => ({ ...a, mode: [ACTION_MODES.VERIFY] }))
-        );
-      }
+// Runtime validation of step objects to catch malformed exports
+const StepArraySchema = z.array(
+  z.object({
+    name: z.string(),
+    handler: z.function(),
+  })
+);
 
-      if (step.execute) {
-        actions.push(
-          ...step.execute.map((a) => ({ ...a, mode: [ACTION_MODES.EXECUTE] }))
-        );
-      }
+export function parseWorkflow() {
+  const workflow = {
+    connections,
+    roles,
+    variables: variableDefinitions,
+    steps,
+  } as const;
 
-      return { ...step, actions, verify: undefined, execute: undefined };
-    });
+  WorkflowSchema.partial().parse(workflow); // structural validation
+  StepArraySchema.parse(steps);
 
-    return parsed;
-  } catch (error) {
-    console.error("Failed to parse workflow:", error);
-    throw new Error("Invalid workflow configuration");
-  }
+  return workflow;
 }

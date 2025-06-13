@@ -296,3 +296,82 @@ export interface OAuthConfig {
   tokenUrl: string;
   scopes: string[];
 }
+
+// ---------------------------------------------------------------------------
+//  Modular workflow runtime types (refactor v2)
+// ---------------------------------------------------------------------------
+
+/**
+ * Context object provided to each step handler during execution.
+ */
+export interface StepContext {
+  /** Mutable map of workflow variables */
+  vars: Record<string, string>;
+
+  /** Lightweight API wrapper that endpoint helpers rely on */
+  api: {
+    request: (
+      connection: string,
+      method: string,
+      path: string,
+      options?: { query?: Record<string, string | undefined>; body?: unknown }
+    ) => Promise<unknown>;
+  };
+
+  /** Persist new / updated variables */
+  setVars: (updates: Record<string, string>) => void;
+
+  /** Structured logging */
+  log: (level: "info" | "warn" | "error", message: string, data?: unknown) => void;
+}
+
+/**
+ * Result object returned by a step handler.
+ */
+export interface StepResult {
+  success: boolean;
+  mode: "verified" | "executed" | "skipped" | "already-exists";
+  error?: string;
+  outputs?: Record<string, string>;
+}
+
+/**
+ * Definition describing a single workflow step.
+ */
+export interface StepDefinition {
+  /** Human-readable step name */
+  name: string;
+
+  /** Required role permissions */
+  role?: string;
+
+  /** Variables that must be defined before the step can execute */
+  inputs?: string[];
+
+  /** Variables produced by the step */
+  outputs?: string[];
+
+  /** Indicates the step is performed outside automation and user confirms */
+  manual?: boolean;
+
+  /** Main business logic */
+  handler: (ctx: StepContext) => Promise<StepResult>;
+}
+
+// Zod wrappers for runtime validation
+export const StepContextSchema = z.object({
+  vars: z.record(z.string()),
+  api: z.object({
+    request: z.function(),
+  }),
+  setVars: z.function(),
+  log: z.function(),
+});
+
+export const StepResultSchema = z.object({
+  success: z.boolean(),
+  mode: z.enum(["verified", "executed", "skipped", "already-exists"]),
+  error: z.string().optional(),
+  outputs: z.record(z.string()).optional(),
+});
+

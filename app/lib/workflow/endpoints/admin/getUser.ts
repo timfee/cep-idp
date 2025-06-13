@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const ParamsSchema = z.object({
@@ -19,7 +20,7 @@ export async function getUser(
     ctx,
     connection: "googleAdmin",
     method: "GET",
-    pathTemplate: "/users/{userEmail}",
+    pathTemplate: API_PATHS.USER_BY_EMAIL,
     params,
     paramsSchema: ParamsSchema,
     responseSchema: ResponseSchema,

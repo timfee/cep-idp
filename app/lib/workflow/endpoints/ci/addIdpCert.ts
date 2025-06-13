@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const BodySchema = z.record(z.unknown());
@@ -23,8 +24,7 @@ export async function addIdpCert(
     ctx,
     connection: "googleCI",
     method: "POST",
-    pathTemplate:
-      "/inboundSamlSsoProfiles/{samlProfileId}/idpCredentials:add",
+    pathTemplate: API_PATHS.ADD_IDP_CREDENTIALS,
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ samlProfileId: true }),
     responseSchema: ResponseSchema,

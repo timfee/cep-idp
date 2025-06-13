@@ -28,12 +28,12 @@ export const createServiceAccount: StepDefinition = {
 
     // Try fetch existing user
     try {
-      const user = await getUser(ctx.api, { userEmail: targetEmail });
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
+      const user = (await getUser(ctx.api, {
+        userEmail: targetEmail,
+      })) as Record<string, unknown>;
       const outputs = OutputSchema.parse({
-        provisioningUserId: user.id,
-        provisioningUserEmail: user.primaryEmail,
+        provisioningUserId: String(user.id),
+        provisioningUserEmail: String(user.primaryEmail),
       });
       ctx.setVars(outputs);
       return StepResultSchema.parse({ success: true, mode: "verified", outputs });
@@ -42,20 +42,18 @@ export const createServiceAccount: StepDefinition = {
     }
 
     const password = generatePassword(16);
-    const createResp = await postUser(ctx.api, {
+    const createResp = (await postUser(ctx.api, {
       body: {
         primaryEmail: targetEmail,
         name: { givenName: "Microsoft", familyName: "Provisioning" },
         password,
         orgUnitPath: "/Automation",
       },
-    });
+    })) as Record<string, unknown>;
 
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
     const outputs = OutputSchema.parse({
-      provisioningUserId: createResp.id,
-      provisioningUserEmail: createResp.primaryEmail,
+      provisioningUserId: String(createResp.id),
+      provisioningUserEmail: String(createResp.primaryEmail),
     });
     ctx.setVars({ ...outputs, generatedPassword: password });
 

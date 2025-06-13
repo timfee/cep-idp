@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const BodySchema = z.record(z.unknown());
@@ -23,7 +24,7 @@ export async function postRoleAssign(
     ctx,
     connection: "googleAdmin",
     method: "POST",
-    pathTemplate: "/customer/{customerId}/roleassignments",
+    pathTemplate: API_PATHS.ROLE_ASSIGNMENTS,
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ customerId: true }),
     responseSchema: ResponseSchema,

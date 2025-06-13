@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const ParamsSchema = z.object({});
@@ -16,7 +17,7 @@ export async function listSamlProfiles(
     ctx,
     connection: "googleCI",
     method: "GET",
-    pathTemplate: "/inboundSamlSsoProfiles",
+    pathTemplate: API_PATHS.SAML_PROFILES,
     params: {},
     paramsSchema: ParamsSchema,
     responseSchema: ResponseSchema,

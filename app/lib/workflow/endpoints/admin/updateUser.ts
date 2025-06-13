@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const BodySchema = z.record(z.unknown());
@@ -23,7 +24,7 @@ export async function updateUser(
     ctx,
     connection: "googleAdmin",
     method: "PUT",
-    pathTemplate: "/users/{userEmail}",
+    pathTemplate: API_PATHS.USER_BY_EMAIL,
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ userEmail: true }),
     responseSchema: ResponseSchema,

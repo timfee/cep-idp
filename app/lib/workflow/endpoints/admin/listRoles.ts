@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const ParamsSchema = z.object({
@@ -19,7 +20,7 @@ export async function listRoles(
     ctx,
     connection: "googleAdmin",
     method: "GET",
-    pathTemplate: "/customer/{customerId}/roles",
+    pathTemplate: API_PATHS.ROLES,
     params,
     paramsSchema: ParamsSchema,
     responseSchema: ResponseSchema,

@@ -1,11 +1,13 @@
 import { z } from "zod";
 
 import { connections, roles, variableDefinitions } from "./config";
+import { endpointRegistry } from "./endpoints";
 import {
   StepDefinition,
   StepResultSchema,
   StepContextSchema,
   WorkflowSchema,
+  Workflow,
 } from "./types";
 
 import {
@@ -46,10 +48,18 @@ const StepArraySchema = z.array(
   })
 );
 
+const checkers = {
+  exists: "$ != null",
+  fieldTruthy: "$.{field} == true",
+  eq: "$ == '{value}'",
+} as const;
+
 export function parseWorkflow() {
   const workflow = {
     connections,
     roles,
+    endpoints: endpointRegistry,
+    checkers,
     variables: variableDefinitions,
     steps,
   } as const;
@@ -57,5 +67,5 @@ export function parseWorkflow() {
   WorkflowSchema.partial().parse(workflow); // structural validation
   StepArraySchema.parse(steps);
 
-  return workflow;
+  return workflow as unknown as Workflow;
 }

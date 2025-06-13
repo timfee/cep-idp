@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const BodySchema = z.record(z.unknown());
@@ -23,8 +24,7 @@ export async function patchSamlSettings(
     ctx,
     connection: "graphBeta",
     method: "PATCH",
-    pathTemplate:
-      "/servicePrincipals/{servicePrincipalId}/samlSingleSignOnSettings",
+    pathTemplate: API_PATHS.SAML_SP_SETTINGS,
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ servicePrincipalId: true }),
     responseSchema: ResponseSchema,

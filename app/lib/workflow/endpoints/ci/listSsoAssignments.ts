@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const ParamsSchema = z.object({});
@@ -16,7 +17,7 @@ export async function listSsoAssignments(
     ctx,
     connection: "googleCI",
     method: "GET",
-    pathTemplate: "/inboundSsoAssignments",
+    pathTemplate: API_PATHS.SSO_ASSIGNMENTS,
     params: {},
     paramsSchema: ParamsSchema,
     responseSchema: ResponseSchema,

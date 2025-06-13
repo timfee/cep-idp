@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const ParamsSchema = z.object({
@@ -19,8 +20,7 @@ export async function listPolicies(
     ctx,
     connection: "graphBeta",
     method: "GET",
-    pathTemplate:
-      "/servicePrincipals/{servicePrincipalId}/tokenIssuancePolicies",
+    pathTemplate: API_PATHS.TOKEN_POLICIES,
     params,
     paramsSchema: ParamsSchema,
     responseSchema: ResponseSchema,

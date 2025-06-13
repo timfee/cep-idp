@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const ParamsSchema = z.object({
@@ -19,8 +20,7 @@ export async function listOUAutomation(
     ctx,
     connection: "googleAdmin",
     method: "GET",
-    // Use literal path to avoid optional query syntax complications.
-    pathTemplate: "/customer/{customerId}/orgunits",
+    pathTemplate: API_PATHS.ORG_UNITS,
     params,
     paramsSchema: ParamsSchema,
     responseSchema: ResponseSchema,

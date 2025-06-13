@@ -1,28 +1,11 @@
 import { z } from "zod";
 
+import { ApiContext } from "../api-adapter";
+import { HttpMethod } from "../constants";
 import { API_PATHS } from "../../workflow/constants";
 
-/**
- * Lightweight runtime context provided to endpoint wrappers so they can call
- * the appropriate HTTP client without importing global state.
- */
-export interface ApiContext {
-  /**
-   * Issue an HTTP request via the central API client.
-   *
-   * @param connection - Name of the connection (key from connections map)
-   * @param method - Standard HTTP method (GET/POST/…)
-   * @param url - Fully resolved path (without base URL)
-   * @param options - Optional query/body settings
-   * @returns Raw JSON (or other) response from the upstream API
-   */
-  request: (
-    connection: string,
-    method: string,
-    url: string,
-    options?: { query?: Record<string, string | undefined>; body?: unknown }
-  ) => Promise<unknown>;
-}
+// Re-export so endpoint modules can continue importing from this helper.
+export type { ApiContext };
 
 /** Extract `{var}` placeholders from a template path. */
 const VAR_REGEX = /\{(\w+)}/g;
@@ -52,7 +35,7 @@ export async function callEndpoint<
 >(options: {
   ctx: ApiContext;
   connection: string;
-  method: string;
+  method: HttpMethod;
   pathTemplate: keyof typeof API_PATHS | string;
   params: P;
   paramsSchema: z.ZodType<P>;

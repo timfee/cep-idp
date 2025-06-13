@@ -283,3 +283,75 @@ export const API_PATHS = {
   FED_METADATA: "/FederationMetadata/2007-06/FederationMetadata.xml",
 } as const;
 
+// ---------------------------------------------------------------------------
+//  Additional constants introduced by modular workflow refactor (step files)
+// ---------------------------------------------------------------------------
+
+// Organization Units
+export const OU_NAMES = {
+  AUTOMATION: "Automation",
+  ROOT: "/",
+} as const;
+
+// Service Account Configuration
+export const SERVICE_ACCOUNT = {
+  USERNAME: "azuread-provisioning",
+  GIVEN_NAME: "Microsoft",
+  FAMILY_NAME: "Provisioning",
+} as const;
+
+// Role Configuration
+export const ROLE_NAMES = {
+  MS_ENTRA_PROVISIONING: "Microsoft Entra Provisioning",
+  MS_ENTRA_DESC: "Custom role for Microsoft Entra provisioning service",
+} as const;
+
+// Google Workspace Privileges
+export const GOOGLE_PRIVILEGES = {
+  USERS_RETRIEVE: "USERS_RETRIEVE",
+  USERS_CREATE: "USERS_CREATE",
+  USERS_UPDATE: "USERS_UPDATE",
+  GROUPS_RETRIEVE: "GROUPS_RETRIEVE",
+  GROUPS_CREATE: "GROUPS_CREATE",
+  ORG_UNITS_RETRIEVE: "ORG_UNITS_RETRIEVE",
+} as const;
+
+// SAML Configuration
+export const SAML_CONFIG = {
+  DISPLAY_NAME: "Azure AD",
+  IDP_ENTITY_PREFIX: "https://sts.windows.net/",
+  IDP_SSO_PREFIX: "https://login.microsoftonline.com/",
+  SSO_MODE_SAML: "SAML_SSO",
+  SSO_MODE_OFF: "SSO_OFF",
+} as const;
+
+// Microsoft Graph Configuration
+export const MS_GRAPH_CONFIG = {
+  GOOGLE_CONNECTOR_TEMPLATE_ID: "01303a13-8322-4e06-bee5-80d612907131",
+  GOOGLE_CONNECTOR_NAME: "Google Cloud / G Suite Connector",
+  CLAIMS_POLICY_NAME: "Google Workspace Basic Claims",
+  CLAIMS_POLICY_VERSION: 1,
+  BASE_ADDRESS_KEY: "BaseAddress",
+  SECRET_KEY_KEY: "SecretKey",
+  GOOGLE_ADMIN_BASE: "https://admin.googleapis.com/admin/directory/v1",
+  GRAPH_BETA_BASE: "https://graph.microsoft.com/beta",
+} as const;
+
+// Sync Job Configuration
+export const SYNC_CONFIG = {
+  DEFAULT_JOB_ID: "Initial",
+  SYNC_INTERVAL: "PT40M",
+} as const;
+
+// Password Generation
+export const PASSWORD_CONFIG = {
+  DEFAULT_LENGTH: 16,
+  DETERMINISTIC_SUFFIX: "-azuread-provisioning-2024",
+} as const;
+
+// Miscellaneous repeated literals
+export const GOOGLE_GROUPS = {
+  ALL_USERS: "allUsers",
+} as const;
+
+

@@ -260,12 +260,12 @@
       "_comment": "Display name to lookup the provisioning application template"
     },
     "ssoTemplateId": {
-      "default": "8b1025e4-1dd2-430b-a150-2ef79cd700f5",
-      "_comment": "Gallery ID for Google Cloud SSO App (fallback if dynamic lookup fails)"
+      "default": "01303a13-8322-4e06-bee5-80d612907131",
+      "_comment": "Gallery ID for Google Cloud / G Suite Connector by Microsoft (same as provisioning)"
     },
     "ssoTemplateName": {
-      "default": "Google Cloud",
-      "_comment": "Display name to lookup the SSO application template"
+      "default": "Google Cloud / G Suite Connector",
+      "_comment": "Display name to lookup the SSO application template (same gallery as provisioning)"
     },
     "provServicePrincipalId": {},
     "ssoServicePrincipalId": {},
@@ -477,17 +477,24 @@
         "ssoServicePrincipalId",
         "ssoAppId"
       ],
+      "verify": [
+        {
+          "use": "graph.appByTemplateProv",
+          "checker": "exists",
+          "extract": {
+            "provServicePrincipalId": "$.value[0].servicePrincipal.id"
+          }
+        },
+        {
+          "use": "graph.appByTemplateSSO",
+          "checker": "exists",
+          "extract": {
+            "ssoServicePrincipalId": "$.value[0].servicePrincipal.id",
+            "ssoAppId": "$.value[0].application.appId"
+          }
+        }
+      ],
       "execute": [
-        {
-          "use": "graph.listAppTemplates",
-          "qs": { "$filter": "displayName eq '{provTemplateName}'" },
-          "extract": { "provTemplateId": "$.value[0].id" }
-        },
-        {
-          "use": "graph.listAppTemplates",
-          "qs": { "$filter": "displayName eq '{ssoTemplateName}'" },
-          "extract": { "ssoTemplateId": "$.value[0].id" }
-        },
         {
           "use": "graph.instantiateProv",
           "payload": { "displayName": "{provTemplateName}" },

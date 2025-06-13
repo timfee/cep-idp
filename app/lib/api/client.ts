@@ -254,18 +254,9 @@ async function handleAuthenticatedRequest(
 
   if (!response.ok) {
     const error = await response.text();
-    // re-construct the URL in curl format:
-    console.log(
-      "curl -X",
-      endpoint.method,
-      url,
-      Object.entries(requestOptions.headers || {})
-        .map(([key, value]) => `-H "${key}: ${value}"`)
-        .join(" "),
-      finalBody ? `-d '${JSON.stringify(finalBody)}'` : ""
-    );
+
     throw new Error(
-      `API request to ${connection.base + " " + endpoint.method + " " + endpoint.path + " Params:" + endpoint.qs} failed: ${response.status} - ${error}`
+      `${endpoint.conn} API request to ${endpoint.method} ${endpoint.path} failed: ${response.status}: ${error}`
     );
   }
 

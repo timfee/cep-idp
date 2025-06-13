@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const ParamsSchema = z.object({
@@ -26,7 +27,7 @@ export async function listOrgUnits(
     ctx,
     connection: "googleAdmin",
     method: "GET",
-    pathTemplate: "/customer/{customerId}/orgunits",
+    pathTemplate: API_PATHS.ORG_UNITS,
     params: pathParams as { customerId: string },
     paramsSchema: ParamsSchema.pick({ customerId: true }),
     responseSchema: ResponseSchema,

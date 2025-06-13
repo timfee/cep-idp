@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const BodySchema = z.record(z.unknown());
@@ -22,7 +23,7 @@ export async function postSsoAssignment(
     ctx,
     connection: "googleCI",
     method: "POST",
-    pathTemplate: "/inboundSsoAssignments",
+    pathTemplate: API_PATHS.SSO_ASSIGNMENTS,
     params: {},
     paramsSchema: z.object({}).strict(),
     responseSchema: ResponseSchema,

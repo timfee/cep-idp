@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const ParamsSchema = z.object({
@@ -20,8 +21,7 @@ export async function startSyncJob(
     ctx,
     connection: "graphGA",
     method: "POST",
-    pathTemplate:
-      "/servicePrincipals/{servicePrincipalId}/synchronization/jobs/{jobId}/start",
+    pathTemplate: API_PATHS.START_SYNC,
     params,
     paramsSchema: ParamsSchema,
     responseSchema: ResponseSchema,

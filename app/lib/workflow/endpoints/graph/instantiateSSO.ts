@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const ParamsSchema = z.object({
@@ -19,7 +20,7 @@ export async function instantiateSSO(
     ctx,
     connection: "graphGA",
     method: "POST",
-    pathTemplate: "/applicationTemplates/{ssoTemplateId}/instantiate",
+    pathTemplate: API_PATHS.APP_BY_SSO_TEMPLATE,
     params,
     paramsSchema: ParamsSchema,
     responseSchema: ResponseSchema,

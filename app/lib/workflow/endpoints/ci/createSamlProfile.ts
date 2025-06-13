@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const BodySchema = z.record(z.unknown());
@@ -22,7 +23,7 @@ export async function createSamlProfile(
     ctx,
     connection: "googleCI",
     method: "POST",
-    pathTemplate: "/inboundSamlSsoProfiles",
+    pathTemplate: API_PATHS.SAML_PROFILES,
     params: {},
     paramsSchema: z.object({}).strict(),
     responseSchema: ResponseSchema,

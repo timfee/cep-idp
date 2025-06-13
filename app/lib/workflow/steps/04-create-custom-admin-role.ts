@@ -24,12 +24,12 @@ export const createCustomAdminRole: StepDefinition = {
     });
 
     try {
-      const rolesResp = await listRoles(ctx.api, { customerId });
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const existing = rolesResp.items?.find(
-        (r: any) => r.roleName === "Microsoft Entra Provisioning"
-      );
+    const rolesResp = (await listRoles(ctx.api, {
+      customerId,
+    })) as Record<string, any>;
+    const existing = (rolesResp as any).items?.find(
+      (r: any) => r.roleName === "Microsoft Entra Provisioning"
+    );
       if (existing) {
         const outputs = OutputSchema.parse({
           adminRoleId: existing.roleId,
@@ -40,12 +40,12 @@ export const createCustomAdminRole: StepDefinition = {
       }
 
       // Need directory serviceId – fetch from privileges
-      const privResp = await listPrivileges(ctx.api, { customerId });
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const dirServiceId = privResp.items?.find(
-        (p: any) => p.privilegeName === "USERS_RETRIEVE"
-      )?.serviceId;
+    const privResp = (await listPrivileges(ctx.api, {
+      customerId,
+    })) as Record<string, any>;
+    const dirServiceId = (privResp as any).items?.find(
+      (p: any) => p.privilegeName === "USERS_RETRIEVE"
+    )?.serviceId;
 
       const roleBody = {
         roleName: "Microsoft Entra Provisioning",
@@ -57,10 +57,10 @@ export const createCustomAdminRole: StepDefinition = {
         ],
       } as Record<string, unknown>;
 
-      const createResp = await postRole(ctx.api, {
+      const createResp = (await postRole(ctx.api, {
         customerId,
         body: roleBody,
-      });
+      })) as Record<string, any>;
 
       const outputs = OutputSchema.parse({
         adminRoleId: createResp.roleId ?? createResp.id ?? "",

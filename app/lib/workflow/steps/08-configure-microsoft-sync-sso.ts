@@ -43,9 +43,9 @@ export const configureMicrosoftSyncSSO: StepDefinition = {
       });
 
       // Patch SAML settings to include claims etc.
-      const settings = await getSamlSettings(ctx.api, {
+      const settings = (await getSamlSettings(ctx.api, {
         servicePrincipalId: ssoServicePrincipalId,
-      });
+      })) as Record<string, unknown>;
       await patchSamlSettings(ctx.api, {
         servicePrincipalId: ssoServicePrincipalId,
         body: settings, // no-op patch as placeholder

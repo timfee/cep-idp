@@ -234,7 +234,7 @@ export const API_PATHS = {
   // Google Admin
   DOMAINS: "/customer/{customerId}/domains",
   DOMAIN_BY_NAME: "/customer/{customerId}/domains/{domainName}",
-  ORG_UNITS: "/customer/{customerId}/orgunits{?type,orgUnitPath}",
+  ORG_UNITS: "/customer/{customerId}/orgunits",
   ORG_UNIT: "/customer/{customerId}/orgunits/{orgUnitPath}",
   PRIVILEGES: "/customer/{customerId}/roles/ALL/privileges",
   ROLES: "/customer/{customerId}/roles",
@@ -253,6 +253,8 @@ export const API_PATHS = {
   // Microsoft Graph (v1.0 & beta)
   APP_TEMPLATES: "/applicationTemplates",
   APP_BY_TEMPLATE: "/applicationTemplates/{templateId}/instantiate",
+  APP_BY_PROV_TEMPLATE: "/applicationTemplates/{provTemplateId}/instantiate",
+  APP_BY_SSO_TEMPLATE: "/applicationTemplates/{ssoTemplateId}/instantiate",
   SERVICE_PRINCIPAL: "/servicePrincipals/{servicePrincipalId}",
   SYNC_JOBS: "/servicePrincipals/{servicePrincipalId}/synchronization/jobs",
   SYNC_JOB: "/servicePrincipals/{servicePrincipalId}/synchronization/jobs/{jobId}",
@@ -261,6 +263,21 @@ export const API_PATHS = {
   LINK_POLICY: "/servicePrincipals/{servicePrincipalId}/claimsMappingPolicies/$ref",
   SAML_SETTINGS: "/applications/{appId}/federatedIdentityCredentials",
   UPDATE_SAML_SETTINGS: "/beta/applications/{appId}/federatedIdentityCredentials/{credentialId}",
+
+  // Additional Microsoft Graph
+  APPLICATIONS: "/applications",
+  SYNC: "/servicePrincipals/{servicePrincipalId}/synchronization",
+  TOKEN_POLICIES: "/servicePrincipals/{servicePrincipalId}/tokenIssuancePolicies",
+  CREATE_TOKEN_POLICY: "/policies/tokenIssuancePolicies",
+  SAML_SP_SETTINGS: "/servicePrincipals/{servicePrincipalId}/samlSingleSignOnSettings",
+
+  // Additional Cloud-Identity
+  IDP_CREDENTIALS: "/inboundSamlSsoProfiles/{samlProfileId}/idpCredentials",
+  ADD_IDP_CREDENTIALS: "/inboundSamlSsoProfiles/{samlProfileId}/idpCredentials:add",
+
+  // Additional Admin SDK
+  USERS_ROOT: "/users",
+  USER_BY_EMAIL: "/users/{userEmail}",
 
   // Public
   FED_METADATA: "/FederationMetadata/2007-06/FederationMetadata.xml",

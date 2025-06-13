@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const BodySchema = z.record(z.unknown());
@@ -23,8 +24,7 @@ export async function linkPolicy(
     ctx,
     connection: "graphBeta",
     method: "POST",
-    pathTemplate:
-      "/servicePrincipals/{servicePrincipalId}/tokenIssuancePolicies/$ref",
+    pathTemplate: API_PATHS.LINK_POLICY,
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ servicePrincipalId: true }),
     responseSchema: ResponseSchema,

@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const BodySchema = z.record(z.unknown());
@@ -23,8 +24,7 @@ export async function patchSync(
     ctx,
     connection: "graphGA",
     method: "PATCH",
-    pathTemplate:
-      "/servicePrincipals/{servicePrincipalId}/synchronization",
+    pathTemplate: API_PATHS.SYNC,
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ servicePrincipalId: true }),
     responseSchema: ResponseSchema,

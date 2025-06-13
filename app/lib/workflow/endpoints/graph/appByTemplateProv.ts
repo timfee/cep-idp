@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const ParamsSchema = z.object({
@@ -24,7 +25,7 @@ export async function appByTemplateProv(
     ctx,
     connection: "graphGA",
     method: "GET",
-    pathTemplate: "/applications",
+    pathTemplate: API_PATHS.APPLICATIONS,
     params: {},
     paramsSchema: z.object({}).strict(),
     responseSchema: ResponseSchema,

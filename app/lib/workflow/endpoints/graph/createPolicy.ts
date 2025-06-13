@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const BodySchema = z.record(z.unknown());
@@ -22,7 +23,7 @@ export async function createPolicy(
     ctx,
     connection: "graphBeta",
     method: "POST",
-    pathTemplate: "/policies/tokenIssuancePolicies",
+    pathTemplate: API_PATHS.CREATE_TOKEN_POLICY,
     params: {},
     paramsSchema: z.object({}).strict(),
     responseSchema: ResponseSchema,

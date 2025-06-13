@@ -1,5 +1,6 @@
 import { z } from "zod";
 
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const ParamsSchema = z.object({
@@ -19,7 +20,7 @@ export async function getIdpCreds(
     ctx,
     connection: "googleCI",
     method: "GET",
-    pathTemplate: "/inboundSamlSsoProfiles/{samlProfileId}/idpCredentials",
+    pathTemplate: API_PATHS.IDP_CREDENTIALS,
     params,
     paramsSchema: ParamsSchema,
     responseSchema: ResponseSchema,

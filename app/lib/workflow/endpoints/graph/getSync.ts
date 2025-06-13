@@ -1,0 +1,28 @@
+import { z } from "zod";
+
+import { ApiContext, callEndpoint } from "../utils";
+
+const ParamsSchema = z.object({
+  servicePrincipalId: z.string(),
+});
+
+const ResponseSchema = z.unknown();
+
+export type GetSyncParams = z.infer<typeof ParamsSchema>;
+export type GetSyncResponse = z.infer<typeof ResponseSchema>;
+
+export async function getSync(
+  ctx: ApiContext,
+  params: GetSyncParams
+): Promise<GetSyncResponse> {
+  return callEndpoint({
+    ctx,
+    connection: "graphGA",
+    method: "GET",
+    pathTemplate:
+      "/servicePrincipals/{servicePrincipalId}/synchronization",
+    params,
+    paramsSchema: ParamsSchema,
+    responseSchema: ResponseSchema,
+  });
+}

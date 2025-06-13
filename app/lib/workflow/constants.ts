@@ -110,6 +110,13 @@ export const WORKFLOW_CONSTANTS = {
   PROVISIONING_BASE_URL: "https://admin.googleapis.com/admin/directory/v1",
 
   PASSWORD_EXTRACTION_KEY: "_generated_password_displayed",
+
+  // ---------------------------------------------------------------------
+  // Added by modular workflow refactor
+  // ---------------------------------------------------------------------
+  PROV_TEMPLATE_ID: "01303a13-8322-4e06-bee5-80d612907131",
+  SSO_TEMPLATE_ID: "01303a13-8322-4e06-bee5-80d612907131",
+  PROV_TEMPLATE_NAME: "Google Cloud / G Suite Connector",
 };
 
 export const DETERMINISTIC_PASSWORD_BASE_LENGTH = 12;
@@ -206,3 +213,55 @@ export const ERROR_MESSAGES = {
 } as const;
 
 export const JSON_FORMAT = { INDENT: 2, DATE_LOCALE: "en-US" } as const;
+
+// ---------------------------------------------------------------------------
+//  New values introduced by the modular workflow refactor
+// ---------------------------------------------------------------------------
+
+// Duplicate constant removed – properties have been merged into the original
+
+/**
+ * Path templates (without the base URL) used by the endpoint layer.  Variable
+ * placeholders are kept using curly-brace syntax for readability but the new
+ * endpoint builders will perform explicit string interpolation rather than
+ * blind template replacement.
+ */
+export const API_PATHS = {
+  // NOTE: values intentionally use curly braces for readability – no unsafe
+  // runtime substitution occurs because endpoint builders will explicitly
+  // interpolate and validate each param.
+  // Google Admin
+  DOMAINS: "/customer/{customerId}/domains",
+  DOMAIN_BY_NAME: "/customer/{customerId}/domains/{domainName}",
+  ORG_UNITS: "/customer/{customerId}/orgunits{?type,orgUnitPath}",
+  ORG_UNIT: "/customer/{customerId}/orgunits/{orgUnitPath}",
+  PRIVILEGES: "/customer/{customerId}/roles/ALL/privileges",
+  ROLES: "/customer/{customerId}/roles",
+  ROLE: "/customer/{customerId}/roles/{roleId}",
+  ROLE_ASSIGN: "/customer/{customerId}/roleassignments/{roleAssignmentId}",
+  ROLE_ASSIGNMENTS: "/customer/{customerId}/roleassignments",
+  USERS: "/customer/{customerId}/users",
+  USER: "/customer/{customerId}/users/{userId}",
+
+  // Google Cloud-Identity
+  IDP_CERTS: "/inboundSamlSsoProfiles/{samlProfileId}:uploadCertificate",
+  SAML_PROFILES: "/inboundSamlSsoProfiles",
+  SAML_PROFILE: "/inboundSamlSsoProfiles/{samlProfileId}",
+  SSO_ASSIGNMENTS: "/inboundSsoAssignments",
+
+  // Microsoft Graph (v1.0 & beta)
+  APP_TEMPLATES: "/applicationTemplates",
+  APP_BY_TEMPLATE: "/applicationTemplates/{templateId}/instantiate",
+  SERVICE_PRINCIPAL: "/servicePrincipals/{servicePrincipalId}",
+  SYNC_JOBS: "/servicePrincipals/{servicePrincipalId}/synchronization/jobs",
+  SYNC_JOB: "/servicePrincipals/{servicePrincipalId}/synchronization/jobs/{jobId}",
+  START_SYNC: "/servicePrincipals/{servicePrincipalId}/synchronization/jobs/{jobId}/start",
+  CLAIMS_POLICY: "/policies/claimsMappingPolicies",
+  LINK_POLICY: "/servicePrincipals/{servicePrincipalId}/claimsMappingPolicies/$ref",
+  SAML_SETTINGS: "/applications/{appId}/federatedIdentityCredentials",
+  UPDATE_SAML_SETTINGS: "/beta/applications/{appId}/federatedIdentityCredentials/{credentialId}",
+
+  // Public
+  FED_METADATA: "/FederationMetadata/2007-06/FederationMetadata.xml",
+} as const;
+

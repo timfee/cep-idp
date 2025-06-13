@@ -34,7 +34,8 @@ export async function getGoogleAccessToken() {
   const tokenUrl = googleTokenUrl;
 
   if (!adminEmail) {
-    throw new Error("GOOGLE_ADMIN_EMAIL not set");
+    console.warn("GOOGLE_ADMIN_EMAIL not set; skipping Google token request");
+    return;
   }
 
   if (keyJson) {
@@ -59,21 +60,26 @@ export async function getGoogleAccessToken() {
     const signature = signer.sign(key.private_key, "base64");
     const jwt = `${header}.${claim}.${base64url(signature)}`;
 
-    const res = await fetch(tokenUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-        assertion: jwt,
-      }),
-    });
+    try {
+      const res = await fetch(tokenUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+          assertion: jwt,
+        }),
+      });
 
-    const data = (await res.json()) as any;
-    if (!res.ok) {
-      throw new Error(`Google token error: ${JSON.stringify(data)}`);
+      const data = (await res.json()) as any;
+      if (!res.ok) {
+        console.warn(`Google token error: ${JSON.stringify(data)}`);
+        return;
+      }
+
+      process.env.GOOGLE_ACCESS_TOKEN = data.access_token;
+    } catch (err) {
+      console.warn("Google token request failed", err);
     }
-
-    process.env.GOOGLE_ACCESS_TOKEN = data.access_token;
     return;
   }
 
@@ -100,21 +106,26 @@ export async function getGoogleAccessToken() {
     });
 
     const jwt = (signRes.data as any).signedJwt as string;
-    const res = await fetch(tokenUrl, {
-      method: "POST",
-      headers: { "Content-Type": "application/x-www-form-urlencoded" },
-      body: new URLSearchParams({
-        grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-        assertion: jwt,
-      }),
-    });
+    try {
+      const res = await fetch(tokenUrl, {
+        method: "POST",
+        headers: { "Content-Type": "application/x-www-form-urlencoded" },
+        body: new URLSearchParams({
+          grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
+          assertion: jwt,
+        }),
+      });
 
-    const data = (await res.json()) as any;
-    if (!res.ok) {
-      throw new Error(`Google token error: ${JSON.stringify(data)}`);
+      const data = (await res.json()) as any;
+      if (!res.ok) {
+        console.warn(`Google token error: ${JSON.stringify(data)}`);
+        return;
+      }
+
+      process.env.GOOGLE_ACCESS_TOKEN = data.access_token;
+    } catch (err) {
+      console.warn("Google token request failed", err);
     }
-
-    process.env.GOOGLE_ACCESS_TOKEN = data.access_token;
     return;
   }
 
@@ -135,21 +146,26 @@ export async function getMicrosoftAccessToken() {
   const scopes = microsoftScopes.join(" ");
   const tokenUrl = microsoftTokenUrl.replace("organizations", tenantId);
 
-  const res = await fetch(tokenUrl, {
-    method: "POST",
-    headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: new URLSearchParams({
-      grant_type: "client_credentials",
-      client_id: clientId,
-      client_secret: clientSecret,
-      scope: scopes,
-    }),
-  });
+  try {
+    const res = await fetch(tokenUrl, {
+      method: "POST",
+      headers: { "Content-Type": "application/x-www-form-urlencoded" },
+      body: new URLSearchParams({
+        grant_type: "client_credentials",
+        client_id: clientId,
+        client_secret: clientSecret,
+        scope: scopes,
+      }),
+    });
 
-  const data = (await res.json()) as any;
-  if (!res.ok) {
-    throw new Error(`Microsoft token error: ${JSON.stringify(data)}`);
+    const data = (await res.json()) as any;
+    if (!res.ok) {
+      console.warn(`Microsoft token error: ${JSON.stringify(data)}`);
+      return;
+    }
+
+    process.env.MICROSOFT_ACCESS_TOKEN = data.access_token;
+  } catch (err) {
+    console.warn("Microsoft token request failed", err);
   }
-
-  process.env.MICROSOFT_ACCESS_TOKEN = data.access_token;
 }

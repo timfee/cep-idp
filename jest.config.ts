@@ -1,7 +1,13 @@
 import dotenv from "dotenv";
 import type { Config } from "jest";
 import { pathsToModuleNameMapper } from "ts-jest";
-import tsConfig from "./tsconfig.json" with { type: "json" };
+import fs from "fs";
+import path from "path";
+
+// Load the TypeScript configuration manually to avoid import assertion issues
+const tsConfig = JSON.parse(
+  fs.readFileSync(path.join(__dirname, "tsconfig.json"), "utf8")
+);
 
 dotenv.config({ path: ".env.local" });
 

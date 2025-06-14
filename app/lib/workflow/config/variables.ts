@@ -84,6 +84,10 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
   tenantId: {
     comment: "Microsoft tenant ID from environment configuration",
   },
+
+  // Local JSON string that tracks completion of manual workflow steps.  Used
+  // solely by the UI layer; not required for API calls.
+  manualStepsState: {},
   // Google OrgUnit details (removed unused ouPath/ouName variables)
 } as const;
 

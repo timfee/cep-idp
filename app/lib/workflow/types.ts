@@ -103,6 +103,12 @@ export interface StepDefinition {
   /** Indicates that the step is performed manually */
   manual?: boolean;
 
+  /** Optional free-form status string returned by the step handler */
+  apiStatus?: string;
+
+  /** Optional dependency list used by the UI for ordering/enablement */
+  depends_on?: string[];
+
   /** Main business logic */
   handler: (ctx: StepContext) => Promise<StepResult>;
 }

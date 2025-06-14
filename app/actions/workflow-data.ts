@@ -358,7 +358,12 @@ export async function getWorkflowVariables(): Promise<{
     string,
     {
       value?: string;
-      definition: { default?: string; generator?: string; validator?: string };
+      // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
+      definition: {
+        default?: string;
+        generator?: string | ((...args: unknown[]) => unknown);
+        validator?: string | RegExp | string;
+      };
       isRequired: boolean;
     }
   >;
@@ -369,7 +374,11 @@ export async function getWorkflowVariables(): Promise<{
     string,
     {
       value?: string;
-      definition: { default?: string; generator?: string; validator?: string };
+      definition: {
+        default?: string;
+        generator?: string | ((...args: unknown[]) => unknown);
+        validator?: string | RegExp | string;
+      };
       isRequired: boolean;
     }
   > = {};

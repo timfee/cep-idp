@@ -20,7 +20,11 @@ interface VariableViewerProps {
   variables: Record<string, string>;
   definitions?: Record<
     string,
-    { default?: string; generator?: string; validator?: string }
+    {
+      default?: string;
+      generator?: string | ((...args: unknown[]) => unknown);
+      validator?: string | RegExp;
+    }
   >;
   requiredVariables?: Set<string>;
 }
@@ -81,7 +85,7 @@ export function VariableViewer({
 
   const getVariableDescription = (def?: {
     default?: string;
-    generator?: string;
+    generator?: string | ((...args: unknown[]) => unknown);
   }): string => {
     if (def?.generator) return "Will be generated";
     if (def?.default) return `Default: ${def.default}`;

@@ -168,6 +168,9 @@ importers:
       typescript:
         specifier: ^5.8.3
         version: 5.8.3
+      undici:
+        specifier: ^7.10.0
+        version: 7.10.0
       zod:
         specifier: ^3.25.64
         version: 3.25.64
@@ -3877,6 +3880,10 @@ packages:
 
   undici-types@7.8.0:
     resolution: {integrity: sha512-9UJ2xGDvQ43tYyVMpuHlsgApydB8ZKfVYTsLDhXkFL/6gfkp+U8xTGdh8pMJv1SpZna0zxG1DwsKZsreLbXBxw==}
+
+  undici@7.10.0:
+    resolution: {integrity: sha512-u5otvFBOBZvmdjWLVW+5DAc9Nkq8f24g0O9oY7qw2JVIF1VocIFoyz9JFkuVOS2j41AufeO0xnlweJ2RLT8nGw==}
+    engines: {node: '>=20.18.1'}
 
   unrs-resolver@1.7.11:
     resolution: {integrity: sha512-OhuAzBImFPjKNgZ2JwHMfGFUA6NSbRegd1+BPjC1Y0E6X9Y/vJ4zKeGmIMqmlYboj6cMNEwKI+xQisrg4J0HaQ==}
@@ -8228,6 +8235,8 @@ snapshots:
       which-boxed-primitive: 1.1.1
 
   undici-types@7.8.0: {}
+
+  undici@7.10.0: {}
 
   unrs-resolver@1.7.11:
     dependencies:

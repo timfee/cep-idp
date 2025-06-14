@@ -12,7 +12,7 @@ describe("Org Units - Live API", () => {
 
   let apiContext: ReturnType<typeof createLiveApiContext>;
   const testOuName = `TestOU_${Date.now()}`;
-  const testOuPath = `/${testOuName}`;
+  const testOuPath = `${testOuName}`;
 
   beforeAll(() => {
     const googleToken = process.env.GOOGLE_ACCESS_TOKEN!;
@@ -45,7 +45,7 @@ describe("Org Units - Live API", () => {
       orgUnitPath: testOuPath
     });
 
-    expect(getResult.orgUnitPath).toBe(testOuPath);
+    expect(getResult.orgUnitPath).toBe(`/${testOuPath}`);
   });
 
   it("should handle duplicate OU creation", async () => {

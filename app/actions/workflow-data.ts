@@ -7,17 +7,14 @@ import { hasOwnProperty } from "@/app/lib/utils";
 
 // Import types only to assist consumers while avoiding runtime impact.
 // Bring in for future type adjustments – disable sonar unused import for now
-// eslint-disable-next-line sonarjs/unused-import, @typescript-eslint/no-unused-vars
-import type { StepDefinition as _StepDefinition } from "@/app/lib/workflow/types";
+ 
+import type { StepDefinition } from "@/app/lib/workflow/types";
 import {
   evaluateGenerator,
   LogEntry,
   parseWorkflow,
-  Step,
   StepStatus,
   Token,
-  Variable,
-  Workflow,
 } from "@/app/lib/workflow";
 import {
   JWT_PART_COUNT,
@@ -53,7 +50,8 @@ export interface AuthState {
  * Full snapshot of workflow state used by the UI layer.
  */
 export interface WorkflowData {
-  workflow: Workflow;
+   
+  workflow: ReturnType<typeof parseWorkflow>;
   variables: Record<string, string>;
   stepStatuses: Record<string, StepStatus>;
   auth: AuthState;
@@ -66,7 +64,8 @@ export interface WorkflowData {
  * @returns Initial variable map
  */
 async function initializeVariables(
-  workflow: Workflow
+   
+  workflow: ReturnType<typeof parseWorkflow>
 ): Promise<Record<string, string>> {
   const vars: Record<string, string> = {} as Record<string, string>;
   for (const name of Object.keys(workflow.variables)) {
@@ -122,7 +121,8 @@ function extractTenantId(
  * @returns Map of step statuses and updated variables
  */
 async function reconstituteStepStatuses(
-  workflow: Workflow,
+   
+  workflow: ReturnType<typeof parseWorkflow>,
   variables: Record<string, string>,
   tokens: { google?: Token; microsoft?: Token }
 ): Promise<{
@@ -164,7 +164,7 @@ async function reconstituteStepStatuses(
     });
   };
 
-  const isAuthMet = (step: Step): boolean => {
+  const isAuthMet = (step: StepDefinition): boolean => {
     if (!step.role) return true;
     const requiredScopes =
       hasOwnProperty(workflow.roles, step.role) ?
@@ -189,7 +189,7 @@ async function reconstituteStepStatuses(
     return false;
   };
 
-  const shouldSkipStep = (step: Step): boolean =>
+  const shouldSkipStep = (step: StepDefinition): boolean =>
     !areDependenciesMet(step, manualCompleted)
     || !isAuthMet(step)
     || (!!step.manual && !manualCompleted.includes(step.name))
@@ -197,7 +197,7 @@ async function reconstituteStepStatuses(
       step.inputs.some((i) => !hasOwnProperty(workingVariables, i))
     : false);
 
-  const verifyStep = async (step: Step): Promise<void> => {
+  const verifyStep = async (step: StepDefinition): Promise<void> => {
     const logs: LogEntry[] = [];
     try {
       const result = await runStepActions(
@@ -356,29 +356,29 @@ export async function getAuthStatus(): Promise<AuthState> {
 export async function getWorkflowVariables(): Promise<{
   variables: Record<
     string,
-    { value?: string; definition: Variable; isRequired: boolean }
+    {
+      value?: string;
+      definition: { default?: string; generator?: string; validator?: string };
+      isRequired: boolean;
+    }
   >;
 }> {
   const { workflow, variables } = await getWorkflowData();
 
   const result: Record<
     string,
-    { value?: string; definition: Variable; isRequired: boolean }
+    {
+      value?: string;
+      definition: { default?: string; generator?: string; validator?: string };
+      isRequired: boolean;
+    }
   > = {};
 
-  // Check which variables are required by steps
+  // Determine required variables – based on step.inputs declarations
   const requiredVars = new Set<string>();
   for (const step of workflow.steps) {
-    if (step.actions) {
-      for (const action of step.actions) {
-        if (action.payload) {
-          const payloadStr = JSON.stringify(action.payload);
-          const matches = payloadStr.matchAll(/\{([^{}]+)\}/g);
-          for (const match of matches) {
-            requiredVars.add(match[1]);
-          }
-        }
-      }
+    if (step.inputs && step.inputs.length > 0) {
+      step.inputs.forEach((input) => requiredVars.add(input));
     }
   }
 

@@ -1,7 +1,11 @@
 import { z } from "zod";
 
 // Local imports
-import { VALIDATION_PATTERNS, WORKFLOW_CONSTANTS } from "../constants";
+import {
+  VALIDATION_PATTERNS,
+  TEMPLATE_IDS,
+  TEMPLATE_NAMES,
+} from "../constants";
 
 /**
  * Schema describing a single variable definition.  The workflow engine uses
@@ -49,20 +53,20 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
 
   // Microsoft application template identifiers
   provisioningTemplateId: {
-    default: WORKFLOW_CONSTANTS.PROV_TEMPLATE_ID,
+    default: TEMPLATE_IDS.GOOGLE_CONNECTOR,
     comment:
       "Gallery ID for the Google Cloud / G Suite Connector provisioning template",
   },
   provisioningTemplateName: {
-    default: WORKFLOW_CONSTANTS.PROV_TEMPLATE_NAME,
+    default: TEMPLATE_NAMES.GOOGLE_CONNECTOR,
     comment: "Display name for the provisioning application template",
   },
   ssoTemplateId: {
-    default: WORKFLOW_CONSTANTS.SSO_TEMPLATE_ID,
+    default: TEMPLATE_IDS.GOOGLE_CONNECTOR,
     comment: "Gallery ID for the Google Cloud / G Suite Connector SSO template",
   },
   ssoTemplateName: {
-    default: WORKFLOW_CONSTANTS.PROV_TEMPLATE_NAME,
+    default: TEMPLATE_NAMES.GOOGLE_CONNECTOR,
     comment: "Display name for the SSO application template (same as prov)",
   },
 
@@ -74,23 +78,13 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
     default: "Initial",
   },
   claimsPolicyId: {},
-  principalId: {},
 
   // Other runtime data
   generatedPassword: {},
   tenantId: {
     comment: "Microsoft tenant ID from environment configuration",
   },
-  rawXmlResponse: {
-    comment: "Raw XML response fetched from federation metadata endpoint",
-  },
-  manualStepsState: {
-    comment: "JSON string storing completed manual steps",
-  },
-
-  // Google OrgUnit details
-  ouPath: {},
-  ouName: {},
+  // Google OrgUnit details (removed unused ouPath/ouName variables)
 } as const;
 
 // Fail fast on invalid definitions

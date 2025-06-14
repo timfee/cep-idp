@@ -115,10 +115,8 @@ export const RETRY_COUNT = 3;
 export const SPLIT_LIMIT = 2;
 export const JWT_PART_COUNT = 3;
 export const WORKFLOW_MAX_ITERATION_MULTIPLIER = 2;
-export const STRING_SPLIT_PAIR = 2;
 export const WILDCARD_SUFFIX_LENGTH = 2;
 export const MIN_LOG_COUNT_FOR_PLURAL = 2;
-export const EXPECTED_ARG_COUNT_PAIR = 2;
 export const CRYPTO_IV_LENGTH_BYTES = 16;
 export const CRYPTO_AUTH_TAG_SPLIT_INDEX = 2;
 export const CRYPTO_RANDOM_BYTES_LENGTH = 32;
@@ -155,7 +153,6 @@ export const WORKFLOW_CONSTANTS = {
 
   MIN_PASSWORD_LENGTH: 16,
   JSONPATH_SINGLE_RESULT: 1,
-  STRING_SPLIT_PAIR: 2,
 
   MAX_WORKFLOW_ITERATIONS: 2,
 
@@ -167,18 +164,12 @@ export const WORKFLOW_CONSTANTS = {
 
   // Retained for backwards compatibility. Prefer SYNC_CONFIG.SYNC_INTERVAL
   SYNC_INTERVAL: "PT40M",
-  // Deprecated – use BASE_URLS.GOOGLE_ADMIN instead. Retained for backward
-  // compatibility until call sites are updated.
-  PROVISIONING_BASE_URL: "https://admin.googleapis.com/admin/directory/v1",
 
-  PASSWORD_EXTRACTION_KEY: "_generated_password_displayed",
 
   // ---------------------------------------------------------------------
   // Legacy aliases – prefer TEMPLATE_IDS / TEMPLATE_NAMES going forward.
+  // (Deprecated keys removed in cleanup.)
   // ---------------------------------------------------------------------
-  PROV_TEMPLATE_ID: TEMPLATE_IDS.GOOGLE_CONNECTOR,
-  SSO_TEMPLATE_ID: TEMPLATE_IDS.GOOGLE_CONNECTOR,
-  PROV_TEMPLATE_NAME: TEMPLATE_NAMES.GOOGLE_CONNECTOR,
 };
 
 export const DETERMINISTIC_PASSWORD_BASE_LENGTH = 12;
@@ -249,8 +240,7 @@ export const VALIDATION_PATTERNS = {
   CUSTOMER_ID: /^C[0-9a-f]{10,}$|^my_customer$/,
   DOMAIN: /^([\w-]+\.)+[A-Za-z]{2,}$/,
   DIGITS_ONLY: /^\d+$/,
-  FIND_BY_PREFIX: "findBy(",
-  SPLIT_ARGS: /,\s*/,
+  // Removed unused patterns to reduce surface
 } as const;
 
 export const ERROR_MESSAGES = {

@@ -4,12 +4,14 @@ import "client-only";
 import { executeWorkflowStep } from "@/app/actions/workflow-execution";
 import { markManualStepComplete } from "@/app/actions/workflow-state";
 import { cn } from "@/app/lib/utils";
-import {
-  LogEntry,
-  Step,
-  StepStatus,
-  substituteVariables,
-} from "@/app/lib/workflow";
+import { LogEntry, StepStatus } from "@/app/lib/workflow/types";
+
+// Local lightweight helper – replaces `{var}` with value from map. This avoids
+// bringing back the heavy legacy template engine that has been removed.
+function simpleSubstitute(str: string, vars: Record<string, string>): string {
+  return str.replace(/\{([^{}]+)\}/g, (_, key) => vars[key] ?? "");
+}
+import type { StepDefinition } from "@/app/lib/workflow/types";
 import {
   MIN_LOG_COUNT_FOR_PLURAL,
   STATUS_VALUES,
@@ -40,7 +42,7 @@ import { PasswordDisplay } from "./password-display";
 const JSON_INDENT = 2;
 
 interface StepCardProps {
-  step: Step;
+  step: StepDefinition;
   status: StepStatus;
   canExecute: boolean;
   isAuthValid: boolean;
@@ -179,10 +181,10 @@ export function StepCard({
                               const rawValue = variables[input];
                               let display = input;
                               if (rawValue) {
-                                const substituted = substituteVariables(
-                                  rawValue,
-                                  variables
-                                );
+                              const substituted = simpleSubstitute(
+                                rawValue,
+                                variables
+                              );
                                 display = `${input}: ${substituted.substring(0, VARIABLE_DISPLAY_MAX_LENGTH)}${
                                   (
                                     substituted.length

@@ -2,12 +2,14 @@
 import "client-only";
 
 import { isTokenExpired } from "@/app/lib/auth/oauth-client";
-import type { Step, StepStatus, Workflow } from "@/app/lib/workflow";
+import type { StepDefinition, StepStatus } from "@/app/lib/workflow/types";
+import { parseWorkflow } from "@/app/lib/workflow";
 import { ROLE_PREFIXES, STATUS_VALUES } from "@/app/lib/workflow/constants";
 import { StepCard } from "./step-card";
 
 interface WorkflowStepsProps {
-  workflow: Workflow;
+   
+  workflow: ReturnType<typeof parseWorkflow>;
   stepStatuses: Record<string, StepStatus>;
   authStatus: {
     google: { authenticated: boolean; scopes: string[]; expiresAt?: number };
@@ -34,13 +36,13 @@ export function WorkflowSteps({
   );
 
   // Helper to get required scopes for a step
-  const getRequiredScopes = (step: Step) => {
+  const getRequiredScopes = (step: StepDefinition) => {
     if (!step.role) return [];
     return workflow.roles[step.role] || [];
   };
 
   // Helper to check if auth is valid for a step
-  const isAuthValidForStep = (step: Step) => {
+  const isAuthValidForStep = (step: StepDefinition) => {
     if (!step.role) return true;
 
     const requiredScopes = getRequiredScopes(step);
@@ -84,7 +86,7 @@ export function WorkflowSteps({
 
   return (
     <div className="space-y-4">
-      {workflow.steps.map((step: Step) => {
+      {workflow.steps.map((step: StepDefinition) => {
         const status = stepStatuses[step.name] || {
           status: STATUS_VALUES.PENDING,
           logs: [],

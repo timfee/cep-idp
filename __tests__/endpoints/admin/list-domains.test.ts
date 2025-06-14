@@ -15,7 +15,7 @@ describe("listDomains - Live API", () => {
     apiContext = createLiveApiContext({
       googleToken,
       microsoftToken,
-      trackCreatedResources: false, // List operations don't create resources
+      trackCreatedResources: false // List operations don't create resources
     });
   });
 

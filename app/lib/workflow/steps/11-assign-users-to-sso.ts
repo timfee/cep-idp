@@ -12,7 +12,7 @@ export const assignUsersToSSO: StepDefinition = {
 
   async handler(ctx) {
     const { samlProfileId } = InputSchema.parse({
-      samlProfileId: ctx.vars.samlProfileId,
+      samlProfileId: ctx.vars.samlProfileId
     });
 
     const assignments = (await listSsoAssignments(ctx.api, {})) as {
@@ -35,10 +35,10 @@ export const assignUsersToSSO: StepDefinition = {
     await postSsoAssignment(ctx.api, {
       body: {
         targetGroup: { id: "allUsers" },
-        samlSsoInfo: { inboundSamlSsoProfile: samlProfileId },
-      },
+        samlSsoInfo: { inboundSamlSsoProfile: samlProfileId }
+      }
     });
 
     return StepResultSchema.parse({ success: true, mode: "executed" });
-  },
+  }
 };

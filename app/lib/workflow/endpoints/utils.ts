@@ -42,7 +42,7 @@ export function buildPath(
  */
 export async function callEndpoint<
   P extends Record<string, unknown>,
-  R,
+  R
 >(options: {
   ctx: ApiContext;
   connection: string;
@@ -64,7 +64,7 @@ export async function callEndpoint<
 
   const response = await ctx.request(connection, method, path, {
     query: options.query,
-    body: options.body,
+    body: options.body
   });
 
   return options.responseSchema.parse(response);

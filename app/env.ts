@@ -9,12 +9,12 @@ export const env = createEnv({
     GOOGLE_CLIENT_ID: z.string().min(1),
     GOOGLE_CLIENT_SECRET: z.string().min(1),
     MICROSOFT_CLIENT_ID: z.string().min(1),
-    MICROSOFT_CLIENT_SECRET: z.string().min(1),
+    MICROSOFT_CLIENT_SECRET: z.string().min(1)
   },
   shared: {
     NODE_ENV: z
       .enum(["development", "production", "test"])
-      .default("development"),
+      .default("development")
   },
   runtimeEnv: {
     AUTH_SECRET: process.env.AUTH_SECRET,
@@ -22,6 +22,6 @@ export const env = createEnv({
     GOOGLE_CLIENT_SECRET: process.env.GOOGLE_CLIENT_SECRET,
     MICROSOFT_CLIENT_ID: process.env.MICROSOFT_CLIENT_ID,
     MICROSOFT_CLIENT_SECRET: process.env.MICROSOFT_CLIENT_SECRET,
-    NODE_ENV: process.env.NODE_ENV,
-  },
+    NODE_ENV: process.env.NODE_ENV
+  }
 });

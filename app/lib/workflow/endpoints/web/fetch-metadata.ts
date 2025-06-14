@@ -31,6 +31,6 @@ export async function fetchMetadata(
       .object({})
       .strict()
       .describe("No additional path parameters; URL constructed inline"),
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

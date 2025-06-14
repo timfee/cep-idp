@@ -29,6 +29,6 @@ export async function postSsoAssignment(
       .strict()
       .describe("No path parameters for post inbound SSO assignment"),
     responseSchema: ResponseSchema,
-    body,
+    body
   });
 }

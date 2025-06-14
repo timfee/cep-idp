@@ -31,6 +31,6 @@ export async function postOU(
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ customerId: true }),
     responseSchema: ResponseSchema,
-    body,
+    body
   });
 }

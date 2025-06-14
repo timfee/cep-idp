@@ -8,7 +8,7 @@ import {
   PROVIDERS,
   STATUS_VALUES,
   STEP_NAMES,
-  VARIABLE_KEYS,
+  VARIABLE_KEYS
 } from "@/app/lib/workflow/constants";
 import {
   LogEntry,
@@ -16,7 +16,7 @@ import {
   StepDefinition,
   StepResult,
   StepStatus,
-  Token,
+  Token
 } from "@/app/lib/workflow/types";
 import { setStoredVariables } from "@/app/lib/workflow/variables-store";
 import { revalidatePath } from "next/cache";
@@ -66,8 +66,8 @@ export async function runStepActions(
         path,
         query: options?.query,
         body: options?.body,
-        tokens,
-      }),
+        tokens
+      })
   };
 
   const ctx: StepContext = {
@@ -82,16 +82,16 @@ export async function runStepActions(
         timestamp: Date.now(),
         level: level as LogEntry["level"],
         message,
-        data,
+        data
       });
-    },
+    }
   };
 
   try {
     onLog({
       timestamp: Date.now(),
       level: "info",
-      message: `Executing step handler: ${step.name}`,
+      message: `Executing step handler: ${step.name}`
     });
 
     const result: StepResult = await step.handler(ctx);
@@ -99,14 +99,14 @@ export async function runStepActions(
     return {
       success: result.success,
       extractedVariables: extractedVars,
-      data: result,
+      data: result
     };
   } catch (error) {
     onLog({
       timestamp: Date.now(),
       level: "error",
       message: `Step handler failed: ${step.name}`,
-      data: error,
+      data: error
     });
     return { success: false, extractedVariables: extractedVars };
   }
@@ -123,7 +123,7 @@ async function processStepExecution(
   const status: StepStatus = {
     status: STATUS_VALUES.RUNNING,
     logs: [],
-    startedAt: Date.now(),
+    startedAt: Date.now()
   };
 
   const logs: LogEntry[] = [];
@@ -136,7 +136,7 @@ async function processStepExecution(
     onLog({
       timestamp: Date.now(),
       level: "info",
-      message: `Starting step: ${step.name}`,
+      message: `Starting step: ${step.name}`
     });
 
     if (step.inputs && step.inputs.length > 0) {
@@ -174,7 +174,7 @@ async function processStepExecution(
       status.variables = {
         ...(status.variables || {}),
         [VARIABLE_KEYS.GENERATED_PASSWORD]:
-          variables[VARIABLE_KEYS.GENERATED_PASSWORD],
+          variables[VARIABLE_KEYS.GENERATED_PASSWORD]
       };
     }
 
@@ -186,7 +186,7 @@ async function processStepExecution(
     onLog({
       timestamp: Date.now(),
       level: "info",
-      message: `Step completed: ${step.name}`,
+      message: `Step completed: ${step.name}`
     });
   } catch (error: unknown) {
     const errorMessage = error instanceof Error ? error.message : String(error);
@@ -200,7 +200,7 @@ async function processStepExecution(
       timestamp: Date.now(),
       level: "error",
       message: `Step failed: ${errorMessage}`,
-      data: error,
+      data: error
     });
   }
 
@@ -242,7 +242,7 @@ export async function executeWorkflowStep(
 
     const tokens = {
       google: googleToken ?? undefined,
-      microsoft: microsoftToken ?? undefined,
+      microsoft: microsoftToken ?? undefined
     };
 
     // Find the step
@@ -272,14 +272,14 @@ export async function executeWorkflowStep(
     return {
       success: status.status === STATUS_VALUES.COMPLETED,
       status,
-      variables: updatedVariables,
+      variables: updatedVariables
     };
   } catch (error) {
     console.error("Step execution failed:", error);
 
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error instanceof Error ? error.message : "Unknown error"
     };
   }
 }
@@ -304,7 +304,7 @@ export async function skipWorkflowStep(): Promise<{
     console.error("Failed to skip step:", error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error instanceof Error ? error.message : "Unknown error"
     };
   }
 }

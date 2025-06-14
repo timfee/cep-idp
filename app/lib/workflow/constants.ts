@@ -11,7 +11,7 @@ export const STEP_NAMES = {
   SETUP_CLAIMS_POLICY: "Setup Microsoft Claims Policy",
   COMPLETE_GOOGLE_SSO_SETUP: "Complete Google SSO Setup",
   ASSIGN_USERS_TO_SSO: "Assign Users to SSO App",
-  TEST_SSO: "Test SSO Configuration",
+  TEST_SSO: "Test SSO Configuration"
 } as const;
 
 /** OAuth providers supported by the workflow. */
@@ -24,7 +24,7 @@ export const STATUS_VALUES = {
   RUNNING: "running",
   COMPLETED: "completed",
   FAILED: "failed",
-  SKIPPED: "skipped",
+  SKIPPED: "skipped"
 } as const;
 
 /**
@@ -82,7 +82,7 @@ export const TIME = {
   HOURS_IN_DAY: 24,
   DAYS_IN_MONTH: 30,
   MS_IN_MINUTE: 1000 * 60,
-  TOKEN_EXPIRING_SOON_MINUTES: 30,
+  TOKEN_EXPIRING_SOON_MINUTES: 30
 } as const;
 /* eslint-enable no-magic-numbers */
 
@@ -102,17 +102,17 @@ export const BASE_URLS = {
   GOOGLE_ADMIN: "https://admin.googleapis.com/admin/directory/v1",
   GOOGLE_CI: "https://cloudidentity.googleapis.com/v1",
   GRAPH_V1: "https://graph.microsoft.com/v1.0",
-  GRAPH_BETA: "https://graph.microsoft.com/beta",
+  GRAPH_BETA: "https://graph.microsoft.com/beta"
 } as const;
 
 // 3rd-party application template IDs & names (single definitions)
 
 export const TEMPLATE_IDS = {
-  GOOGLE_CONNECTOR: "01303a13-8322-4e06-bee5-80d612907131",
+  GOOGLE_CONNECTOR: "01303a13-8322-4e06-bee5-80d612907131"
 } as const;
 
 export const TEMPLATE_NAMES = {
-  GOOGLE_CONNECTOR: "Google Cloud / G Suite Connector",
+  GOOGLE_CONNECTOR: "Google Cloud / G Suite Connector"
 } as const;
 
 export const COPY_FEEDBACK_DURATION_MS = 2000;
@@ -133,7 +133,7 @@ export const COOKIE_METADATA_SIZES = {
   SAME_SITE: 11,
   HTTP_ONLY: 10,
   SECURE: 8,
-  DOMAIN: 9,
+  DOMAIN: 9
 } as const;
 
 export const WORKFLOW_CONSTANTS = {
@@ -168,7 +168,7 @@ export const WORKFLOW_CONSTANTS = {
     DAYS_IN_MONTH * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE,
 
   // Retained for backwards compatibility. Prefer SYNC_CONFIG.SYNC_INTERVAL
-  SYNC_INTERVAL: "PT40M",
+  SYNC_INTERVAL: "PT40M"
 
   // Legacy aliases – prefer TEMPLATE_IDS / TEMPLATE_NAMES going forward.
   // (Deprecated keys removed in cleanup.)
@@ -181,7 +181,7 @@ export const OAUTH_STATE_COOKIE_NAME = "oauth_state";
 export const VARIABLE_KEYS = {
   GENERATED_PASSWORD: "generatedPassword",
   TENANT_ID: "tenantId",
-  PRIMARY_DOMAIN: "primaryDomain",
+  PRIMARY_DOMAIN: "primaryDomain"
 } as const;
 
 export const HTTP_METHODS = {
@@ -189,7 +189,7 @@ export const HTTP_METHODS = {
   POST: "POST",
   PUT: "PUT",
   PATCH: "PATCH",
-  DELETE: "DELETE",
+  DELETE: "DELETE"
 } as const;
 
 export type HttpMethod = (typeof HTTP_METHODS)[keyof typeof HTTP_METHODS];
@@ -197,7 +197,7 @@ export type HttpMethod = (typeof HTTP_METHODS)[keyof typeof HTTP_METHODS];
 export const ROLE_PREFIXES = {
   GOOGLE_DIR: "dir",
   GOOGLE_CI: "ci",
-  MICROSOFT: "graph",
+  MICROSOFT: "graph"
 } as const;
 
 /** Common time constants used throughout the workflow. */
@@ -205,13 +205,13 @@ export const ROLE_PREFIXES = {
 
 export const OAUTH_GRANT_TYPES = {
   AUTHORIZATION_CODE: "authorization_code",
-  REFRESH_TOKEN: "refresh_token",
+  REFRESH_TOKEN: "refresh_token"
 } as const;
 
 export const VALIDATION_PATTERNS = {
   CUSTOMER_ID: /^C[0-9a-f]{10,}$|^my_customer$/,
   DOMAIN: /^([\w-]+\.)+[A-Za-z]{2,}$/,
-  DIGITS_ONLY: /^\d+$/,
+  DIGITS_ONLY: /^\d+$/
   // Removed unused patterns to reduce surface
 } as const;
 
@@ -224,7 +224,7 @@ export const ERROR_MESSAGES = {
   AUTH_EXPIRED: (provider: string) =>
     `${provider} authentication expired. Please re-authenticate.`,
   RESOURCE_NOT_FOUND: (stepName: string) =>
-    `Resource not found for "${stepName}". This usually means a previous step failed to create the required resource.`,
+    `Resource not found for "${stepName}". This usually means a previous step failed to create the required resource.`
 } as const;
 
 export const JSON_FORMAT = { INDENT: 2, DATE_LOCALE: "en-US" } as const;
@@ -306,7 +306,7 @@ export const API_PATHS = {
   USER_BY_EMAIL: "/admin/directory/v1/users/{userEmail}",
 
   // Public
-  FED_METADATA: "/FederationMetadata/2007-06/FederationMetadata.xml",
+  FED_METADATA: "/FederationMetadata/2007-06/FederationMetadata.xml"
 } as const;
 
 // Additional constants introduced by modular workflow refactor (step files)
@@ -318,13 +318,13 @@ export const OU_NAMES = { AUTOMATION: "Automation", ROOT: "/" } as const;
 export const SERVICE_ACCOUNT = {
   USERNAME: "azuread-provisioning",
   GIVEN_NAME: "Microsoft",
-  FAMILY_NAME: "Provisioning",
+  FAMILY_NAME: "Provisioning"
 } as const;
 
 // Role Configuration
 export const ROLE_NAMES = {
   MS_ENTRA_PROVISIONING: "Microsoft Entra Provisioning",
-  MS_ENTRA_DESC: "Custom role for Microsoft Entra provisioning service",
+  MS_ENTRA_DESC: "Custom role for Microsoft Entra provisioning service"
 } as const;
 
 // Google Workspace Privileges
@@ -334,7 +334,7 @@ export const GOOGLE_PRIVILEGES = {
   USERS_UPDATE: "USERS_UPDATE",
   GROUPS_RETRIEVE: "GROUPS_RETRIEVE",
   GROUPS_CREATE: "GROUPS_CREATE",
-  ORG_UNITS_RETRIEVE: "ORG_UNITS_RETRIEVE",
+  ORG_UNITS_RETRIEVE: "ORG_UNITS_RETRIEVE"
 } as const;
 
 // SAML Configuration
@@ -343,7 +343,7 @@ export const SAML_CONFIG = {
   IDP_ENTITY_PREFIX: "https://sts.windows.net/",
   IDP_SSO_PREFIX: "https://login.microsoftonline.com/",
   SSO_MODE_SAML: "SAML_SSO",
-  SSO_MODE_OFF: "SSO_OFF",
+  SSO_MODE_OFF: "SSO_OFF"
 } as const;
 
 // Microsoft Graph Configuration
@@ -355,19 +355,19 @@ export const MS_GRAPH_CONFIG = {
   BASE_ADDRESS_KEY: "BaseAddress",
   SECRET_KEY_KEY: "SecretKey",
   GOOGLE_ADMIN_BASE: BASE_URLS.GOOGLE_ADMIN,
-  GRAPH_BETA_BASE: BASE_URLS.GRAPH_BETA,
+  GRAPH_BETA_BASE: BASE_URLS.GRAPH_BETA
 } as const;
 
 // Sync Job Configuration
 export const SYNC_CONFIG = {
   DEFAULT_JOB_ID: "Initial",
-  SYNC_INTERVAL: "PT40M",
+  SYNC_INTERVAL: "PT40M"
 } as const;
 
 // Password Generation
 export const PASSWORD_CONFIG = {
   DEFAULT_LENGTH: 16,
-  DETERMINISTIC_SUFFIX: "-azuread-provisioning-2024",
+  DETERMINISTIC_SUFFIX: "-azuread-provisioning-2024"
 } as const;
 
 // Miscellaneous repeated literals

@@ -8,7 +8,7 @@ import { Provider } from "@/app/lib/workflow/constants";
 import type { LogEntry } from "@/app/lib/workflow/types";
 import {
   getStoredVariables,
-  setStoredVariables,
+  setStoredVariables
 } from "@/app/lib/workflow/variables-store";
 import { timingSafeEqual } from "crypto";
 import { revalidatePath } from "next/cache";
@@ -58,7 +58,7 @@ export async function setWorkflowVariable(
     if (!isValid) {
       return {
         success: false,
-        error: `Variable '${name}' is not defined in the workflow`,
+        error: `Variable '${name}' is not defined in the workflow`
       };
     }
     const varDef = workflow.variables[name];
@@ -69,7 +69,7 @@ export async function setWorkflowVariable(
       if (!isValid) {
         return {
           success: false,
-          error: `Value '${value}' does not match the required format for '${name}'`,
+          error: `Value '${value}' does not match the required format for '${name}'`
         };
       }
     }
@@ -87,11 +87,11 @@ export async function setWorkflowVariable(
       timestamp: Date.now(),
       level: "error",
       message: "Failed to set variable",
-      data: error,
+      data: error
     });
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error instanceof Error ? error.message : "Unknown error"
     };
   }
 }
@@ -130,11 +130,11 @@ export async function refreshAuthToken(
       timestamp: Date.now(),
       level: "error",
       message: `Failed to refresh ${provider} token`,
-      data: error,
+      data: error
     });
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error",
+      error: error instanceof Error ? error.message : "Unknown error"
     };
   }
 }

@@ -16,7 +16,7 @@ export async function appByTemplateSSO(
 ): Promise<AppByTemplateSSOResponse> {
   const { ssoTemplateId } = params;
   const query = {
-    $filter: `applicationTemplateId eq '${ssoTemplateId}'`,
+    $filter: `applicationTemplateId eq '${ssoTemplateId}'`
   } as Record<string, string>;
 
   return callEndpoint({
@@ -27,6 +27,6 @@ export async function appByTemplateSSO(
     params: {},
     paramsSchema: z.object({}).strict().describe("No path parameters"),
     responseSchema: ResponseSchema,
-    query,
+    query
   });
 }

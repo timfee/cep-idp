@@ -6,7 +6,7 @@ import { StepDefinition, StepResultSchema } from "../types";
 const InputSchema = z.object({
   customerId: z.string(),
   adminRoleId: z.string(),
-  provisioningUserId: z.string(),
+  provisioningUserId: z.string()
 });
 
 export const setupSyncPermissions: StepDefinition = {
@@ -18,14 +18,14 @@ export const setupSyncPermissions: StepDefinition = {
     const { customerId, adminRoleId, provisioningUserId } = InputSchema.parse({
       customerId: ctx.vars.customerId,
       adminRoleId: ctx.vars.adminRoleId,
-      provisioningUserId: ctx.vars.provisioningUserId,
+      provisioningUserId: ctx.vars.provisioningUserId
     });
 
     // Check if assignment exists
     const assignResp = (await getRoleAssign(ctx.api, {
       customerId,
       roleId: adminRoleId,
-      assignedTo: provisioningUserId,
+      assignedTo: provisioningUserId
     })) as { items?: unknown[] };
 
     if ((assignResp.items?.length ?? 0) > 0) {
@@ -34,8 +34,8 @@ export const setupSyncPermissions: StepDefinition = {
 
     await postRoleAssign(ctx.api, {
       customerId,
-      body: { roleId: adminRoleId, assignedTo: provisioningUserId },
+      body: { roleId: adminRoleId, assignedTo: provisioningUserId }
     });
     return StepResultSchema.parse({ success: true, mode: "executed" });
-  },
+  }
 };

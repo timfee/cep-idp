@@ -31,6 +31,6 @@ export async function updateUser(
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ userEmail: true }),
     responseSchema: ResponseSchema,
-    body,
+    body
   });
 }

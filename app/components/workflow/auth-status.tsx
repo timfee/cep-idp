@@ -4,7 +4,7 @@ import "client-only";
 import { refreshAuthToken } from "@/app/actions/workflow-state";
 import {
   PROVIDERS,
-  WILDCARD_SUFFIX_LENGTH,
+  WILDCARD_SUFFIX_LENGTH
 } from "@/app/lib/workflow/constants";
 import { AlertOctagonIcon, BadgeCheckIcon } from "lucide-react";
 import { Badge } from "../ui/badge";
@@ -97,7 +97,7 @@ export function AuthStatus({
   scopes,
   requiredScopes,
   expiresAt,
-  hasRefreshToken,
+  hasRefreshToken
 }: AuthStatusProps) {
   const displayName = provider === PROVIDERS.GOOGLE ? "Google" : "Microsoft";
   const hasAllScopes = hasAllRequiredScopes(scopes, requiredScopes);

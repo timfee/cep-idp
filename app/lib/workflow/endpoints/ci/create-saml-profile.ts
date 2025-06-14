@@ -30,6 +30,6 @@ export async function createSamlProfile(
       .strict()
       .describe("No path parameters for createSamlProfile"),
     responseSchema: ResponseSchema,
-    body,
+    body
   });
 }

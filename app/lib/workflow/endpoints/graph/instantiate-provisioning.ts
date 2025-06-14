@@ -25,6 +25,6 @@ export async function instantiateProv(
     pathTemplate: API_PATHS.APP_BY_PROV_TEMPLATE,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

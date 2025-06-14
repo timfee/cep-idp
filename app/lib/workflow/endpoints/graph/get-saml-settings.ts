@@ -25,6 +25,6 @@ export async function getSamlSettings(
     pathTemplate: API_PATHS.SAML_SP_SETTINGS,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

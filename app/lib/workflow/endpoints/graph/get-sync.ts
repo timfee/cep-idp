@@ -25,6 +25,6 @@ export async function getSync(
     pathTemplate: API_PATHS.SYNC,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

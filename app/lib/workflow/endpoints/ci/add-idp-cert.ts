@@ -31,6 +31,6 @@ export async function addIdpCert(
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ samlProfileId: true }),
     responseSchema: ResponseSchema,
-    body,
+    body
   });
 }

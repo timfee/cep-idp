@@ -1,7 +1,7 @@
 import { createHash, randomBytes } from "crypto";
 import {
   DETERMINISTIC_PASSWORD_BASE_LENGTH,
-  ERROR_MESSAGES,
+  ERROR_MESSAGES
 } from "./constants";
 
 /** Character set used when generating random passwords. */

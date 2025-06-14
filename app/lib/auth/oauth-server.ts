@@ -3,7 +3,7 @@ import { Provider, Token } from "../workflow";
 import {
   MS_IN_SECOND,
   OAUTH_GRANT_TYPES,
-  PROVIDERS,
+  PROVIDERS
 } from "../workflow/constants";
 
 // Local-only – defines the shape of provider configuration.  Not re-exported.
@@ -32,8 +32,8 @@ export const googleOAuthConfig: OAuthConfig = {
     "https://www.googleapis.com/auth/admin.directory.rolemanagement",
     "https://www.googleapis.com/auth/cloud-identity.inboundsso",
     "https://www.googleapis.com/auth/siteverification",
-    "https://www.googleapis.com/auth/admin.directory.rolemanagement",
-  ],
+    "https://www.googleapis.com/auth/admin.directory.rolemanagement"
+  ]
 };
 
 export const microsoftOAuthConfig: OAuthConfig = {
@@ -53,8 +53,8 @@ export const microsoftOAuthConfig: OAuthConfig = {
     "Application.ReadWrite.All",
     "AppRoleAssignment.ReadWrite.All",
     "Policy.ReadWrite.ApplicationConfiguration",
-    "offline_access",
-  ],
+    "offline_access"
+  ]
 };
 
 /**
@@ -122,13 +122,13 @@ export async function exchangeCodeForToken(
     client_secret: config.clientSecret,
     code,
     redirect_uri: redirectUri,
-    grant_type: OAUTH_GRANT_TYPES.AUTHORIZATION_CODE,
+    grant_type: OAUTH_GRANT_TYPES.AUTHORIZATION_CODE
   });
 
   const response = await fetch(config.tokenUrl, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: params.toString(),
+    body: params.toString()
   });
 
   if (!response.ok) {
@@ -142,7 +142,7 @@ export async function exchangeCodeForToken(
     accessToken: data.access_token,
     refreshToken: data.refresh_token,
     expiresAt: Date.now() + data.expires_in * MS_IN_SECOND,
-    scope: data.scope?.split(" ") || config.scopes,
+    scope: data.scope?.split(" ") || config.scopes
   };
 }
 
@@ -163,13 +163,13 @@ export async function refreshAccessToken(
     client_id: config.clientId,
     client_secret: config.clientSecret,
     refresh_token: refreshToken,
-    grant_type: OAUTH_GRANT_TYPES.REFRESH_TOKEN,
+    grant_type: OAUTH_GRANT_TYPES.REFRESH_TOKEN
   });
 
   const response = await fetch(config.tokenUrl, {
     method: "POST",
     headers: { "Content-Type": "application/x-www-form-urlencoded" },
-    body: params.toString(),
+    body: params.toString()
   });
 
   if (!response.ok) {
@@ -183,6 +183,6 @@ export async function refreshAccessToken(
     accessToken: data.access_token,
     refreshToken: data.refresh_token || refreshToken,
     expiresAt: Date.now() + data.expires_in * MS_IN_SECOND,
-    scope: data.scope?.split(" ") || config.scopes,
+    scope: data.scope?.split(" ") || config.scopes
   };
 }

@@ -26,6 +26,6 @@ export async function createPolicy(
     params: {},
     paramsSchema: z.object({}).strict().describe("No path parameters"),
     responseSchema: ResponseSchema,
-    body,
+    body
   });
 }

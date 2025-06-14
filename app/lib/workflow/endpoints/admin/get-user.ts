@@ -25,6 +25,6 @@ export async function getUser(
     pathTemplate: API_PATHS.USER_BY_EMAIL,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

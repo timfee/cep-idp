@@ -14,7 +14,7 @@ export const TokenSchema = z
     expiresAt: z
       .number()
       .describe("Unix timestamp (ms) indicating when the token expires"),
-    scope: z.array(z.string()).describe("OAuth scopes granted by the token"),
+    scope: z.array(z.string()).describe("OAuth scopes granted by the token")
   })
   .describe("Persisted OAuth token metadata");
 
@@ -100,5 +100,5 @@ export const StepResultSchema = z.object({
   success: z.boolean(),
   mode: z.enum(["verified", "executed", "skipped", "already-exists"]),
   error: z.string().optional(),
-  outputs: z.record(z.string()).optional(),
+  outputs: z.record(z.string()).optional()
 });

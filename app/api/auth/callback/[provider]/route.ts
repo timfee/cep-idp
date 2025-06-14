@@ -44,7 +44,7 @@ export async function GET(request: Request) {
       secure: isProduction,
       sameSite: "lax" as const,
       path: "/",
-      maxAge: WORKFLOW_CONSTANTS.TOKEN_COOKIE_MAX_AGE,
+      maxAge: WORKFLOW_CONSTANTS.TOKEN_COOKIE_MAX_AGE
     };
 
     // Create redirect response

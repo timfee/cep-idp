@@ -25,6 +25,6 @@ export async function instantiateSSO(
     pathTemplate: API_PATHS.APP_BY_SSO_TEMPLATE,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

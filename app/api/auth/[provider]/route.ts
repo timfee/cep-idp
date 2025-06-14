@@ -3,7 +3,7 @@ import { generateAuthUrl } from "@/app/lib/auth/oauth";
 import {
   OAUTH_STATE_COOKIE_NAME,
   PROVIDERS,
-  Provider,
+  Provider
 } from "@/app/lib/workflow/constants";
 import { NextResponse } from "next/server";
 
@@ -33,7 +33,7 @@ export async function GET(request: Request) {
     secure: isProduction,
     sameSite: "lax" as const,
     path: "/",
-    maxAge: 600, // 10 minutes
+    maxAge: 600 // 10 minutes
   };
 
   // Build cookie string

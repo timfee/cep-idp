@@ -26,6 +26,6 @@ export async function listOUAutomation(
     params,
     paramsSchema: ParamsSchema,
     responseSchema: ResponseSchema,
-    query: { orgUnitPath: "/Automation", type: "children" },
+    query: { orgUnitPath: "/Automation", type: "children" }
   });
 }

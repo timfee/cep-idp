@@ -10,7 +10,7 @@ import {
   Database,
   FileText,
   Key,
-  Sparkles,
+  Sparkles
 } from "lucide-react";
 import { useState } from "react";
 import { Badge } from "../ui/badge";
@@ -44,7 +44,7 @@ interface VariableViewerProps {
 export function VariableViewer({
   variables,
   definitions = {},
-  requiredVariables = new Set(),
+  requiredVariables = new Set()
 }: VariableViewerProps) {
   const [expanded, setExpanded] = useState(true);
   const [showUndefined, setShowUndefined] = useState(false);
@@ -56,7 +56,7 @@ export function VariableViewer({
   // Check all variables from definitions
   const allVarNames = new Set([
     ...Object.keys(variables),
-    ...Object.keys(definitions),
+    ...Object.keys(definitions)
   ]);
 
   allVarNames.forEach((key) => {

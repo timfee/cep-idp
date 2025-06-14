@@ -28,7 +28,7 @@ export function createLiveApiContext(options: LiveApiOptions): ApiContext {
         googleCI: "https://cloudidentity.googleapis.com/v1",
         graphGA: "https://graph.microsoft.com/v1.0",
         graphBeta: "https://graph.microsoft.com/beta",
-        public: "https://login.microsoftonline.com",
+        public: "https://login.microsoftonline.com"
       };
 
       const baseUrl = baseUrls[connection] || "";
@@ -51,9 +51,9 @@ export function createLiveApiContext(options: LiveApiOptions): ApiContext {
         headers: {
           Authorization: token ? `Bearer ${token}` : "",
           "Content-Type": "application/json",
-          Accept: "application/json",
+          Accept: "application/json"
         },
-        body: opts?.body ? JSON.stringify(opts.body) : undefined,
+        body: opts?.body ? JSON.stringify(opts.body) : undefined
       });
 
       const responseText = await response.text();
@@ -85,7 +85,7 @@ export function createLiveApiContext(options: LiveApiOptions): ApiContext {
       }
 
       return responseData;
-    },
+    }
   };
 }
 

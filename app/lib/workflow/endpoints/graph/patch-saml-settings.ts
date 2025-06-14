@@ -31,6 +31,6 @@ export async function patchSamlSettings(
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ servicePrincipalId: true }),
     responseSchema: ResponseSchema,
-    body,
+    body
   });
 }

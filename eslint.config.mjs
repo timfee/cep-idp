@@ -22,8 +22,8 @@ const eslintConfig = [
       "cypress",
       "e2e",
       "playwright",
-      ".turbo",
-    ],
+      ".turbo"
+    ]
   },
   ...compat.extends(
     "next/core-web-vitals",
@@ -37,8 +37,8 @@ const eslintConfig = [
       "tsdoc/syntax": "warn",
       // eslint-disable-next-line no-magic-numbers
       "sonarjs/cognitive-complexity": ["warn", 20],
-      "no-magic-numbers": ["warn", { ignore: [-1, 0, 1] }],
-    },
+      "no-magic-numbers": ["warn", { ignore: [-1, 0, 1] }]
+    }
   },
   {
     files: ["**/__tests__/**", "test/**"],
@@ -46,18 +46,15 @@ const eslintConfig = [
       "custom/no-console-log": "off",
       "no-magic-numbers": "off",
       "@typescript-eslint/no-explicit-any": "off",
-      "sonarjs/no-nested-conditional": "off",
-    },
+      "sonarjs/no-nested-conditional": "off"
+    }
   },
   {
     rules: {
-      "@typescript-eslint/no-unused-vars": [
-        "warn",
-        { argsIgnorePattern: "^_" },
-      ],
-    },
+      "@typescript-eslint/no-unused-vars": ["warn", { argsIgnorePattern: "^_" }]
+    }
   },
-  { files: ["jest.config.ts"], rules: { "sonarjs/slow-regex": "off" } },
+  { files: ["jest.config.ts"], rules: { "sonarjs/slow-regex": "off" } }
 ];
 
 export default eslintConfig;

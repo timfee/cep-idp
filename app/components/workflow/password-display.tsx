@@ -22,7 +22,7 @@ interface PasswordDisplayProps {
  */
 export function PasswordDisplay({
   password,
-  accountEmail,
+  accountEmail
 }: PasswordDisplayProps) {
   const [showPassword, setShowPassword] = useState(true);
   const [copied, setCopied] = useState(false);

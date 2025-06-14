@@ -8,6 +8,6 @@
     "test-utils/**/*.ts",
     "jest.config.ts",
     "jest.globalSetup.ts",
-    "jest.globalTeardown.ts",
-  ],
+    "jest.globalTeardown.ts"
+  ]
 }

@@ -27,6 +27,6 @@ export async function postDomain(
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ customerId: true }),
     responseSchema: ResponseSchema,
-    body,
+    body
   });
 }

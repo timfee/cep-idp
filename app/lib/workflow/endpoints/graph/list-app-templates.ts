@@ -24,6 +24,6 @@ export async function listAppTemplates(
     pathTemplate: API_PATHS.APP_TEMPLATES,
     params: {},
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

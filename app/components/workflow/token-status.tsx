@@ -33,7 +33,7 @@ export function TokenStatus({
   isAuthenticated,
   expiresAt,
   hasRefreshToken,
-  onRefresh,
+  onRefresh
 }: TokenStatusProps) {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const router = useRouter();

@@ -5,7 +5,7 @@ const config = {
   singleQuote: false,
   jsxSingleQuote: false,
   semi: true,
-  trailingComma: "es5",
+  trailingComma: "none",
   objectWrap: "collapse",
   experimentalTernaries: true,
   bracketSameLine: true,
@@ -13,9 +13,9 @@ const config = {
   overrides: [
     {
       files: ["**/.vscode/*.json", "**/tsconfig.json", "**/tsconfig.*.json"],
-      options: { parser: "jsonc" },
-    },
-  ],
+      options: { parser: "jsonc" }
+    }
+  ]
 };
 
 export default config;

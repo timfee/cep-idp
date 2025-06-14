@@ -5,7 +5,7 @@ import { CHUNK_DELIMITER } from "./constants";
 import {
   buildChunkMetadata,
   estimateCookieSize,
-  splitIntoChunks,
+  splitIntoChunks
 } from "./utils";
 
 const MAX_COOKIE_SIZE = WORKFLOW_CONSTANTS.MAX_COOKIE_SIZE;
@@ -48,7 +48,7 @@ export async function setChunkedCookie(
     } catch (error) {
       return {
         success: false,
-        error: error instanceof Error ? error.message : "Failed to set cookie",
+        error: error instanceof Error ? error.message : "Failed to set cookie"
       };
     }
   }
@@ -63,7 +63,7 @@ export async function setChunkedCookie(
   if (metadataSize > MAX_COOKIE_SIZE) {
     return {
       success: false,
-      error: `Metadata too large: ${metadataSize} bytes`,
+      error: `Metadata too large: ${metadataSize} bytes`
     };
   }
 
@@ -75,7 +75,7 @@ export async function setChunkedCookie(
   if (totalSize > MAX_COOKIE_SIZE * (chunks.length + 1)) {
     return {
       success: false,
-      error: `Data too large: ${totalSize} bytes exceeds maximum`,
+      error: `Data too large: ${totalSize} bytes exceeds maximum`
     };
   }
 
@@ -83,7 +83,7 @@ export async function setChunkedCookie(
     onLog?.({
       timestamp: Date.now(),
       level: "info",
-      message: `[Cookie Server] Splitting ${name} into ${chunks.length} chunks`,
+      message: `[Cookie Server] Splitting ${name} into ${chunks.length} chunks`
     });
     cookieStore.set(name, JSON.stringify(metadata), options);
     for (let i = 0; i < chunks.length; i++) {
@@ -91,7 +91,7 @@ export async function setChunkedCookie(
       onLog?.({
         timestamp: Date.now(),
         level: "info",
-        message: `[Cookie Server] Setting chunk ${i}: ${chunkName} (${chunks[i].length} bytes)`,
+        message: `[Cookie Server] Setting chunk ${i}: ${chunkName} (${chunks[i].length} bytes)`
       });
       cookieStore.set(chunkName, chunks[i], options);
     }
@@ -99,7 +99,7 @@ export async function setChunkedCookie(
   } catch (error) {
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Failed to set cookie",
+      error: error instanceof Error ? error.message : "Failed to set cookie"
     };
   }
 }
@@ -126,7 +126,7 @@ export async function getChunkedCookie(
       onLog?.({
         timestamp: Date.now(),
         level: "info",
-        message: `[Cookie Server] Reconstructing ${name} from ${metadata.count} chunks`,
+        message: `[Cookie Server] Reconstructing ${name} from ${metadata.count} chunks`
       });
       const chunks: string[] = [];
       for (let i = 0; i < metadata.count; i++) {
@@ -136,7 +136,7 @@ export async function getChunkedCookie(
           onLog?.({
             timestamp: Date.now(),
             level: "error",
-            message: `[Cookie Server] Missing chunk ${i} for ${name}`,
+            message: `[Cookie Server] Missing chunk ${i} for ${name}`
           });
           return null;
         }
@@ -146,7 +146,7 @@ export async function getChunkedCookie(
       onLog?.({
         timestamp: Date.now(),
         level: "info",
-        message: `[Cookie Server] Reconstructed ${name}: ${reconstructed.length} bytes`,
+        message: `[Cookie Server] Reconstructed ${name}: ${reconstructed.length} bytes`
       });
       return reconstructed;
     }
@@ -175,7 +175,7 @@ export async function clearChunkedCookie(
         onLog?.({
           timestamp: Date.now(),
           level: "info",
-          message: `[Cookie Server] Clearing ${metadata.count} chunks for ${name}`,
+          message: `[Cookie Server] Clearing ${metadata.count} chunks for ${name}`
         });
         for (let i = 0; i < metadata.count; i++) {
           const chunkName = `${name}${CHUNK_DELIMITER}${i}`;
@@ -230,7 +230,7 @@ export function setChunkedCookieOnResponse(
     onLog?.({
       timestamp: Date.now(),
       level: "info",
-      message: `[Cookie Server] Setting ${chunks.length} chunks on response for ${name}`,
+      message: `[Cookie Server] Setting ${chunks.length} chunks on response for ${name}`
     });
     const metadata = buildChunkMetadata(chunks.length);
     response.headers.append(

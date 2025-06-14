@@ -7,5 +7,5 @@ export const testSSOConfiguration: StepDefinition = {
   async handler(_ctx) {
     // Manual confirmation assumed complete
     return StepResultSchema.parse({ success: true, mode: "skipped" });
-  },
+  }
 };

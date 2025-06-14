@@ -12,7 +12,7 @@ export const roles = {
   // Google Admin SDK scopes
   dirDomainRW: [
     "https://www.googleapis.com/auth/admin.directory.domain",
-    "https://www.googleapis.com/auth/siteverification",
+    "https://www.googleapis.com/auth/siteverification"
   ],
   dirOrgunitRW: ["https://www.googleapis.com/auth/admin.directory.orgunit"],
   dirUserRW: ["https://www.googleapis.com/auth/admin.directory.user"],
@@ -25,7 +25,7 @@ export const roles = {
   graphAppRW: ["Application.ReadWrite.All"],
   graphSyncRW: ["Synchronization.ReadWrite.All"],
   graphPolicyRW: ["Policy.ReadWrite.ApplicationConfiguration"],
-  graphAppRole: ["AppRoleAssignment.ReadWrite.All"],
+  graphAppRole: ["AppRoleAssignment.ReadWrite.All"]
 } as const satisfies z.infer<typeof RoleSchema>;
 
 // Fail fast when someone edits the file incorrectly.

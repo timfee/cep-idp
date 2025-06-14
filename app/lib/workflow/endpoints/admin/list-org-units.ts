@@ -7,7 +7,7 @@ const ParamsSchema = z
   .object({
     customerId: z.string(),
     orgUnitPath: z.string().optional(),
-    type: z.string().optional(),
+    type: z.string().optional()
   })
   .describe("Customer ID plus optional filters for org units list");
 
@@ -35,6 +35,6 @@ export async function listOrgUnits(
     params: pathParams as { customerId: string },
     paramsSchema: ParamsSchema.pick({ customerId: true }),
     responseSchema: ResponseSchema,
-    query,
+    query
   });
 }

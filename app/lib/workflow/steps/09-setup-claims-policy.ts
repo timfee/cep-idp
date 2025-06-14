@@ -15,12 +15,12 @@ export const setupClaimsPolicy: StepDefinition = {
 
   async handler(ctx) {
     const { ssoServicePrincipalId } = InputSchema.parse({
-      ssoServicePrincipalId: ctx.vars.ssoServicePrincipalId,
+      ssoServicePrincipalId: ctx.vars.ssoServicePrincipalId
     });
 
     // Check existing policies
     const policies = (await listPolicies(ctx.api, {
-      servicePrincipalId: ssoServicePrincipalId,
+      servicePrincipalId: ssoServicePrincipalId
     })) as { value?: { id?: string }[] };
 
     const existing = policies.value?.[0];
@@ -30,7 +30,7 @@ export const setupClaimsPolicy: StepDefinition = {
       return StepResultSchema.parse({
         success: true,
         mode: "verified",
-        outputs,
+        outputs
       });
     }
 
@@ -39,8 +39,8 @@ export const setupClaimsPolicy: StepDefinition = {
       body: {
         definition: [],
         displayName: "Google Claims",
-        isOrganizationDefault: false,
-      },
+        isOrganizationDefault: false
+      }
     })) as { id?: string };
 
     const policyId = newPolicy.id ?? "";
@@ -48,13 +48,13 @@ export const setupClaimsPolicy: StepDefinition = {
     await linkPolicy(ctx.api, {
       servicePrincipalId: ssoServicePrincipalId,
       body: {
-        "@odata.id": `https://graph.microsoft.com/beta/policies/claimsMappingPolicies/${policyId}`,
-      },
+        "@odata.id": `https://graph.microsoft.com/beta/policies/claimsMappingPolicies/${policyId}`
+      }
     });
 
     const outputs = OutputSchema.parse({ claimsPolicyId: policyId });
     ctx.setVars(outputs);
 
     return StepResultSchema.parse({ success: true, mode: "executed", outputs });
-  },
+  }
 };

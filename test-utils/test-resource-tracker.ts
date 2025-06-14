@@ -33,7 +33,7 @@ export class TestResourceTracker {
       type,
       id,
       metadata,
-      createdAt: Date.now(),
+      createdAt: Date.now()
     };
     this.resources.push(resource);
     await this.persist();
@@ -91,7 +91,7 @@ export class TestResourceTracker {
             `https://admin.googleapis.com/admin/directory/v1/users/${encodeURIComponent(resource.id)}`,
             {
               method: "DELETE",
-              headers: { Authorization: `Bearer ${googleToken}` },
+              headers: { Authorization: `Bearer ${googleToken}` }
             }
           );
         },
@@ -100,7 +100,7 @@ export class TestResourceTracker {
             `https://admin.googleapis.com/admin/directory/v1/customer/my_customer/orgunits/${encodeURIComponent(resource.id)}`,
             {
               method: "DELETE",
-              headers: { Authorization: `Bearer ${googleToken}` },
+              headers: { Authorization: `Bearer ${googleToken}` }
             }
           );
         },
@@ -109,7 +109,7 @@ export class TestResourceTracker {
             `https://admin.googleapis.com/admin/directory/v1/customer/my_customer/roles/${resource.id}`,
             {
               method: "DELETE",
-              headers: { Authorization: `Bearer ${googleToken}` },
+              headers: { Authorization: `Bearer ${googleToken}` }
             }
           );
         },
@@ -118,7 +118,7 @@ export class TestResourceTracker {
             `https://cloudidentity.googleapis.com/v1/${resource.id}`,
             {
               method: "DELETE",
-              headers: { Authorization: `Bearer ${googleToken}` },
+              headers: { Authorization: `Bearer ${googleToken}` }
             }
           );
         },
@@ -127,7 +127,7 @@ export class TestResourceTracker {
             `https://graph.microsoft.com/v1.0/applications/${resource.id}`,
             {
               method: "DELETE",
-              headers: { Authorization: `Bearer ${microsoftToken}` },
+              headers: { Authorization: `Bearer ${microsoftToken}` }
             }
           );
         },
@@ -136,7 +136,7 @@ export class TestResourceTracker {
             `https://graph.microsoft.com/v1.0/servicePrincipals/${resource.id}`,
             {
               method: "DELETE",
-              headers: { Authorization: `Bearer ${microsoftToken}` },
+              headers: { Authorization: `Bearer ${microsoftToken}` }
             }
           );
         },
@@ -145,10 +145,10 @@ export class TestResourceTracker {
             `https://graph.microsoft.com/beta/policies/claimsMappingPolicies/${resource.id}`,
             {
               method: "DELETE",
-              headers: { Authorization: `Bearer ${microsoftToken}` },
+              headers: { Authorization: `Bearer ${microsoftToken}` }
             }
           );
-        },
+        }
       };
 
     const handler = deleteHandlers[resource.type];

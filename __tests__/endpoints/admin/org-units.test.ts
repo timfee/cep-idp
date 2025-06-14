@@ -14,7 +14,7 @@ describe("Org Units - Live API", () => {
     apiContext = createLiveApiContext({
       googleToken,
       microsoftToken,
-      trackCreatedResources: true,
+      trackCreatedResources: true
     });
   });
 
@@ -22,7 +22,7 @@ describe("Org Units - Live API", () => {
     // Create OU
     const createResult = await postOU(apiContext, {
       customerId: "my_customer",
-      body: { name: testOuName, parentOrgUnitPath: "/" },
+      body: { name: testOuName, parentOrgUnitPath: "/" }
     });
 
     expect(createResult).toHaveProperty("orgUnitId");
@@ -34,7 +34,7 @@ describe("Org Units - Live API", () => {
 
     const getResult = await getOU(apiContext, {
       customerId: "my_customer",
-      orgUnitPath: testOuPath,
+      orgUnitPath: testOuPath
     });
 
     expect(getResult.orgUnitPath).toBe(testOuPath);
@@ -46,14 +46,14 @@ describe("Org Units - Live API", () => {
     // Create first
     await postOU(apiContext, {
       customerId: "my_customer",
-      body: { name: duplicateName, parentOrgUnitPath: "/" },
+      body: { name: duplicateName, parentOrgUnitPath: "/" }
     });
 
     // Try to create duplicate
     await expect(
       postOU(apiContext, {
         customerId: "my_customer",
-        body: { name: duplicateName, parentOrgUnitPath: "/" },
+        body: { name: duplicateName, parentOrgUnitPath: "/" }
       })
     ).rejects.toThrow();
   });

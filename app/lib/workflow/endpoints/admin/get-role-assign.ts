@@ -7,7 +7,7 @@ const ParamsSchema = z
   .object({
     customerId: z.string(),
     roleId: z.string().optional(),
-    assignedTo: z.string().optional(),
+    assignedTo: z.string().optional()
   })
   .describe("Path and query parameters for role assignments lookup");
 
@@ -37,6 +37,6 @@ export async function getRoleAssign(
       .object({ customerId: z.string() })
       .describe("Customer ID path parameter"),
     responseSchema: ResponseSchema,
-    query,
+    query
   });
 }

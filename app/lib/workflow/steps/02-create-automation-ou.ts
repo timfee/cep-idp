@@ -13,7 +13,7 @@ export const createAutomationOU: StepDefinition = {
 
   async handler(ctx) {
     const { customerId } = InputSchema.parse({
-      customerId: ctx.vars.customerId,
+      customerId: ctx.vars.customerId
     });
 
     try {
@@ -28,11 +28,11 @@ export const createAutomationOU: StepDefinition = {
 
       await postOU(ctx.api, {
         customerId,
-        body: { name: "Automation", parentOrgUnitPath: "/" },
+        body: { name: "Automation", parentOrgUnitPath: "/" }
       });
       return StepResultSchema.parse({ success: true, mode: "executed" });
     } catch (err: unknown) {
       return handleStepError(err, this.name, ctx);
     }
-  },
+  }
 };

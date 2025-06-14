@@ -25,6 +25,6 @@ export async function listDomains(
     pathTemplate: API_PATHS.DOMAINS,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

@@ -4,7 +4,7 @@ import {
   clearChunkedCookie,
   CookieOptions,
   getChunkedCookie,
-  setChunkedCookie,
+  setChunkedCookie
 } from "../cookies/server";
 import { WORKFLOW_CONSTANTS } from "./constants";
 import { LogEntry } from "./types";
@@ -13,7 +13,7 @@ const COOKIE_OPTIONS: CookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production",
   sameSite: "lax" as const,
-  path: "/",
+  path: "/"
 };
 
 /**
@@ -38,7 +38,7 @@ export async function getStoredVariables(
       timestamp: Date.now(),
       level: "error",
       message: "Failed to decrypt variables",
-      data: err,
+      data: err
     });
     return {};
   }
@@ -65,7 +65,7 @@ export async function setStoredVariables(
     onLog?.({
       timestamp: Date.now(),
       level: "error",
-      message: result.error || "Failed to set cookie",
+      message: result.error || "Failed to set cookie"
     });
   }
 }

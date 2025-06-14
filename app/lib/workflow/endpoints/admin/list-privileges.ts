@@ -25,6 +25,6 @@ export async function listPrivileges(
     pathTemplate: API_PATHS.PRIVILEGES,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

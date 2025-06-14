@@ -13,19 +13,19 @@ import {
   LogEntry,
   parseWorkflow,
   StepStatus,
-  Token,
+  Token
 } from "@/app/lib/workflow";
 import {
   JWT_PART_COUNT,
   PROVIDERS,
   ROLE_PREFIXES,
   STATUS_VALUES,
-  VARIABLE_KEYS,
+  VARIABLE_KEYS
 } from "@/app/lib/workflow/constants";
 import type { StepDefinition } from "@/app/lib/workflow/types";
 import {
   getStoredVariables,
-  setStoredVariables,
+  setStoredVariables
 } from "@/app/lib/workflow/variables-store";
 import { runStepActions } from "./workflow-execution";
 import { refreshWorkflowState } from "./workflow-state";
@@ -114,7 +114,7 @@ function extractTenantId(
       timestamp: Date.now(),
       level: "warn",
       message: "Failed to extract tenant ID from token",
-      data: error,
+      data: error
     });
   }
   return null;
@@ -220,7 +220,7 @@ async function reconstituteStepStatuses(
           status: STATUS_VALUES.COMPLETED,
           logs,
           result: result.data,
-          completedAt: Date.now(),
+          completedAt: Date.now()
         });
       } else {
         stepStatuses.set(step.name, { status: STATUS_VALUES.PENDING, logs });
@@ -230,7 +230,7 @@ async function reconstituteStepStatuses(
         timestamp: Date.now(),
         level: "error",
         message: `Verification failed for ${step.name}`,
-        data: error,
+        data: error
       });
       stepStatuses.set(step.name, { status: STATUS_VALUES.PENDING, logs });
     }
@@ -283,7 +283,7 @@ export async function getWorkflowData(
 
   const tokens = {
     google: googleToken ?? undefined,
-    microsoft: microsoftToken ?? undefined,
+    microsoft: microsoftToken ?? undefined
   };
 
   console.log(tokens);
@@ -311,7 +311,7 @@ export async function getWorkflowData(
     Object.fromEntries(
       Array.from(stepStatusesMap.entries()).map(([name, status]) => [
         name,
-        status.status,
+        status.status
       ])
     )
   );
@@ -325,15 +325,15 @@ export async function getWorkflowData(
         authenticated: !!googleToken && !isTokenExpired(googleToken),
         scopes: googleToken?.scope || [],
         expiresAt: googleToken?.expiresAt,
-        hasRefreshToken: !!googleToken?.refreshToken,
+        hasRefreshToken: !!googleToken?.refreshToken
       },
       microsoft: {
         authenticated: !!microsoftToken && !isTokenExpired(microsoftToken),
         scopes: microsoftToken?.scope || [],
         expiresAt: microsoftToken?.expiresAt,
-        hasRefreshToken: !!microsoftToken?.refreshToken,
-      },
-    },
+        hasRefreshToken: !!microsoftToken?.refreshToken
+      }
+    }
   };
 }
 
@@ -360,14 +360,14 @@ export async function getAuthStatus(): Promise<AuthState> {
       authenticated: !!googleToken && !isTokenExpired(googleToken),
       scopes: googleToken?.scope || [],
       expiresAt: googleToken?.expiresAt,
-      hasRefreshToken: !!googleToken?.refreshToken,
+      hasRefreshToken: !!googleToken?.refreshToken
     },
     microsoft: {
       authenticated: !!microsoftToken && !isTokenExpired(microsoftToken),
       scopes: microsoftToken?.scope || [],
       expiresAt: microsoftToken?.expiresAt,
-      hasRefreshToken: !!microsoftToken?.refreshToken,
-    },
+      hasRefreshToken: !!microsoftToken?.refreshToken
+    }
   };
 }
 
@@ -418,7 +418,7 @@ export async function getWorkflowVariables(): Promise<{
     result[name] = {
       value: hasOwnProperty(variables, name) ? variables[name] : undefined,
       definition: def,
-      isRequired: requiredVars.has(name),
+      isRequired: requiredVars.has(name)
     };
   }
 

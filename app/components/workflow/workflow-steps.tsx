@@ -31,7 +31,7 @@ export function WorkflowSteps({
   workflow,
   stepStatuses,
   authStatus,
-  variables,
+  variables
 }: WorkflowStepsProps) {
   // Calculate completed steps
   const completedSteps = new Set(
@@ -66,7 +66,7 @@ export function WorkflowSteps({
         || !isTokenExpired({
           accessToken: "",
           expiresAt: authStatus.google.expiresAt || 0,
-          scope: [],
+          scope: []
         });
       return (
         notExpired
@@ -80,7 +80,7 @@ export function WorkflowSteps({
         || !isTokenExpired({
           accessToken: "",
           expiresAt: authStatus.microsoft.expiresAt || 0,
-          scope: [],
+          scope: []
         });
       return (
         notExpired
@@ -98,7 +98,7 @@ export function WorkflowSteps({
       {workflow.steps.map((step: StepDefinition) => {
         const status = stepStatuses[step.name] || {
           status: STATUS_VALUES.PENDING,
-          logs: [],
+          logs: []
         };
 
         const canExecute =

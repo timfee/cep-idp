@@ -16,7 +16,7 @@ export async function appByTemplateProv(
 ): Promise<AppByTemplateProvResponse> {
   const { provisioningTemplateId } = params;
   const query = {
-    $filter: `applicationTemplateId eq '${provisioningTemplateId}'`,
+    $filter: `applicationTemplateId eq '${provisioningTemplateId}'`
   } as Record<string, string>;
 
   return callEndpoint({
@@ -27,6 +27,6 @@ export async function appByTemplateProv(
     params: {},
     paramsSchema: z.object({}).strict().describe("No path parameters"),
     responseSchema: ResponseSchema,
-    query,
+    query
   });
 }

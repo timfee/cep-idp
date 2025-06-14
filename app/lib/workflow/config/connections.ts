@@ -15,10 +15,10 @@ export const ConnectionConfigSchema = z.object({
     .args(
       z.object({
         google: TokenSchema.optional(),
-        microsoft: TokenSchema.optional(),
+        microsoft: TokenSchema.optional()
       })
     )
-    .returns(z.string()),
+    .returns(z.string())
 });
 
 export type ConnectionConfig = z.infer<typeof ConnectionConfigSchema>;
@@ -30,21 +30,21 @@ export type ConnectionConfig = z.infer<typeof ConnectionConfigSchema>;
 export const connections: Record<string, ConnectionConfig> = {
   googleAdmin: {
     base: BASE_URLS.GOOGLE_ADMIN,
-    getAuthHeader: (tokens) => `Bearer ${tokens.google?.accessToken ?? ""}`,
+    getAuthHeader: (tokens) => `Bearer ${tokens.google?.accessToken ?? ""}`
   },
   googleCI: {
     base: BASE_URLS.GOOGLE_CI,
-    getAuthHeader: (tokens) => `Bearer ${tokens.google?.accessToken ?? ""}`,
+    getAuthHeader: (tokens) => `Bearer ${tokens.google?.accessToken ?? ""}`
   },
   graphGA: {
     base: BASE_URLS.GRAPH_V1,
-    getAuthHeader: (tokens) => `Bearer ${tokens.microsoft?.accessToken ?? ""}`,
+    getAuthHeader: (tokens) => `Bearer ${tokens.microsoft?.accessToken ?? ""}`
   },
   graphBeta: {
     base: BASE_URLS.GRAPH_BETA,
-    getAuthHeader: (tokens) => `Bearer ${tokens.microsoft?.accessToken ?? ""}`,
+    getAuthHeader: (tokens) => `Bearer ${tokens.microsoft?.accessToken ?? ""}`
   },
-  public: { base: "", getAuthHeader: () => "" },
+  public: { base: "", getAuthHeader: () => "" }
 };
 
 // Validate configuration at module load

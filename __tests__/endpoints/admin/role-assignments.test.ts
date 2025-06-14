@@ -2,7 +2,7 @@ import {
   getRoleAssign,
   postRole,
   postRoleAssign,
-  postUser,
+  postUser
 } from "@/app/lib/workflow/endpoints/admin";
 import { createLiveApiContext } from "../../../test-utils/live-api-context";
 
@@ -20,7 +20,7 @@ describe("Role Assignments - Live API", () => {
     apiContext = createLiveApiContext({
       googleToken,
       microsoftToken,
-      trackCreatedResources: true,
+      trackCreatedResources: true
     });
 
     // create a user
@@ -29,7 +29,7 @@ describe("Role Assignments - Live API", () => {
     // module-initialisation time.
     const { listDomains } = await import("@/app/lib/workflow/endpoints/admin");
     const domains = await listDomains(apiContext, {
-      customerId: "my_customer",
+      customerId: "my_customer"
     });
     primaryDomain = (
       domains.domains as Array<{ domainName: string; isPrimary?: boolean }>
@@ -39,8 +39,8 @@ describe("Role Assignments - Live API", () => {
       body: {
         primaryEmail: `assignuser${Date.now()}@${primaryDomain}`,
         password: `TempPass${Date.now()}!`,
-        name: { givenName: "Assign", familyName: "User" },
-      },
+        name: { givenName: "Assign", familyName: "User" }
+      }
     });
     userId = userRes.id;
 
@@ -50,9 +50,9 @@ describe("Role Assignments - Live API", () => {
       body: {
         roleName: `AssignRole_${Date.now()}`,
         rolePrivileges: [
-          { privilegeName: "GROUPS_ALL", serviceId: "00haapch16h1ysv" },
-        ],
-      },
+          { privilegeName: "GROUPS_ALL", serviceId: "00haapch16h1ysv" }
+        ]
+      }
     });
     roleId = roleRes.roleId;
   });
@@ -64,7 +64,7 @@ describe("Role Assignments - Live API", () => {
         `https://admin.googleapis.com/admin/directory/v1/customer/my_customer/roleassignments/${assignmentId}`,
         {
           method: "DELETE",
-          headers: { Authorization: `Bearer ${googleToken}` },
+          headers: { Authorization: `Bearer ${googleToken}` }
         }
       ).catch(() => {});
     }
@@ -77,8 +77,8 @@ describe("Role Assignments - Live API", () => {
         roleId,
         assignedTo: userId,
         assigneeType: "user",
-        scopeType: "CUSTOMER",
-      },
+        scopeType: "CUSTOMER"
+      }
     });
 
     assignmentId = assignRes.roleAssignmentId;
@@ -88,7 +88,7 @@ describe("Role Assignments - Live API", () => {
     const listRes = await getRoleAssign(apiContext, {
       customerId: "my_customer",
       roleId,
-      assignedTo: userId,
+      assignedTo: userId
     });
 
     expect(Array.isArray(listRes.items)).toBe(true);
@@ -105,8 +105,8 @@ describe("Role Assignments - Live API", () => {
         roleId,
         assignedTo: userId,
         assigneeType: "user",
-        scopeType: "CUSTOMER",
-      },
+        scopeType: "CUSTOMER"
+      }
     });
 
     await expect(
@@ -116,8 +116,8 @@ describe("Role Assignments - Live API", () => {
           roleId,
           assignedTo: userId,
           assigneeType: "user",
-          scopeType: "CUSTOMER",
-        },
+          scopeType: "CUSTOMER"
+        }
       })
     ).rejects.toThrow();
   });
@@ -130,8 +130,8 @@ describe("Role Assignments - Live API", () => {
           roleId: "123",
           assignedTo: userId,
           assigneeType: "user",
-          scopeType: "CUSTOMER",
-        },
+          scopeType: "CUSTOMER"
+        }
       })
     ).rejects.toThrow();
   });

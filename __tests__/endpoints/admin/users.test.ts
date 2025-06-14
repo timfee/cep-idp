@@ -1,7 +1,7 @@
 import {
   getUser,
   postUser,
-  updateUser,
+  updateUser
 } from "@/app/lib/workflow/endpoints/admin";
 import { createLiveApiContext } from "../../../test-utils/live-api-context";
 import { sleep } from "../../../test-utils/sleep";
@@ -18,7 +18,7 @@ describe("Users - Live API", () => {
     apiContext = createLiveApiContext({
       googleToken,
       microsoftToken,
-      trackCreatedResources: true,
+      trackCreatedResources: true
     });
 
     // Get primary domain first
@@ -26,7 +26,7 @@ describe("Users - Live API", () => {
     // any circular references between endpoint helpers during test startup.
     const { listDomains } = await import("@/app/lib/workflow/endpoints/admin");
     const domains = await listDomains(apiContext, {
-      customerId: "my_customer",
+      customerId: "my_customer"
     });
     primaryDomain = (
       domains.domains as Array<{ domainName: string; isPrimary?: boolean }>
@@ -41,8 +41,8 @@ describe("Users - Live API", () => {
       body: {
         primaryEmail: testEmail,
         password: `TempPass${Date.now()}!`,
-        name: { givenName: "Test", familyName: "User" },
-      },
+        name: { givenName: "Test", familyName: "User" }
+      }
     });
 
     expect(createResult.primaryEmail).toBe(testEmail);
@@ -59,7 +59,7 @@ describe("Users - Live API", () => {
     // Update user
     const updateResult = await updateUser(apiContext, {
       userEmail: testEmail,
-      body: { name: { givenName: "Updated" } },
+      body: { name: { givenName: "Updated" } }
     });
 
     expect(updateResult.name.givenName).toBe("Updated");

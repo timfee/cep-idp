@@ -9,7 +9,7 @@ import {
   STATUS_VALUES,
   STEP_NAMES,
   VARIABLE_DISPLAY_MAX_LENGTH,
-  VARIABLE_KEYS,
+  VARIABLE_KEYS
 } from "@/app/lib/workflow/constants";
 import type { StepDefinition } from "@/app/lib/workflow/types";
 import { LogEntry, StepStatus } from "@/app/lib/workflow/types";
@@ -18,14 +18,14 @@ import {
   CheckCircle,
   Clock,
   Loader2,
-  XCircle,
+  XCircle
 } from "lucide-react";
 import { useReducer, useTransition } from "react";
 import {
   Accordion,
   AccordionContent,
   AccordionItem,
-  AccordionTrigger,
+  AccordionTrigger
 } from "../ui/accordion";
 import { Alert, AlertDescription } from "../ui/alert";
 import { Badge } from "../ui/badge";
@@ -104,7 +104,7 @@ export function StepCard({
   status,
   canExecute,
   isAuthValid,
-  variables,
+  variables
 }: StepCardProps) {
   const [isPending, startTransition] = useTransition();
   const [state, dispatch] = useReducer(stepCardReducer, { isExecuting: false });

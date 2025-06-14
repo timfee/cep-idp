@@ -30,5 +30,5 @@ export function isTokenExpired(token: Token): boolean {
 export {
   generateCodeChallenge,
   generateCodeVerifier,
-  generateState,
+  generateState
 } from "./crypto";

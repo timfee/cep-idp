@@ -3,7 +3,7 @@ import "server-only";
 import {
   CookieOptions,
   getChunkedCookie,
-  setChunkedCookie,
+  setChunkedCookie
 } from "../cookies/server";
 import { LogEntry, Provider, Token, WORKFLOW_CONSTANTS } from "../workflow";
 import { OAUTH_STATE_COOKIE_NAME } from "../workflow/constants";
@@ -14,7 +14,7 @@ const COOKIE_OPTIONS: CookieOptions = {
   httpOnly: true,
   secure: process.env.NODE_ENV === "production", // Only set secure in production
   sameSite: "lax" as const,
-  path: "/",
+  path: "/"
 };
 
 /**
@@ -32,7 +32,7 @@ export async function getToken(
   onLog?.({
     timestamp: Date.now(),
     level: "info",
-    message: `[getToken] NODE_ENV: ${process.env.NODE_ENV}`,
+    message: `[getToken] NODE_ENV: ${process.env.NODE_ENV}`
   });
 
   // Use chunked cookie getter to handle large tokens
@@ -57,7 +57,7 @@ export async function getToken(
       timestamp: Date.now(),
       level: "error",
       message: `Failed to decrypt ${provider} token`,
-      data: error,
+      data: error
     });
     return null;
   }
@@ -80,23 +80,23 @@ export async function setToken(
   onLog?.({
     timestamp: Date.now(),
     level: "info",
-    message: `[setToken] NODE_ENV: ${process.env.NODE_ENV}`,
+    message: `[setToken] NODE_ENV: ${process.env.NODE_ENV}`
   });
   onLog?.({
     timestamp: Date.now(),
     level: "info",
-    message: `[setToken] Setting token for provider: ${provider}, cookie: ${cookieName}`,
+    message: `[setToken] Setting token for provider: ${provider}, cookie: ${cookieName}`
   });
   onLog?.({
     timestamp: Date.now(),
     level: "info",
-    message: `[setToken] Encrypted value size for ${provider}: ${encrypted.length} bytes`,
+    message: `[setToken] Encrypted value size for ${provider}: ${encrypted.length} bytes`
   });
 
   try {
     const result = await setChunkedCookie(cookieName, encrypted, {
       ...COOKIE_OPTIONS,
-      maxAge: WORKFLOW_CONSTANTS.TOKEN_COOKIE_MAX_AGE,
+      maxAge: WORKFLOW_CONSTANTS.TOKEN_COOKIE_MAX_AGE
     });
     if (!result.success) {
       throw new Error(result.error);
@@ -106,7 +106,7 @@ export async function setToken(
       timestamp: Date.now(),
       level: "error",
       message: `[setToken] Failed to set cookie for ${provider}`,
-      data: err,
+      data: err
     });
   }
 }

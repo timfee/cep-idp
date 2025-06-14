@@ -17,6 +17,6 @@ export function handleStepError(
   return StepResultSchema.parse({
     success: false,
     mode: "skipped",
-    error: message,
+    error: message
   });
 }

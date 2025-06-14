@@ -3,7 +3,7 @@ import { z } from "zod";
 import {
   createSamlProfile,
   getIdpCreds,
-  listSamlProfiles,
+  listSamlProfiles
 } from "../endpoints/ci";
 import { StepDefinition, StepResultSchema } from "../types";
 import { handleStepError } from "./utils";
@@ -11,7 +11,7 @@ import { handleStepError } from "./utils";
 const OutputSchema = z.object({
   samlProfileId: z.string(),
   entityId: z.string(),
-  acsUrl: z.string(),
+  acsUrl: z.string()
 });
 
 export const configureGoogleSamlProfile: StepDefinition = {
@@ -34,19 +34,19 @@ export const configureGoogleSamlProfile: StepDefinition = {
         const outputs = OutputSchema.parse({
           samlProfileId: profile.name,
           entityId: profile.idpConfig?.entityId ?? "",
-          acsUrl: profile.spConfig?.spEntityId ?? "",
+          acsUrl: profile.spConfig?.spEntityId ?? ""
         });
         ctx.setVars(outputs);
         return StepResultSchema.parse({
           success: true,
           mode: "verified",
-          outputs,
+          outputs
         });
       }
 
       // Create new profile (simplified minimal body)
       const createResp = (await createSamlProfile(ctx.api, {
-        body: { displayName: "Microsoft Entra SAML" },
+        body: { displayName: "Microsoft Entra SAML" }
       })) as { name?: string };
 
       const newProfileId = createResp.name ?? "";
@@ -58,17 +58,17 @@ export const configureGoogleSamlProfile: StepDefinition = {
       const outputs = OutputSchema.parse({
         samlProfileId: newProfileId,
         entityId: "", // unknown in skeleton
-        acsUrl: "",
+        acsUrl: ""
       });
       ctx.setVars(outputs);
 
       return StepResultSchema.parse({
         success: true,
         mode: "executed",
-        outputs,
+        outputs
       });
     } catch (err: unknown) {
       return handleStepError(err, this.name, ctx);
     }
-  },
+  }
 };

@@ -31,6 +31,6 @@ export async function patchSync(
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ servicePrincipalId: true }),
     responseSchema: ResponseSchema,
-    body,
+    body
   });
 }

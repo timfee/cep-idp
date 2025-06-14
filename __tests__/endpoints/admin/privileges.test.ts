@@ -11,7 +11,7 @@ describe("Privileges - Live API", () => {
     apiContext = createLiveApiContext({
       googleToken,
       microsoftToken,
-      trackCreatedResources: false,
+      trackCreatedResources: false
     });
   });
 

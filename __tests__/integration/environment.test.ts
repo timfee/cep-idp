@@ -1,6 +1,6 @@
 import {
   setupTestEnvironment,
-  teardownTestEnvironment,
+  teardownTestEnvironment
 } from "../../test-utils/testEnv";
 
 describe("Test environment setup", () => {

@@ -29,6 +29,6 @@ export async function getDomain(
     pathTemplate: API_PATHS.DOMAIN_BY_NAME,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

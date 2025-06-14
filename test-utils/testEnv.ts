@@ -41,7 +41,7 @@ async function deleteMicrosoftApp() {
   if (!appId || !token) return;
   await fetch(`https://graph.microsoft.com/v1.0/applications/${appId}`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${token}` }
   }).catch((err) => console.warn("deleteMicrosoftApp", err));
 }
 
@@ -51,7 +51,7 @@ async function deleteMicrosoftServicePrincipal() {
   if (!spId || !token) return;
   await fetch(`https://graph.microsoft.com/v1.0/servicePrincipals/${spId}`, {
     method: "DELETE",
-    headers: { Authorization: `Bearer ${token}` },
+    headers: { Authorization: `Bearer ${token}` }
   }).catch((err) => console.warn("deleteMicrosoftServicePrincipal", err));
 }
 
@@ -65,6 +65,6 @@ export async function teardownTestEnvironment() {
     deleteGoogleOrgUnit(),
     deleteGoogleSsoAssignment(),
     deleteMicrosoftApp(),
-    deleteMicrosoftServicePrincipal(),
+    deleteMicrosoftServicePrincipal()
   ]);
 }

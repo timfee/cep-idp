@@ -16,7 +16,7 @@ export async function safeAsync<T>(
     console.error(errorMessage, error);
     return {
       success: false,
-      error: error instanceof Error ? error.message : errorMessage,
+      error: error instanceof Error ? error.message : errorMessage
     };
   }
 }

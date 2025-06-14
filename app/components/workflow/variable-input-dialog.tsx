@@ -13,7 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle,
+  DialogTitle
 } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -45,7 +45,7 @@ export function VariableInputDialog({
   placeholder,
   validator,
   isOpen,
-  onComplete,
+  onComplete
 }: VariableInputDialogProps) {
   const [value, setValue] = useState("");
   const [error, setError] = useState("");

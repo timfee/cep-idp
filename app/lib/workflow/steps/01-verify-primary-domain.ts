@@ -15,7 +15,7 @@ export const verifyPrimaryDomain: StepDefinition = {
 
   async handler(ctx) {
     const { customerId } = InputSchema.parse({
-      customerId: ctx.vars.customerId,
+      customerId: ctx.vars.customerId
     });
 
     try {
@@ -42,23 +42,23 @@ export const verifyPrimaryDomain: StepDefinition = {
         return StepResultSchema.parse({
           success: true,
           mode: "verified",
-          outputs: { primaryDomain },
+          outputs: { primaryDomain }
         });
       }
 
       // Attempt to (re-)create domain – will 409 if exists and not verified
       await postDomain(ctx.api, {
         customerId,
-        body: { domainName: primaryDomain },
+        body: { domainName: primaryDomain }
       });
 
       return StepResultSchema.parse({
         success: true,
         mode: "executed",
-        outputs: { primaryDomain },
+        outputs: { primaryDomain }
       });
     } catch (err: unknown) {
       return handleStepError(err, this.name, ctx);
     }
-  },
+  }
 };

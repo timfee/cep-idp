@@ -8,7 +8,7 @@ const InputSchema = z.object({ primaryDomain: z.string() });
 
 const OutputSchema = z.object({
   provisioningUserId: z.string(),
-  provisioningUserEmail: z.string(),
+  provisioningUserEmail: z.string()
 });
 
 export const createServiceAccount: StepDefinition = {
@@ -19,7 +19,7 @@ export const createServiceAccount: StepDefinition = {
 
   async handler(ctx) {
     const { primaryDomain } = InputSchema.parse({
-      primaryDomain: ctx.vars.primaryDomain,
+      primaryDomain: ctx.vars.primaryDomain
     });
 
     const targetEmail = `azuread-provisioning@${primaryDomain}`;
@@ -27,17 +27,17 @@ export const createServiceAccount: StepDefinition = {
     // Try fetch existing user
     try {
       const user = (await getUser(ctx.api, {
-        userEmail: targetEmail,
+        userEmail: targetEmail
       })) as Record<string, unknown>;
       const outputs = OutputSchema.parse({
         provisioningUserId: String(user.id),
-        provisioningUserEmail: String(user.primaryEmail),
+        provisioningUserEmail: String(user.primaryEmail)
       });
       ctx.setVars(outputs);
       return StepResultSchema.parse({
         success: true,
         mode: "verified",
-        outputs,
+        outputs
       });
     } catch {
       // proceed to create
@@ -50,16 +50,16 @@ export const createServiceAccount: StepDefinition = {
         primaryEmail: targetEmail,
         name: { givenName: "Microsoft", familyName: "Provisioning" },
         password,
-        orgUnitPath: "/Automation",
-      },
+        orgUnitPath: "/Automation"
+      }
     })) as Record<string, unknown>;
 
     const outputs = OutputSchema.parse({
       provisioningUserId: String(createResp.id),
-      provisioningUserEmail: String(createResp.primaryEmail),
+      provisioningUserEmail: String(createResp.primaryEmail)
     });
     ctx.setVars({ ...outputs, generatedPassword: password });
 
     return StepResultSchema.parse({ success: true, mode: "executed", outputs });
-  },
+  }
 };

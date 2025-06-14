@@ -13,7 +13,7 @@ import {
   setupClaimsPolicy,
   setupSyncPermissions,
   testSSOConfiguration,
-  verifyPrimaryDomain,
+  verifyPrimaryDomain
 } from "./steps";
 import { StepDefinition } from "./types";
 
@@ -30,7 +30,7 @@ export const steps: StepDefinition[] = [
   setupClaimsPolicy,
   completeGoogleSsoSetup,
   assignUsersToSSO,
-  testSSOConfiguration,
+  testSSOConfiguration
 ];
 
 // Basic runtime validation – ensure each step exposes name & handler
@@ -52,7 +52,7 @@ export function parseWorkflow() {
     connections,
     roles,
     variables: variableDefinitions,
-    steps,
+    steps
   } as const;
 
   StepArraySchema.parse(steps);

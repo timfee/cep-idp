@@ -26,7 +26,7 @@ export const DomainSchema = z
     verified: z.boolean(),
     creationTime: z.string().optional(),
     etag: z.string().optional(),
-    kind: z.string().optional(),
+    kind: z.string().optional()
   })
   .passthrough()
   .describe("Google Admin Directory domain metadata");
@@ -35,7 +35,7 @@ export const ListDomainsResponseSchema = z
   .object({
     domains: z.array(DomainSchema).optional(),
     kind: z.string().optional(),
-    etag: z.string().optional(),
+    etag: z.string().optional()
   })
   .passthrough()
   .describe("Response wrapper for Admin SDK listDomains endpoint");
@@ -46,7 +46,7 @@ export const OrgUnitSchema = z
     orgUnitPath: z.string(),
     orgUnitId: z.string().optional(),
     parentOrgUnitPath: z.string().optional(),
-    parentOrgUnitId: z.string().optional(),
+    parentOrgUnitId: z.string().optional()
   })
   .passthrough()
   .describe("Google Admin Directory organizational unit metadata");
@@ -54,7 +54,7 @@ export const OrgUnitSchema = z
 export const ListOrgUnitsResponseSchema = z
   .object({
     organizationUnits: z.array(OrgUnitSchema).optional(),
-    kind: z.string().optional(),
+    kind: z.string().optional()
   })
   .passthrough()
   .describe("Response wrapper for Admin SDK listOrgUnits endpoint");
@@ -73,11 +73,11 @@ export const UserSchema = z
       .object({
         givenName: z.string().optional(),
         familyName: z.string().optional(),
-        fullName: z.string().optional(),
+        fullName: z.string().optional()
       })
       .optional(),
     isAdmin: z.boolean().optional(),
-    orgUnitPath: z.string().optional(),
+    orgUnitPath: z.string().optional()
   })
   .passthrough()
   .describe("Minimal subset of Google Admin user record used by workflow");
@@ -88,7 +88,7 @@ export const PrivilegeSchema = z
     serviceId: z.string(),
     // The workflow only inspects privilegeName/serviceId.  Nested privileges
     // are left untyped to avoid circular-reference complexity.
-    childPrivileges: z.array(z.unknown()).optional(),
+    childPrivileges: z.array(z.unknown()).optional()
   })
   .passthrough()
   .describe("Google Admin privilege definition including nested children");
@@ -96,7 +96,7 @@ export const PrivilegeSchema = z
 export const ListPrivilegesResponseSchema = z
   .object({
     items: z.array(PrivilegeSchema).optional(),
-    kind: z.string().optional(),
+    kind: z.string().optional()
   })
   .passthrough()
   .describe("Response wrapper for Admin SDK listPrivileges endpoint");
@@ -112,7 +112,7 @@ export const RoleSchema = z
     roleName: z.string(),
     roleDescription: z.string().optional(),
     rolePrivileges: z.array(RolePrivilegeSchema).optional(),
-    isSystemRole: z.boolean().optional(),
+    isSystemRole: z.boolean().optional()
   })
   .passthrough()
   .describe("Google Admin role definition");
@@ -120,7 +120,7 @@ export const RoleSchema = z
 export const ListRolesResponseSchema = z
   .object({
     items: z.array(RoleSchema).optional(),
-    kind: z.string().optional(),
+    kind: z.string().optional()
   })
   .passthrough()
   .describe("Response wrapper for Admin SDK listRoles endpoint");
@@ -131,7 +131,7 @@ export const RoleAssignmentSchema = z
     roleId: z.string(),
     assignedTo: z.string(),
     assigneeType: z.string().optional(),
-    scopeType: z.string().optional(),
+    scopeType: z.string().optional()
   })
   .passthrough()
   .describe("Mapping of role to user/group (role assignment record)");
@@ -139,7 +139,7 @@ export const RoleAssignmentSchema = z
 export const ListRoleAssignmentsResponseSchema = z
   .object({
     items: z.array(RoleAssignmentSchema).optional(),
-    kind: z.string().optional(),
+    kind: z.string().optional()
   })
   .passthrough()
   .describe("Response wrapper for Admin SDK listRoleAssignments endpoint");
@@ -151,7 +151,7 @@ export const ListRoleAssignmentsResponseSchema = z
 export const SsoIdpConfigSchema = z
   .object({
     entityId: z.string().optional(),
-    singleSignOnServiceUri: z.string().optional(),
+    singleSignOnServiceUri: z.string().optional()
   })
   .passthrough()
   .describe("Inbound SAML IdP configuration block");
@@ -162,7 +162,7 @@ export const SsoSpConfigSchema = z
     // `spEntityId`.  We'll allow both for maximum compatibility.
     entityId: z.string().optional(),
     spEntityId: z.string().optional(),
-    assertionConsumerServiceUri: z.string().optional(),
+    assertionConsumerServiceUri: z.string().optional()
   })
   .passthrough()
   .describe("Inbound SAML SP configuration block");
@@ -173,14 +173,14 @@ export const InboundSamlSsoProfileSchema = z
     customer: z.string().optional(),
     displayName: z.string().optional(),
     idpConfig: SsoIdpConfigSchema.optional(),
-    spConfig: SsoSpConfigSchema.optional(),
+    spConfig: SsoSpConfigSchema.optional()
   })
   .passthrough()
   .describe("Cloud Identity inbound SAML profile");
 
 export const ListSamlProfilesResponseSchema = z
   .object({
-    inboundSamlSsoProfiles: z.array(InboundSamlSsoProfileSchema).optional(),
+    inboundSamlSsoProfiles: z.array(InboundSamlSsoProfileSchema).optional()
   })
   .passthrough()
   .describe("Response for list inbound SAML profiles");
@@ -193,7 +193,7 @@ export const OperationResponseSchema = z
     response: z.unknown().optional(),
     error: z
       .object({ code: z.number(), message: z.string(), status: z.string() })
-      .optional(),
+      .optional()
   })
   .passthrough()
   .describe("Long-running operation wrapper used by CI APIs");
@@ -207,14 +207,14 @@ export const InboundSsoAssignmentSchema = z
     ssoMode: z.string().optional(),
     samlSsoInfo: z
       .object({ inboundSamlSsoProfile: z.string().optional() })
-      .optional(),
+      .optional()
   })
   .passthrough()
   .describe("Cloud Identity inbound SSO assignment");
 
 export const ListSsoAssignmentsResponseSchema = z
   .object({
-    inboundSsoAssignments: z.array(InboundSsoAssignmentSchema).optional(),
+    inboundSsoAssignments: z.array(InboundSsoAssignmentSchema).optional()
   })
   .passthrough()
   .describe("Response for list inbound SSO assignments");
@@ -234,7 +234,7 @@ export const ApplicationListItemSchema = z
     servicePrincipalId: z.string().optional(),
     appId: z.string().optional(),
     applicationTemplateId: z.string().optional(),
-    displayName: z.string().optional(),
+    displayName: z.string().optional()
   })
   .passthrough()
   .describe("Compact application record from Microsoft Graph");
@@ -242,7 +242,7 @@ export const ApplicationListItemSchema = z
 export const ListApplicationsResponseSchema = z
   .object({
     value: z.array(ApplicationListItemSchema).optional(),
-    "@odata.context": z.string().optional(),
+    "@odata.context": z.string().optional()
   })
   .passthrough()
   .describe("Response for list applications Graph endpoint");
@@ -252,7 +252,7 @@ export const ApplicationSchema = z
   .object({
     id: z.string(),
     appId: z.string(),
-    displayName: z.string().optional(),
+    displayName: z.string().optional()
   })
   .passthrough()
   .describe("Full Microsoft Graph Application object subset");
@@ -261,7 +261,7 @@ export const ServicePrincipalSchema = z
   .object({
     id: z.string(),
     appId: z.string(),
-    displayName: z.string().optional(),
+    displayName: z.string().optional()
   })
   .passthrough()
   .describe("Full Microsoft Graph ServicePrincipal subset");
@@ -270,7 +270,7 @@ export const InstantiateAppResponseSchema = z
   .object({
     application: ApplicationSchema,
     servicePrincipal: ServicePrincipalSchema,
-    "@odata.context": z.string().optional(),
+    "@odata.context": z.string().optional()
   })
   .passthrough()
   .describe("Response from instantiateTemplate endpoint");
@@ -295,7 +295,7 @@ export const ClaimsPolicySchema = z
 export const ListPoliciesResponseSchema = z
   .object({
     value: z.array(ClaimsPolicySchema).optional(),
-    "@odata.context": z.string().optional(),
+    "@odata.context": z.string().optional()
   })
   .passthrough()
   .describe("Response for list claims mapping policies");
@@ -303,7 +303,7 @@ export const ListPoliciesResponseSchema = z
 export const CreatePolicyResponseSchema = ClaimsPolicySchema.extend({
   definition: z.array(z.string()).optional(),
   isOrganizationDefault: z.boolean().optional(),
-  "@odata.context": z.string().optional(),
+  "@odata.context": z.string().optional()
 })
   .passthrough()
   .describe("Response after creating a claims mapping policy");
@@ -311,7 +311,7 @@ export const CreatePolicyResponseSchema = ClaimsPolicySchema.extend({
 export const SamlSettingsResponseSchema = z
   .object({
     relayState: z.string().optional(),
-    "@odata.context": z.string().optional(),
+    "@odata.context": z.string().optional()
   })
   .passthrough()
   .describe("Service principal SAML settings response");

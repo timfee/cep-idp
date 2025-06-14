@@ -25,6 +25,6 @@ export async function listPolicies(
     pathTemplate: API_PATHS.TOKEN_POLICIES,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

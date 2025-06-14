@@ -25,6 +25,6 @@ export async function getOU(
     pathTemplate: API_PATHS.ORG_UNIT,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

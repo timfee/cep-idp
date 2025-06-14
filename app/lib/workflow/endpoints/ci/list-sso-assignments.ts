@@ -25,6 +25,6 @@ export async function listSsoAssignments(
     pathTemplate: API_PATHS.SSO_ASSIGNMENTS,
     params: {},
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

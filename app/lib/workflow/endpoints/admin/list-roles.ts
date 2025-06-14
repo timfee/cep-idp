@@ -25,6 +25,6 @@ export async function listRoles(
     pathTemplate: API_PATHS.ROLES,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

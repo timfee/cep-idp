@@ -4,7 +4,7 @@ import { z } from "zod";
 import {
   TEMPLATE_IDS,
   TEMPLATE_NAMES,
-  VALIDATION_PATTERNS,
+  VALIDATION_PATTERNS
 } from "../constants";
 
 /**
@@ -15,7 +15,7 @@ export const VariableDefinitionSchema = z.object({
   validator: z.union([z.instanceof(RegExp), z.string()]).optional(),
   default: z.string().optional(),
   generator: z.string().optional(),
-  comment: z.string().optional(),
+  comment: z.string().optional()
 });
 
 export type VariableDefinition = z.infer<typeof VariableDefinitionSchema>;
@@ -28,14 +28,14 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
   // Core identifiers
   customerId: {
     validator: VALIDATION_PATTERNS.CUSTOMER_ID,
-    default: "my_customer",
+    default: "my_customer"
   },
   domainName: {
     validator: "domain",
-    comment: "Domain to be verified / provisioned within Google Admin",
+    comment: "Domain to be verified / provisioned within Google Admin"
   },
   primaryDomain: {
-    comment: "Primary domain fetched from Google Admin API on initialization",
+    comment: "Primary domain fetched from Google Admin API on initialization"
   },
 
   // OAuth tokens – injected via authentication flow
@@ -55,19 +55,19 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
   provisioningTemplateId: {
     default: TEMPLATE_IDS.GOOGLE_CONNECTOR,
     comment:
-      "Gallery ID for the Google Cloud / G Suite Connector provisioning template",
+      "Gallery ID for the Google Cloud / G Suite Connector provisioning template"
   },
   provisioningTemplateName: {
     default: TEMPLATE_NAMES.GOOGLE_CONNECTOR,
-    comment: "Display name for the provisioning application template",
+    comment: "Display name for the provisioning application template"
   },
   ssoTemplateId: {
     default: TEMPLATE_IDS.GOOGLE_CONNECTOR,
-    comment: "Gallery ID for the Google Cloud / G Suite Connector SSO template",
+    comment: "Gallery ID for the Google Cloud / G Suite Connector SSO template"
   },
   ssoTemplateName: {
     default: TEMPLATE_NAMES.GOOGLE_CONNECTOR,
-    comment: "Display name for the SSO application template (same as prov)",
+    comment: "Display name for the SSO application template (same as prov)"
   },
 
   // Microsoft service principals / sync jobs etc.
@@ -83,7 +83,7 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
 
   // Local JSON string that tracks completion of manual workflow steps.  Used
   // solely by the UI layer; not required for API calls.
-  manualStepsState: {},
+  manualStepsState: {}
   // Google OrgUnit details (removed unused ouPath/ouName variables)
 } as const;
 

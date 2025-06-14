@@ -20,7 +20,7 @@ export async function makeApiRequest(options: {
     query,
     body,
     headers = {},
-    tokens,
+    tokens
   } = options;
 
   const connection = (
@@ -59,7 +59,7 @@ export async function makeApiRequest(options: {
   const response = await fetch(url.toString(), {
     method,
     headers,
-    body: body ? JSON.stringify(body) : undefined,
+    body: body ? JSON.stringify(body) : undefined
   });
 
   if (!response.ok) {

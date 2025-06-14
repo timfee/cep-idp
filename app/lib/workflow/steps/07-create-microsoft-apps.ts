@@ -4,19 +4,19 @@ import {
   appByTemplateProv,
   appByTemplateSSO,
   instantiateProv,
-  instantiateSSO,
+  instantiateSSO
 } from "../endpoints/graph";
 import { StepDefinition, StepResultSchema } from "../types";
 
 const InputSchema = z.object({
   provisioningTemplateId: z.string(),
-  ssoTemplateId: z.string(),
+  ssoTemplateId: z.string()
 });
 
 const OutputSchema = z.object({
   provisioningServicePrincipalId: z.string().optional(),
   ssoServicePrincipalId: z.string().optional(),
-  ssoAppId: z.string().optional(),
+  ssoAppId: z.string().optional()
 });
 
 export const createMicrosoftApps: StepDefinition = {
@@ -26,18 +26,18 @@ export const createMicrosoftApps: StepDefinition = {
   outputs: [
     "provisioningServicePrincipalId",
     "ssoServicePrincipalId",
-    "ssoAppId",
+    "ssoAppId"
   ],
 
   async handler(ctx) {
     const { provisioningTemplateId, ssoTemplateId } = InputSchema.parse({
       provisioningTemplateId: ctx.vars.provisioningTemplateId,
-      ssoTemplateId: ctx.vars.ssoTemplateId,
+      ssoTemplateId: ctx.vars.ssoTemplateId
     });
 
     // Check if provisioning app exists already
     const provisioningApps = (await appByTemplateProv(ctx.api, {
-      provisioningTemplateId,
+      provisioningTemplateId
     })) as { value?: { servicePrincipalId?: string }[] };
 
     const existingProvisioning = provisioningApps.value?.[0];
@@ -48,7 +48,7 @@ export const createMicrosoftApps: StepDefinition = {
 
     if (!provisioningSpId) {
       const inst = (await instantiateProv(ctx.api, {
-        provisioningTemplateId,
+        provisioningTemplateId
       })) as { servicePrincipal?: { id?: string } };
 
       provisioningSpId = inst.servicePrincipal?.id;
@@ -76,10 +76,10 @@ export const createMicrosoftApps: StepDefinition = {
     const outputs = OutputSchema.parse({
       provisioningServicePrincipalId: provisioningSpId,
       ssoServicePrincipalId: ssoSpId,
-      ssoAppId,
+      ssoAppId
     });
     ctx.setVars(outputs);
 
     return StepResultSchema.parse({ success: true, mode: "executed", outputs });
-  },
+  }
 };

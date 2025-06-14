@@ -55,7 +55,7 @@ export function parseApiError(error: unknown): ApiError {
             kind: "structured",
             code: parsed.error.code,
             status: parsed.error.status,
-            message: parsed.error.message,
+            message: parsed.error.message
           };
         }
       }

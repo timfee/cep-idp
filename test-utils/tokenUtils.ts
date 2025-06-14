@@ -1,7 +1,7 @@
 import { GoogleAuth, JWT } from "google-auth-library";
 import {
   googleOAuthConfig,
-  microsoftOAuthConfig,
+  microsoftOAuthConfig
 } from "../app/lib/auth/oauth-server";
 
 const googleScopes = googleOAuthConfig.scopes;
@@ -33,7 +33,7 @@ export async function getGoogleAccessToken() {
       email: key.client_email,
       key: key.private_key,
       scopes: scopes.split(" "),
-      subject: adminEmail,
+      subject: adminEmail
     });
     try {
       const authRes = await client.authorize();
@@ -56,7 +56,7 @@ export async function getGoogleAccessToken() {
     const now = Math.floor(Date.now() / SECONDS_IN_MILLISECOND);
     const exp = now + ONE_HOUR_IN_SECONDS;
     const auth = new GoogleAuth({
-      scopes: "https://www.googleapis.com/auth/iam",
+      scopes: "https://www.googleapis.com/auth/iam"
     });
     const client = await auth.getClient();
     const signRes = await client.request<{ signedJwt: string }>({
@@ -69,9 +69,9 @@ export async function getGoogleAccessToken() {
           scope: scopes,
           aud: tokenUrl,
           exp,
-          iat: now,
-        }),
-      },
+          iat: now
+        })
+      }
     });
 
     const jwt = signRes.data.signedJwt;
@@ -81,8 +81,8 @@ export async function getGoogleAccessToken() {
         headers: { "Content-Type": "application/x-www-form-urlencoded" },
         body: new URLSearchParams({
           grant_type: "urn:ietf:params:oauth:grant-type:jwt-bearer",
-          assertion: jwt,
-        }),
+          assertion: jwt
+        })
       });
 
       interface TokenResponse {
@@ -131,8 +131,8 @@ export async function getMicrosoftAccessToken() {
         grant_type: "client_credentials",
         client_id: clientId,
         client_secret: clientSecret,
-        scope: clientScope,
-      }),
+        scope: clientScope
+      })
     });
 
     interface MsTokenResponse {

@@ -25,6 +25,6 @@ export async function listSamlProfiles(
     pathTemplate: API_PATHS.SAML_PROFILES,
     params: {},
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

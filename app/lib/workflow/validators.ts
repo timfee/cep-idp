@@ -20,7 +20,7 @@ function isValidDomain(value: string): boolean {
 const VALIDATOR_FUNCTIONS: Record<string, ValidatorFunction> = {
   [VALIDATION_PATTERNS.CUSTOMER_ID.source]: (val) =>
     VALIDATION_PATTERNS.CUSTOMER_ID.test(val),
-  [VALIDATION_PATTERNS.DOMAIN.source]: isValidDomain,
+  [VALIDATION_PATTERNS.DOMAIN.source]: isValidDomain
 };
 
 /**

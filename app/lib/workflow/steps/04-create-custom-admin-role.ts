@@ -8,7 +8,7 @@ const InputSchema = z.object({ customerId: z.string() });
 
 const OutputSchema = z.object({
   adminRoleId: z.string(),
-  directoryServiceId: z.string(),
+  directoryServiceId: z.string()
 });
 
 export const createCustomAdminRole: StepDefinition = {
@@ -19,7 +19,7 @@ export const createCustomAdminRole: StepDefinition = {
 
   async handler(ctx) {
     const { customerId } = InputSchema.parse({
-      customerId: ctx.vars.customerId,
+      customerId: ctx.vars.customerId
     });
 
     try {
@@ -37,19 +37,19 @@ export const createCustomAdminRole: StepDefinition = {
       if (existing) {
         const outputs = OutputSchema.parse({
           adminRoleId: existing.roleId,
-          directoryServiceId: existing.rolePrivileges?.[0]?.serviceId ?? "",
+          directoryServiceId: existing.rolePrivileges?.[0]?.serviceId ?? ""
         });
         ctx.setVars(outputs);
         return StepResultSchema.parse({
           success: true,
           mode: "verified",
-          outputs,
+          outputs
         });
       }
 
       // Need directory serviceId – fetch from privileges
       const privResp = (await listPrivileges(ctx.api, {
-        customerId,
+        customerId
       })) as unknown;
 
       interface PrivItem {
@@ -67,28 +67,28 @@ export const createCustomAdminRole: StepDefinition = {
         rolePrivileges: [
           { serviceId: dirServiceId, privilegeName: "USERS_RETRIEVE" },
           { serviceId: dirServiceId, privilegeName: "USERS_CREATE" },
-          { serviceId: dirServiceId, privilegeName: "USERS_UPDATE" },
-        ],
+          { serviceId: dirServiceId, privilegeName: "USERS_UPDATE" }
+        ]
       } as Record<string, unknown>;
 
       const createResp = (await postRole(ctx.api, {
         customerId,
-        body: roleBody,
+        body: roleBody
       })) as Record<string, unknown>;
 
       const outputs = OutputSchema.parse({
         adminRoleId: createResp.roleId ?? createResp.id ?? "",
-        directoryServiceId: dirServiceId,
+        directoryServiceId: dirServiceId
       });
       ctx.setVars(outputs);
 
       return StepResultSchema.parse({
         success: true,
         mode: "executed",
-        outputs,
+        outputs
       });
     } catch (err: unknown) {
       return handleStepError(err, this.name, ctx);
     }
-  },
+  }
 };

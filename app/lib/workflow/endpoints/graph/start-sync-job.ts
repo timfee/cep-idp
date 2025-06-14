@@ -25,6 +25,6 @@ export async function startSyncJob(
     pathTemplate: API_PATHS.START_SYNC,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

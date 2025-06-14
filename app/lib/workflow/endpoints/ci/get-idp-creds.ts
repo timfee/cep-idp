@@ -25,6 +25,6 @@ export async function getIdpCreds(
     pathTemplate: API_PATHS.IDP_CREDENTIALS,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ResponseSchema
   });
 }

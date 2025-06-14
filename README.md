@@ -36,7 +36,7 @@ cp .env.local.example .env.local  # fill in Google + Microsoft secrets
 pnpm dev
 ```
 
-Open http://localhost:3000 and follow the on-screen prompts.
+Open <http://localhost:3000> and follow the on-screen prompts.
 
 ---
 
@@ -45,7 +45,7 @@ Open http://localhost:3000 and follow the on-screen prompts.
 ### 3.1 Modular Workflow
 
 * **Typed building blocks** – Endpoint builders, Zod-validated connections, and
-  per-step files eliminate the brittle monolithic JSON.
+  per-step files keep the configuration type-safe and discoverable.
 * **Live progress** – Each step declares `verify` actions so the app can detect
   pre-existing resources and mark them complete automatically.
 * **Variables Store** – Engine-populated key/value cache (persisted in

@@ -1,25 +1,23 @@
 # CEP Identity Federation – Workflow Architecture & Configuration
 
-This document is the **single reference** for how the _modular_ workflow layer
-operates after the 2025-05 refactor.  If you maintained the original
-`workflow.json`-only version, read on – every moving part is still here, but the
-implementation has been split into focused, type-safe modules so that tests and
-editors can help you avoid obvious mistakes.
+This document describes the **modular workflow layer** that powers CEP Identity
+Federation.  The configuration is code-driven and fully type-checked so your
+editor and CI pipeline catch mistakes early.
 
 ## 0. TL;DR for the Impatient
 
-*   _Everything is code._  There is no longer a monolithic JSON file.  The
-    runtime model is produced from strongly-typed **configs** under
+* _Everything is code._  Instead of a monolithic JSON file, the runtime model
+    is produced from strongly-typed **configs** under
     `app/lib/workflow/`.
-*   **connections.ts** – registry of remote API hosts and how to sign requests.
-*   **endpoints/** – route templates grouped by provider (Admin SDK, Cloud-
+* **connections.ts** – registry of remote API hosts and how to sign requests.
+* **endpoints/** – route templates grouped by provider (Admin SDK, Cloud-
     Identity, Graph…).  Each file exports a typed `EndpointBuilder` that
     enforces params.
-*   **constants.ts** – One place for shared literals (URLs, template IDs, time
+* **constants.ts** – One place for shared literals (URLs, template IDs, time
     units, etc.).  No more string drift.
-*   **steps/** – Each workflow step lives in its own file; the directory is
+* **steps/** – Each workflow step lives in its own file; the directory is
     loaded dynamically so you can ship features incrementally.
-*   The public UI is built by reading the compiled `Workflow` object – no need
+* The public UI is built by reading the compiled `Workflow` object – no need
     to manually synchronise JSON and React.
 
 ---
@@ -45,7 +43,7 @@ editors can help you avoid obvious mistakes.
 
 The engine iterates over **Step** objects emitted by `steps/index.ts`.  A step
 declares `verify` and `execute` action lists.  An action references an
-endpoint builder (e.g. `admin.postUser`) and may expose *extractors*
+endpoint builder (e.g. `admin.postUser`) and may expose _extractors_
 (`extractors.ts`) that save data into the per-user **Variables Store**.
 
 ## 2. Key Modules
@@ -58,7 +56,6 @@ Canonical homes for:
 * `BASE_URLS` – four URLs used across the project; you no longer see raw
   strings elsewhere.
 * `TEMPLATE_IDS` & `TEMPLATE_NAMES` – Microsoft application-template metadata.
-* Aliases for legacy names so _nothing_ broke during the migration.
 
 ### 2.2 config/connections.ts
 

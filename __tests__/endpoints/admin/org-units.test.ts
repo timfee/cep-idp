@@ -3,6 +3,13 @@ import { createLiveApiContext } from "../../../test-utils/live-api-context";
 import { sleep } from "../../../test-utils/sleep";
 
 describe("Org Units - Live API", () => {
+  // Google's Admin SDK can take several seconds to propagate newly created
+  // organisational units.  The default Jest timeout of 5 seconds is therefore
+  // too aggressive and would cause this suite to fail intermittently.  A more
+  // forgiving 20 second budget keeps the tests reliable while still
+  // surfacing genuine hangs.
+  jest.setTimeout(20000);
+
   let apiContext: ReturnType<typeof createLiveApiContext>;
   const testOuName = `TestOU_${Date.now()}`;
   const testOuPath = `/${testOuName}`;
@@ -29,8 +36,9 @@ describe("Org Units - Live API", () => {
     expect(createResult.name).toBe(testOuName);
 
     // Verify it exists
-    // Give Google's distributed systems a moment to register the new OU
-    await sleep(2000);
+    // Give Google's distributed systems a moment to register the new OU.
+    // Two seconds was occasionally insufficient, causing flaky 404s.
+    await sleep(5000); // Increased delay for eventual consistency
 
     const getResult = await getOU(apiContext, {
       customerId: "my_customer",

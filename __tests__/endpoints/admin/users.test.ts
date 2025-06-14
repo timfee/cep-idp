@@ -7,6 +7,11 @@ import { createLiveApiContext } from "../../../test-utils/live-api-context";
 import { sleep } from "../../../test-utils/sleep";
 
 describe("Users - Live API", () => {
+  // Creating a user and then immediately updating them can trip an eventual
+  // consistency window in Google's backend.  Give the test up to 15 seconds
+  // so we can insert an explicit delay without flaking.
+  jest.setTimeout(15000);
+
   let apiContext: ReturnType<typeof createLiveApiContext>;
   let primaryDomain: string;
   const timestamp = Date.now();
@@ -48,8 +53,10 @@ describe("Users - Live API", () => {
     expect(createResult.primaryEmail).toBe(testEmail);
     expect(createResult.id).toBeDefined();
 
-    // Small delay to allow eventual consistency in Google's backend
-    await sleep(2000);
+    // Small delay to allow eventual consistency in Google's backend.  A two
+    // second wait proved unreliable in practice so we stretch this to five
+    // seconds.
+    await sleep(5000);
 
     // Get user
     const getResult = await getUser(apiContext, { userEmail: testEmail });

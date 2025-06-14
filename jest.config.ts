@@ -29,18 +29,15 @@ const { compilerOptions } = readTsConfig();
 
 const createJestConfig = nextJest({ dir: "./" });
 
+// Remove transformIgnorePatterns from this configuration.
 const customConfig: Config = {
   testEnvironment: "node",
   moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
-    prefix: "<rootDir>/"
+    prefix: "<rootDir>/",
   }),
   globalSetup: "<rootDir>/jest.globalSetup.ts",
   globalTeardown: "<rootDir>/jest.globalTeardown.ts",
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
-  transform: {
-    "^.+\\.(ts|tsx)$": ["ts-jest", { tsconfig: "tsconfig.spec.json" }]
-  },
-  transformIgnorePatterns: ["node_modules/(?!(.pnpm/)?@t3-oss/env-nextjs)"]
 };
 
 export default createJestConfig(customConfig);

@@ -99,6 +99,11 @@ describe("Role Assignments - Live API", () => {
   });
 
   it("should prevent duplicate assignments", async () => {
+    // We expect exactly one assertion in this test – the duplicate creation
+    // must throw.
+    expect.assertions(1);
+
+    // Seed the system with an initial assignment.
     await postRoleAssign(apiContext, {
       customerId: "my_customer",
       body: {
@@ -109,6 +114,7 @@ describe("Role Assignments - Live API", () => {
       }
     });
 
+    // The second, identical request should fail with a 409 conflict.
     await expect(
       postRoleAssign(apiContext, {
         customerId: "my_customer",
@@ -119,7 +125,7 @@ describe("Role Assignments - Live API", () => {
           scopeType: "CUSTOMER"
         }
       })
-    ).rejects.toThrow();
+    ).rejects.toThrow("409");
   });
 
   it("should handle invalid role", async () => {

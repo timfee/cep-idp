@@ -3,22 +3,20 @@ import { z } from "zod";
 import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z.object({
-  ssoTemplateId: z.string(),
-});
-
 const ResponseSchema = z.unknown();
 
-export type AppByTemplateSSOParams = z.infer<typeof ParamsSchema>;
-export type AppByTemplateSSOResponse = z.infer<typeof ResponseSchema>;
+export type AppByTemplateProvParams = {
+  provisioningTemplateId: string;
+};
+export type AppByTemplateProvResponse = z.infer<typeof ResponseSchema>;
 
-export async function appByTemplateSSO(
+export async function appByTemplateProv(
   ctx: ApiContext,
-  params: AppByTemplateSSOParams
-): Promise<AppByTemplateSSOResponse> {
-  const { ssoTemplateId } = params;
+  params: AppByTemplateProvParams
+): Promise<AppByTemplateProvResponse> {
+  const { provisioningTemplateId } = params;
   const query = {
-    $filter: `applicationTemplateId eq '${ssoTemplateId}'`,
+    $filter: `applicationTemplateId eq '${provisioningTemplateId}'`,
   } as Record<string, string>;
 
   return callEndpoint({

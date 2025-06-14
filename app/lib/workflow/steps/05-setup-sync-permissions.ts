@@ -22,13 +22,12 @@ export const setupSyncPermissions: StepDefinition = {
     });
 
     // Check if assignment exists
-    const assignResp = await getRoleAssign(ctx.api, {
+    const assignResp = (await getRoleAssign(ctx.api, {
       customerId,
       roleId: adminRoleId,
       assignedTo: provisioningUserId,
-    });
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    })) as { items?: unknown[] };
+
     if ((assignResp.items?.length ?? 0) > 0) {
       return StepResultSchema.parse({ success: true, mode: "verified" });
     }

@@ -26,9 +26,16 @@ export const createCustomAdminRole: StepDefinition = {
     try {
     const rolesResp = (await listRoles(ctx.api, {
       customerId,
-    })) as Record<string, any>;
-    const existing = (rolesResp as any).items?.find(
-      (r: any) => r.roleName === "Microsoft Entra Provisioning"
+    })) as unknown;
+
+    interface RoleItem {
+      roleName?: string;
+      roleId?: string;
+      rolePrivileges?: { serviceId?: string }[];
+    }
+
+    const existing = (rolesResp as { items?: RoleItem[] }).items?.find(
+      (r) => r.roleName === "Microsoft Entra Provisioning"
     );
       if (existing) {
         const outputs = OutputSchema.parse({
@@ -42,9 +49,15 @@ export const createCustomAdminRole: StepDefinition = {
       // Need directory serviceId – fetch from privileges
     const privResp = (await listPrivileges(ctx.api, {
       customerId,
-    })) as Record<string, any>;
-    const dirServiceId = (privResp as any).items?.find(
-      (p: any) => p.privilegeName === "USERS_RETRIEVE"
+    })) as unknown;
+
+    interface PrivItem {
+      privilegeName?: string;
+      serviceId?: string;
+    }
+
+    const dirServiceId = (privResp as { items?: PrivItem[] }).items?.find(
+      (p) => p.privilegeName === "USERS_RETRIEVE"
     )?.serviceId;
 
       const roleBody = {
@@ -60,7 +73,7 @@ export const createCustomAdminRole: StepDefinition = {
       const createResp = (await postRole(ctx.api, {
         customerId,
         body: roleBody,
-      })) as Record<string, any>;
+      })) as Record<string, unknown>;
 
       const outputs = OutputSchema.parse({
         adminRoleId: createResp.roleId ?? createResp.id ?? "",
@@ -69,9 +82,13 @@ export const createCustomAdminRole: StepDefinition = {
       ctx.setVars(outputs);
 
       return StepResultSchema.parse({ success: true, mode: "executed", outputs });
-    } catch (error: any) {
-      ctx.log("error", "Failed to create custom role", error);
-      return StepResultSchema.parse({ success: false, mode: "skipped", error: String(error) });
+    } catch (err: unknown) {
+      ctx.log("error", "Failed to create custom role", err);
+      return StepResultSchema.parse({
+        success: false,
+        mode: "skipped",
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   },
 };

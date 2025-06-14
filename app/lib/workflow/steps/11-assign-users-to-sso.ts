@@ -15,10 +15,18 @@ export const assignUsersToSSO: StepDefinition = {
   async handler(ctx) {
     const { samlProfileId } = InputSchema.parse({ samlProfileId: ctx.vars.samlProfileId });
 
-    const assignments = await listSsoAssignments(ctx.api, {});
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const exists = assignments.inboundSsoAssignments?.some((a: any) => a.targetGroup?.id === "allUsers" && a.samlSsoInfo?.inboundSamlSsoProfile == samlProfileId);
+    const assignments = (await listSsoAssignments(ctx.api, {})) as {
+      inboundSsoAssignments?: {
+        targetGroup?: { id?: string };
+        samlSsoInfo?: { inboundSamlSsoProfile?: string };
+      }[];
+    };
+
+    const exists = assignments.inboundSsoAssignments?.some(
+      (a) =>
+        a.targetGroup?.id === "allUsers" &&
+        a.samlSsoInfo?.inboundSamlSsoProfile === samlProfileId
+    );
 
     if (exists) {
       return StepResultSchema.parse({ success: true, mode: "verified" });

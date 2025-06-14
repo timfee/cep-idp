@@ -1,14 +1,12 @@
 import { cookies } from "next/headers";
 import "server-only";
 import {
-  clearChunkedCookie,
   CookieOptions,
   getChunkedCookie,
   setChunkedCookie,
 } from "../cookies/server";
 import {
   LogEntry,
-  MS_IN_SECOND,
   Provider,
   Token,
   WORKFLOW_CONSTANTS,
@@ -123,31 +121,9 @@ export async function setToken(
  *
  * @param provider - Token owner
  */
-export async function deleteToken(provider: Provider): Promise<void> {
-  const cookieName = `${provider}_token`;
-  // Use chunked cookie clearer to remove all chunks
-  await clearChunkedCookie(cookieName);
-}
-
-// OAuth state management for CSRF protection
-/**
- * Store the OAuth `state` value used for CSRF protection.
- *
- * @param state - Random state value
- * @param provider - Provider string to scope state
- */
-export async function setOAuthState(
-  state: string,
-  provider: string
-): Promise<void> {
-  const data = { state, provider, timestamp: Date.now() };
-  const encrypted = encrypt(JSON.stringify(data));
-
-  (await cookies()).set(OAUTH_STATE_COOKIE_NAME, encrypted, {
-    ...COOKIE_OPTIONS,
-    maxAge: WORKFLOW_CONSTANTS.OAUTH_STATE_TTL_MS / MS_IN_SECOND,
-  });
-}
+// Note: token deletion and state-cookie writing are now handled directly in the
+// calling layers (sign-out route & OAuth redirect response). Keeping this file
+// lean avoids unused-code bloat.
 
 /**
  * Validate that the OAuth state cookie matches the provided value.

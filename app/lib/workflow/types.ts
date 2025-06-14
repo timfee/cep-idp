@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 /**
- * Zod schemas describing the shape of `workflow.json`.
+ * Zod schemas describing the shape of the runtime workflow configuration.
  *
  * Each schema includes rich descriptions so developers can better understand
  * what each field represents when authoring a workflow.  The descriptions are

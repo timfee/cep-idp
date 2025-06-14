@@ -253,7 +253,7 @@ export const API_PATHS = {
   // Microsoft Graph (v1.0 & beta)
   APP_TEMPLATES: "/applicationTemplates",
   APP_BY_TEMPLATE: "/applicationTemplates/{templateId}/instantiate",
-  APP_BY_PROV_TEMPLATE: "/applicationTemplates/{provTemplateId}/instantiate",
+  APP_BY_PROV_TEMPLATE: "/applicationTemplates/{provisioningTemplateId}/instantiate",
   APP_BY_SSO_TEMPLATE: "/applicationTemplates/{ssoTemplateId}/instantiate",
   SERVICE_PRINCIPAL: "/servicePrincipals/{servicePrincipalId}",
   SYNC_JOBS: "/servicePrincipals/{servicePrincipalId}/synchronization/jobs",

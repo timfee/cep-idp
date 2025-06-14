@@ -1,6 +1,5 @@
 import { Token } from "./types";
-import { apiRequest as oldApiRequest } from "../api/client";
-import { connections as newConnections } from "./config/connections";
+import { makeApiRequest } from "../api/client";
 import { HttpMethod } from "./constants";
 
 /**
@@ -12,10 +11,10 @@ export interface ApiContext {
   /**
    * Issue an HTTP request through the legacy apiRequest helper.
    *
-   * @param connection Name of the configured connection (key from `connections`)
-   * @param method     Standard HTTP verb (GET, POST, …)
-   * @param url        Fully-resolved path (already interpolated by the caller)
-   * @param options    Optional query string / body parameters
+   * @param connection - Name of the configured connection (key from `connections`).
+   * @param method - Standard HTTP verb (GET, POST, …).
+   * @param url - Fully-resolved path (already interpolated by the caller).
+   * @param options - Optional query string / body parameters.
    */
   request: (
     connection: string,
@@ -32,7 +31,7 @@ export interface ApiContext {
  */
 export function createApiContext(
   tokens: { google?: Token; microsoft?: Token },
-  variables: Record<string, string>
+  _variables: Record<string, string>
 ): ApiContext {
   return {
     request: async (connection, method, url, options) => {
@@ -41,42 +40,22 @@ export function createApiContext(
       // expected by the existing API client. The legacy client requires an
       // `auth` template string that is later populated with the access token.
       // -------------------------------------------------------------------
-      const legacyConnections: Record<string, { base: string; auth: string }> =
-        {};
-
-      for (const [name, cfg] of Object.entries(newConnections)) {
-        let authTemplate = "";
-        const lower = name.toLowerCase();
-        if (lower.includes("google")) {
-          authTemplate = "Bearer {googleAccessToken}";
-        } else if (lower.includes("graph")) {
-          authTemplate = "Bearer {azureAccessToken}";
-        }
-        legacyConnections[name] = { base: cfg.base, auth: authTemplate };
-      }
       const qsClean = options?.query
         ? (Object.fromEntries(
-            Object.entries(options.query).filter(
-              (entry): entry is [string, string] => typeof entry[1] === "string"
+            Object.entries(options.query).filter((e): e is [string, string] =>
+              typeof e[1] === "string"
             )
           ) as Record<string, string>)
         : undefined;
 
-      const endpoint = {
-        conn: connection,
+      return makeApiRequest({
+        connection,
         method,
         path: url,
-        qs: qsClean,
-      } as const;
-
-      return oldApiRequest({
-        endpoint,
-        connections: legacyConnections,
-        variables,
-        tokens,
+        query: qsClean,
         body: options?.body,
-        throwOnMissingVars: true,
-        onLog: (entry) => console.log(entry),
+        headers: {},
+        tokens,
       });
     },
   };

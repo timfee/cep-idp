@@ -1,17 +1,14 @@
 import { z } from "zod";
-
 import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
-const BodySchema = z.record(z.unknown());
-
-const ParamsSchema = z.object({
-  body: BodySchema,
-});
+type RequestBody = Record<string, unknown>;
 
 const ResponseSchema = z.unknown();
 
-export type PostUserParams = z.infer<typeof ParamsSchema>;
+export interface PostUserParams {
+  body: RequestBody;
+}
 export type PostUserResponse = z.infer<typeof ResponseSchema>;
 
 export async function postUser(

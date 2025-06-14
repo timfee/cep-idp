@@ -48,12 +48,12 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
   acsUrl: {},
 
   // Microsoft application template identifiers
-  provTemplateId: {
+  provisioningTemplateId: {
     default: WORKFLOW_CONSTANTS.PROV_TEMPLATE_ID,
     comment:
       "Gallery ID for the Google Cloud / G Suite Connector provisioning template",
   },
-  provTemplateName: {
+  provisioningTemplateName: {
     default: WORKFLOW_CONSTANTS.PROV_TEMPLATE_NAME,
     comment: "Display name for the provisioning application template",
   },
@@ -67,7 +67,7 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
   },
 
   // Microsoft service principals / sync jobs etc.
-  provServicePrincipalId: {},
+  provisioningServicePrincipalId: {},
   ssoServicePrincipalId: {},
   ssoAppId: {},
   jobId: {

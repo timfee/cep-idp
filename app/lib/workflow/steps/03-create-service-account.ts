@@ -41,7 +41,8 @@ export const createServiceAccount: StepDefinition = {
       // proceed to create
     }
 
-    const password = generatePassword(16);
+    const PASSWORD_LENGTH = 16;
+    const password = generatePassword(PASSWORD_LENGTH);
     const createResp = (await postUser(ctx.api, {
       body: {
         primaryEmail: targetEmail,

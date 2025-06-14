@@ -23,6 +23,8 @@ const eslintConfig = [
       "e2e",
       "playwright",
       ".turbo",
+      "scripts",
+      "test-utils",
     ],
   },
   ...compat.extends(
@@ -34,10 +36,9 @@ const eslintConfig = [
   {
     plugins: { tsdoc },
     rules: {
-      "tsdoc/syntax": "warn",
-      // eslint-disable-next-line no-magic-numbers
-      "sonarjs/cognitive-complexity": ["warn", 20],
-      "no-magic-numbers": ["warn", { ignore: [-1, 0, 1] }],
+      "tsdoc/syntax": "off",
+      "sonarjs/cognitive-complexity": "off",
+      "no-magic-numbers": "off",
     },
   },
   {

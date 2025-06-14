@@ -1,1 +1,1 @@
-export * from "./fetchMetadata";
+export * from "./fetch-metadata";

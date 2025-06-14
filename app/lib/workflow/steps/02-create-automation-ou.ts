@@ -19,9 +19,12 @@ export const createAutomationOU: StepDefinition = {
 
     try {
       const resp = await listOUAutomation(ctx.api, { customerId });
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const exists = (resp.organizationUnits?.length ?? 0) > 0;
+      type OrgUnitsResponse = {
+        organizationUnits?: unknown[];
+      };
+
+      const { organizationUnits } = resp as OrgUnitsResponse;
+      const exists = (organizationUnits?.length ?? 0) > 0;
       if (exists) {
         return StepResultSchema.parse({ success: true, mode: "verified" });
       }
@@ -34,12 +37,12 @@ export const createAutomationOU: StepDefinition = {
         },
       });
       return StepResultSchema.parse({ success: true, mode: "executed" });
-    } catch (error: any) {
-      ctx.log("error", "Failed to create OU", error);
+    } catch (err: unknown) {
+      ctx.log("error", "Failed to create OU", err);
       return StepResultSchema.parse({
         success: false,
         mode: "skipped",
-        error: String(error),
+        error: err instanceof Error ? err.message : String(err),
       });
     }
   },

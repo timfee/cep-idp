@@ -1,16 +1,14 @@
 import { z } from "zod";
 
 import { StepDefinition, StepResultSchema } from "../types";
-import { getDomain, listDomains, postDomain } from "../endpoints/admin";
+import { listDomains, postDomain } from "../endpoints/admin";
 import { ERROR_MESSAGES } from "../constants";
 
 const InputSchema = z.object({
   customerId: z.string(),
 });
 
-const OutputSchema = z.object({
-  primaryDomain: z.string(),
-});
+// Removed OutputSchema – no runtime usage
 
 export const verifyPrimaryDomain: StepDefinition = {
   name: "Verify Primary Domain",
@@ -25,9 +23,15 @@ export const verifyPrimaryDomain: StepDefinition = {
     try {
       const domainsResp = await listDomains(ctx.api, { customerId });
       // naive extraction; assumes domainsResp has domains array
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const primary = domainsResp.domains?.find((d: any) => d.isPrimary);
+      type DomainItem = {
+        domainName?: string;
+        isPrimary?: boolean;
+        verified?: boolean;
+      };
+
+      const primary = (domainsResp as { domains?: DomainItem[] }).domains?.find(
+        (d) => d.isPrimary === true
+      );
       if (!primary) {
         throw new Error("Primary domain not found");
       }
@@ -36,8 +40,6 @@ export const verifyPrimaryDomain: StepDefinition = {
       ctx.setVars({ primaryDomain });
 
       // Check verification status
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
       if (primary.verified) {
         return StepResultSchema.parse({
           success: true,
@@ -57,12 +59,13 @@ export const verifyPrimaryDomain: StepDefinition = {
         mode: "executed",
         outputs: { primaryDomain },
       });
-    } catch (error: any) {
-      ctx.log("error", ERROR_MESSAGES.RESOURCE_NOT_FOUND(this.name), error);
+    } catch (err: unknown) {
+      const message = err instanceof Error ? err.message : String(err);
+      ctx.log("error", ERROR_MESSAGES.RESOURCE_NOT_FOUND(this.name), err);
       return StepResultSchema.parse({
         success: false,
         mode: "skipped",
-        error: String(error),
+        error: message,
       });
     }
   },

@@ -2,7 +2,6 @@ import { z } from "zod";
 
 import { StepDefinition, StepResultSchema } from "../types";
 import {
-  getSync,
   patchSync,
   startSyncJob,
   getSamlSettings,
@@ -10,7 +9,7 @@ import {
 } from "../endpoints/graph";
 
 const InputSchema = z.object({
-  provServicePrincipalId: z.string(),
+  provisioningServicePrincipalId: z.string(),
   jobId: z.string().default("Initial"),
   ssoServicePrincipalId: z.string(),
 });
@@ -18,15 +17,12 @@ const InputSchema = z.object({
 export const configureMicrosoftSyncSSO: StepDefinition = {
   name: "Configure Microsoft Sync and SSO",
   role: "graphSyncRW",
-  inputs: [
-    "provServicePrincipalId",
-    "ssoServicePrincipalId",
-  ],
+  inputs: ["provisioningServicePrincipalId", "ssoServicePrincipalId"],
 
   async handler(ctx) {
-    const { provServicePrincipalId, jobId, ssoServicePrincipalId } =
+    const { provisioningServicePrincipalId, jobId, ssoServicePrincipalId } =
       InputSchema.parse({
-        provServicePrincipalId: ctx.vars.provServicePrincipalId,
+        provisioningServicePrincipalId: ctx.vars.provisioningServicePrincipalId,
         jobId: ctx.vars.jobId ?? "Initial",
         ssoServicePrincipalId: ctx.vars.ssoServicePrincipalId,
       });
@@ -34,11 +30,11 @@ export const configureMicrosoftSyncSSO: StepDefinition = {
     // Placeholder implementation that attempts to patch sync and saml settings
     try {
       await patchSync(ctx.api, {
-        servicePrincipalId: provServicePrincipalId,
+        servicePrincipalId: provisioningServicePrincipalId,
         body: { synchronizationTemplates: [] },
       });
       await startSyncJob(ctx.api, {
-        servicePrincipalId: provServicePrincipalId,
+        servicePrincipalId: provisioningServicePrincipalId,
         jobId,
       });
 
@@ -52,9 +48,13 @@ export const configureMicrosoftSyncSSO: StepDefinition = {
       });
 
       return StepResultSchema.parse({ success: true, mode: "executed" });
-    } catch (error: any) {
-      ctx.log("error", "Failed to configure sync/SSO", error);
-      return StepResultSchema.parse({ success: false, mode: "skipped", error: String(error) });
+    } catch (err: unknown) {
+      ctx.log("error", "Failed to configure sync/SSO", err);
+      return StepResultSchema.parse({
+        success: false,
+        mode: "skipped",
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   },
 };

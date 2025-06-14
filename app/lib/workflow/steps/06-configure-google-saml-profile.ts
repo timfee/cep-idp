@@ -1,16 +1,7 @@
 import { z } from "zod";
 
 import { StepDefinition, StepResultSchema } from "../types";
-import {
-  listSamlProfiles,
-  createSamlProfile,
-  getIdpCreds,
-  addIdpCert,
-} from "../endpoints/ci";
-
-const InputSchema = z.object({
-  customerId: z.string().optional(), // not needed for CI endpoints
-});
+import { listSamlProfiles, createSamlProfile, getIdpCreds } from "../endpoints/ci";
 
 const OutputSchema = z.object({
   samlProfileId: z.string(),
@@ -26,9 +17,14 @@ export const configureGoogleSamlProfile: StepDefinition = {
     try {
       // Check existing profiles
       const list = await listSamlProfiles(ctx.api, {});
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const profile = list.inboundSamlSsoProfiles?.[0];
+      type SsoProfile = {
+        name?: string;
+        idpConfig?: { entityId?: string };
+        spConfig?: { spEntityId?: string };
+      };
+
+      const profile = (list as { inboundSamlSsoProfiles?: SsoProfile[] })
+        .inboundSamlSsoProfiles?.[0];
       if (profile) {
         const outputs = OutputSchema.parse({
           samlProfileId: profile.name,
@@ -40,12 +36,11 @@ export const configureGoogleSamlProfile: StepDefinition = {
       }
 
       // Create new profile (simplified minimal body)
-      const createResp = await createSamlProfile(ctx.api, {
+      const createResp = (await createSamlProfile(ctx.api, {
         body: { displayName: "Microsoft Entra SAML" },
-      });
-      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-      // @ts-ignore
-      const newProfileId = createResp.name;
+      })) as { name?: string };
+
+      const newProfileId = createResp.name ?? "";
 
       // Fetch creds & upload cert placeholder (skipped) – skeleton
       await getIdpCreds(ctx.api, { samlProfileId: newProfileId });
@@ -59,9 +54,13 @@ export const configureGoogleSamlProfile: StepDefinition = {
       ctx.setVars(outputs);
 
       return StepResultSchema.parse({ success: true, mode: "executed", outputs });
-    } catch (error: any) {
-      ctx.log("error", "Failed to configure SAML profile", error);
-      return StepResultSchema.parse({ success: false, mode: "skipped", error: String(error) });
+    } catch (err: unknown) {
+      ctx.log("error", "Failed to configure SAML profile", err);
+      return StepResultSchema.parse({
+        success: false,
+        mode: "skipped",
+        error: err instanceof Error ? err.message : String(err),
+      });
     }
   },
 };

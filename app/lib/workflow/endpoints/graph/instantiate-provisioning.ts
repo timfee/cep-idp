@@ -4,7 +4,7 @@ import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
 const ParamsSchema = z.object({
-  provTemplateId: z.string(),
+  provisioningTemplateId: z.string(),
 });
 
 const ResponseSchema = z.unknown();

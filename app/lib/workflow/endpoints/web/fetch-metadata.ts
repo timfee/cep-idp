@@ -2,14 +2,12 @@ import { z } from "zod";
 
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z.object({
-  tenantId: z.string(),
-  ssoAppId: z.string(),
-});
-
 const ResponseSchema = z.string(); // XML response
 
-export type FetchMetadataParams = z.infer<typeof ParamsSchema>;
+export interface FetchMetadataParams {
+  tenantId: string;
+  ssoAppId: string;
+}
 export type FetchMetadataResponse = z.infer<typeof ResponseSchema>;
 
 export async function fetchMetadata(

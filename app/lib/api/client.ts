@@ -17,6 +17,75 @@ import {
 } from "../workflow/constants";
 import { ApiRequestOptions } from "./types";
 
+import { connections } from "../workflow/config/connections";
+
+/**
+ * Simplified API request without template substitution.
+ * Used by the new endpoint architecture.
+ */
+export async function makeApiRequest(options: {
+  connection: string;
+  method: string;
+  path: string; // Already interpolated
+  query?: Record<string, string | undefined>;
+  body?: unknown;
+  headers?: Record<string, string>;
+  tokens: { google?: Token; microsoft?: Token };
+}): Promise<unknown> {
+  const {
+    connection: connName,
+    method,
+    path,
+    query,
+    body,
+    headers = {},
+    tokens,
+  } = options;
+
+  const connection = (connections as Record<string, { base: string; getAuthHeader: (t: { google?: Token; microsoft?: Token }) => string }>)[
+    connName
+  ];
+  if (!connection) {
+    throw new Error(`Unknown connection: ${connName}`);
+  }
+
+  const url = new URL(path, connection.base);
+  if (query) {
+    Object.entries(query).forEach(([key, value]) => {
+      if (value !== undefined) {
+        url.searchParams.append(key, value);
+      }
+    });
+  }
+
+  const authHeader = connection.getAuthHeader(tokens);
+  if (authHeader) {
+    headers["Authorization"] = authHeader;
+  }
+
+  if (!headers["Content-Type"] && body) {
+    headers["Content-Type"] = "application/json";
+  }
+
+  const response = await fetch(url.toString(), {
+    method,
+    headers,
+    body: body ? JSON.stringify(body) : undefined,
+  });
+
+  if (!response.ok) {
+    const errorText = await response.text();
+    throw new Error(`API request failed: ${response.status} - ${errorText}`);
+  }
+
+  const contentType = response.headers.get("content-type");
+  if (contentType?.includes("application/json")) {
+    return response.json();
+  }
+
+  return response.text();
+}
+
 /**
  * Resolve which OAuth token should be used for a given endpoint.
  *
@@ -274,6 +343,11 @@ async function handleAuthenticatedRequest(
  *
  * @param options - Request configuration
  * @returns API response payload and captured variables
+ */
+/**
+ * @deprecated Use makeApiRequest for new code paths.  This function remains
+ *             only to support the legacy JSON-based workflow engine during
+ *             the migration period.
  */
 export async function apiRequest(
   options: ApiRequestOptions

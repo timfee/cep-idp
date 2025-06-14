@@ -6,8 +6,6 @@ import {
 
 const googleScopes = googleOAuthConfig.scopes;
 
-const microsoftScopes = microsoftOAuthConfig.scopes;
-
 const googleTokenUrl = googleOAuthConfig.tokenUrl;
 const microsoftTokenUrl = microsoftOAuthConfig.tokenUrl;
 
@@ -51,8 +49,11 @@ export async function getGoogleAccessToken() {
   }
 
   if (useWorkload && serviceAccount) {
-    const now = Math.floor(Date.now() / 1000);
-    const exp = now + 3600;
+    const SECONDS_IN_MILLISECOND = 1_000;
+    const ONE_HOUR_IN_SECONDS = 60 * 60;
+
+    const now = Math.floor(Date.now() / SECONDS_IN_MILLISECOND);
+    const exp = now + ONE_HOUR_IN_SECONDS;
     const auth = new GoogleAuth({
       scopes: "https://www.googleapis.com/auth/iam",
     });
@@ -72,7 +73,7 @@ export async function getGoogleAccessToken() {
       },
     });
 
-    const jwt = (signRes.data as any).signedJwt as string;
+    const jwt = signRes.data.signedJwt;
     try {
       const res = await fetch(tokenUrl, {
         method: "POST",
@@ -83,13 +84,20 @@ export async function getGoogleAccessToken() {
         }),
       });
 
-      const data = (await res.json()) as any;
+      interface TokenResponse {
+        access_token?: string;
+        [key: string]: unknown;
+      }
+
+      const data = (await res.json()) as TokenResponse;
       if (!res.ok) {
         console.warn(`Google token error: ${JSON.stringify(data)}`);
         return;
       }
 
-      process.env.GOOGLE_ACCESS_TOKEN = data.access_token;
+      if (data.access_token) {
+        process.env.GOOGLE_ACCESS_TOKEN = data.access_token;
+      }
     } catch (err) {
       console.warn("Google token request failed", err);
     }
@@ -126,13 +134,20 @@ export async function getMicrosoftAccessToken() {
       }),
     });
 
-    const data = (await res.json()) as any;
+    interface MsTokenResponse {
+      access_token?: string;
+      [key: string]: unknown;
+    }
+
+    const data = (await res.json()) as MsTokenResponse;
     if (!res.ok) {
       console.warn(`Microsoft token error: ${JSON.stringify(data)}`);
       return;
     }
 
-    process.env.MICROSOFT_ACCESS_TOKEN = data.access_token;
+    if (data.access_token) {
+      process.env.MICROSOFT_ACCESS_TOKEN = data.access_token;
+    }
   } catch (err) {
     console.warn("Microsoft token request failed", err);
   }

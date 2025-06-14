@@ -23,9 +23,10 @@ export const setupClaimsPolicy: StepDefinition = {
     });
 
     // Check existing policies
-    const policies = await listPolicies(ctx.api, { servicePrincipalId: ssoServicePrincipalId });
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
+    const policies = (await listPolicies(ctx.api, {
+      servicePrincipalId: ssoServicePrincipalId,
+    })) as { value?: { id?: string }[] };
+
     const existing = policies.value?.[0];
     if (existing) {
       const outputs = OutputSchema.parse({ claimsPolicyId: existing.id });
@@ -34,12 +35,11 @@ export const setupClaimsPolicy: StepDefinition = {
     }
 
     // Create minimal policy
-    const newPolicy = await createPolicy(ctx.api, {
+    const newPolicy = (await createPolicy(ctx.api, {
       body: { definition: [], displayName: "Google Claims", isOrganizationDefault: false },
-    });
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    // @ts-ignore
-    const policyId = newPolicy.id;
+    })) as { id?: string };
+
+    const policyId = newPolicy.id ?? "";
 
     await linkPolicy(ctx.api, {
       servicePrincipalId: ssoServicePrincipalId,

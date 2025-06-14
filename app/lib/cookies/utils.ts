@@ -63,11 +63,19 @@ export function estimateCookieSize(
  * @param options - Cookie options
  * @returns True if the cookie is within size limits
  */
+type CookieOptions = {
+  httpOnly?: boolean;
+  secure?: boolean;
+  sameSite?: "lax" | "strict" | "none";
+  path?: string;
+  maxAge?: number;
+  domain?: string;
+};
+
 export function validateCookieSize(
   name: string,
   value: string,
-  // eslint-disable-next-line no-magic-numbers
-  options: Parameters<typeof estimateCookieSize>[2]
+  options: CookieOptions
 ): boolean {
   const estimatedSize = estimateCookieSize(name, value, options);
   return estimatedSize <= MAX_COOKIE_SIZE;

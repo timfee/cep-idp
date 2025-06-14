@@ -1,17 +1,14 @@
 import { z } from "zod";
-
 import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
-const BodySchema = z.record(z.unknown());
-
-const ParamsSchema = z.object({
-  body: BodySchema,
-});
+type RequestBody = Record<string, unknown>;
 
 const ResponseSchema = z.unknown();
 
-export type PostSsoAssignmentParams = z.infer<typeof ParamsSchema>;
+export interface PostSsoAssignmentParams {
+  body: RequestBody;
+}
 export type PostSsoAssignmentResponse = z.infer<typeof ResponseSchema>;
 
 export async function postSsoAssignment(

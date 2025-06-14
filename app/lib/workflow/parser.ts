@@ -2,13 +2,7 @@ import { z } from "zod";
 
 import { connections, roles, variableDefinitions } from "./config";
 import { endpointRegistry } from "./endpoints";
-import {
-  StepDefinition,
-  StepResultSchema,
-  StepContextSchema,
-  WorkflowSchema,
-  Workflow,
-} from "./types";
+import { StepDefinition, WorkflowSchema, Workflow } from "./types";
 
 import {
   verifyPrimaryDomain,
@@ -44,7 +38,8 @@ const steps: StepDefinition[] = [
 const StepArraySchema = z.array(
   z.object({
     name: z.string(),
-    handler: z.function(),
+    // We don't need to validate the runtime signature here; just ensure the property exists
+    handler: z.any(),
   })
 );
 

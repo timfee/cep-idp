@@ -1,5 +1,6 @@
 import { getOU, postOU } from "@/app/lib/workflow/endpoints/admin";
-import { createLiveApiContext } from "../../setup/live-api-context";
+import { createLiveApiContext } from "../../../test-utils/live-api-context";
+import { sleep } from "../../../test-utils/sleep";
 
 describe("Org Units - Live API", () => {
   let apiContext: ReturnType<typeof createLiveApiContext>;
@@ -28,6 +29,9 @@ describe("Org Units - Live API", () => {
     expect(createResult.name).toBe(testOuName);
 
     // Verify it exists
+    // Give Google's distributed systems a moment to register the new OU
+    await sleep(2000);
+
     const getResult = await getOU(apiContext, {
       customerId: "my_customer",
       orgUnitPath: testOuPath,

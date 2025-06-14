@@ -3,11 +3,17 @@ import { z } from "zod";
 import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
-const BodySchema = z.record(z.unknown());
+const BodySchema = z
+  .record(z.unknown())
+  .describe("JSON payload to create an Admin role");
 
-const ParamsSchema = z.object({ customerId: z.string(), body: BodySchema });
+const ParamsSchema = z
+  .object({ customerId: z.string(), body: BodySchema })
+  .describe("Customer ID path parameter and request body");
 
-const ResponseSchema = z.unknown();
+const ResponseSchema = z
+  .unknown()
+  .describe("Google Admin create role operation response");
 
 export type PostRoleParams = z.infer<typeof ParamsSchema>;
 export type PostRoleResponse = z.infer<typeof ResponseSchema>;

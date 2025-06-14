@@ -3,9 +3,13 @@ import { z } from "zod";
 import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z.object({ customerId: z.string() });
+const ParamsSchema = z
+  .object({ customerId: z.string() })
+  .describe("Customer ID path parameter for privileges list");
 
-const ResponseSchema = z.unknown();
+const ResponseSchema = z
+  .unknown()
+  .describe("Google Admin list privileges API response");
 
 export type ListPrivilegesParams = z.infer<typeof ParamsSchema>;
 export type ListPrivilegesResponse = z.infer<typeof ResponseSchema>;

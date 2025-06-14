@@ -4,7 +4,9 @@ import { ApiContext, callEndpoint } from "../utils";
 
 type RequestBody = Record<string, unknown>;
 
-const ResponseSchema = z.unknown();
+const ResponseSchema = z
+  .unknown()
+  .describe("Cloud Identity Operation response for postSsoAssignment");
 
 export interface PostSsoAssignmentParams {
   body: RequestBody;
@@ -22,7 +24,10 @@ export async function postSsoAssignment(
     method: "POST",
     pathTemplate: API_PATHS.SSO_ASSIGNMENTS,
     params: {},
-    paramsSchema: z.object({}).strict(),
+    paramsSchema: z
+      .object({})
+      .strict()
+      .describe("No path parameters for post inbound SSO assignment"),
     responseSchema: ResponseSchema,
     body,
   });

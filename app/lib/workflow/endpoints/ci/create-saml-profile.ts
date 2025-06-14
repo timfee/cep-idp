@@ -2,9 +2,12 @@ import { z } from "zod";
 import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
+// Type returned by the UI when constructing the SAML profile payload.
 type RequestBody = Record<string, unknown>;
 
-const ResponseSchema = z.unknown();
+const ResponseSchema = z
+  .unknown()
+  .describe("Cloud Identity Operation response for createSamlProfile");
 
 export interface CreateSamlProfileParams {
   body: RequestBody;
@@ -22,7 +25,10 @@ export async function createSamlProfile(
     method: "POST",
     pathTemplate: API_PATHS.SAML_PROFILES,
     params: {},
-    paramsSchema: z.object({}).strict(),
+    paramsSchema: z
+      .object({})
+      .strict()
+      .describe("No path parameters for createSamlProfile"),
     responseSchema: ResponseSchema,
     body,
   });

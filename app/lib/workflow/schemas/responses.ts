@@ -153,7 +153,8 @@ export const SsoIdpConfigSchema = z
     entityId: z.string().optional(),
     singleSignOnServiceUri: z.string().optional(),
   })
-  .passthrough().describe("Inbound SAML IdP configuration block");
+  .passthrough()
+  .describe("Inbound SAML IdP configuration block");
 
 export const SsoSpConfigSchema = z
   .object({
@@ -163,7 +164,8 @@ export const SsoSpConfigSchema = z
     spEntityId: z.string().optional(),
     assertionConsumerServiceUri: z.string().optional(),
   })
-  .passthrough().describe("Inbound SAML SP configuration block");
+  .passthrough()
+  .describe("Inbound SAML SP configuration block");
 
 export const InboundSamlSsoProfileSchema = z
   .object({
@@ -173,13 +175,15 @@ export const InboundSamlSsoProfileSchema = z
     idpConfig: SsoIdpConfigSchema.optional(),
     spConfig: SsoSpConfigSchema.optional(),
   })
-  .passthrough().describe("Cloud Identity inbound SAML profile");
+  .passthrough()
+  .describe("Cloud Identity inbound SAML profile");
 
 export const ListSamlProfilesResponseSchema = z
   .object({
     inboundSamlSsoProfiles: z.array(InboundSamlSsoProfileSchema).optional(),
   })
-  .passthrough().describe("Response for list inbound SAML profiles");
+  .passthrough()
+  .describe("Response for list inbound SAML profiles");
 
 // Long-running operation wrapper used by createSamlProfile / postSsoAssignment
 export const OperationResponseSchema = z
@@ -191,7 +195,8 @@ export const OperationResponseSchema = z
       .object({ code: z.number(), message: z.string(), status: z.string() })
       .optional(),
   })
-  .passthrough().describe("Long-running operation wrapper used by CI APIs");
+  .passthrough()
+  .describe("Long-running operation wrapper used by CI APIs");
 
 export const InboundSsoAssignmentSchema = z
   .object({
@@ -204,13 +209,15 @@ export const InboundSsoAssignmentSchema = z
       .object({ inboundSamlSsoProfile: z.string().optional() })
       .optional(),
   })
-  .passthrough().describe("Cloud Identity inbound SSO assignment");
+  .passthrough()
+  .describe("Cloud Identity inbound SSO assignment");
 
 export const ListSsoAssignmentsResponseSchema = z
   .object({
     inboundSsoAssignments: z.array(InboundSsoAssignmentSchema).optional(),
   })
-  .passthrough().describe("Response for list inbound SSO assignments");
+  .passthrough()
+  .describe("Response for list inbound SSO assignments");
 
 /* -------------------------------------------------------------------------- */
 /* Microsoft Graph                                                               */
@@ -229,14 +236,16 @@ export const ApplicationListItemSchema = z
     applicationTemplateId: z.string().optional(),
     displayName: z.string().optional(),
   })
-  .passthrough().describe("Compact application record from Microsoft Graph");
+  .passthrough()
+  .describe("Compact application record from Microsoft Graph");
 
 export const ListApplicationsResponseSchema = z
   .object({
     value: z.array(ApplicationListItemSchema).optional(),
     "@odata.context": z.string().optional(),
   })
-  .passthrough().describe("Response for list applications Graph endpoint");
+  .passthrough()
+  .describe("Response for list applications Graph endpoint");
 
 /* instantiate{Prov,SSO} – returns an application/servicePrincipal pair */
 export const ApplicationSchema = z
@@ -245,7 +254,8 @@ export const ApplicationSchema = z
     appId: z.string(),
     displayName: z.string().optional(),
   })
-  .passthrough().describe("Full Microsoft Graph Application object subset");
+  .passthrough()
+  .describe("Full Microsoft Graph Application object subset");
 
 export const ServicePrincipalSchema = z
   .object({
@@ -253,7 +263,8 @@ export const ServicePrincipalSchema = z
     appId: z.string(),
     displayName: z.string().optional(),
   })
-  .passthrough().describe("Full Microsoft Graph ServicePrincipal subset");
+  .passthrough()
+  .describe("Full Microsoft Graph ServicePrincipal subset");
 
 export const InstantiateAppResponseSchema = z
   .object({
@@ -261,41 +272,49 @@ export const InstantiateAppResponseSchema = z
     servicePrincipal: ServicePrincipalSchema,
     "@odata.context": z.string().optional(),
   })
-  .passthrough().describe("Response from instantiateTemplate endpoint");
+  .passthrough()
+  .describe("Response from instantiateTemplate endpoint");
 
 /* list/patch/get Sync & SAML settings – minimal fields */
 export const GraphSyncResponseSchema = z
   .object({ jobs: z.array(z.unknown()).optional() })
-  .passthrough().describe("Response payload for /synchronization/syncJobs");
+  .passthrough()
+  .describe("Response payload for /synchronization/syncJobs");
 
 export const GraphNoContentResponseSchema = z
   .object({ status: z.number().int().optional() })
-  .passthrough().describe("Synthetic schema representing 204 responses");
+  .passthrough()
+  .describe("Synthetic schema representing 204 responses");
 
 /* Policies */
 export const ClaimsPolicySchema = z
   .object({ id: z.string(), displayName: z.string().optional() })
-  .passthrough().describe("ClaimsMappingPolicy subset");
+  .passthrough()
+  .describe("ClaimsMappingPolicy subset");
 
 export const ListPoliciesResponseSchema = z
   .object({
     value: z.array(ClaimsPolicySchema).optional(),
     "@odata.context": z.string().optional(),
   })
-  .passthrough().describe("Response for list claims mapping policies");
+  .passthrough()
+  .describe("Response for list claims mapping policies");
 
 export const CreatePolicyResponseSchema = ClaimsPolicySchema.extend({
   definition: z.array(z.string()).optional(),
   isOrganizationDefault: z.boolean().optional(),
   "@odata.context": z.string().optional(),
-}).passthrough().describe("Response after creating a claims mapping policy");
+})
+  .passthrough()
+  .describe("Response after creating a claims mapping policy");
 
 export const SamlSettingsResponseSchema = z
   .object({
     relayState: z.string().optional(),
     "@odata.context": z.string().optional(),
   })
-  .passthrough().describe("Service principal SAML settings response");
+  .passthrough()
+  .describe("Service principal SAML settings response");
 
 /* -------------------------------------------------------------------------- */
 /* Convenience re-exports for endpoints                                         */

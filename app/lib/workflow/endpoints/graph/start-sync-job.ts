@@ -3,12 +3,13 @@ import { z } from "zod";
 import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z.object({
-  servicePrincipalId: z.string(),
-  jobId: z.string(),
-});
+const ParamsSchema = z
+  .object({ servicePrincipalId: z.string(), jobId: z.string() })
+  .describe("Path parameters to start a Graph sync job");
 
-const ResponseSchema = z.unknown();
+const ResponseSchema = z
+  .unknown()
+  .describe("Graph /start synchronizationJob operation response");
 
 export type StartSyncJobParams = z.infer<typeof ParamsSchema>;
 export type StartSyncJobResponse = z.infer<typeof ResponseSchema>;

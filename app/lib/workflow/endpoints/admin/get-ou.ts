@@ -3,12 +3,13 @@ import { z } from "zod";
 import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z.object({
-  customerId: z.string(),
-  orgUnitPath: z.string(),
-});
+const ParamsSchema = z
+  .object({ customerId: z.string(), orgUnitPath: z.string() })
+  .describe("Path parameters identifying customer and orgUnitPath");
 
-const ResponseSchema = z.unknown();
+const ResponseSchema = z
+  .unknown()
+  .describe("Google Admin get orgUnit response");
 
 export type GetOUParams = z.infer<typeof ParamsSchema>;
 export type GetOUResponse = z.infer<typeof ResponseSchema>;

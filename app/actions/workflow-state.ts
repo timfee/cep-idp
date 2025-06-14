@@ -39,6 +39,9 @@ export async function setWorkflowVariable(
   onLog?: (entry: LogEntry) => void
 ): Promise<{ success: boolean; error?: string }> {
   try {
+    // Lazy-load the relatively heavy workflow engine only when this server
+    // action is executed so that the default Edge bundle remains small and the
+    // module graph stays free of circular dependencies.
     const { validateVariable } = await import("@/app/lib/workflow");
     const workflow = parseWorkflow();
 

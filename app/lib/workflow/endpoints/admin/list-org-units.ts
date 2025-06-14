@@ -3,13 +3,17 @@ import { z } from "zod";
 import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z.object({
-  customerId: z.string(),
-  orgUnitPath: z.string().optional(),
-  type: z.string().optional(),
-});
+const ParamsSchema = z
+  .object({
+    customerId: z.string(),
+    orgUnitPath: z.string().optional(),
+    type: z.string().optional(),
+  })
+  .describe("Customer ID plus optional filters for org units list");
 
-const ResponseSchema = z.unknown();
+const ResponseSchema = z
+  .unknown()
+  .describe("Google Admin list organizationUnits response");
 
 export type ListOrgUnitsParams = z.infer<typeof ParamsSchema>;
 export type ListOrgUnitsResponse = z.infer<typeof ResponseSchema>;

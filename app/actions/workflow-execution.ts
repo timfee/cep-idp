@@ -55,7 +55,6 @@ export async function runStepActions(
   extractedVariables: Record<string, string>;
   data?: unknown;
 }> {
-
   const extractedVars: Record<string, string> = {};
 
   // Lightweight API wrapper passed to step handlers

@@ -42,7 +42,12 @@ const eslintConfig = [
   },
   {
     files: ["**/__tests__/**", "test/**"],
-    rules: { "custom/no-console-log": "off", "no-magic-numbers": "off" },
+    rules: {
+      "custom/no-console-log": "off",
+      "no-magic-numbers": "off",
+      "@typescript-eslint/no-explicit-any": "off",
+      "sonarjs/no-nested-conditional": "off",
+    },
   },
   {
     rules: {
@@ -52,6 +57,7 @@ const eslintConfig = [
       ],
     },
   },
+  { files: ["jest.config.ts"], rules: { "sonarjs/slow-regex": "off" } },
 ];
 
 export default eslintConfig;

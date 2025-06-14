@@ -1,39 +1,46 @@
+import fs from "fs";
 import type { Config } from "jest";
 import nextJest from "next/jest.js";
+import { default as path } from "path";
+import { pathsToModuleNameMapper } from "ts-jest";
+import { fileURLToPath } from "url";
 
-import { createDefaultEsmPreset, pathsToModuleNameMapper } from "ts-jest";
-import { readFileSync } from "fs";
-
+/**
+ * Reads and parses the tsconfig.json file, removing any comments to prevent parsing errors.
+ */
 function readTsConfig() {
-  const text = readFileSync("./tsconfig.json", "utf8");
-  const cleaned = text
-    .replace(/\s*\/\/.*$/gm, "")
-    .replace(/,(?=\s*[}\]])/g, "");
-  return JSON.parse(cleaned);
+  // Get the directory name in an ES module-safe way.
+  const __dirname = path.dirname(fileURLToPath(import.meta.url));
+
+  const tsConfigPath = path.resolve(__dirname, "./tsconfig.json");
+  const tsConfigFile = fs.readFileSync(tsConfigPath, "utf8");
+
+  // Strip comments from the JSON file.
+  const cleanedJson = tsConfigFile.replace(
+    /\\"|"(?:\\"|[^"])*"|(\/\/.*|\/\*[\s\S]*?\*\/)/g,
+    (m, g) => (g ? "" : m)
+  );
+  const tsConfig = JSON.parse(cleanedJson);
+
+  return tsConfig;
 }
 
-const tsConfig = readTsConfig();
+const { compilerOptions } = readTsConfig();
 
 const createJestConfig = nextJest({ dir: "./" });
 
-/**
- * Custom Jest config to match our Next.js setup.
- * next/jest will handle ESM modules and TypeScript transforms automatically.
- */
 const customConfig: Config = {
   testEnvironment: "node",
-  moduleNameMapper: {
-    // stub Next.js server-only imports
-    "^server-only$": "<rootDir>/test-utils/serverOnlyStub.ts",
-    // map tsconfig paths (e.g. '@/...' → '<rootDir>/...')
-    ...pathsToModuleNameMapper(tsConfig.compilerOptions.paths ?? {}, {
-      prefix: "<rootDir>/",
-    }),
-  },
+  moduleNameMapper: pathsToModuleNameMapper(compilerOptions.paths, {
+    prefix: "<rootDir>/",
+  }),
   globalSetup: "<rootDir>/jest.globalSetup.ts",
   globalTeardown: "<rootDir>/jest.globalTeardown.ts",
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
-  extensionsToTreatAsEsm: [".ts", ".tsx", ".js", ".jsx"],
+  transform: {
+    "^.+\\.(ts|tsx)$": ["ts-jest", { tsconfig: "tsconfig.spec.json" }],
+  },
+  transformIgnorePatterns: ["node_modules/(?!(.pnpm/)?@t3-oss/env-nextjs)"],
 };
 
-export default createJestConfig(createDefaultEsmPreset(customConfig));
+export default createJestConfig(customConfig);

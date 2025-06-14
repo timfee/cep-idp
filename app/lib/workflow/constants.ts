@@ -244,17 +244,23 @@ export const API_PATHS = {
   // runtime substitution occurs because endpoint builders will explicitly
   // interpolate and validate each param.
   // Google Admin
-  DOMAINS: "/customer/{customerId}/domains",
-  DOMAIN_BY_NAME: "/customer/{customerId}/domains/{domainName}",
-  ORG_UNITS: "/customer/{customerId}/orgunits",
-  ORG_UNIT: "/customer/{customerId}/orgunits/{orgUnitPath}",
-  PRIVILEGES: "/customer/{customerId}/roles/ALL/privileges",
-  ROLES: "/customer/{customerId}/roles",
-  ROLE: "/customer/{customerId}/roles/{roleId}",
-  ROLE_ASSIGN: "/customer/{customerId}/roleassignments/{roleAssignmentId}",
-  ROLE_ASSIGNMENTS: "/customer/{customerId}/roleassignments",
-  USERS: "/customer/{customerId}/users",
-  USER: "/customer/{customerId}/users/{userId}",
+  // Google Admin SDK Directory API – include full base path segment so that
+  // URL() resolution against the host retains the directory scope. A leading
+  // slash would otherwise reset the entire path, stripping "/admin/directory/v1"
+  // from the final request.
+  DOMAINS: "/admin/directory/v1/customer/{customerId}/domains",
+  DOMAIN_BY_NAME:
+    "/admin/directory/v1/customer/{customerId}/domains/{domainName}",
+  ORG_UNITS: "/admin/directory/v1/customer/{customerId}/orgunits",
+  ORG_UNIT: "/admin/directory/v1/customer/{customerId}/orgunits/{orgUnitPath}",
+  PRIVILEGES: "/admin/directory/v1/customer/{customerId}/roles/ALL/privileges",
+  ROLES: "/admin/directory/v1/customer/{customerId}/roles",
+  ROLE: "/admin/directory/v1/customer/{customerId}/roles/{roleId}",
+  ROLE_ASSIGN:
+    "/admin/directory/v1/customer/{customerId}/roleassignments/{roleAssignmentId}",
+  ROLE_ASSIGNMENTS: "/admin/directory/v1/customer/{customerId}/roleassignments",
+  USERS: "/admin/directory/v1/customer/{customerId}/users",
+  USER: "/admin/directory/v1/customer/{customerId}/users/{userId}",
 
   // Google Cloud-Identity
   IDP_CERTS: "/inboundSamlSsoProfiles/{samlProfileId}:uploadCertificate",
@@ -296,8 +302,8 @@ export const API_PATHS = {
     "/inboundSamlSsoProfiles/{samlProfileId}/idpCredentials:add",
 
   // Additional Admin SDK
-  USERS_ROOT: "/users",
-  USER_BY_EMAIL: "/users/{userEmail}",
+  USERS_ROOT: "/admin/directory/v1/users",
+  USER_BY_EMAIL: "/admin/directory/v1/users/{userEmail}",
 
   // Public
   FED_METADATA: "/FederationMetadata/2007-06/FederationMetadata.xml",

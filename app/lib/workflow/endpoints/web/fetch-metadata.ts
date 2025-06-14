@@ -2,7 +2,9 @@ import { z } from "zod";
 
 import { ApiContext, callEndpoint } from "../utils";
 
-const ResponseSchema = z.string(); // XML response
+const ResponseSchema = z
+  .string()
+  .describe("Raw FederationMetadata.xml document returned by Azure AD");
 
 export interface FetchMetadataParams {
   tenantId: string;
@@ -25,7 +27,10 @@ export async function fetchMetadata(
     method: "GET",
     pathTemplate: path,
     params: {},
-    paramsSchema: z.object({}).strict(),
+    paramsSchema: z
+      .object({})
+      .strict()
+      .describe("No additional path parameters; URL constructed inline"),
     responseSchema: ResponseSchema,
   });
 }

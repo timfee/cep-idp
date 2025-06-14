@@ -1,5 +1,5 @@
 import { listPrivileges } from "@/app/lib/workflow/endpoints/admin";
-import { createLiveApiContext } from "../../setup/live-api-context";
+import { createLiveApiContext } from "../../../test-utils/live-api-context";
 
 describe("Privileges - Live API", () => {
   let apiContext: ReturnType<typeof createLiveApiContext>;

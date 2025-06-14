@@ -3,9 +3,13 @@ import { z } from "zod";
 import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z.object({ ssoTemplateId: z.string() });
+const ParamsSchema = z
+  .object({ ssoTemplateId: z.string() })
+  .describe("Path parameter for SSO applicationTemplateId");
 
-const ResponseSchema = z.unknown();
+const ResponseSchema = z
+  .unknown()
+  .describe("Response from instantiate application SSO template endpoint");
 
 export type InstantiateSSOParams = z.infer<typeof ParamsSchema>;
 export type InstantiateSSOResponse = z.infer<typeof ResponseSchema>;

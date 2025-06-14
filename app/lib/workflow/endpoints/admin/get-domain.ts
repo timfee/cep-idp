@@ -5,13 +5,14 @@ import { ApiContext, callEndpoint } from "../utils";
 
 // Schema definitions
 
-const ParamsSchema = z.object({
-  customerId: z.string(),
-  domainName: z.string(),
-});
+const ParamsSchema = z
+  .object({ customerId: z.string(), domainName: z.string() })
+  .describe("Path parameters identifying customer and domain name");
 
 // The Admin SDK returns a complex object we don't fully model yet. Accept any.
-const ResponseSchema = z.unknown();
+const ResponseSchema = z
+  .unknown()
+  .describe("Google Admin Directory domain get API response");
 
 export type GetDomainParams = z.infer<typeof ParamsSchema>;
 export type GetDomainResponse = z.infer<typeof ResponseSchema>;

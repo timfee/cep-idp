@@ -12,13 +12,13 @@ requirements.
 
 ## 1. What’s Inside?
 
-| Path                                        | Purpose                                                     |
-| ------------------------------------------- | ----------------------------------------------------------- |
-| `app/`                                      | Next.js 14 app-router code (RSC + Server Actions).          |
-| `app/lib/workflow/`                         | Modular workflow engine – see                               |
-| `app/lib/auth/`                             | OAuth 2.0 helpers, token encryption, cookie chunking.       |
-| `app/lib/cookies/`                          | Generic chunked-cookie utilities shared by auth & workflow. |
-| `__tests__/`                                | Jest integration + fixture data for both providers.         |
+| Path                | Purpose                                                     |
+| ------------------- | ----------------------------------------------------------- |
+| `app/`              | Next.js 14 app-router code (RSC + Server Actions).          |
+| `app/lib/workflow/` | Modular workflow engine – see                               |
+| `app/lib/auth/`     | OAuth 2.0 helpers, token encryption, cookie chunking.       |
+| `app/lib/cookies/`  | Generic chunked-cookie utilities shared by auth & workflow. |
+| `__tests__/`        | Jest integration + fixture data for both providers.         |
 
 ---
 

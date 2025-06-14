@@ -3,14 +3,17 @@ import { z } from "zod";
 import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
-const BodySchema = z.record(z.unknown());
+const BodySchema = z
+  .record(z.unknown())
+  .describe("Graph body to link claimsMappingPolicy to servicePrincipal");
 
-const ParamsSchema = z.object({
-  servicePrincipalId: z.string(),
-  body: BodySchema,
-});
+const ParamsSchema = z
+  .object({ servicePrincipalId: z.string(), body: BodySchema })
+  .describe("Path parameter for servicePrincipal plus request body");
 
-const ResponseSchema = z.unknown();
+const ResponseSchema = z
+  .unknown()
+  .describe("Microsoft Graph response for policy link operation");
 
 export type LinkPolicyParams = z.infer<typeof ParamsSchema>;
 export type LinkPolicyResponse = z.infer<typeof ResponseSchema>;

@@ -3,8 +3,12 @@ import { z } from "zod";
 import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z.object({});
-const ResponseSchema = z.unknown();
+const ParamsSchema = z
+  .object({})
+  .describe("No parameters required for list application templates");
+const ResponseSchema = z
+  .unknown()
+  .describe("Microsoft Graph list application templates API response");
 
 export type ListAppTemplatesParams = z.infer<typeof ParamsSchema>;
 export type ListAppTemplatesResponse = z.infer<typeof ResponseSchema>;

@@ -3,7 +3,8 @@ import {
   postUser,
   updateUser,
 } from "@/app/lib/workflow/endpoints/admin";
-import { createLiveApiContext } from "../../setup/live-api-context";
+import { createLiveApiContext } from "../../../test-utils/live-api-context";
+import { sleep } from "../../../test-utils/sleep";
 
 describe("Users - Live API", () => {
   let apiContext: ReturnType<typeof createLiveApiContext>;
@@ -21,6 +22,8 @@ describe("Users - Live API", () => {
     });
 
     // Get primary domain first
+    // Lazy import to keep the initial Jest environment lean and to sidestep
+    // any circular references between endpoint helpers during test startup.
     const { listDomains } = await import("@/app/lib/workflow/endpoints/admin");
     const domains = await listDomains(apiContext, {
       customerId: "my_customer",
@@ -44,6 +47,9 @@ describe("Users - Live API", () => {
 
     expect(createResult.primaryEmail).toBe(testEmail);
     expect(createResult.id).toBeDefined();
+
+    // Small delay to allow eventual consistency in Google's backend
+    await sleep(2000);
 
     // Get user
     const getResult = await getUser(apiContext, { userEmail: testEmail });

@@ -4,7 +4,7 @@ import {
   postRoleAssign,
   postUser,
 } from "@/app/lib/workflow/endpoints/admin";
-import { createLiveApiContext } from "../../setup/live-api-context";
+import { createLiveApiContext } from "../../../test-utils/live-api-context";
 
 describe("Role Assignments - Live API", () => {
   let apiContext: ReturnType<typeof createLiveApiContext>;
@@ -24,6 +24,9 @@ describe("Role Assignments - Live API", () => {
     });
 
     // create a user
+    // Defers the import until inside the live-API test so the production
+    // bundle is not affected and avoids any potential circular-dependency at
+    // module-initialisation time.
     const { listDomains } = await import("@/app/lib/workflow/endpoints/admin");
     const domains = await listDomains(apiContext, {
       customerId: "my_customer",
@@ -70,7 +73,12 @@ describe("Role Assignments - Live API", () => {
   it("should create and retrieve a role assignment", async () => {
     const assignRes = await postRoleAssign(apiContext, {
       customerId: "my_customer",
-      body: { roleId, assignedTo: userId, assigneeType: "user" },
+      body: {
+        roleId,
+        assignedTo: userId,
+        assigneeType: "user",
+        scopeType: "CUSTOMER",
+      },
     });
 
     assignmentId = assignRes.roleAssignmentId;
@@ -93,13 +101,23 @@ describe("Role Assignments - Live API", () => {
   it("should prevent duplicate assignments", async () => {
     await postRoleAssign(apiContext, {
       customerId: "my_customer",
-      body: { roleId, assignedTo: userId, assigneeType: "user" },
+      body: {
+        roleId,
+        assignedTo: userId,
+        assigneeType: "user",
+        scopeType: "CUSTOMER",
+      },
     });
 
     await expect(
       postRoleAssign(apiContext, {
         customerId: "my_customer",
-        body: { roleId, assignedTo: userId, assigneeType: "user" },
+        body: {
+          roleId,
+          assignedTo: userId,
+          assigneeType: "user",
+          scopeType: "CUSTOMER",
+        },
       })
     ).rejects.toThrow();
   });
@@ -108,7 +126,12 @@ describe("Role Assignments - Live API", () => {
     await expect(
       postRoleAssign(apiContext, {
         customerId: "my_customer",
-        body: { roleId: "123", assignedTo: userId, assigneeType: "user" },
+        body: {
+          roleId: "123",
+          assignedTo: userId,
+          assigneeType: "user",
+          scopeType: "CUSTOMER",
+        },
       })
     ).rejects.toThrow();
   });

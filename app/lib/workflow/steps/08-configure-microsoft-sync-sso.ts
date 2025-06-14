@@ -7,6 +7,7 @@ import {
   getSamlSettings,
   patchSamlSettings,
 } from "../endpoints/graph";
+import { handleStepError } from "./utils";
 
 const InputSchema = z.object({
   provisioningServicePrincipalId: z.string(),
@@ -49,12 +50,7 @@ export const configureMicrosoftSyncSSO: StepDefinition = {
 
       return StepResultSchema.parse({ success: true, mode: "executed" });
     } catch (err: unknown) {
-      ctx.log("error", "Failed to configure sync/SSO", err);
-      return StepResultSchema.parse({
-        success: false,
-        mode: "skipped",
-        error: err instanceof Error ? err.message : String(err),
-      });
+      return handleStepError(err, this.name, ctx);
     }
   },
 };

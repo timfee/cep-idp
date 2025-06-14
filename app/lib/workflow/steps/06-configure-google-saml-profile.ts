@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { StepDefinition, StepResultSchema } from "../types";
 import { listSamlProfiles, createSamlProfile, getIdpCreds } from "../endpoints/ci";
+import { handleStepError } from "./utils";
 
 const OutputSchema = z.object({
   samlProfileId: z.string(),
@@ -55,12 +56,7 @@ export const configureGoogleSamlProfile: StepDefinition = {
 
       return StepResultSchema.parse({ success: true, mode: "executed", outputs });
     } catch (err: unknown) {
-      ctx.log("error", "Failed to configure SAML profile", err);
-      return StepResultSchema.parse({
-        success: false,
-        mode: "skipped",
-        error: err instanceof Error ? err.message : String(err),
-      });
+      return handleStepError(err, this.name, ctx);
     }
   },
 };

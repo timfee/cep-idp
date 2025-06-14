@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { StepDefinition, StepResultSchema } from "../types";
 import { listRoles, postRole, listPrivileges } from "../endpoints/admin";
+import { handleStepError } from "./utils";
 
 const InputSchema = z.object({
   customerId: z.string(),
@@ -83,12 +84,7 @@ export const createCustomAdminRole: StepDefinition = {
 
       return StepResultSchema.parse({ success: true, mode: "executed", outputs });
     } catch (err: unknown) {
-      ctx.log("error", "Failed to create custom role", err);
-      return StepResultSchema.parse({
-        success: false,
-        mode: "skipped",
-        error: err instanceof Error ? err.message : String(err),
-      });
+      return handleStepError(err, this.name, ctx);
     }
   },
 };

@@ -31,7 +31,7 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
     default: "my_customer",
   },
   domainName: {
-    validator: VALIDATION_PATTERNS.DOMAIN,
+    validator: "domain",
     comment: "Domain to be verified / provisioned within Google Admin",
   },
   primaryDomain: {

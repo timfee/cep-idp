@@ -2,7 +2,7 @@ import { z } from "zod";
 
 import { StepDefinition, StepResultSchema } from "../types";
 import { listDomains, postDomain } from "../endpoints/admin";
-import { ERROR_MESSAGES } from "../constants";
+import { handleStepError } from "./utils";
 
 const InputSchema = z.object({
   customerId: z.string(),
@@ -60,13 +60,7 @@ export const verifyPrimaryDomain: StepDefinition = {
         outputs: { primaryDomain },
       });
     } catch (err: unknown) {
-      const message = err instanceof Error ? err.message : String(err);
-      ctx.log("error", ERROR_MESSAGES.RESOURCE_NOT_FOUND(this.name), err);
-      return StepResultSchema.parse({
-        success: false,
-        mode: "skipped",
-        error: message,
-      });
+      return handleStepError(err, this.name, ctx);
     }
   },
 };

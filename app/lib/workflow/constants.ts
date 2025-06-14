@@ -192,11 +192,6 @@ export const HTTP_METHODS = {
 
 export type HttpMethod = (typeof HTTP_METHODS)[keyof typeof HTTP_METHODS];
 
-export const HTTP_METHODS_WITH_BODY = [
-  HTTP_METHODS.POST,
-  HTTP_METHODS.PATCH,
-  HTTP_METHODS.PUT,
-] as const;
 
 export const ROLE_PREFIXES = {
   GOOGLE_DIR: "dir",
@@ -204,32 +199,10 @@ export const ROLE_PREFIXES = {
   MICROSOFT: "graph",
 } as const;
 
-export const CONNECTION_IDENTIFIERS = {
-  GOOGLE: "google",
-  GOOGLE_CI: "CI",
-  MICROSOFT: "graph",
-} as const;
 
-export const LOG_LEVELS = {
-  INFO: "info",
-  WARN: "warn",
-  ERROR: "error",
-} as const;
-export type LogLevel = (typeof LOG_LEVELS)[keyof typeof LOG_LEVELS];
 
 /** Common time constants used throughout the workflow. */
 /** Keys used when encoding metadata for chunked cookies. */
-export const COOKIE_METADATA_KEYS = {
-  CHUNKED: "chunked",
-  COUNT: "count",
-  TIMESTAMP: "timestamp",
-} as const;
-
-export const CHECKER_TYPES = {
-  EXISTS: "exists",
-  FIELD_TRUTHY: "fieldTruthy",
-  EQ: "eq",
-} as const;
 
 export const OAUTH_GRANT_TYPES = {
   AUTHORIZATION_CODE: "authorization_code",

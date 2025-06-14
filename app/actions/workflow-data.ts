@@ -353,37 +353,24 @@ export async function getAuthStatus(): Promise<AuthState> {
  *
  * @returns Map of variable names to current value and definition
  */
+// Reusable structure for variable metadata used below
+type WorkflowVariableInfo = {
+  value?: string;
+  definition: {
+    default?: string;
+    generator?: string;
+    validator?: string | RegExp;
+    comment?: string;
+  };
+  isRequired: boolean;
+};
+
 export async function getWorkflowVariables(): Promise<{
-  variables: Record<
-    string,
-    {
-      value?: string;
-      // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
-      definition: {
-        default?: string;
-        generator?: string;
-        validator?: string | RegExp | string;
-        comment?: string;
-      };
-      isRequired: boolean;
-    }
-  >;
+  variables: Record<string, WorkflowVariableInfo>;
 }> {
   const { workflow, variables } = await getWorkflowData();
 
-  const result: Record<
-    string,
-    {
-      value?: string;
-      definition: {
-        default?: string;
-        generator?: string;
-        validator?: string | RegExp | string;
-        comment?: string;
-      };
-      isRequired: boolean;
-    }
-  > = {};
+  const result: Record<string, WorkflowVariableInfo> = {};
 
   // Determine required variables – based on step.inputs declarations
   const requiredVars = new Set<string>();

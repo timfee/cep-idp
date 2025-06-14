@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { StepDefinition, StepResultSchema } from "../types";
 import { listOUAutomation, postOU } from "../endpoints/admin";
+import { handleStepError } from "./utils";
 
 const InputSchema = z.object({
   customerId: z.string(),
@@ -38,12 +39,7 @@ export const createAutomationOU: StepDefinition = {
       });
       return StepResultSchema.parse({ success: true, mode: "executed" });
     } catch (err: unknown) {
-      ctx.log("error", "Failed to create OU", err);
-      return StepResultSchema.parse({
-        success: false,
-        mode: "skipped",
-        error: err instanceof Error ? err.message : String(err),
-      });
+      return handleStepError(err, this.name, ctx);
     }
   },
 };

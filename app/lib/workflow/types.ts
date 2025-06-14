@@ -26,9 +26,6 @@ export type Token = z.infer<typeof TokenSchema>;
 //  Runtime execution status & logging
 // ---------------------------------------------------------------------------
 
-export type StepStatusValue =
-  (typeof STATUS_VALUES)[keyof typeof STATUS_VALUES];
-
 export interface LogEntry {
   timestamp: number;
   level: "info" | "warn" | "error";
@@ -37,7 +34,7 @@ export interface LogEntry {
 }
 
 export interface StepStatus {
-  status: StepStatusValue;
+  status: (typeof STATUS_VALUES)[keyof typeof STATUS_VALUES];
   error?: string;
   result?: unknown;
   logs: LogEntry[];
@@ -46,14 +43,7 @@ export interface StepStatus {
   variables?: Record<string, string>;
 }
 
-export interface OAuthConfig {
-  clientId: string;
-  clientSecret: string;
-  redirectUri: string;
-  authorizationUrl: string;
-  tokenUrl: string;
-  scopes: string[];
-}
+
 
 // ---------------------------------------------------------------------------
 //  Step handler interfaces (refactor v2)
@@ -77,7 +67,7 @@ export interface StepContext {
   setVars: (updates: Record<string, string>) => void;
 
   /** Structured logging */
-  log: (level: "info" | "warn" | "error", message: string, data?: unknown) => void;
+  log: (level: string, message: string, data?: unknown) => void;
 }
 
 export interface StepResult {
@@ -114,13 +104,6 @@ export interface StepDefinition {
 }
 
 // Zod wrappers for runtime validation (used by workflow parser)
-export const StepContextSchema = z.object({
-  vars: z.record(z.string()),
-  api: z.object({ request: z.function() }),
-  setVars: z.function(),
-  log: z.function(),
-});
-
 export const StepResultSchema = z.object({
   success: z.boolean(),
   mode: z.enum(["verified", "executed", "skipped", "already-exists"]),

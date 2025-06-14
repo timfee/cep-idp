@@ -60,8 +60,8 @@ export async function runStepActions(
       Object.assign(extractedVars, updates);
       Object.assign(variables, updates);
     },
-    log: (level, message, data) => {
-      onLog({ timestamp: Date.now(), level, message, data });
+    log: (level: string, message, data) => {
+      onLog({ timestamp: Date.now(), level: level as LogEntry["level"], message, data });
     },
   };
 

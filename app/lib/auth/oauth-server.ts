@@ -1,5 +1,15 @@
 import { env } from "../../env";
-import { OAuthConfig, Provider, Token } from "../workflow";
+import { Provider, Token } from "../workflow";
+
+// Local-only – defines the shape of provider configuration.  Not re-exported.
+interface OAuthConfig {
+  clientId: string;
+  clientSecret: string;
+  redirectUri: string;
+  authorizationUrl: string;
+  tokenUrl: string;
+  scopes: string[];
+}
 import {
   MS_IN_SECOND,
   OAUTH_GRANT_TYPES,

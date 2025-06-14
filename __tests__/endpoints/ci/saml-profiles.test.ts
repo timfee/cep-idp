@@ -1,5 +1,5 @@
 import { listSamlProfiles, createSamlProfile, getIdpCreds } from '@/app/lib/workflow/endpoints/ci';
-import { createLiveApiContext } from '../../setup/live-api-context';
+import { createLiveApiContext } from '../../../test-utils/live-api-context';
 
 describe('SAML Profiles - Live API', () => {
   let apiContext: ReturnType<typeof createLiveApiContext>;

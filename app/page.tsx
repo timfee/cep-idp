@@ -28,7 +28,9 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
               && (step.role.startsWith(ROLE_PREFIXES.GOOGLE_DIR)
                 || step.role.startsWith(ROLE_PREFIXES.GOOGLE_CI))
           )
-          .flatMap((step) => workflow.roles[step.role!] || [])
+          .flatMap((step) =>
+            (workflow.roles as Record<string, string[]>)[step.role!] || []
+          )
       )
     );
 
@@ -38,7 +40,9 @@ export default async function WorkflowPage({ searchParams }: PageProps) {
           .filter(
             (step) => step.role && step.role.startsWith(ROLE_PREFIXES.MICROSOFT)
           )
-          .flatMap((step) => workflow.roles[step.role!] || [])
+          .flatMap((step) =>
+            (workflow.roles as Record<string, string[]>)[step.role!] || []
+          )
       )
     );
 

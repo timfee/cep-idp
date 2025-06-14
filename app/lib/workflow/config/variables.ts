@@ -14,7 +14,7 @@ import {
 export const VariableDefinitionSchema = z.object({
   validator: z.instanceof(RegExp).optional(),
   default: z.string().optional(),
-  generator: z.function().optional(),
+  generator: z.string().optional(),
   comment: z.string().optional(),
 });
 

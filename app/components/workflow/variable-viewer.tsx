@@ -22,7 +22,7 @@ interface VariableViewerProps {
     string,
     {
       default?: string;
-      generator?: string | ((...args: unknown[]) => unknown);
+      generator?: string;
       validator?: string | RegExp;
     }
   >;
@@ -85,7 +85,7 @@ export function VariableViewer({
 
   const getVariableDescription = (def?: {
     default?: string;
-    generator?: string | ((...args: unknown[]) => unknown);
+    generator?: string;
   }): string => {
     if (def?.generator) return "Will be generated";
     if (def?.default) return `Default: ${def.default}`;

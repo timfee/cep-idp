@@ -38,7 +38,7 @@ export function WorkflowSteps({
   // Helper to get required scopes for a step
   const getRequiredScopes = (step: StepDefinition) => {
     if (!step.role) return [];
-    return workflow.roles[step.role] || [];
+    return (workflow.roles as Record<string, string[]>)[step.role] || [];
   };
 
   // Helper to check if auth is valid for a step

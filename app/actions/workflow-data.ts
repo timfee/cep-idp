@@ -145,11 +145,11 @@ async function reconstituteStepStatuses(
   const pendingStatus: StepStatus = { status: STATUS_VALUES.PENDING, logs: [] };
 
   const areDependenciesMet = (
-    step: Step,
+    step: StepDefinition,
     manualCompleted: string[]
   ): boolean => {
     if (!step.depends_on) return true;
-    return step.depends_on.every((dep) => {
+    return step.depends_on?.every((dep: string) => {
       const depStep = workflow.steps.find((s) => s.name === dep);
       const local = stepStatuses.get(dep);
 
@@ -168,7 +168,7 @@ async function reconstituteStepStatuses(
     if (!step.role) return true;
     const requiredScopes =
       hasOwnProperty(workflow.roles, step.role) ?
-        workflow.roles[step.role]
+        (workflow.roles as Record<string, string[]>)[step.role]
       : [];
     const isGoogleStep =
       step.role.startsWith(ROLE_PREFIXES.GOOGLE_DIR)
@@ -361,8 +361,9 @@ export async function getWorkflowVariables(): Promise<{
       // eslint-disable-next-line @typescript-eslint/consistent-type-definitions
       definition: {
         default?: string;
-        generator?: string | ((...args: unknown[]) => unknown);
+        generator?: string;
         validator?: string | RegExp | string;
+        comment?: string;
       };
       isRequired: boolean;
     }
@@ -376,8 +377,9 @@ export async function getWorkflowVariables(): Promise<{
       value?: string;
       definition: {
         default?: string;
-        generator?: string | ((...args: unknown[]) => unknown);
+        generator?: string;
         validator?: string | RegExp | string;
+        comment?: string;
       };
       isRequired: boolean;
     }

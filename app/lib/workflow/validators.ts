@@ -30,8 +30,17 @@ const VALIDATOR_FUNCTIONS: Record<string, ValidatorFunction> = {
  * @param validator - Name of validator pattern
  * @returns True when the value satisfies the validator
  */
-export function validateVariable(value: string, validator?: string): boolean {
+export function validateVariable(
+  value: string,
+  validator?: string | RegExp
+): boolean {
   if (!validator) return true;
+
+  // Direct RegExp validation when a pattern is supplied inline
+  if (validator instanceof RegExp) {
+    return validator.test(value);
+  }
+
   const fn = VALIDATOR_FUNCTIONS[validator];
   if (!fn) {
     console.error("Unknown validator pattern:", validator);

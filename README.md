@@ -1,97 +1,130 @@
-# CEP Identity Federation Automater
+# CEP Identity Federation Automater (Next.js / RSC)
 
-## 1. Introduction & Vision
+> Provision Google Workspace resources and configure SSO to Microsoft Entra ID
+> in **minutes**, not days.
 
-### 1.1. Problem Statement
+The project combines a type-safe **workflow engine**, a friendly React Server
+Component UI, and helper APIs for Google & Microsoft.  Administrators can run
+the guided flow end-to-end with *zero* CLI tooling and minimal privilege
+requirements.
 
-Large enterprises adopting Chrome Enterprise Premium (CEP) often use an established, non-Google Identity Provider (IdP) such as Microsoft Entra ID. To unlock the full value of CEP—specifically advanced security features like context-aware access, threat detection, and detailed reporting—Google must be aware of the user identities within the organization. The process of synchronizing these identities and configuring single sign-on (SSO) federation is a significant manual effort, requiring deep expertise across both Google and Microsoft cloud ecosystems and creating a barrier to CEP adoption.
+---
 
-### 1.2. Vision & Goal
+## 1. What’s Inside?
 
-This product is a guided, semi-automated onboarding tool designed to dramatically simplify the identity setup for Chrome Enterprise Premium. The goal is to provide a minimally intrusive workflow that enables administrators to synchronize user identities from Microsoft Entra ID to Google Workspace and establish SSO federation. By automating this complex process, we can accelerate CEP adoption, reduce configuration errors, and allow customers to realize the value of their investment faster.
+| Path | Purpose |
+|------|---------|
+| `app/` | Next.js 14 app-router code (RSC + Server Actions). |
+| `app/lib/workflow/` | Modular workflow engine – see
+  [`WORKFLOW_README.md`](WORKFLOW_README.md). |
+| `app/lib/auth/` | OAuth 2.0 helpers, token encryption, cookie chunking. |
+| `app/lib/cookies/` | Generic chunked-cookie utilities shared by auth & workflow. |
+| `__tests__/` | Jest integration + fixture data for both providers. |
 
-## 2. User Personas & Target Audience
+---
 
-### Primary Persona: The "CEP Champion"
+## 2. Getting Started
 
-An administrator at a large enterprise (e.g., Chrome Admin, Security Admin, IT Project Manager) who is tasked with the successful implementation of Chrome Enterprise Premium. Their organization is strategically committed to using Microsoft Entra ID as its primary IdP.
+```bash
+# 1. Install deps
+pnpm install
 
-#### Goals
+# 2. Provide credentials
+cp .env.local.example .env.local  # fill in Google + Microsoft secrets
 
-- To get user identities provisioned into their Google tenant to enable advanced CEP features.
-
-- To configure SSO so that employees have a seamless, familiar login experience via their existing Microsoft credentials.
-
-- To complete the identity setup with minimal disruption to end-users and existing infrastructure.
-
-#### Challenges & Environment
-
-- The CEP Champion is an expert in their domain (e.g., Chrome) but may not be a Super Admin in both Google Workspace and Microsoft Entra ID.
-
-- They may need to coordinate with other teams or administrators who hold the required privileges (e.g., a dedicated Microsoft Global Administrator or a Google Workspace User Admin).
-
-- Their success depends on their ability to either execute the necessary steps themselves or clearly articulate the required actions to other administrators.
-
-## 3. Core Features & User Flow
-
-The application guides the CEP Champion through the federation setup, gracefully handling the complexities of a multi-admin environment. It is implemented as a
-Next.js application with a workflow engine defined in `workflow.json`.
-
-### 3.1. User Flow
-
-1. **Onboarding & Authentication:** The CEP Champion lands on the workflow page. They are prompted to authenticate with both their Google and Microsoft accounts. The system will use the permissions they have been granted.
-2. **Step-by-Step Execution:** The interface presents the series of steps.
-   - Nice to have: Steps that cannot be completed with the Champion's current permissions are disabled with a short message explaining why. For example: _"This action requires the 'Role Management Administrator' privilege in Google Workspace. Please run this step with a user who has this privilege, or delegate this task to the appropriate administrator."_
-3. **Stateful Progression:** The application's state (completed steps, extracted variables like domain names and IDs) is maintained using client-side state management. Because the status of each step can be ascertained by READ API calls, it’s not critical to persist the entirety of the workflow in any sophisticated way.
-4. **Completion:** The workflow is complete once all technical steps are marked “completed.”
-
-## 4. Getting Started
-
-1. Install dependencies with `pnpm install`.
-2. Create a `.env.local` file with credentials for both providers:
-
-   ```env
-   AUTH_SECRET=<random string>
-   GOOGLE_CLIENT_ID=<OAuth client id>
-   GOOGLE_CLIENT_SECRET=<OAuth client secret>
-   MICROSOFT_CLIENT_ID=<Azure app id>
-   MICROSOFT_CLIENT_SECRET=<Azure client secret>
-   ```
-
-3. Start the development server with `pnpm dev`.
-
-## 5. Obtaining Test Tokens
-
-Jest automatically fetches fresh tokens when tests run. Before executing `pnpm test`, set the following environment variables:
-
-```env
-GOOGLE_SERVICE_ACCOUNT_KEY=<Google service account JSON>
-GOOGLE_ADMIN_EMAIL=<admin email to impersonate>
-# or to use Workload Identity
-# GOOGLE_WORKLOAD_IDENTITY=1
-# GOOGLE_SERVICE_ACCOUNT_EMAIL=<service account email>
-MS_TENANT_ID=<Azure tenant id>
-MS_CLIENT_ID=<Azure application id>
-MS_CLIENT_SECRET=<Azure client secret>
+# 3. Run in dev mode
+pnpm dev
 ```
 
-Tokens will be available as `process.env.GOOGLE_ACCESS_TOKEN` and `process.env.MICROSOFT_ACCESS_TOKEN` during tests.
-Scopes and endpoints are taken from the OAuth configuration in `app/lib/auth/oauth-server.ts` to stay consistent with the application.
+Open http://localhost:3000 and follow the on-screen prompts.
 
-## 6. Test Environment Cleanup
+---
 
-The Jest environment tears down any test artifacts once the suite finishes. If you create temporary users, organizational units, or SSO applications, provide their identifiers so cleanup can run automatically:
+## 3. Architecture Highlights
+
+### 3.1 Modular Workflow
+
+* **Typed building blocks** – Endpoint builders, Zod-validated connections, and
+  per-step files eliminate the brittle monolithic JSON.
+* **Live progress** – Each step declares `verify` actions so the app can detect
+  pre-existing resources and mark them complete automatically.
+* **Variables Store** – Engine-populated key/value cache (persisted in
+  chunked cookies) keeps UI and server logic in sync.
+
+### 3.2 Shared Constants
+
+`app/lib/workflow/constants.ts` centralises time units, base URLs, template
+IDs, etc.  No more string drift across files.
+
+### 3.3 Chunked Cookies
+
+Tokens often exceed the 4-KB cookie limit.  The utilities in
+`app/lib/cookies/` transparently split / reassemble values so **no** call site
+needs to worry about size.
+
+### 3.4 React Server Components
+
+The UI fetches data directly inside components via `server-only` imports – no
+REST proxy endpoints or client bundles are required, yet hydration remains
+minimal thanks to Server Actions.
+
+---
+
+## 4. Scripts
+
+| Command | Description |
+|---------|-------------|
+| `pnpm dev` | Start Next.js in development mode. |
+| `pnpm lint` | Run ESLint & prettier.  Must be clean before pushing. |
+| `pnpm test` | Execute Jest with automatic token acquisition (see below). |
+| `pnpm typecheck` | Execute TypeScript compiler with `--noEmit`. |
+
+---
+
+## 5. Testing with Real APIs
+
+The Jest setup acquires fresh OAuth tokens at runtime using the supplied
+service account and Azure App credentials – **no hard-coded secrets** in the
+repo.  Populate the following environment variables before running the suite:
 
 ```env
 # Google
-GOOGLE_TEST_USER=<user email>
-GOOGLE_TEST_OU=<org unit path>
-GOOGLE_SSO_PROFILE_ID=<saml profile id>
-GOOGLE_SSO_ASSIGNMENT_ID=<assignment id>
+GOOGLE_SERVICE_ACCOUNT_KEY=<json key> # or use Workload Identity
+GOOGLE_ADMIN_EMAIL=<super-admin email>
 
 # Microsoft
-MS_TEST_APP_ID=<application id>
-MS_TEST_SP_ID=<service principal id>
+MS_TENANT_ID=<tenant guid>
+MS_CLIENT_ID=<app id>
+MS_CLIENT_SECRET=<secret>
 ```
 
-During global teardown, these resources are deleted using the access tokens obtained at setup.
+Artifacts created by the tests (users, SAML profiles, etc.) are torn down in
+`jest.globalTeardown.ts`.  Provide their identifiers (see template in the file)
+when adding new scenarios.
+
+---
+
+## 6. Contributing
+
+1. Create a feature branch off `main`.
+2. Add or update tests in `__tests__/`.
+3. Ensure `pnpm lint` & `pnpm test` pass.
+4. Open a PR; the CI pipeline mirrors the local scripts and will block on
+   failures.
+
+---
+
+## 7. FAQ
+
+**Q:** Can I still define the workflow in JSON?  
+**A:** Yes.  Add a `.json` file under `app/lib/workflow/legacy/` and import it
+with `parseLegacyWorkflow()` – but the team strongly recommends the modular
+approach for new work.
+
+**Q:** Where should I put a new constant?  
+**A:** If it’s cross-cutting, add it to `constants.ts`.  Otherwise keep it local
+to the module that needs it and export only when reuse is proven.
+
+---
+
+Happy automating 🚀

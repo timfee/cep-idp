@@ -1,191 +1,183 @@
-# Workflow Configuration Guide
+# CEP Identity Federation – Workflow Architecture & Configuration
 
-This document explains in detail how the **`workflow.json`** file drives the CEP Identity Federation application. The file is consumed at runtime to build the UI and orchestrate API calls for Google Workspace and Microsoft Entra ID. Every entry in the JSON follows a specific schema defined in `app/lib/workflow/types.ts` and is validated by `app/lib/workflow/parser.ts` when the application starts.
+This document is the **single reference** for how the _modular_ workflow layer
+operates after the 2025-05 refactor.  If you maintained the original
+`workflow.json`-only version, read on – every moving part is still here, but the
+implementation has been split into focused, type-safe modules so that tests and
+editors can help you avoid obvious mistakes.
 
-## 1. File Overview
+## 0. TL;DR for the Impatient
 
-A valid workflow file contains the following top‑level keys:
+*   _Everything is code._  There is no longer a monolithic JSON file.  The
+    runtime model is produced from strongly-typed **configs** under
+    `app/lib/workflow/`.
+*   **connections.ts** – registry of remote API hosts and how to sign requests.
+*   **endpoints/** – route templates grouped by provider (Admin SDK, Cloud-
+    Identity, Graph…).  Each file exports a typed `EndpointBuilder` that
+    enforces params.
+*   **constants.ts** – One place for shared literals (URLs, template IDs, time
+    units, etc.).  No more string drift.
+*   **steps/** – Each workflow step lives in its own file; the directory is
+    loaded dynamically so you can ship features incrementally.
+*   The public UI is built by reading the compiled `Workflow` object – no need
+    to manually synchronise JSON and React.
 
-1. **`connections`** – remote API hosts and authorization tokens.
-2. **`roles`** – mapping of friendly names to OAuth scopes.
-3. **`endpoints`** – reusable API request definitions.
-4. **`checkers`** – small expressions used to evaluate API responses.
-5. **`variables`** – data referenced or produced by the workflow.
-6. **`steps`** – ordered list of tasks executed by the engine.
+---
 
-The sections below describe the syntax of each block with examples drawn from the provided workflow file.
+## 1. Runtime Overview
 
-## 2. Connections
+```
+┌────────────────────────┐      ┌──────────────────────────┐
+│  Next.js / RSC pages   │◀────▶│  Workflow React hooks    │
+└────────────┬───────────┘      └────────────┬─────────────┘
+             │                               │
+             ▼            executes           ▼
+       ┌──────────────┐  actions/verify  ┌──────────────┐
+       │  engine.ts   │──────────────────▶│ endpoints/* │
+       └──────┬───────┘   uses           └──────────────┘
+              │                           ▲
+              │ inject vars              │ uses
+              ▼                           │
+       ┌──────────────┐  persists        │
+       │ variables.ts │──────────────────┘
+       └──────────────┘
+```
 
-Connections define the base URL and authentication string for each API. Actions reference these connections by name so the engine knows which host and token to use when executing a request.
+The engine iterates over **Step** objects emitted by `steps/index.ts`.  A step
+declares `verify` and `execute` action lists.  An action references an
+endpoint builder (e.g. `admin.postUser`) and may expose *extractors*
+(`extractors.ts`) that save data into the per-user **Variables Store**.
 
-```json
-"connections": {
-  "googleAdmin": {
-    "base": "https://admin.googleapis.com/admin/directory/v1",
-    "auth": "Bearer {googleAccessToken}"
+## 2. Key Modules
+
+### 2.1 constants.ts
+
+Canonical homes for:
+
+* `TIME` – self-explanatory numeric units (rule-guarded magic numbers).
+* `BASE_URLS` – four URLs used across the project; you no longer see raw
+  strings elsewhere.
+* `TEMPLATE_IDS` & `TEMPLATE_NAMES` – Microsoft application-template metadata.
+* Aliases for legacy names so _nothing_ broke during the migration.
+
+### 2.2 config/connections.ts
+
+All external hosts with a `getAuthHeader` callback.
+
+```ts
+export const connections = {
+  googleAdmin: { base: BASE_URLS.GOOGLE_ADMIN, getAuthHeader: … },
+  graphBeta:   { base: BASE_URLS.GRAPH_BETA,  getAuthHeader: … },
+  …
+} satisfies Record<string, ConnectionConfig>
+```
+
+The Zod schema (`ConnectionConfigSchema`) guarantees every entry has the right
+shape at **module load time** – the app fails fast during CI if you forget a
+field.
+
+### 2.3 endpoints/
+
+```
+endpoints/
+  admin/
+    post-user.ts       // exports buildPostUser()
+  graph/
+    start-sync.ts
+  index.ts             // central barrel re-export
+```
+
+Each file lives next to the official API docs so copy-pasting is trivial.  The
+pattern:
+
+```ts
+export const buildPostUser = endpoint(
+  {
+    conn: 'googleAdmin',
+    method: 'POST',
+    path: API_PATHS.USERS_ROOT,
   },
-  "graphGA": {
-    "base": "https://graph.microsoft.com/v1.0",
-    "auth": "Bearer {azureAccessToken}"
-  }
-}
+  z.object({
+    primaryEmail: z.string().email(),
+    …
+  }),
+)
 ```
 
-The `{googleAccessToken}` and `{azureAccessToken}` placeholders are variables populated at runtime. See the _Variables_ section for interpolation rules.
+At compile time you get:
 
-## 3. Roles
+* Autocomplete for connection names & methods.
+* Type-checked payload against the Zod schema.
+* Required path params enforced (because `API_PATHS` uses `{param}` tokens).
 
-A role is a named set of OAuth scopes. Steps declare the role they require so the UI can warn the user if they lack adequate permissions.
+### 2.4 steps/
 
-```json
-"roles": {
-  "dirUserRW": ["https://www.googleapis.com/auth/admin.directory.user"],
-  "graphSyncRW": ["Synchronization.ReadWrite.All"]
-}
-```
+Each step exports a plain object of type `WorkflowStep`.  The name is inferred
+from the filename so duplicates cannot exist.  A trimmed example:
 
-If the logged‑in user does not have the scopes associated with a role, the corresponding step is disabled until the user provides consent.
-
-## 4. Endpoints
-
-Endpoints are short identifiers for API requests. Each entry specifies:
-
-- **`conn`** – which connection configuration to use
-- **`method`** – HTTP verb (GET, POST, PATCH, PUT, DELETE)
-- **`path`** – path template relative to the connection base URL
-- **`qs`** (optional) – query string parameters
-- **`headers`** (optional) – additional HTTP headers
-
-```json
-"endpoints": {
-  "admin.postUser": {
-    "conn": "googleAdmin",
-    "method": "POST",
-    "path": "/users"
-  },
-  "graph.startSyncJob": {
-    "conn": "graphGA",
-    "method": "POST",
-    "path": "/servicePrincipals/{provServicePrincipalId}/synchronization/jobs/{jobId}/start"
-  }
-}
-```
-
-Paths may contain placeholders such as `{provServicePrincipalId}` which are replaced with variable values at runtime.
-
-## 5. Checkers
-
-Checkers are small boolean expressions evaluated against an API response body. They are referenced by name inside an action. The built‑in checkers are defined in `workflow.json`:
-
-```json
-"checkers": {
-  "exists": "$ != null",
-  "fieldTruthy": "$.{field} == true",
-  "eq": "$ == '{value}'"
-}
-```
-
-A checker can access fields of the JSON response using JsonPath syntax. Custom values may be injected via the `field`, `value`, or `jsonPath` properties of an action.
-
-## 6. Variables
-
-Variables store data shared between steps. Each variable may include:
-
-- **`default`** – value used if nothing else sets it
-- **`validator`** – regular expression a value must match
-- **`generator`** – name of a helper function from `generators.ts`
-- **`_comment`** – human readable note (ignored by the parser)
-
-Example:
-
-```json
-"variables": {
-  "customerId": {
-    "validator": "^C[0-9a-f]{10,}$|^my_customer$",
-    "default": "my_customer"
-  },
-  "primaryDomain": {
-    "_comment": "Fetched from Google Admin API"
-  }
-}
-```
-
-Any string wrapped in `{}` within an endpoint definition or action payload will be replaced by the corresponding variable. The template engine also supports helper functions such as `email(user, domain)` or `generateDeterministicPassword(seed)`.
-
-## 7. Steps
-
-The heart of the workflow is the **steps** array. Each step represents a discrete task. A step may declare:
-
-- **`name`** – descriptive label
-- **`inputs`** – variables required before execution
-- **`outputs`** – variables produced by this step
-- **`actions`**, **`verify`**, **`execute`** – lists of actions to perform
-- **`role`** – required permission set
-- **`depends_on`** – other steps that must complete first
-- **`manual`** – if true, the user marks completion manually
-
-A step must define automation using either a single **`actions`** list or one or
-both of **`verify`** and **`execute`**. Manual steps may omit actions entirely.
-The workflow parser rejects steps that include both styles at once or, for
-non-manual steps, omit automation completely.
-
-### 7.1 Actions
-
-An action references an endpoint and can optionally include a payload, extraction rules and checker settings. When the engine runs a step it performs all actions listed under `verify` first. If every checker passes, the step is considered complete. Otherwise the `execute` actions run to apply the necessary changes.
-
-```json
-{
-  "name": "Create Service Account for Microsoft",
-  "outputs": ["provisioningUserId", "generatedPassword"],
-  "verify": [{ "use": "admin.getUser", "checker": "exists" }],
-  "execute": [
-    {
-      "use": "admin.postUser",
-      "payload": {
-        "primaryEmail": "{email('azuread-provisioning', primaryDomain)}",
-        "password": "{generateDeterministicPassword(primaryDomain)}"
-      },
-      "extract": {
-        "provisioningUserId": "$.id",
-        "generatedPassword": "{generateDeterministicPassword(primaryDomain)}"
-      }
-    }
+```ts
+export default defineStep({
+  name: STEP_NAMES.CREATE_SERVICE_ACCOUNT,
+  role: 'dirUserRW',
+  outputs: ['provisioningUserId', 'generatedPassword'],
+  verify: [action('admin.getUser').checker('exists')],
+  execute: [
+    action('admin.postUser')
+      .payload(({ primaryDomain }) => ({
+        primaryEmail: email('azuread-provisioning', primaryDomain),
+        …
+      }))
+      .extract({ provisioningUserId: '$.id' }),
   ],
-  "role": "dirUserRW",
-  "depends_on": ["Create Automation Organizational Unit"]
-}
+})
 ```
 
-### 7.2 Manual Steps
+The DX is far better than editing a huge JSON blob – linting and IntelliSense
+catch most issues immediately.
 
-Some workflow stages require human intervention. Mark a step with `"manual": true` when the administrator must complete a task outside the automation (for example assigning users to an app). The UI allows the user to acknowledge completion before moving on.
+## 3. Variables Store & Chunked Cookies
 
-## 8. Template Expressions
+OAuth tokens and big variable payloads are too large for a single Set-Cookie
+header.  The new **chunked cookie utilities** take care of splitting and
+reassembly:
 
-Strings wrapped in `{}` are processed by the template engine in `template.ts`. Besides simple variable substitution, several helper functions are available:
+* `setChunkedCookie()` – server-side helper that writes N cookies.  Uses
+  `buildChunkMetadata()` from `cookies/utils.ts` so metadata logic exists only
+  once.
+* `getChunkedCookie()` – reassembles on read.
 
-- `email(user, domain)` – build an email address
-- `url(base, path)` – concatenate URL pieces
-- `concat(a, b, ...)` – join strings
-- `format(template, value1, value2, ...)` – `%s` string formatter
-- `generatePassword(length)` – random password
-- `generateDeterministicPassword(seed)` – stable password derived from a seed
-- `extractCertificateFromXml(xml)` – pull a certificate from federation metadata
+`MAX_COOKIE_SIZE` lives in `WORKFLOW_CONSTANTS`; if browsers ever change their
+rules we update one number.
 
-Expressions can be nested anywhere a string is expected: endpoint paths, query parameters, payload fields or checker values.
+## 4. Adding a New Feature
 
-## 9. Extending the Workflow
+1. **Create an endpoint** file if the API call is new.
+2. **Add a step** under `steps/` referencing that endpoint.
+3. **Wire up any new variables** via `variables.ts` (validators & generators are
+   optional but recommended).
+4. If new OAuth scopes are required, update `roles.ts`.
 
-To introduce new automation logic:
+That’s it – the UI rebuilds automatically.
 
-1. Add or update endpoint definitions in the **`endpoints`** section.
-2. Define any new variables along with defaults or validators.
-3. Append a new object to the **`steps`** array describing your task. Include `verify` actions if the step can detect pre‑existing state.
-4. Update the **`roles`** block if additional OAuth scopes are required.
+## 5. Testing
 
-The application reloads the workflow file on startup, so after editing `workflow.json` simply restart the dev server.
+Jest integration suites live under `__tests__/workflow`.  Fixture responses are
+matched against the new endpoint builders so mocks are guaranteed to stay in
+sync with real calls.
 
-## 10. Conclusion
+## 6. Migrating from workflow.json
 
-`workflow.json` is the single source of truth describing how CEP Identity Federation should proceed. By understanding the structure outlined above – connections, roles, endpoints, variables and ordered steps – administrators can customize or extend the onboarding flow to suit their environment.
+Use `scripts/json-to-ts.mjs` to convert each block into its new home.
+
+* connections     → config/connections.ts
+* roles           → config/roles.ts
+* variables       → config/variables.ts
+* endpoints       → endpoints/* (file per call)
+* steps           → steps/* (file per step)
+
+The script leaves TODO comments anywhere manual tweaking is required.
+
+---
+
+Happy automating!  If something is unclear, `#identity-federation` on the
+internal Slack is the fastest route to help.

@@ -12,7 +12,7 @@ import {
  * this at runtime to ensure externally supplied data matches expectations.
  */
 export const VariableDefinitionSchema = z.object({
-  validator: z.instanceof(RegExp).optional(),
+  validator: z.union([z.instanceof(RegExp), z.string()]).optional(),
   default: z.string().optional(),
   generator: z.string().optional(),
   comment: z.string().optional(),

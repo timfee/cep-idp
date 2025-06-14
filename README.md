@@ -116,11 +116,6 @@ when adding new scenarios.
 
 ## 7. FAQ
 
-**Q:** Can I still define the workflow in JSON?  
-**A:** Yes. Add a `.json` file under `app/lib/workflow/legacy/` and import it
-with `parseLegacyWorkflow()` – but the team strongly recommends the modular
-approach for new work.
-
 **Q:** Where should I put a new constant?  
 **A:** If it’s cross-cutting, add it to `constants.ts`. Otherwise keep it local
 to the module that needs it and export only when reuse is proven.

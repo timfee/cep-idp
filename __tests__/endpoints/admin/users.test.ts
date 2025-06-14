@@ -74,7 +74,7 @@ describe("Users - Live API", () => {
 
   it("should handle non-existent user", async () => {
     await expect(
-      getUser(apiContext, { userEmail: "nonexistent@example.com" })
+      getUser(apiContext, { userEmail: `nonexistent@${primaryDomain}` })
     ).rejects.toThrow();
   });
 });

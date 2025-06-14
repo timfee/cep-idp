@@ -1,4 +1,15 @@
 // Global test setup and teardown
+import { ProxyAgent, setGlobalDispatcher } from "undici";
+
+// Configure fetch to respect HTTPS proxy if set.
+const proxy = process.env.https_proxy || process.env.HTTPS_PROXY;
+if (proxy) {
+  const agent = new ProxyAgent(proxy);
+  setGlobalDispatcher(agent);
+  const origFetch: typeof fetch = globalThis.fetch;
+  globalThis.fetch = ((input: RequestInfo | URL, init?: RequestInit) =>
+    origFetch(input, { dispatcher: agent, ...init })) as typeof fetch;
+}
 
 beforeAll(async () => {
   // Validate test environment

@@ -7,7 +7,7 @@ const ParamsSchema = z
   .object({
     customerId: z.string(),
     roleId: z.string().optional(),
-    assignedTo: z.string().optional()
+    userKey: z.string().optional()
   })
   .describe("Path and query parameters for role assignments lookup");
 
@@ -22,10 +22,10 @@ export async function getRoleAssign(
   ctx: ApiContext,
   params: GetRoleAssignParams
 ): Promise<GetRoleAssignResponse> {
-  const { customerId, roleId, assignedTo } = ParamsSchema.parse(params);
+  const { customerId, roleId, userKey } = ParamsSchema.parse(params);
   const query: Record<string, string | undefined> = {};
   if (roleId) query.roleId = roleId;
-  if (assignedTo) query.assignedTo = assignedTo;
+  if (userKey) query.userKey = userKey;
 
   return callEndpoint({
     ctx,

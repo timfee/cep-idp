@@ -1,6 +1,15 @@
+import { ProxyAgent, setGlobalDispatcher } from "undici";
 import { globalTracker } from "./test-utils/test-resource-tracker";
 
 const globalSetup = async () => {
+  const proxy = process.env.https_proxy || process.env.HTTPS_PROXY;
+  if (proxy) {
+    const agent = new ProxyAgent(proxy);
+    setGlobalDispatcher(agent);
+    const origFetch: typeof fetch = globalThis.fetch;
+    globalThis.fetch = ((input: RequestInfo | URL, init?: RequestInit) =>
+      origFetch(input, { dispatcher: agent, ...init })) as typeof fetch;
+  }
   await globalTracker.load();
   const existingResources = globalTracker.getResources();
   if (existingResources.length > 0) {

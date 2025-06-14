@@ -88,7 +88,7 @@ describe("Role Assignments - Live API", () => {
     const listRes = await getRoleAssign(apiContext, {
       customerId: "my_customer",
       roleId,
-      assignedTo: userId
+      userKey: userId
     });
 
     expect(Array.isArray(listRes.items)).toBe(true);

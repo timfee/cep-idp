@@ -263,10 +263,13 @@ export const API_PATHS = {
   USER: "/admin/directory/v1/customer/{customerId}/users/{userId}",
 
   // Google Cloud-Identity
-  IDP_CERTS: "/inboundSamlSsoProfiles/{samlProfileId}:uploadCertificate",
-  SAML_PROFILES: "/inboundSamlSsoProfiles",
-  SAML_PROFILE: "/inboundSamlSsoProfiles/{samlProfileId}",
-  SSO_ASSIGNMENTS: "/inboundSsoAssignments",
+  // Paths include the version prefix because the Cloud Identity base URL is the
+  // host without a trailing `/v1`. Using absolute paths avoids `URL()` stripping
+  // the version segment during resolution.
+  IDP_CERTS: "/v1/inboundSamlSsoProfiles/{samlProfileId}:uploadCertificate",
+  SAML_PROFILES: "/v1/inboundSamlSsoProfiles",
+  SAML_PROFILE: "/v1/inboundSamlSsoProfiles/{samlProfileId}",
+  SSO_ASSIGNMENTS: "/v1/inboundSsoAssignments",
 
   // Microsoft Graph (v1.0 & beta)
   APP_TEMPLATES: "/applicationTemplates",
@@ -297,9 +300,9 @@ export const API_PATHS = {
     "/servicePrincipals/{servicePrincipalId}/samlSingleSignOnSettings",
 
   // Additional Cloud-Identity
-  IDP_CREDENTIALS: "/inboundSamlSsoProfiles/{samlProfileId}/idpCredentials",
+  IDP_CREDENTIALS: "/v1/inboundSamlSsoProfiles/{samlProfileId}/idpCredentials",
   ADD_IDP_CREDENTIALS:
-    "/inboundSamlSsoProfiles/{samlProfileId}/idpCredentials:add",
+    "/v1/inboundSamlSsoProfiles/{samlProfileId}/idpCredentials:add",
 
   // Additional Admin SDK
   USERS_ROOT: "/admin/directory/v1/users",

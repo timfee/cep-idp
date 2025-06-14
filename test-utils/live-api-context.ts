@@ -25,7 +25,9 @@ export function createLiveApiContext(options: LiveApiOptions): ApiContext {
       // Build full URL
       const baseUrls: Record<string, string> = {
         googleAdmin: "https://admin.googleapis.com/admin/directory/v1",
-        googleCI: "https://cloudidentity.googleapis.com/v1",
+        // Cloud Identity base host without version so that paths including
+        // `/v1` resolve correctly when passed to `new URL`.
+        googleCI: "https://cloudidentity.googleapis.com",
         graphGA: "https://graph.microsoft.com/v1.0",
         graphBeta: "https://graph.microsoft.com/beta",
         public: "https://login.microsoftonline.com"

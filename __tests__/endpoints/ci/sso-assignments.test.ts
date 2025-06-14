@@ -1,5 +1,6 @@
-import { listSsoAssignments } from '@/app/lib/workflow/endpoints/ci';
-import { createLiveApiContext } from '../../setup/live-api-context';
+// eslint-disable-next-line sonarjs/unused-import
+import { listSsoAssignments, postSsoAssignment } from '@/app/lib/workflow/endpoints/ci';
+import { createLiveApiContext } from '../../../test-utils/live-api-context';
 
 describe('SSO Assignments - Live API', () => {
   let apiContext: ReturnType<typeof createLiveApiContext>;

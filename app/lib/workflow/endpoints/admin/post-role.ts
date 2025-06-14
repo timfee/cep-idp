@@ -5,10 +5,7 @@ import { ApiContext, callEndpoint } from "../utils";
 
 const BodySchema = z.record(z.unknown());
 
-const ParamsSchema = z.object({
-  customerId: z.string(),
-  body: BodySchema,
-});
+const ParamsSchema = z.object({ customerId: z.string(), body: BodySchema });
 
 const ResponseSchema = z.unknown();
 

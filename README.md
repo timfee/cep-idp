@@ -4,22 +4,22 @@
 > in **minutes**, not days.
 
 The project combines a type-safe **workflow engine**, a friendly React Server
-Component UI, and helper APIs for Google & Microsoft.  Administrators can run
-the guided flow end-to-end with *zero* CLI tooling and minimal privilege
+Component UI, and helper APIs for Google & Microsoft. Administrators can run
+the guided flow end-to-end with _zero_ CLI tooling and minimal privilege
 requirements.
 
 ---
 
 ## 1. What’s Inside?
 
-| Path | Purpose |
-|------|---------|
-| `app/` | Next.js 14 app-router code (RSC + Server Actions). |
-| `app/lib/workflow/` | Modular workflow engine – see
-  [`WORKFLOW_README.md`](WORKFLOW_README.md). |
-| `app/lib/auth/` | OAuth 2.0 helpers, token encryption, cookie chunking. |
-| `app/lib/cookies/` | Generic chunked-cookie utilities shared by auth & workflow. |
-| `__tests__/` | Jest integration + fixture data for both providers. |
+| Path                                        | Purpose                                                     |
+| ------------------------------------------- | ----------------------------------------------------------- |
+| `app/`                                      | Next.js 14 app-router code (RSC + Server Actions).          |
+| `app/lib/workflow/`                         | Modular workflow engine – see                               |
+| [`WORKFLOW_README.md`](WORKFLOW_README.md). |
+| `app/lib/auth/`                             | OAuth 2.0 helpers, token encryption, cookie chunking.       |
+| `app/lib/cookies/`                          | Generic chunked-cookie utilities shared by auth & workflow. |
+| `__tests__/`                                | Jest integration + fixture data for both providers.         |
 
 ---
 
@@ -44,21 +44,21 @@ Open <http://localhost:3000> and follow the on-screen prompts.
 
 ### 3.1 Modular Workflow
 
-* **Typed building blocks** – Endpoint builders, Zod-validated connections, and
+- **Typed building blocks** – Endpoint builders, Zod-validated connections, and
   per-step files keep the configuration type-safe and discoverable.
-* **Live progress** – Each step declares `verify` actions so the app can detect
+- **Live progress** – Each step declares `verify` actions so the app can detect
   pre-existing resources and mark them complete automatically.
-* **Variables Store** – Engine-populated key/value cache (persisted in
+- **Variables Store** – Engine-populated key/value cache (persisted in
   chunked cookies) keeps UI and server logic in sync.
 
 ### 3.2 Shared Constants
 
 `app/lib/workflow/constants.ts` centralises time units, base URLs, template
-IDs, etc.  No more string drift across files.
+IDs, etc. No more string drift across files.
 
 ### 3.3 Chunked Cookies
 
-Tokens often exceed the 4-KB cookie limit.  The utilities in
+Tokens often exceed the 4-KB cookie limit. The utilities in
 `app/lib/cookies/` transparently split / reassemble values so **no** call site
 needs to worry about size.
 
@@ -72,12 +72,12 @@ minimal thanks to Server Actions.
 
 ## 4. Scripts
 
-| Command | Description |
-|---------|-------------|
-| `pnpm dev` | Start Next.js in development mode. |
-| `pnpm lint` | Run ESLint & prettier.  Must be clean before pushing. |
-| `pnpm test` | Execute Jest with automatic token acquisition (see below). |
-| `pnpm typecheck` | Execute TypeScript compiler with `--noEmit`. |
+| Command          | Description                                                |
+| ---------------- | ---------------------------------------------------------- |
+| `pnpm dev`       | Start Next.js in development mode.                         |
+| `pnpm lint`      | Run ESLint & prettier. Must be clean before pushing.       |
+| `pnpm test`      | Execute Jest with automatic token acquisition (see below). |
+| `pnpm typecheck` | Execute TypeScript compiler with `--noEmit`.               |
 
 ---
 
@@ -85,7 +85,7 @@ minimal thanks to Server Actions.
 
 The Jest setup acquires fresh OAuth tokens at runtime using the supplied
 service account and Azure App credentials – **no hard-coded secrets** in the
-repo.  Populate the following environment variables before running the suite:
+repo. Populate the following environment variables before running the suite:
 
 ```env
 # Google
@@ -99,7 +99,7 @@ MS_CLIENT_SECRET=<secret>
 ```
 
 Artifacts created by the tests (users, SAML profiles, etc.) are torn down in
-`jest.globalTeardown.ts`.  Provide their identifiers (see template in the file)
+`jest.globalTeardown.ts`. Provide their identifiers (see template in the file)
 when adding new scenarios.
 
 ---
@@ -117,12 +117,12 @@ when adding new scenarios.
 ## 7. FAQ
 
 **Q:** Can I still define the workflow in JSON?  
-**A:** Yes.  Add a `.json` file under `app/lib/workflow/legacy/` and import it
+**A:** Yes. Add a `.json` file under `app/lib/workflow/legacy/` and import it
 with `parseLegacyWorkflow()` – but the team strongly recommends the modular
 approach for new work.
 
 **Q:** Where should I put a new constant?  
-**A:** If it’s cross-cutting, add it to `constants.ts`.  Otherwise keep it local
+**A:** If it’s cross-cutting, add it to `constants.ts`. Otherwise keep it local
 to the module that needs it and export only when reuse is proven.
 
 ---

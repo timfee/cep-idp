@@ -1,8 +1,8 @@
 import { z } from "zod";
 
 // Local imports
-import { TokenSchema } from "../types";
 import { BASE_URLS } from "../constants";
+import { TokenSchema } from "../types";
 
 /**
  * Zod schema describing a single connection configuration.  Validation runs at
@@ -44,10 +44,7 @@ export const connections: Record<string, ConnectionConfig> = {
     base: BASE_URLS.GRAPH_BETA,
     getAuthHeader: (tokens) => `Bearer ${tokens.microsoft?.accessToken ?? ""}`,
   },
-  public: {
-    base: "",
-    getAuthHeader: () => "",
-  },
+  public: { base: "", getAuthHeader: () => "" },
 };
 
 // --- Validate configuration at module load ---------------------------------

@@ -1,7 +1,11 @@
 import { z } from "zod";
 
+import {
+  createSamlProfile,
+  getIdpCreds,
+  listSamlProfiles,
+} from "../endpoints/ci";
 import { StepDefinition, StepResultSchema } from "../types";
-import { listSamlProfiles, createSamlProfile, getIdpCreds } from "../endpoints/ci";
 import { handleStepError } from "./utils";
 
 const OutputSchema = z.object({
@@ -33,7 +37,11 @@ export const configureGoogleSamlProfile: StepDefinition = {
           acsUrl: profile.spConfig?.spEntityId ?? "",
         });
         ctx.setVars(outputs);
-        return StepResultSchema.parse({ success: true, mode: "verified", outputs });
+        return StepResultSchema.parse({
+          success: true,
+          mode: "verified",
+          outputs,
+        });
       }
 
       // Create new profile (simplified minimal body)
@@ -54,7 +62,11 @@ export const configureGoogleSamlProfile: StepDefinition = {
       });
       ctx.setVars(outputs);
 
-      return StepResultSchema.parse({ success: true, mode: "executed", outputs });
+      return StepResultSchema.parse({
+        success: true,
+        mode: "executed",
+        outputs,
+      });
     } catch (err: unknown) {
       return handleStepError(err, this.name, ctx);
     }

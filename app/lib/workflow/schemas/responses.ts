@@ -95,10 +95,7 @@ export const ListPrivilegesResponseSchema = z
   .passthrough();
 
 export const RolePrivilegeSchema = z
-  .object({
-    privilegeName: z.string(),
-    serviceId: z.string(),
-  })
+  .object({ privilegeName: z.string(), serviceId: z.string() })
   .passthrough();
 
 export const RoleSchema = z
@@ -179,11 +176,7 @@ export const OperationResponseSchema = z
     name: z.string().optional(),
     response: z.unknown().optional(),
     error: z
-      .object({
-        code: z.number(),
-        message: z.string(),
-        status: z.string(),
-      })
+      .object({ code: z.number(), message: z.string(), status: z.string() })
       .optional(),
   })
   .passthrough();
@@ -192,17 +185,11 @@ export const InboundSsoAssignmentSchema = z
   .object({
     name: z.string(),
     customer: z.string().optional(),
-    targetGroup: z
-      .object({
-        id: z.string(),
-      })
-      .optional(),
+    targetGroup: z.object({ id: z.string() }).optional(),
     targetOrgUnit: z.string().optional(),
     ssoMode: z.string().optional(),
     samlSsoInfo: z
-      .object({
-        inboundSamlSsoProfile: z.string().optional(),
-      })
+      .object({ inboundSamlSsoProfile: z.string().optional() })
       .optional(),
   })
   .passthrough();
@@ -266,23 +253,16 @@ export const InstantiateAppResponseSchema = z
 
 /* list/patch/get Sync & SAML settings – minimal fields */
 export const GraphSyncResponseSchema = z
-  .object({
-    jobs: z.array(z.unknown()).optional(),
-  })
+  .object({ jobs: z.array(z.unknown()).optional() })
   .passthrough();
 
 export const GraphNoContentResponseSchema = z
-  .object({
-    status: z.number().int().optional(),
-  })
+  .object({ status: z.number().int().optional() })
   .passthrough();
 
 /* Policies */
 export const ClaimsPolicySchema = z
-  .object({
-    id: z.string(),
-    displayName: z.string().optional(),
-  })
+  .object({ id: z.string(), displayName: z.string().optional() })
   .passthrough();
 
 export const ListPoliciesResponseSchema = z
@@ -318,24 +298,36 @@ export type ListOrgUnitsResponse = z.infer<typeof ListOrgUnitsResponseSchema>;
 export type User = z.infer<typeof UserSchema>;
 
 export type Privilege = z.infer<typeof PrivilegeSchema>;
-export type ListPrivilegesResponse = z.infer<typeof ListPrivilegesResponseSchema>;
+export type ListPrivilegesResponse = z.infer<
+  typeof ListPrivilegesResponseSchema
+>;
 
 export type Role = z.infer<typeof RoleSchema>;
 export type ListRolesResponse = z.infer<typeof ListRolesResponseSchema>;
 
 export type RoleAssignment = z.infer<typeof RoleAssignmentSchema>;
-export type ListRoleAssignmentsResponse = z.infer<typeof ListRoleAssignmentsResponseSchema>;
+export type ListRoleAssignmentsResponse = z.infer<
+  typeof ListRoleAssignmentsResponseSchema
+>;
 
 export type InboundSamlSsoProfile = z.infer<typeof InboundSamlSsoProfileSchema>;
-export type ListSamlProfilesResponse = z.infer<typeof ListSamlProfilesResponseSchema>;
+export type ListSamlProfilesResponse = z.infer<
+  typeof ListSamlProfilesResponseSchema
+>;
 
 export type InboundSsoAssignment = z.infer<typeof InboundSsoAssignmentSchema>;
-export type ListSsoAssignmentsResponse = z.infer<typeof ListSsoAssignmentsResponseSchema>;
+export type ListSsoAssignmentsResponse = z.infer<
+  typeof ListSsoAssignmentsResponseSchema
+>;
 
 export type ApplicationListItem = z.infer<typeof ApplicationListItemSchema>;
-export type ListApplicationsResponse = z.infer<typeof ListApplicationsResponseSchema>;
+export type ListApplicationsResponse = z.infer<
+  typeof ListApplicationsResponseSchema
+>;
 
-export type InstantiateAppResponse = z.infer<typeof InstantiateAppResponseSchema>;
+export type InstantiateAppResponse = z.infer<
+  typeof InstantiateAppResponseSchema
+>;
 
 export type ListPoliciesResponse = z.infer<typeof ListPoliciesResponseSchema>;
 export type CreatePolicyResponse = z.infer<typeof CreatePolicyResponseSchema>;

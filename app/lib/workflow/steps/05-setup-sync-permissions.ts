@@ -1,7 +1,7 @@
 import { z } from "zod";
 
-import { StepDefinition, StepResultSchema } from "../types";
 import { getRoleAssign, postRoleAssign } from "../endpoints/admin";
+import { StepDefinition, StepResultSchema } from "../types";
 
 const InputSchema = z.object({
   customerId: z.string(),
@@ -34,10 +34,7 @@ export const setupSyncPermissions: StepDefinition = {
 
     await postRoleAssign(ctx.api, {
       customerId,
-      body: {
-        roleId: adminRoleId,
-        assignedTo: provisioningUserId,
-      },
+      body: { roleId: adminRoleId, assignedTo: provisioningUserId },
     });
     return StepResultSchema.parse({ success: true, mode: "executed" });
   },

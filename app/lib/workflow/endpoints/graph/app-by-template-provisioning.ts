@@ -5,9 +5,7 @@ import { ApiContext, callEndpoint } from "../utils";
 
 const ResponseSchema = z.unknown();
 
-export type AppByTemplateProvParams = {
-  provisioningTemplateId: string;
-};
+export type AppByTemplateProvParams = { provisioningTemplateId: string };
 export type AppByTemplateProvResponse = z.infer<typeof ResponseSchema>;
 
 export async function appByTemplateProv(

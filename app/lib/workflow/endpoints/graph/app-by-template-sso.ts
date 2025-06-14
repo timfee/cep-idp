@@ -5,9 +5,7 @@ import { ApiContext, callEndpoint } from "../utils";
 
 const ResponseSchema = z.unknown();
 
-export type AppByTemplateSSOParams = {
-  ssoTemplateId: string;
-};
+export type AppByTemplateSSOParams = { ssoTemplateId: string };
 export type AppByTemplateSSOResponse = z.infer<typeof ResponseSchema>;
 
 export async function appByTemplateSSO(

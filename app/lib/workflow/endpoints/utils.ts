@@ -1,6 +1,6 @@
 import { z } from "zod";
-import { HttpMethod } from "../constants";
 import { API_PATHS } from "../../workflow/constants";
+import { HttpMethod } from "../constants";
 import { Token } from "../types";
 
 /**

@@ -1,12 +1,12 @@
 import { z } from "zod";
 
-import { StepDefinition, StepResultSchema } from "../types";
 import {
-  patchSync,
-  startSyncJob,
   getSamlSettings,
   patchSamlSettings,
+  patchSync,
+  startSyncJob,
 } from "../endpoints/graph";
+import { StepDefinition, StepResultSchema } from "../types";
 import { handleStepError } from "./utils";
 
 const InputSchema = z.object({

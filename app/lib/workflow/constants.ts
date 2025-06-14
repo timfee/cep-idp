@@ -34,7 +34,6 @@ export const STATUS_VALUES = {
  * @returns True when role targets Google APIs
  */
 
-
 /**
  * Generic helper used by {@link isGoogleRole} and {@link isMicrosoftRole}.
  * Additional provider checks can reuse this without duplicating startsWith
@@ -80,13 +79,12 @@ export const TIME = {
 // refactor is rolled out.  They point back to the canonical TIME values so we
 // still have a single definition.
 
- 
 export const MS_IN_SECOND = TIME.MS_IN_SECOND;
 export const SECONDS_IN_MINUTE = TIME.SECONDS_IN_MINUTE;
 export const MINUTES_IN_HOUR = TIME.MINUTES_IN_HOUR;
 export const HOURS_IN_DAY = TIME.HOURS_IN_DAY;
 export const DAYS_IN_MONTH = TIME.DAYS_IN_MONTH;
- 
+
 // ---------------------------------------------------------------------------
 // Remote API base URLs – single source of truth to avoid duplication.
 // ---------------------------------------------------------------------------
@@ -165,7 +163,6 @@ export const WORKFLOW_CONSTANTS = {
   // Retained for backwards compatibility. Prefer SYNC_CONFIG.SYNC_INTERVAL
   SYNC_INTERVAL: "PT40M",
 
-
   // ---------------------------------------------------------------------
   // Legacy aliases – prefer TEMPLATE_IDS / TEMPLATE_NAMES going forward.
   // (Deprecated keys removed in cleanup.)
@@ -192,14 +189,11 @@ export const HTTP_METHODS = {
 
 export type HttpMethod = (typeof HTTP_METHODS)[keyof typeof HTTP_METHODS];
 
-
 export const ROLE_PREFIXES = {
   GOOGLE_DIR: "dir",
   GOOGLE_CI: "ci",
   MICROSOFT: "graph",
 } as const;
-
-
 
 /** Common time constants used throughout the workflow. */
 /** Keys used when encoding metadata for chunked cookies. */
@@ -268,27 +262,35 @@ export const API_PATHS = {
   // Microsoft Graph (v1.0 & beta)
   APP_TEMPLATES: "/applicationTemplates",
   APP_BY_TEMPLATE: "/applicationTemplates/{templateId}/instantiate",
-  APP_BY_PROV_TEMPLATE: "/applicationTemplates/{provisioningTemplateId}/instantiate",
+  APP_BY_PROV_TEMPLATE:
+    "/applicationTemplates/{provisioningTemplateId}/instantiate",
   APP_BY_SSO_TEMPLATE: "/applicationTemplates/{ssoTemplateId}/instantiate",
   SERVICE_PRINCIPAL: "/servicePrincipals/{servicePrincipalId}",
   SYNC_JOBS: "/servicePrincipals/{servicePrincipalId}/synchronization/jobs",
-  SYNC_JOB: "/servicePrincipals/{servicePrincipalId}/synchronization/jobs/{jobId}",
-  START_SYNC: "/servicePrincipals/{servicePrincipalId}/synchronization/jobs/{jobId}/start",
+  SYNC_JOB:
+    "/servicePrincipals/{servicePrincipalId}/synchronization/jobs/{jobId}",
+  START_SYNC:
+    "/servicePrincipals/{servicePrincipalId}/synchronization/jobs/{jobId}/start",
   CLAIMS_POLICY: "/policies/claimsMappingPolicies",
-  LINK_POLICY: "/servicePrincipals/{servicePrincipalId}/claimsMappingPolicies/$ref",
+  LINK_POLICY:
+    "/servicePrincipals/{servicePrincipalId}/claimsMappingPolicies/$ref",
   SAML_SETTINGS: "/applications/{appId}/federatedIdentityCredentials",
-  UPDATE_SAML_SETTINGS: "/beta/applications/{appId}/federatedIdentityCredentials/{credentialId}",
+  UPDATE_SAML_SETTINGS:
+    "/beta/applications/{appId}/federatedIdentityCredentials/{credentialId}",
 
   // Additional Microsoft Graph
   APPLICATIONS: "/applications",
   SYNC: "/servicePrincipals/{servicePrincipalId}/synchronization",
-  TOKEN_POLICIES: "/servicePrincipals/{servicePrincipalId}/tokenIssuancePolicies",
+  TOKEN_POLICIES:
+    "/servicePrincipals/{servicePrincipalId}/tokenIssuancePolicies",
   CREATE_TOKEN_POLICY: "/policies/tokenIssuancePolicies",
-  SAML_SP_SETTINGS: "/servicePrincipals/{servicePrincipalId}/samlSingleSignOnSettings",
+  SAML_SP_SETTINGS:
+    "/servicePrincipals/{servicePrincipalId}/samlSingleSignOnSettings",
 
   // Additional Cloud-Identity
   IDP_CREDENTIALS: "/inboundSamlSsoProfiles/{samlProfileId}/idpCredentials",
-  ADD_IDP_CREDENTIALS: "/inboundSamlSsoProfiles/{samlProfileId}/idpCredentials:add",
+  ADD_IDP_CREDENTIALS:
+    "/inboundSamlSsoProfiles/{samlProfileId}/idpCredentials:add",
 
   // Additional Admin SDK
   USERS_ROOT: "/users",
@@ -303,10 +305,7 @@ export const API_PATHS = {
 // ---------------------------------------------------------------------------
 
 // Organization Units
-export const OU_NAMES = {
-  AUTOMATION: "Automation",
-  ROOT: "/",
-} as const;
+export const OU_NAMES = { AUTOMATION: "Automation", ROOT: "/" } as const;
 
 // Service Account Configuration
 export const SERVICE_ACCOUNT = {
@@ -365,8 +364,4 @@ export const PASSWORD_CONFIG = {
 } as const;
 
 // Miscellaneous repeated literals
-export const GOOGLE_GROUPS = {
-  ALL_USERS: "allUsers",
-} as const;
-
-
+export const GOOGLE_GROUPS = { ALL_USERS: "allUsers" } as const;

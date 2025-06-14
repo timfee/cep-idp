@@ -20,11 +20,7 @@ interface VariableViewerProps {
   variables: Record<string, string>;
   definitions?: Record<
     string,
-    {
-      default?: string;
-      generator?: string;
-      validator?: string | RegExp;
-    }
+    { default?: string; generator?: string; validator?: string | RegExp }
   >;
   requiredVariables?: Set<string>;
 }

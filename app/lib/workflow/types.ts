@@ -43,8 +43,6 @@ export interface StepStatus {
   variables?: Record<string, string>;
 }
 
-
-
 // ---------------------------------------------------------------------------
 //  Step handler interfaces (refactor v2)
 // ---------------------------------------------------------------------------

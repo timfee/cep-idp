@@ -5,12 +5,7 @@ import {
   getChunkedCookie,
   setChunkedCookie,
 } from "../cookies/server";
-import {
-  LogEntry,
-  Provider,
-  Token,
-  WORKFLOW_CONSTANTS,
-} from "../workflow";
+import { LogEntry, Provider, Token, WORKFLOW_CONSTANTS } from "../workflow";
 import { OAUTH_STATE_COOKIE_NAME } from "../workflow/constants";
 import { decrypt, encrypt } from "./crypto";
 

@@ -1,12 +1,10 @@
 import { z } from "zod";
 
-import { StepDefinition, StepResultSchema } from "../types";
 import { listOUAutomation, postOU } from "../endpoints/admin";
+import { StepDefinition, StepResultSchema } from "../types";
 import { handleStepError } from "./utils";
 
-const InputSchema = z.object({
-  customerId: z.string(),
-});
+const InputSchema = z.object({ customerId: z.string() });
 
 export const createAutomationOU: StepDefinition = {
   name: "Create Automation Organizational Unit",
@@ -20,9 +18,7 @@ export const createAutomationOU: StepDefinition = {
 
     try {
       const resp = await listOUAutomation(ctx.api, { customerId });
-      type OrgUnitsResponse = {
-        organizationUnits?: unknown[];
-      };
+      type OrgUnitsResponse = { organizationUnits?: unknown[] };
 
       const { organizationUnits } = resp as OrgUnitsResponse;
       const exists = (organizationUnits?.length ?? 0) > 0;
@@ -32,10 +28,7 @@ export const createAutomationOU: StepDefinition = {
 
       await postOU(ctx.api, {
         customerId,
-        body: {
-          name: "Automation",
-          parentOrgUnitPath: "/",
-        },
+        body: { name: "Automation", parentOrgUnitPath: "/" },
       });
       return StepResultSchema.parse({ success: true, mode: "executed" });
     } catch (err: unknown) {

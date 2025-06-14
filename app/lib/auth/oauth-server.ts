@@ -1,5 +1,10 @@
 import { env } from "../../env";
 import { Provider, Token } from "../workflow";
+import {
+  MS_IN_SECOND,
+  OAUTH_GRANT_TYPES,
+  PROVIDERS,
+} from "../workflow/constants";
 
 // Local-only – defines the shape of provider configuration.  Not re-exported.
 interface OAuthConfig {
@@ -10,11 +15,6 @@ interface OAuthConfig {
   tokenUrl: string;
   scopes: string[];
 }
-import {
-  MS_IN_SECOND,
-  OAUTH_GRANT_TYPES,
-  PROVIDERS,
-} from "../workflow/constants";
 
 export const googleOAuthConfig: OAuthConfig = {
   clientId: env.GOOGLE_CLIENT_ID,

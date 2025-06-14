@@ -2,9 +2,9 @@ import { z } from "zod";
 
 // Local imports
 import {
-  VALIDATION_PATTERNS,
   TEMPLATE_IDS,
   TEMPLATE_NAMES,
+  VALIDATION_PATTERNS,
 } from "../constants";
 
 /**
@@ -74,16 +74,12 @@ export const variableDefinitions: Record<string, VariableDefinition> = {
   provisioningServicePrincipalId: {},
   ssoServicePrincipalId: {},
   ssoAppId: {},
-  jobId: {
-    default: "Initial",
-  },
+  jobId: { default: "Initial" },
   claimsPolicyId: {},
 
   // Other runtime data
   generatedPassword: {},
-  tenantId: {
-    comment: "Microsoft tenant ID from environment configuration",
-  },
+  tenantId: { comment: "Microsoft tenant ID from environment configuration" },
 
   // Local JSON string that tracks completion of manual workflow steps.  Used
   // solely by the UI layer; not required for API calls.

@@ -232,7 +232,7 @@ export function setChunkedCookieOnResponse(
       level: "info",
       message: `[Cookie Server] Setting ${chunks.length} chunks on response for ${name}`,
     });
-      const metadata = buildChunkMetadata(chunks.length);
+    const metadata = buildChunkMetadata(chunks.length);
     response.headers.append(
       "Set-Cookie",
       buildCookieString(name, JSON.stringify(metadata))

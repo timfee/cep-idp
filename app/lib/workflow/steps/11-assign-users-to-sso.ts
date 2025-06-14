@@ -1,11 +1,9 @@
 import { z } from "zod";
 
-import { StepDefinition, StepResultSchema } from "../types";
 import { listSsoAssignments, postSsoAssignment } from "../endpoints/ci";
+import { StepDefinition, StepResultSchema } from "../types";
 
-const InputSchema = z.object({
-  samlProfileId: z.string(),
-});
+const InputSchema = z.object({ samlProfileId: z.string() });
 
 export const assignUsersToSSO: StepDefinition = {
   name: "Assign Users to SSO App",
@@ -13,7 +11,9 @@ export const assignUsersToSSO: StepDefinition = {
   inputs: ["samlProfileId"],
 
   async handler(ctx) {
-    const { samlProfileId } = InputSchema.parse({ samlProfileId: ctx.vars.samlProfileId });
+    const { samlProfileId } = InputSchema.parse({
+      samlProfileId: ctx.vars.samlProfileId,
+    });
 
     const assignments = (await listSsoAssignments(ctx.api, {})) as {
       inboundSsoAssignments?: {
@@ -24,8 +24,8 @@ export const assignUsersToSSO: StepDefinition = {
 
     const exists = assignments.inboundSsoAssignments?.some(
       (a) =>
-        a.targetGroup?.id === "allUsers" &&
-        a.samlSsoInfo?.inboundSamlSsoProfile === samlProfileId
+        a.targetGroup?.id === "allUsers"
+        && a.samlSsoInfo?.inboundSamlSsoProfile === samlProfileId
     );
 
     if (exists) {

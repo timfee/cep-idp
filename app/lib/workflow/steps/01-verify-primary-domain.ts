@@ -1,12 +1,10 @@
 import { z } from "zod";
 
-import { StepDefinition, StepResultSchema } from "../types";
 import { listDomains, postDomain } from "../endpoints/admin";
+import { StepDefinition, StepResultSchema } from "../types";
 import { handleStepError } from "./utils";
 
-const InputSchema = z.object({
-  customerId: z.string(),
-});
+const InputSchema = z.object({ customerId: z.string() });
 
 // Removed OutputSchema – no runtime usage
 

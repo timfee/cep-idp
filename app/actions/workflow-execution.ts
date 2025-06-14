@@ -4,6 +4,13 @@ import "server-only";
 import { makeApiRequest } from "@/app/lib/api/client";
 import { getToken } from "@/app/lib/auth/tokens";
 import {
+  ERROR_MESSAGES,
+  PROVIDERS,
+  STATUS_VALUES,
+  STEP_NAMES,
+  VARIABLE_KEYS,
+} from "@/app/lib/workflow/constants";
+import {
   LogEntry,
   StepContext,
   StepDefinition,
@@ -11,13 +18,6 @@ import {
   StepStatus,
   Token,
 } from "@/app/lib/workflow/types";
-import {
-  PROVIDERS,
-  STATUS_VALUES,
-  STEP_NAMES,
-  VARIABLE_KEYS,
-  ERROR_MESSAGES,
-} from "@/app/lib/workflow/constants";
 import { setStoredVariables } from "@/app/lib/workflow/variables-store";
 import { revalidatePath } from "next/cache";
 
@@ -61,7 +61,12 @@ export async function runStepActions(
       Object.assign(variables, updates);
     },
     log: (level: string, message, data) => {
-      onLog({ timestamp: Date.now(), level: level as LogEntry["level"], message, data });
+      onLog({
+        timestamp: Date.now(),
+        level: level as LogEntry["level"],
+        message,
+        data,
+      });
     },
   };
 
@@ -86,10 +91,7 @@ export async function runStepActions(
       message: `Step handler failed: ${step.name}`,
       data: error,
     });
-    return {
-      success: false,
-      extractedVariables: extractedVars,
-    };
+    return { success: false, extractedVariables: extractedVars };
   }
 }
 
@@ -225,7 +227,6 @@ export async function executeWorkflowStep(
 
     // Track logs and variables – simply console.log server-side
     const onLog = (log: LogEntry) => {
-       
       console.log(`[LOG] ${log.level.toUpperCase()}: ${log.message}`, log.data);
     };
 
@@ -248,7 +249,6 @@ export async function executeWorkflowStep(
       variables: updatedVariables,
     };
   } catch (error) {
-     
     console.error("Step execution failed:", error);
 
     return {
@@ -258,13 +258,15 @@ export async function executeWorkflowStep(
   }
 }
 
-export async function skipWorkflowStep(): Promise<{ success: boolean; error?: string }> {
+export async function skipWorkflowStep(): Promise<{
+  success: boolean;
+  error?: string;
+}> {
   try {
     // Skipping is handled by the UI state only; a render refresh is enough
     revalidatePath("/");
     return { success: true };
   } catch (error) {
-     
     console.error("Failed to skip step:", error);
     return {
       success: false,

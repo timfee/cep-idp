@@ -7,8 +7,7 @@ import { hasOwnProperty } from "@/app/lib/utils";
 
 // Import types only to assist consumers while avoiding runtime impact.
 // Bring in for future type adjustments – disable sonar unused import for now
- 
-import type { StepDefinition } from "@/app/lib/workflow/types";
+
 import {
   evaluateGenerator,
   LogEntry,
@@ -23,6 +22,7 @@ import {
   STATUS_VALUES,
   VARIABLE_KEYS,
 } from "@/app/lib/workflow/constants";
+import type { StepDefinition } from "@/app/lib/workflow/types";
 import {
   getStoredVariables,
   setStoredVariables,
@@ -50,7 +50,6 @@ export interface AuthState {
  * Full snapshot of workflow state used by the UI layer.
  */
 export interface WorkflowData {
-   
   workflow: ReturnType<typeof parseWorkflow>;
   variables: Record<string, string>;
   stepStatuses: Record<string, StepStatus>;
@@ -64,7 +63,6 @@ export interface WorkflowData {
  * @returns Initial variable map
  */
 async function initializeVariables(
-   
   workflow: ReturnType<typeof parseWorkflow>
 ): Promise<Record<string, string>> {
   const vars: Record<string, string> = {} as Record<string, string>;
@@ -121,7 +119,6 @@ function extractTenantId(
  * @returns Map of step statuses and updated variables
  */
 async function reconstituteStepStatuses(
-   
   workflow: ReturnType<typeof parseWorkflow>,
   variables: Record<string, string>,
   tokens: { google?: Token; microsoft?: Token }

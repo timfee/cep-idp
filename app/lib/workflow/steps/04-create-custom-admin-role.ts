@@ -1,12 +1,10 @@
 import { z } from "zod";
 
+import { listPrivileges, listRoles, postRole } from "../endpoints/admin";
 import { StepDefinition, StepResultSchema } from "../types";
-import { listRoles, postRole, listPrivileges } from "../endpoints/admin";
 import { handleStepError } from "./utils";
 
-const InputSchema = z.object({
-  customerId: z.string(),
-});
+const InputSchema = z.object({ customerId: z.string() });
 
 const OutputSchema = z.object({
   adminRoleId: z.string(),
@@ -25,41 +23,43 @@ export const createCustomAdminRole: StepDefinition = {
     });
 
     try {
-    const rolesResp = (await listRoles(ctx.api, {
-      customerId,
-    })) as unknown;
+      const rolesResp = (await listRoles(ctx.api, { customerId })) as unknown;
 
-    interface RoleItem {
-      roleName?: string;
-      roleId?: string;
-      rolePrivileges?: { serviceId?: string }[];
-    }
+      interface RoleItem {
+        roleName?: string;
+        roleId?: string;
+        rolePrivileges?: { serviceId?: string }[];
+      }
 
-    const existing = (rolesResp as { items?: RoleItem[] }).items?.find(
-      (r) => r.roleName === "Microsoft Entra Provisioning"
-    );
+      const existing = (rolesResp as { items?: RoleItem[] }).items?.find(
+        (r) => r.roleName === "Microsoft Entra Provisioning"
+      );
       if (existing) {
         const outputs = OutputSchema.parse({
           adminRoleId: existing.roleId,
           directoryServiceId: existing.rolePrivileges?.[0]?.serviceId ?? "",
         });
         ctx.setVars(outputs);
-        return StepResultSchema.parse({ success: true, mode: "verified", outputs });
+        return StepResultSchema.parse({
+          success: true,
+          mode: "verified",
+          outputs,
+        });
       }
 
       // Need directory serviceId – fetch from privileges
-    const privResp = (await listPrivileges(ctx.api, {
-      customerId,
-    })) as unknown;
+      const privResp = (await listPrivileges(ctx.api, {
+        customerId,
+      })) as unknown;
 
-    interface PrivItem {
-      privilegeName?: string;
-      serviceId?: string;
-    }
+      interface PrivItem {
+        privilegeName?: string;
+        serviceId?: string;
+      }
 
-    const dirServiceId = (privResp as { items?: PrivItem[] }).items?.find(
-      (p) => p.privilegeName === "USERS_RETRIEVE"
-    )?.serviceId;
+      const dirServiceId = (privResp as { items?: PrivItem[] }).items?.find(
+        (p) => p.privilegeName === "USERS_RETRIEVE"
+      )?.serviceId;
 
       const roleBody = {
         roleName: "Microsoft Entra Provisioning",
@@ -82,7 +82,11 @@ export const createCustomAdminRole: StepDefinition = {
       });
       ctx.setVars(outputs);
 
-      return StepResultSchema.parse({ success: true, mode: "executed", outputs });
+      return StepResultSchema.parse({
+        success: true,
+        mode: "executed",
+        outputs,
+      });
     } catch (err: unknown) {
       return handleStepError(err, this.name, ctx);
     }

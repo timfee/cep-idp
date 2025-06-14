@@ -92,9 +92,5 @@ export function buildChunkMetadata(chunkCount: number): {
   count: number;
   timestamp: number;
 } {
-  return {
-    chunked: true,
-    count: chunkCount,
-    timestamp: Date.now(),
-  } as const;
+  return { chunked: true, count: chunkCount, timestamp: Date.now() } as const;
 }

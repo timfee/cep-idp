@@ -23,10 +23,15 @@ export async function makeApiRequest(options: {
     tokens,
   } = options;
 
-  const connection = (connections as Record<
-    string,
-    { base: string; getAuthHeader: (t: { google?: Token; microsoft?: Token }) => string }
-  >)[connName];
+  const connection = (
+    connections as Record<
+      string,
+      {
+        base: string;
+        getAuthHeader: (t: { google?: Token; microsoft?: Token }) => string;
+      }
+    >
+  )[connName];
 
   if (!connection) {
     throw new Error(`Unknown connection: ${connName}`);

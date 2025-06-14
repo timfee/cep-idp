@@ -1,12 +1,12 @@
 import { z } from "zod";
 
-import { StepDefinition, StepResultSchema } from "../types";
 import {
-  instantiateProv,
-  instantiateSSO,
   appByTemplateProv,
   appByTemplateSSO,
+  instantiateProv,
+  instantiateSSO,
 } from "../endpoints/graph";
+import { StepDefinition, StepResultSchema } from "../types";
 
 const InputSchema = z.object({
   provisioningTemplateId: z.string(),
@@ -42,8 +42,9 @@ export const createMicrosoftApps: StepDefinition = {
 
     const existingProvisioning = provisioningApps.value?.[0];
 
-    let provisioningSpId =
-      existingProvisioning?.servicePrincipalId as string | undefined;
+    let provisioningSpId = existingProvisioning?.servicePrincipalId as
+      | string
+      | undefined;
 
     if (!provisioningSpId) {
       const inst = (await instantiateProv(ctx.api, {
@@ -54,18 +55,16 @@ export const createMicrosoftApps: StepDefinition = {
     }
 
     // Same for SSO
-    const ssoApps = (await appByTemplateSSO(ctx.api, {
-      ssoTemplateId,
-    })) as { value?: { servicePrincipalId?: string; appId?: string }[] };
+    const ssoApps = (await appByTemplateSSO(ctx.api, { ssoTemplateId })) as {
+      value?: { servicePrincipalId?: string; appId?: string }[];
+    };
 
     const existingSso = ssoApps.value?.[0];
     let ssoSpId = existingSso?.servicePrincipalId as string | undefined;
     let ssoAppId = existingSso?.appId as string | undefined;
 
     if (!ssoSpId) {
-      const inst = (await instantiateSSO(ctx.api, {
-        ssoTemplateId,
-      })) as {
+      const inst = (await instantiateSSO(ctx.api, { ssoTemplateId })) as {
         servicePrincipal?: { id?: string };
         application?: { appId?: string };
       };

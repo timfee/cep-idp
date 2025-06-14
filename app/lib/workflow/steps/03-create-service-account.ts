@@ -1,12 +1,10 @@
 import { z } from "zod";
 
-import { StepDefinition, StepResultSchema } from "../types";
 import { getUser, postUser } from "../endpoints/admin";
 import { generatePassword } from "../generators";
+import { StepDefinition, StepResultSchema } from "../types";
 
-const InputSchema = z.object({
-  primaryDomain: z.string(),
-});
+const InputSchema = z.object({ primaryDomain: z.string() });
 
 const OutputSchema = z.object({
   provisioningUserId: z.string(),
@@ -36,7 +34,11 @@ export const createServiceAccount: StepDefinition = {
         provisioningUserEmail: String(user.primaryEmail),
       });
       ctx.setVars(outputs);
-      return StepResultSchema.parse({ success: true, mode: "verified", outputs });
+      return StepResultSchema.parse({
+        success: true,
+        mode: "verified",
+        outputs,
+      });
     } catch {
       // proceed to create
     }

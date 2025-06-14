@@ -3,9 +3,7 @@ import { z } from "zod";
 import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
-// ---------------------------------------------------------------------------
 // Schema definitions
-// ---------------------------------------------------------------------------
 
 const ParamsSchema = z.object({
   customerId: z.string(),

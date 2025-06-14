@@ -49,19 +49,30 @@ function hasPrefix(role: string, prefixes: readonly string[]): boolean {
 // Re-implement provider helpers using the shared predicate (kept export names
 // to avoid a breaking change for callers).
 
+/**
+ * Check whether a role string targets Google Admin or Cloud Identity APIs.
+ * Uses a simple prefix match (`dir*`, `ci*`).
+ *
+ * @param role - Workflow role identifier (e.g. `dirDomainRW`)
+ * @returns `true` when the role is Google-specific
+ */
 export function isGoogleRole(role: string): boolean {
   return hasPrefix(role, ["dir", "ci"]);
 }
 
+/**
+ * Check whether a role string targets Microsoft Graph APIs (prefix `graph`).
+ *
+ * @param role - Workflow role identifier (e.g. `graphUserRO`)
+ * @returns `true` when the role is Microsoft-specific
+ */
 export function isMicrosoftRole(role: string): boolean {
   return hasPrefix(role, ["graph"]);
 }
 
-// ---------------------------------------------------------------------------
 // Core time units – single source of truth for all time-based calculations.
 // The numeric literals are self-descriptive; ESLint magic-number rule is
 // disabled for this block.
-// ---------------------------------------------------------------------------
 
 /* eslint-disable no-magic-numbers */
 export const TIME = {
@@ -85,9 +96,7 @@ export const MINUTES_IN_HOUR = TIME.MINUTES_IN_HOUR;
 export const HOURS_IN_DAY = TIME.HOURS_IN_DAY;
 export const DAYS_IN_MONTH = TIME.DAYS_IN_MONTH;
 
-// ---------------------------------------------------------------------------
 // Remote API base URLs – single source of truth to avoid duplication.
-// ---------------------------------------------------------------------------
 
 export const BASE_URLS = {
   GOOGLE_ADMIN: "https://admin.googleapis.com/admin/directory/v1",
@@ -96,9 +105,7 @@ export const BASE_URLS = {
   GRAPH_BETA: "https://graph.microsoft.com/beta",
 } as const;
 
-// ---------------------------------------------------------------------------
 // 3rd-party application template IDs & names (single definitions)
-// ---------------------------------------------------------------------------
 
 export const TEMPLATE_IDS = {
   GOOGLE_CONNECTOR: "01303a13-8322-4e06-bee5-80d612907131",
@@ -163,10 +170,8 @@ export const WORKFLOW_CONSTANTS = {
   // Retained for backwards compatibility. Prefer SYNC_CONFIG.SYNC_INTERVAL
   SYNC_INTERVAL: "PT40M",
 
-  // ---------------------------------------------------------------------
   // Legacy aliases – prefer TEMPLATE_IDS / TEMPLATE_NAMES going forward.
   // (Deprecated keys removed in cleanup.)
-  // ---------------------------------------------------------------------
 };
 
 export const DETERMINISTIC_PASSWORD_BASE_LENGTH = 12;
@@ -224,9 +229,7 @@ export const ERROR_MESSAGES = {
 
 export const JSON_FORMAT = { INDENT: 2, DATE_LOCALE: "en-US" } as const;
 
-// ---------------------------------------------------------------------------
-//  New values introduced by the modular workflow refactor
-// ---------------------------------------------------------------------------
+// New values introduced by the modular workflow refactor
 
 // Duplicate constant removed – properties have been merged into the original
 
@@ -300,9 +303,7 @@ export const API_PATHS = {
   FED_METADATA: "/FederationMetadata/2007-06/FederationMetadata.xml",
 } as const;
 
-// ---------------------------------------------------------------------------
-//  Additional constants introduced by modular workflow refactor (step files)
-// ---------------------------------------------------------------------------
+// Additional constants introduced by modular workflow refactor (step files)
 
 // Organization Units
 export const OU_NAMES = { AUTOMATION: "Automation", ROOT: "/" } as const;

@@ -23,9 +23,26 @@ import { revalidatePath } from "next/cache";
 
 import { getWorkflowData } from "./workflow-data";
 
-// ---------------------------------------------------------------------------
-//  Core action runner – typed step handlers only
-// ---------------------------------------------------------------------------
+// Core action runner – typed step handlers only
+
+/**
+ * Executes the typed handler for a single workflow step.
+ *
+ * The helper sets up a minimal execution context – variable map, API wrapper
+ * and logging callback – before delegating to the step's business‐logic
+ * handler.  Both verification-only and real execution modes are supported via
+ * the `_verificationOnly` flag.
+ *
+ * @param step - Parsed {@link StepDefinition} containing the handler to run
+ * @param variables - Mutable workflow variable map available to the handler
+ * @param tokens - OAuth tokens used when the handler makes outbound API calls
+ * @param onLog - Log sink allowing the caller to surface structured log
+ *   messages in real time
+ * @param _verificationOnly - When true, the handler should operate in a dry-run
+ *   mode without making mutating API calls
+ * @returns Result object including success flag, any variables the handler
+ *   extracted and optional raw data for debugging
+ */
 
 export async function runStepActions(
   step: StepDefinition,
@@ -38,6 +55,7 @@ export async function runStepActions(
   extractedVariables: Record<string, string>;
   data?: unknown;
 }> {
+
   const extractedVars: Record<string, string> = {};
 
   // Lightweight API wrapper passed to step handlers
@@ -95,9 +113,7 @@ export async function runStepActions(
   }
 }
 
-// ---------------------------------------------------------------------------
-//  Execution helpers used by pages & UI components
-// ---------------------------------------------------------------------------
+// Execution helpers used by pages & UI components
 
 async function processStepExecution(
   step: StepDefinition,
@@ -192,9 +208,20 @@ async function processStepExecution(
   return status;
 }
 
-// ---------------------------------------------------------------------------
-//  Public API – called from UI components
-// ---------------------------------------------------------------------------
+// Public API – called from UI components
+
+/**
+ * Execute a single workflow step and persist the resulting state.
+ *
+ * This is the main entry point called by UI components.  It gathers the
+ * workflow definition, reconstructs variables and authentication context,
+ * dispatches the requested step to {@link runStepActions} and then persists
+ * any updates before re-validating the overall workflow state.
+ *
+ * @param stepName - Human-readable step name as defined in the YAML workflow
+ *   file (e.g. `createServiceAccount`)
+ * @returns Object describing execution success, new variables and status
+ */
 
 export async function executeWorkflowStep(
   stepName: string
@@ -258,6 +285,14 @@ export async function executeWorkflowStep(
   }
 }
 
+/**
+ * Mark the currently running manual step as skipped.
+ *
+ * Skipping is used when an operator determines that the step is unnecessary –
+ * for example because the target resource already exists – and we still want
+ * the workflow to advance.
+ */
+
 export async function skipWorkflowStep(): Promise<{
   success: boolean;
   error?: string;
@@ -274,6 +309,14 @@ export async function skipWorkflowStep(): Promise<{
     };
   }
 }
+
+/**
+ * Re-compute derived workflow state after a step execution or skip action.
+ *
+ * The helper calls the dedicated server action in `app/actions/workflow-state`
+ * and then triggers Next.js cache re-validation so that UI components receive
+ * the up-to-date data on the next render.
+ */
 
 export async function refreshWorkflowState(): Promise<void> {
   revalidatePath("/");

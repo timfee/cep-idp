@@ -38,6 +38,15 @@ const StepArraySchema = z.array(
   z.object({ name: z.string(), handler: z.function() })
 );
 
+/**
+ * Construct an immutable `WorkflowDefinition` object that contains
+ * connections, roles, variable metadata and ordered steps.  The function
+ * performs a lightweight Zod validation to assert that every step has the
+ * required "name" and "handler" fields before returning the assembled
+ * workflow.
+ *
+ * @returns A fully validated, typed `WorkflowDefinition` ready for execution
+ */
 export function parseWorkflow() {
   const workflow = {
     connections,

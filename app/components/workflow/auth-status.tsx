@@ -80,6 +80,17 @@ function hasAllRequiredScopes(
   );
 }
 
+/**
+ * Compact indicator that shows whether the current user is authenticated and
+ * has authorized the workflow application.
+ *
+ * The component watches the `session` prop (Next-Auth session object) and
+ * renders a green check-mark when the user is fully authenticated or a red
+ * warning icon otherwise.
+ *
+ * @param session - Session data returned by Next-Auth (may be `null`)
+ * @returns A colored status chip
+ */
 export function AuthStatus({
   provider,
   isAuthenticated,

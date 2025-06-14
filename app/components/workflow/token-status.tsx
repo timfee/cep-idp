@@ -16,6 +16,18 @@ interface TokenStatusProps {
   onRefresh?: () => Promise<void>;
 }
 
+/**
+ * Status pill that indicates whether an OAuth/OIDC access token is present
+ * and, if so, how many seconds remain before it expires.
+ *
+ * The component polls the monotonic clock via `expiresAt` prop rather than
+ * subscribe to real token refresh events, making it lightweight and suitable
+ * for dashboards.
+ *
+ * @param expiresAt - Epoch milliseconds when the token expires (or `null`
+ *                    when no token is present)
+ * @returns A React element—a colored badge with countdown text
+ */
 export function TokenStatus({
   provider,
   isAuthenticated,

@@ -12,6 +12,14 @@ interface PasswordDisplayProps {
   accountEmail: string;
 }
 
+/**
+ * Obfuscated password viewer with show / hide toggle and copy-to-clipboard
+ * affordance.  Used by the workflow UI to surface generated credentials
+ * without accidentally leaking them in plain text.
+ *
+ * @param password - The raw password string to display
+ * @returns A React element containing a masked input and controls
+ */
 export function PasswordDisplay({
   password,
   accountEmail,

@@ -25,6 +25,22 @@ interface VariableViewerProps {
   requiredVariables?: Set<string>;
 }
 
+/**
+ * Display a categorized, read-only list of workflow variables.
+ *
+ * Defined variables show their current runtime value, while variables that
+ * have not yet been provided are grouped into a collapsible “Pending”
+ * section.  Additional badges communicate whether a variable is required and
+ * highlight the mechanism (generated, default, extracted) that will produce
+ * its value.
+ *
+ * @param variables - Map of variable names to their current value
+ * @param definitions - Optional metadata describing defaults, generators and
+ *                      validators for each variable
+ * @param requiredVariables - Variables that must be defined before the
+ *                            workflow can execute
+ * @returns React element wrapped in a Radix `Card` component
+ */
 export function VariableViewer({
   variables,
   definitions = {},

@@ -2,9 +2,7 @@ import { z } from "zod";
 
 import { STATUS_VALUES } from "./constants";
 
-// ---------------------------------------------------------------------------
-//  OAuth Token
-// ---------------------------------------------------------------------------
+// OAuth Token
 
 export const TokenSchema = z
   .object({
@@ -22,9 +20,7 @@ export const TokenSchema = z
 
 export type Token = z.infer<typeof TokenSchema>;
 
-// ---------------------------------------------------------------------------
-//  Runtime execution status & logging
-// ---------------------------------------------------------------------------
+// Runtime execution status & logging
 
 export interface LogEntry {
   timestamp: number;
@@ -43,9 +39,7 @@ export interface StepStatus {
   variables?: Record<string, string>;
 }
 
-// ---------------------------------------------------------------------------
-//  Step handler interfaces (refactor v2)
-// ---------------------------------------------------------------------------
+// Step handler interfaces
 
 export interface StepContext {
   /** Mutable map of workflow variables */

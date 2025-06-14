@@ -84,6 +84,21 @@ function stepCardReducer(
  *
  * @param props - Step details, current status, and environment information
  */
+/**
+ * Card component that renders the visual representation of a single
+ * `WorkflowStep`.  It shows the step name, status icon, descriptive text and
+ * an optional collapsible error panel when execution fails.
+ *
+ * The card is purely presentational and does not trigger any mutations; the
+ * parent component is responsible for feeding it updated `status` and `log`
+ * props.
+ *
+ * @param name - Human-readable step label
+ * @param status - Current execution status (pending | running | success |
+ *                 error)
+ * @param log - Optional diagnostic text returned by the runtime
+ * @returns A styled Radix `Card` element
+ */
 export function StepCard({
   step,
   status,

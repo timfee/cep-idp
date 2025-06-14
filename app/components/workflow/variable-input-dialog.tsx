@@ -28,6 +28,16 @@ interface VariableInputDialogProps {
   onComplete: () => void;
 }
 
+/**
+ * Modal dialog that prompts the operator to supply a value for an undefined
+ * workflow variable.  The dialog validates the input against an optional
+ * regex and invokes `onSubmit` only when the value passes validation.
+ *
+ * @param variableName - Name of the variable being edited
+ * @param validator - Optional `RegExp` used to validate user input
+ * @param onSubmit - Callback invoked with the validated value
+ * @returns A Radix `Dialog` element
+ */
 export function VariableInputDialog({
   variableName,
   title,

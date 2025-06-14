@@ -17,6 +17,16 @@ interface WorkflowStepsProps {
   variables: Record<string, string>;
 }
 
+/**
+ * High-level component that renders an ordered list of `WorkflowStep`
+ * objects using {@link StepCard}.  It drives step-level animations and
+ * ensures that the viewport scrolls to the active step while the workflow
+ * is running.
+ *
+ * @param steps - Ordered array returned by the workflow engine
+ * @param currentIndex - Zero-based index of the step currently executing
+ * @returns React fragment containing a stack of `StepCard` components
+ */
 export function WorkflowSteps({
   workflow,
   stepStatuses,

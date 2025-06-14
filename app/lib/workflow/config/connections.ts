@@ -47,7 +47,7 @@ export const connections: Record<string, ConnectionConfig> = {
   public: { base: "", getAuthHeader: () => "" },
 };
 
-// --- Validate configuration at module load ---------------------------------
+// Validate configuration at module load
 for (const [name, cfg] of Object.entries(connections)) {
   try {
     ConnectionConfigSchema.parse(cfg);

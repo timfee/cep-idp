@@ -30,7 +30,11 @@ import {
 import { runStepActions } from "./workflow-execution";
 import { refreshWorkflowState } from "./workflow-state";
 
-/** Basic authentication status for both providers. */
+/**
+ * Authentication status metadata for both identity providers used by the
+ * workflow engine.  The structure is consumed by React UI components to decide
+ * which provider still requires user interaction.
+ */
 export interface AuthState {
   google: {
     authenticated: boolean;
@@ -47,7 +51,13 @@ export interface AuthState {
 }
 
 /**
- * Full snapshot of workflow state used by the UI layer.
+ * Hydrated snapshot of the workflow engine state exposed to UI components.
+ *
+ * @remarks
+ * The structure bundles together the parsed YAML workflow definition, the
+ * current variable map (including values reconstructed from verify-only step
+ * checks), per-step execution status and the authentication health for each
+ * provider.
  */
 export interface WorkflowData {
   workflow: ReturnType<typeof parseWorkflow>;
@@ -247,6 +257,16 @@ async function reconstituteStepStatuses(
  * @param forceRefresh - When true, forces state revalidation
  * @returns Complete workflow data for the UI
  */
+/**
+ * Load and verify the workflow configuration, returning a hydrated view that
+ * the UI layer can render directly.
+ *
+ * @param forceRefresh - When `true`, forces verification actions to re-run and
+ *   persisted variable state to be regenerated before the snapshot is
+ *   returned.
+ * @returns Complete, type-safe workflow state data ready for consumption by
+ *   React components.
+ */
 export async function getWorkflowData(
   forceRefresh = false
 ): Promise<WorkflowData> {
@@ -322,6 +342,15 @@ export async function getWorkflowData(
  *
  * @returns Current auth state for Google and Microsoft
  */
+/**
+ * Re-compute the authentication status for Google and Microsoft providers.
+ *
+ * Unlike {@link getWorkflowData} this helper focuses solely on auth-related
+ * data so that UI components can refresh the indicator without incurring the
+ * overhead of full workflow verification.
+ *
+ * @returns Current {@link AuthState} describing token validity and scope sets
+ */
 export async function getAuthStatus(): Promise<AuthState> {
   const googleToken = await getToken(PROVIDERS.GOOGLE);
   const microsoftToken = await getToken(PROVIDERS.MICROSOFT);
@@ -362,6 +391,13 @@ type WorkflowVariableInfo = {
   isRequired: boolean;
 };
 
+/**
+ * Return the variable map persisted in cookies combined with initial defaults
+ * in the workflow file.
+ *
+ * @returns Object containing the reconstructed variable map and a boolean that
+ *   indicates whether the map had to be initialised from scratch.
+ */
 export async function getWorkflowVariables(): Promise<{
   variables: Record<string, WorkflowVariableInfo>;
 }> {

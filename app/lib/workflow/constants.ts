@@ -33,25 +33,83 @@ export const STATUS_VALUES = {
  * @param role - Role identifier from workflow
  * @returns True when role targets Google APIs
  */
-export function isGoogleRole(role: string): boolean {
-  return role.startsWith("dir") || role.startsWith("ci");
-}
+
 
 /**
- * Determine if a role targets Microsoft Graph APIs.
+ * Generic helper used by {@link isGoogleRole} and {@link isMicrosoftRole}.
+ * Additional provider checks can reuse this without duplicating startsWith
+ * logic.
  *
- * @param role - Role identifier from workflow
- * @returns True when role targets Microsoft Graph
+ * @param role - The workflow role identifier
+ * @param prefixes - One or more valid prefixes
  */
-export function isMicrosoftRole(role: string): boolean {
-  return role.startsWith("graph");
+function hasPrefix(role: string, prefixes: readonly string[]): boolean {
+  return prefixes.some((p) => role.startsWith(p));
 }
 
-export const HOURS_IN_DAY = 24;
-export const DAYS_IN_MONTH = 30;
-export const MINUTES_IN_HOUR = 60;
-export const SECONDS_IN_MINUTE = 60;
-export const MS_IN_SECOND = 1000;
+// Re-implement provider helpers using the shared predicate (kept export names
+// to avoid a breaking change for callers).
+
+export function isGoogleRole(role: string): boolean {
+  return hasPrefix(role, ["dir", "ci"]);
+}
+
+export function isMicrosoftRole(role: string): boolean {
+  return hasPrefix(role, ["graph"]);
+}
+
+// ---------------------------------------------------------------------------
+// Core time units – single source of truth for all time-based calculations.
+// The numeric literals are self-descriptive; ESLint magic-number rule is
+// disabled for this block.
+// ---------------------------------------------------------------------------
+
+/* eslint-disable no-magic-numbers */
+export const TIME = {
+  MS_IN_SECOND: 1000,
+  SECONDS_IN_MINUTE: 60,
+  MINUTES_IN_HOUR: 60,
+  HOURS_IN_DAY: 24,
+  DAYS_IN_MONTH: 30,
+  MS_IN_MINUTE: 1000 * 60,
+  TOKEN_EXPIRING_SOON_MINUTES: 30,
+} as const;
+/* eslint-enable no-magic-numbers */
+
+// Older named exports kept as aliases to avoid widespread code churn while the
+// refactor is rolled out.  They point back to the canonical TIME values so we
+// still have a single definition.
+
+ 
+export const MS_IN_SECOND = TIME.MS_IN_SECOND;
+export const SECONDS_IN_MINUTE = TIME.SECONDS_IN_MINUTE;
+export const MINUTES_IN_HOUR = TIME.MINUTES_IN_HOUR;
+export const HOURS_IN_DAY = TIME.HOURS_IN_DAY;
+export const DAYS_IN_MONTH = TIME.DAYS_IN_MONTH;
+ 
+// ---------------------------------------------------------------------------
+// Remote API base URLs – single source of truth to avoid duplication.
+// ---------------------------------------------------------------------------
+
+export const BASE_URLS = {
+  GOOGLE_ADMIN: "https://admin.googleapis.com/admin/directory/v1",
+  GOOGLE_CI: "https://cloudidentity.googleapis.com/v1",
+  GRAPH_V1: "https://graph.microsoft.com/v1.0",
+  GRAPH_BETA: "https://graph.microsoft.com/beta",
+} as const;
+
+// ---------------------------------------------------------------------------
+// 3rd-party application template IDs & names (single definitions)
+// ---------------------------------------------------------------------------
+
+export const TEMPLATE_IDS = {
+  GOOGLE_CONNECTOR: "01303a13-8322-4e06-bee5-80d612907131",
+} as const;
+
+export const TEMPLATE_NAMES = {
+  GOOGLE_CONNECTOR: "Google Cloud / G Suite Connector",
+} as const;
+
 export const COPY_FEEDBACK_DURATION_MS = 2000;
 export const RETRY_COUNT = 3;
 export const SPLIT_LIMIT = 2;
@@ -107,17 +165,20 @@ export const WORKFLOW_CONSTANTS = {
   VARIABLES_COOKIE_MAX_AGE:
     DAYS_IN_MONTH * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE,
 
+  // Retained for backwards compatibility. Prefer SYNC_CONFIG.SYNC_INTERVAL
   SYNC_INTERVAL: "PT40M",
+  // Deprecated – use BASE_URLS.GOOGLE_ADMIN instead. Retained for backward
+  // compatibility until call sites are updated.
   PROVISIONING_BASE_URL: "https://admin.googleapis.com/admin/directory/v1",
 
   PASSWORD_EXTRACTION_KEY: "_generated_password_displayed",
 
   // ---------------------------------------------------------------------
-  // Added by modular workflow refactor
+  // Legacy aliases – prefer TEMPLATE_IDS / TEMPLATE_NAMES going forward.
   // ---------------------------------------------------------------------
-  PROV_TEMPLATE_ID: "01303a13-8322-4e06-bee5-80d612907131",
-  SSO_TEMPLATE_ID: "01303a13-8322-4e06-bee5-80d612907131",
-  PROV_TEMPLATE_NAME: "Google Cloud / G Suite Connector",
+  PROV_TEMPLATE_ID: TEMPLATE_IDS.GOOGLE_CONNECTOR,
+  SSO_TEMPLATE_ID: TEMPLATE_IDS.GOOGLE_CONNECTOR,
+  PROV_TEMPLATE_NAME: TEMPLATE_NAMES.GOOGLE_CONNECTOR,
 };
 
 export const DETERMINISTIC_PASSWORD_BASE_LENGTH = 12;
@@ -166,15 +227,6 @@ export const LOG_LEVELS = {
 export type LogLevel = (typeof LOG_LEVELS)[keyof typeof LOG_LEVELS];
 
 /** Common time constants used throughout the workflow. */
-export const TIME = {
-  MS_IN_SECOND: 1000,
-  SECONDS_IN_MINUTE: 60,
-  MINUTES_IN_HOUR: 60,
-  HOURS_IN_DAY: 24,
-  MS_IN_MINUTE: 60000,
-  TOKEN_EXPIRING_SOON_MINUTES: 30,
-} as const;
-
 /** Keys used when encoding metadata for chunked cookies. */
 export const COOKIE_METADATA_KEYS = {
   CHUNKED: "chunked",
@@ -327,14 +379,14 @@ export const SAML_CONFIG = {
 
 // Microsoft Graph Configuration
 export const MS_GRAPH_CONFIG = {
-  GOOGLE_CONNECTOR_TEMPLATE_ID: "01303a13-8322-4e06-bee5-80d612907131",
-  GOOGLE_CONNECTOR_NAME: "Google Cloud / G Suite Connector",
+  GOOGLE_CONNECTOR_TEMPLATE_ID: TEMPLATE_IDS.GOOGLE_CONNECTOR,
+  GOOGLE_CONNECTOR_NAME: TEMPLATE_NAMES.GOOGLE_CONNECTOR,
   CLAIMS_POLICY_NAME: "Google Workspace Basic Claims",
   CLAIMS_POLICY_VERSION: 1,
   BASE_ADDRESS_KEY: "BaseAddress",
   SECRET_KEY_KEY: "SecretKey",
-  GOOGLE_ADMIN_BASE: "https://admin.googleapis.com/admin/directory/v1",
-  GRAPH_BETA_BASE: "https://graph.microsoft.com/beta",
+  GOOGLE_ADMIN_BASE: BASE_URLS.GOOGLE_ADMIN,
+  GRAPH_BETA_BASE: BASE_URLS.GRAPH_BETA,
 } as const;
 
 // Sync Job Configuration

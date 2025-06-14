@@ -1,10 +1,13 @@
 import { cookies } from "next/headers";
 import "server-only";
 import { LogEntry, WORKFLOW_CONSTANTS } from "../workflow";
-import { COOKIE_METADATA_KEYS } from "../workflow/constants";
-import { estimateCookieSize, splitIntoChunks } from "./utils";
+import { CHUNK_DELIMITER } from "./constants";
+import {
+  buildChunkMetadata,
+  estimateCookieSize,
+  splitIntoChunks,
+} from "./utils";
 
-const CHUNK_DELIMITER = ".chunk.";
 const MAX_COOKIE_SIZE = WORKFLOW_CONSTANTS.MAX_COOKIE_SIZE;
 
 /**
@@ -51,11 +54,7 @@ export async function setChunkedCookie(
   }
 
   const chunks = splitIntoChunks(value);
-  const metadata = {
-    [COOKIE_METADATA_KEYS.CHUNKED]: true,
-    [COOKIE_METADATA_KEYS.COUNT]: chunks.length,
-    [COOKIE_METADATA_KEYS.TIMESTAMP]: Date.now(),
-  };
+  const metadata = buildChunkMetadata(chunks.length);
   const metadataSize = estimateCookieSize(
     name,
     JSON.stringify(metadata),
@@ -233,11 +232,7 @@ export function setChunkedCookieOnResponse(
       level: "info",
       message: `[Cookie Server] Setting ${chunks.length} chunks on response for ${name}`,
     });
-    const metadata = {
-      chunked: true,
-      count: chunks.length,
-      timestamp: Date.now(),
-    };
+      const metadata = buildChunkMetadata(chunks.length);
     response.headers.append(
       "Set-Cookie",
       buildCookieString(name, JSON.stringify(metadata))

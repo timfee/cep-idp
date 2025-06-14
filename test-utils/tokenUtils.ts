@@ -50,6 +50,7 @@ export async function getGoogleAccessToken() {
 
   if (useWorkload && serviceAccount) {
     const SECONDS_IN_MILLISECOND = 1_000;
+    // eslint-disable-next-line no-magic-numbers
     const ONE_HOUR_IN_SECONDS = 60 * 60;
 
     const now = Math.floor(Date.now() / SECONDS_IN_MILLISECOND);

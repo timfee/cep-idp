@@ -2,6 +2,7 @@ import { z } from "zod";
 
 // Local imports
 import { TokenSchema } from "../types";
+import { BASE_URLS } from "../constants";
 
 /**
  * Zod schema describing a single connection configuration.  Validation runs at
@@ -28,19 +29,19 @@ export type ConnectionConfig = z.infer<typeof ConnectionConfigSchema>;
  */
 export const connections: Record<string, ConnectionConfig> = {
   googleAdmin: {
-    base: "https://admin.googleapis.com/admin/directory/v1",
+    base: BASE_URLS.GOOGLE_ADMIN,
     getAuthHeader: (tokens) => `Bearer ${tokens.google?.accessToken ?? ""}`,
   },
   googleCI: {
-    base: "https://cloudidentity.googleapis.com/v1",
+    base: BASE_URLS.GOOGLE_CI,
     getAuthHeader: (tokens) => `Bearer ${tokens.google?.accessToken ?? ""}`,
   },
   graphGA: {
-    base: "https://graph.microsoft.com/v1.0",
+    base: BASE_URLS.GRAPH_V1,
     getAuthHeader: (tokens) => `Bearer ${tokens.microsoft?.accessToken ?? ""}`,
   },
   graphBeta: {
-    base: "https://graph.microsoft.com/beta",
+    base: BASE_URLS.GRAPH_BETA,
     getAuthHeader: (tokens) => `Bearer ${tokens.microsoft?.accessToken ?? ""}`,
   },
   public: {

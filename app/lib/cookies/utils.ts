@@ -2,8 +2,8 @@
 import { COOKIE_METADATA_SIZES, WORKFLOW_CONSTANTS } from "../workflow";
 
 const MAX_COOKIE_SIZE = WORKFLOW_CONSTANTS.MAX_COOKIE_SIZE;
-/** Delimiter used for naming chunked cookie fragments. */
-export const CHUNK_DELIMITER = ".chunk.";
+// Re-export for callers that previously imported from utils.
+export { CHUNK_DELIMITER } from "./constants";
 
 /**
  * Split a value into cookie-sized chunks.
@@ -79,4 +79,22 @@ export function validateCookieSize(
 ): boolean {
   const estimatedSize = estimateCookieSize(name, value, options);
   return estimatedSize <= MAX_COOKIE_SIZE;
+}
+
+/**
+ * Build the standard metadata object stored in the root cookie when a value
+ * must be chunked.
+ *
+ * @param chunkCount - Number of value fragments
+ */
+export function buildChunkMetadata(chunkCount: number): {
+  chunked: true;
+  count: number;
+  timestamp: number;
+} {
+  return {
+    chunked: true,
+    count: chunkCount,
+    timestamp: Date.now(),
+  } as const;
 }

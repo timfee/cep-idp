@@ -1,7 +1,7 @@
 "use server";
 import "server-only";
 
-import { apiRequest } from "@/app/lib/api/client";
+import { makeApiRequest, apiRequest } from "@/app/lib/api/client";
 import { getToken } from "@/app/lib/auth/tokens";
 import {
   Action,
@@ -20,7 +20,6 @@ import {
   Workflow,
 } from "@/app/lib/workflow";
 
-import { createApiContext } from "@/app/lib/workflow/api-adapter";
 import {
   StepDefinition,
   StepContext,
@@ -37,7 +36,6 @@ import {
   WORKFLOW_CONSTANTS,
 } from "@/app/lib/workflow/constants";
 
-import type { HttpMethod } from "@/app/lib/workflow/constants";
 import { safeAsync } from "@/app/lib/workflow/error-handling";
 import { setStoredVariables } from "@/app/lib/workflow/variables-store";
 import { revalidatePath } from "next/cache";
@@ -581,11 +579,29 @@ export async function runStepActions(
   // New typed step: execute dedicated handler
   // ---------------------------------------------------------------------
   if ("handler" in step) {
-    const apiContext = createApiContext(tokens, variables);
+    const apiContext = {
+      request: async (
+        connection: string,
+        method: string,
+        path: string,
+        options?: { query?: Record<string, string | undefined>; body?: unknown }
+      ): Promise<unknown> => {
+        return makeApiRequest({
+          connection,
+          method,
+          path,
+          query: options?.query,
+          body: options?.body,
+          headers: {},
+          tokens,
+        });
+      },
+      tokens,
+    };
     // Adapt to the StepContext expected signature (method as string)
     const apiWrapper: StepContext["api"] = {
       request: (connection, method, path, options) =>
-        apiContext.request(connection, method as HttpMethod, path, options),
+        apiContext.request(connection, method, path, options),
     };
     const extractedVars: Record<string, string> = {};
 

@@ -1,11 +1,22 @@
 import { z } from "zod";
-
-import { ApiContext } from "../api-adapter";
 import { HttpMethod } from "../constants";
 import { API_PATHS } from "../../workflow/constants";
+import { Token } from "../types";
 
-// Re-export so endpoint modules can continue importing from this helper.
-export type { ApiContext };
+/**
+ * Lightweight API context passed into endpoint wrappers.
+ * Removing the temporary adapter means we construct requests directly using
+ * the shared makeApiRequest helper.
+ */
+export interface ApiContext {
+  request: (
+    connection: string,
+    method: HttpMethod,
+    url: string,
+    options?: { query?: Record<string, string | undefined>; body?: unknown }
+  ) => Promise<unknown>;
+  tokens?: { google?: Token; microsoft?: Token };
+}
 
 /** Extract `{var}` placeholders from a template path. */
 const VAR_REGEX = /\{(\w+)}/g;

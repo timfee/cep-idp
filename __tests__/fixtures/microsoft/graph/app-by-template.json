@@ -1,7 +1,9 @@
 {
   "_metadata": {
     "url": "https://graph.microsoft.com/v1.0/applications?=applicationTemplateId%20eq%20'8b1025e4-1dd2-430b-a150-2ef79cd700f5'",
-    "headers": { "Content-Type": "application/json" }
+    "headers": {
+      "Content-Type": "application/json"
+    }
   },
   "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#applications",
   "value": [
@@ -53,7 +55,9 @@
       },
       "appRoles": [
         {
-          "allowedMemberTypes": ["User"],
+          "allowedMemberTypes": [
+            "User"
+          ],
           "description": "msiam_access",
           "displayName": "msiam_access",
           "id": "7dfd756e-8c27-4472-b2b7-38c17fc5de5e",
@@ -75,7 +79,9 @@
         "legalAgeGroupRule": "Allow"
       },
       "passwordCredentials": [],
-      "publicClient": { "redirectUris": [] },
+      "publicClient": {
+        "redirectUris": []
+      },
       "requiredResourceAccess": [],
       "verifiedPublisher": {
         "displayName": null,
@@ -85,16 +91,23 @@
       "web": {
         "homePageUrl": "https://signin.aws.amazon.com/saml?metadata=aws|ISV9.1|primary|z",
         "logoutUrl": null,
-        "redirectUris": ["https://signin.aws.amazon.com/saml"],
+        "redirectUris": [
+          "https://signin.aws.amazon.com/saml"
+        ],
         "implicitGrantSettings": {
           "enableAccessTokenIssuance": false,
           "enableIdTokenIssuance": true
         },
         "redirectUriSettings": [
-          { "uri": "https://signin.aws.amazon.com/saml", "index": null }
+          {
+            "uri": "https://signin.aws.amazon.com/saml",
+            "index": null
+          }
         ]
       },
-      "spa": { "redirectUris": [] }
+      "spa": {
+        "redirectUris": []
+      }
     },
     {
       "id": "1e5fa616-a59c-4527-94ef-84ef50803862",
@@ -144,7 +157,9 @@
       },
       "appRoles": [
         {
-          "allowedMemberTypes": ["User"],
+          "allowedMemberTypes": [
+            "User"
+          ],
           "description": "msiam_access",
           "displayName": "msiam_access",
           "id": "7dfd756e-8c27-4472-b2b7-38c17fc5de5e",
@@ -166,7 +181,9 @@
         "legalAgeGroupRule": "Allow"
       },
       "passwordCredentials": [],
-      "publicClient": { "redirectUris": [] },
+      "publicClient": {
+        "redirectUris": []
+      },
       "requiredResourceAccess": [],
       "verifiedPublisher": {
         "displayName": null,
@@ -176,16 +193,23 @@
       "web": {
         "homePageUrl": "https://signin.aws.amazon.com/saml?metadata=aws|ISV9.1|primary|z",
         "logoutUrl": null,
-        "redirectUris": ["https://signin.aws.amazon.com/saml"],
+        "redirectUris": [
+          "https://signin.aws.amazon.com/saml"
+        ],
         "implicitGrantSettings": {
           "enableAccessTokenIssuance": false,
           "enableIdTokenIssuance": true
         },
         "redirectUriSettings": [
-          { "uri": "https://signin.aws.amazon.com/saml", "index": null }
+          {
+            "uri": "https://signin.aws.amazon.com/saml",
+            "index": null
+          }
         ]
       },
-      "spa": { "redirectUris": [] }
+      "spa": {
+        "redirectUris": []
+      }
     },
     {
       "id": "3d7084d5-59db-49b1-ba84-7171c20db93b",
@@ -235,7 +259,9 @@
       },
       "appRoles": [
         {
-          "allowedMemberTypes": ["User"],
+          "allowedMemberTypes": [
+            "User"
+          ],
           "description": "msiam_access",
           "displayName": "msiam_access",
           "id": "8eea5c46-96fe-4398-b9c2-02ac04d931ca",
@@ -244,7 +270,9 @@
           "value": null
         },
         {
-          "allowedMemberTypes": ["User"],
+          "allowedMemberTypes": [
+            "User"
+          ],
           "description": "Default Organization",
           "displayName": "Default Organization",
           "id": "9e79c739-f165-49e8-8745-fe08f1634b3b",
@@ -266,7 +294,9 @@
         "legalAgeGroupRule": "Allow"
       },
       "passwordCredentials": [],
-      "publicClient": { "redirectUris": [] },
+      "publicClient": {
+        "redirectUris": []
+      },
       "requiredResourceAccess": [],
       "verifiedPublisher": {
         "displayName": null,
@@ -285,11 +315,19 @@
           "enableIdTokenIssuance": true
         },
         "redirectUriSettings": [
-          { "uri": "https://www.google.com/a/*", "index": null },
-          { "uri": "https://www.google.com", "index": null }
+          {
+            "uri": "https://www.google.com/a/*",
+            "index": null
+          },
+          {
+            "uri": "https://www.google.com",
+            "index": null
+          }
         ]
       },
-      "spa": { "redirectUris": [] }
+      "spa": {
+        "redirectUris": []
+      }
     },
     {
       "id": "5c7858c7-529c-40d9-944d-ec0510e25361",
@@ -309,7 +347,10 @@
       "publisherDomain": "cep-netnew.cc",
       "serviceManagementReference": null,
       "signInAudience": "AzureADMultipleOrgs",
-      "tags": ["apiConsumer", "webApp"],
+      "tags": [
+        "apiConsumer",
+        "webApp"
+      ],
       "tokenEncryptionKeyId": null,
       "uniqueName": null,
       "samlMetadataUrl": null,
@@ -358,17 +399,37 @@
           "startDateTime": "2025-05-30T23:53:37.63Z"
         }
       ],
-      "publicClient": { "redirectUris": [] },
+      "publicClient": {
+        "redirectUris": []
+      },
       "requiredResourceAccess": [
         {
           "resourceAppId": "00000003-0000-0000-c000-000000000000",
           "resourceAccess": [
-            { "id": "bdfbf15f-ee85-4955-8675-146e8e5296b5", "type": "Scope" },
-            { "id": "e4c9e354-4dc5-45b8-9e7c-e1393b0b1a20", "type": "Scope" },
-            { "id": "c5366453-9fb0-48a5-a156-24f0c49a4b84", "type": "Scope" },
-            { "id": "4e46008b-f24c-477d-8fff-7bb4ec7aafe0", "type": "Scope" },
-            { "id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d", "type": "Scope" },
-            { "id": "204e0828-b5ca-4ad8-b9f3-f32a958e7cc4", "type": "Scope" }
+            {
+              "id": "bdfbf15f-ee85-4955-8675-146e8e5296b5",
+              "type": "Scope"
+            },
+            {
+              "id": "e4c9e354-4dc5-45b8-9e7c-e1393b0b1a20",
+              "type": "Scope"
+            },
+            {
+              "id": "c5366453-9fb0-48a5-a156-24f0c49a4b84",
+              "type": "Scope"
+            },
+            {
+              "id": "4e46008b-f24c-477d-8fff-7bb4ec7aafe0",
+              "type": "Scope"
+            },
+            {
+              "id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d",
+              "type": "Scope"
+            },
+            {
+              "id": "204e0828-b5ca-4ad8-b9f3-f32a958e7cc4",
+              "type": "Scope"
+            }
           ]
         }
       ],
@@ -407,7 +468,9 @@
         "identifierUris": false,
         "tokenEncryptionKeyId": true
       },
-      "spa": { "redirectUris": [] }
+      "spa": {
+        "redirectUris": []
+      }
     },
     {
       "id": "96c64c9e-2837-434a-a043-ddeee14597f1",
@@ -467,12 +530,17 @@
           "startDateTime": "2025-05-31T00:39:02.42Z"
         }
       ],
-      "publicClient": { "redirectUris": [] },
+      "publicClient": {
+        "redirectUris": []
+      },
       "requiredResourceAccess": [
         {
           "resourceAppId": "00000003-0000-0000-c000-000000000000",
           "resourceAccess": [
-            { "id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d", "type": "Scope" }
+            {
+              "id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d",
+              "type": "Scope"
+            }
           ]
         }
       ],
@@ -499,7 +567,9 @@
         "identifierUris": false,
         "tokenEncryptionKeyId": true
       },
-      "spa": { "redirectUris": [] }
+      "spa": {
+        "redirectUris": []
+      }
     },
     {
       "id": "c52672d8-658d-4738-9100-09b241967728",
@@ -549,7 +619,9 @@
       },
       "appRoles": [
         {
-          "allowedMemberTypes": ["User"],
+          "allowedMemberTypes": [
+            "User"
+          ],
           "description": "msiam_access",
           "displayName": "msiam_access",
           "id": "7dfd756e-8c27-4472-b2b7-38c17fc5de5e",
@@ -571,7 +643,9 @@
         "legalAgeGroupRule": "Allow"
       },
       "passwordCredentials": [],
-      "publicClient": { "redirectUris": [] },
+      "publicClient": {
+        "redirectUris": []
+      },
       "requiredResourceAccess": [],
       "verifiedPublisher": {
         "displayName": null,
@@ -581,16 +655,23 @@
       "web": {
         "homePageUrl": "https://signin.aws.amazon.com/saml?metadata=aws|ISV9.1|primary|z",
         "logoutUrl": null,
-        "redirectUris": ["https://signin.aws.amazon.com/saml"],
+        "redirectUris": [
+          "https://signin.aws.amazon.com/saml"
+        ],
         "implicitGrantSettings": {
           "enableAccessTokenIssuance": false,
           "enableIdTokenIssuance": true
         },
         "redirectUriSettings": [
-          { "uri": "https://signin.aws.amazon.com/saml", "index": null }
+          {
+            "uri": "https://signin.aws.amazon.com/saml",
+            "index": null
+          }
         ]
       },
-      "spa": { "redirectUris": [] }
+      "spa": {
+        "redirectUris": []
+      }
     },
     {
       "id": "dcb2d28f-3bfe-40e2-8e03-91a30464159e",
@@ -650,24 +731,50 @@
           "startDateTime": "2025-06-11T19:54:34.164Z"
         }
       ],
-      "publicClient": { "redirectUris": [] },
+      "publicClient": {
+        "redirectUris": []
+      },
       "requiredResourceAccess": [
         {
           "resourceAppId": "00000003-0000-0000-c000-000000000000",
           "resourceAccess": [
-            { "id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d", "type": "Scope" },
-            { "id": "1bfefb4e-e0b5-418b-a88f-73c46d2cc8e9", "type": "Role" },
-            { "id": "06b708a9-e830-4db3-a914-8e69da51d44f", "type": "Role" },
-            { "id": "19dbc75e-c2e2-444c-a770-ec69d8559fc7", "type": "Role" },
-            { "id": "be74164b-cff1-491c-8741-e671cb536e13", "type": "Role" },
-            { "id": "9b50c33d-700f-43b1-b2eb-87e89b703581", "type": "Role" },
-            { "id": "741f803b-c850-494e-b5df-cde7c675a1ca", "type": "Role" }
+            {
+              "id": "e1fe6dd8-ba31-4d61-89e7-88639da4683d",
+              "type": "Scope"
+            },
+            {
+              "id": "1bfefb4e-e0b5-418b-a88f-73c46d2cc8e9",
+              "type": "Role"
+            },
+            {
+              "id": "06b708a9-e830-4db3-a914-8e69da51d44f",
+              "type": "Role"
+            },
+            {
+              "id": "19dbc75e-c2e2-444c-a770-ec69d8559fc7",
+              "type": "Role"
+            },
+            {
+              "id": "be74164b-cff1-491c-8741-e671cb536e13",
+              "type": "Role"
+            },
+            {
+              "id": "9b50c33d-700f-43b1-b2eb-87e89b703581",
+              "type": "Role"
+            },
+            {
+              "id": "741f803b-c850-494e-b5df-cde7c675a1ca",
+              "type": "Role"
+            }
           ]
         },
         {
           "resourceAppId": "797f4846-ba00-4fd7-ba43-dac1f8f63013",
           "resourceAccess": [
-            { "id": "41094075-9dad-400e-a0bd-54e686782033", "type": "Scope" }
+            {
+              "id": "41094075-9dad-400e-a0bd-54e686782033",
+              "type": "Scope"
+            }
           ]
         }
       ],
@@ -694,7 +801,9 @@
         "identifierUris": false,
         "tokenEncryptionKeyId": true
       },
-      "spa": { "redirectUris": [] }
+      "spa": {
+        "redirectUris": []
+      }
     },
     {
       "id": "ef9f2ca7-ce96-4cb7-97b1-76d2cabdce8c",
@@ -747,7 +856,9 @@
       },
       "appRoles": [
         {
-          "allowedMemberTypes": ["User"],
+          "allowedMemberTypes": [
+            "User"
+          ],
           "description": "msiam_access",
           "displayName": "msiam_access",
           "id": "8eea5c46-96fe-4398-b9c2-02ac04d931ca",
@@ -756,7 +867,9 @@
           "value": null
         },
         {
-          "allowedMemberTypes": ["User"],
+          "allowedMemberTypes": [
+            "User"
+          ],
           "description": "Default Organization",
           "displayName": "Default Organization",
           "id": "9e79c739-f165-49e8-8745-fe08f1634b3b",
@@ -778,7 +891,9 @@
         "legalAgeGroupRule": "Allow"
       },
       "passwordCredentials": [],
-      "publicClient": { "redirectUris": [] },
+      "publicClient": {
+        "redirectUris": []
+      },
       "requiredResourceAccess": [],
       "verifiedPublisher": {
         "displayName": null,
@@ -802,7 +917,9 @@
           }
         ]
       },
-      "spa": { "redirectUris": [] }
+      "spa": {
+        "redirectUris": []
+      }
     }
   ]
 }

@@ -2,7 +2,17 @@ import type { Config } from "jest";
 import nextJest from "next/jest.js";
 
 import { createDefaultEsmPreset, pathsToModuleNameMapper } from "ts-jest";
-import tsConfig from "./tsconfig.json" with { type: "json" };
+import { readFileSync } from "fs";
+
+function readTsConfig() {
+  const text = readFileSync("./tsconfig.json", "utf8");
+  const cleaned = text
+    .replace(/\s*\/\/.*$/gm, "")
+    .replace(/,(?=\s*[}\]])/g, "");
+  return JSON.parse(cleaned);
+}
+
+const tsConfig = readTsConfig();
 
 const createJestConfig = nextJest({ dir: "./" });
 

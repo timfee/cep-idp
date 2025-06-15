@@ -65,4 +65,15 @@ describe("Org Units - Live API", () => {
       })
     ).rejects.toThrow();
   });
+
+  it("should fail when parent OU does not exist", async () => {
+    const badOuName = `BadParent_${Date.now()}`;
+
+    await expect(
+      postOU(apiContext, {
+        customerId: "my_customer",
+        body: { name: badOuName, parentOrgUnitPath: "/DoesNotExist" }
+      })
+    ).rejects.toThrow();
+  });
 });

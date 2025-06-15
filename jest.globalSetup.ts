@@ -7,8 +7,13 @@ const globalSetup = async () => {
     const agent = new ProxyAgent(proxy);
     setGlobalDispatcher(agent);
     const origFetch: typeof fetch = globalThis.fetch;
-    globalThis.fetch = ((input: RequestInfo | URL, init?: RequestInit) =>
-      origFetch(input, { ...init, dispatcher: agent } as any)) as typeof fetch;
+    // Extend the built-in RequestInit type with the Undici dispatcher field
+    type FetchInitWithDispatcher = RequestInit & { dispatcher: typeof agent };
+
+    globalThis.fetch = ((
+      input: RequestInfo | URL,
+      init?: RequestInit,
+    ) => origFetch(input, { ...init, dispatcher: agent } as FetchInitWithDispatcher)) as typeof fetch;
   }
   await globalTracker.load();
   const existingResources = globalTracker.getResources();

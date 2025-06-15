@@ -26,13 +26,13 @@ requirements.
 
 ```bash
 # 1. Install deps
-pnpm install
+npm install
 
 # 2. Provide credentials
 cp .env.local.example .env.local  # fill in Google + Microsoft secrets
 
 # 3. Run in dev mode
-pnpm dev
+npm run dev
 ```
 
 Open <http://localhost:3000> and follow the on-screen prompts.
@@ -76,10 +76,10 @@ minimal thanks to Server Actions.
 
 | Command          | Description                                                |
 | ---------------- | ---------------------------------------------------------- |
-| `pnpm dev`       | Start Next.js in development mode.                         |
-| `pnpm lint`      | Run ESLint & prettier. Must be clean before pushing.       |
-| `pnpm test`      | Execute Jest with automatic token acquisition (see below). |
-| `pnpm typecheck` | Execute TypeScript compiler with `--noEmit`.               |
+| `npm run dev`       | Start Next.js in development mode.                         |
+| `npm run lint`      | Run ESLint & prettier. Must be clean before pushing.       |
+| `npm run test`      | Execute Jest with automatic token acquisition (see below). |
+| `npm run typecheck` | Execute TypeScript compiler with `--noEmit`.               |
 
 ---
 
@@ -110,7 +110,7 @@ when adding new scenarios.
 
 1. Create a feature branch off `main`.
 2. Add or update tests in `__tests__/`.
-3. Ensure `pnpm lint` & `pnpm test` pass.
+3. Ensure `npm lint` & `npm test` pass.
 4. Open a PR; the CI pipeline mirrors the local scripts and will block on
    failures.
 

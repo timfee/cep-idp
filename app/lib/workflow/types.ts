@@ -45,18 +45,16 @@ export interface StepContext {
   /** Mutable map of workflow variables */
   vars: Record<string, string>;
 
-  /** Lightweight API wrapper that endpoint helpers rely on */
-  api: {
-    request: (
-      connection: string,
-      method: string,
-      path: string,
-      options?: { query?: Record<string, string | undefined>; body?: unknown }
-    ) => Promise<unknown>;
-  };
+  /**
+   * Lightweight API wrapper that endpoint helpers rely on.  This re-uses the
+   * ApiContext shape from the endpoint layer so the strongly-typed helpers in
+   * app/lib/workflow/endpoints can be passed the `ctx.api` object without any
+   * additional casting.
+   */
+  api: import("./endpoints/utils").ApiContext;
 
   /** Persist new / updated variables */
-  setVars: (updates: Record<string, string>) => void;
+  setVars: (updates: Record<string, unknown>) => void;
 
   /** Structured logging */
   log: (level: string, message: string, data?: unknown) => void;

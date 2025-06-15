@@ -64,4 +64,4 @@ export MS_CLIENT_SECRET=<CLIENT_SECRET>
 export MS_TENANT_ID=<TENANT_ID>
 ```
 
-With these variables set, `pnpm test` will automatically obtain tokens during the Jest global setup.
+With these variables set, `npm test` will automatically obtain tokens during the Jest global setup.

@@ -1,15 +1,10 @@
 import { z } from "zod";
 
-  name: z.object({ givenName: z.string(), familyName: z.string() }),
-});
-
-
 export const CreateOrgUnitBodySchema = z.object({
   name: z.string(),
-  parentOrgUnitPath: z.string()
+  parentOrgUnitPath: z.string(),
 });
 
-export type CreateOrgUnitBody = z.infer<typeof CreateOrgUnitBodySchema>;
 export const CreateRoleBodySchema = z.object({
   roleName: z.string(),
   roleDescription: z.string().optional(),
@@ -34,7 +29,7 @@ export const UpdateUserBodySchema = z.object({
       familyName: z.string().optional(),
     })
     .optional(),
-  password: z.string().min(8).optional(),
+  password: z.string().optional(),
   suspended: z.boolean().optional(),
   orgUnitPath: z.string().optional(),
 });
@@ -91,7 +86,7 @@ export type PatchSyncBody = z.infer<typeof PatchSyncBodySchema>;
 export const CreateUserBodySchema = z.object({
   primaryEmail: z.string().email(),
   name: z.object({ givenName: z.string(), familyName: z.string() }),
-  password: z.string().min(8),
+  password: z.string(),
   orgUnitPath: z.string().optional(),
 });
 

@@ -1,4 +1,5 @@
-import { listSsoAssignments } from '@/app/lib/workflow/endpoints/ci';
+// eslint-disable-next-line @typescript-eslint/no-unused-vars, sonarjs/unused-import
+import { listSsoAssignments, postSsoAssignment } from '@/app/lib/workflow/endpoints/ci';
 import { createLiveApiContext } from '../../setup/live-api-context';
 
 describe('SSO Assignments - Live API', () => {

@@ -21,7 +21,7 @@ export async function appByTemplateProv(
 
   return callEndpoint({
     ctx,
-    connection: "graphGA",
+    connection: "graphBeta",
     method: "GET",
     pathTemplate: API_PATHS.APPLICATIONS,
     params: {},

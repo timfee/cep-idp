@@ -19,7 +19,7 @@ export async function listAppTemplates(
 ): Promise<ListAppTemplatesResponse> {
   return callEndpoint({
     ctx,
-    connection: "graphGA",
+    connection: "graphBeta",
     method: "GET",
     pathTemplate: API_PATHS.APP_TEMPLATES,
     params: {},

@@ -20,7 +20,7 @@ export async function instantiateProv(
 ): Promise<InstantiateProvResponse> {
   return callEndpoint({
     ctx,
-    connection: "graphGA",
+    connection: "graphBeta",
     method: "POST",
     pathTemplate: API_PATHS.APP_BY_PROV_TEMPLATE,
     params,

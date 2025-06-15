@@ -1,20 +1,8 @@
-import { ProxyAgent, setGlobalDispatcher } from "undici";
-import { globalTracker } from "./test-utils/test-resource-tracker";
+import { setupProxyFetch } from "./__tests__/helpers/proxyFetch";
+import { globalTracker } from "./__tests__/helpers/test-resource-tracker";
 
 const globalSetup = async () => {
-  const proxy = process.env.https_proxy || process.env.HTTPS_PROXY;
-  if (proxy) {
-    const agent = new ProxyAgent(proxy);
-    setGlobalDispatcher(agent);
-    const origFetch: typeof fetch = globalThis.fetch;
-    // Extend the built-in RequestInit type with the Undici dispatcher field
-    type FetchInitWithDispatcher = RequestInit & { dispatcher: typeof agent };
-
-    globalThis.fetch = ((
-      input: RequestInfo | URL,
-      init?: RequestInit,
-    ) => origFetch(input, { ...init, dispatcher: agent } as FetchInitWithDispatcher)) as typeof fetch;
-  }
+  setupProxyFetch();
   await globalTracker.load();
   const existingResources = globalTracker.getResources();
   if (existingResources.length > 0) {
@@ -28,7 +16,7 @@ const globalSetup = async () => {
   // Load test-environment helpers lazily so that Jest can start up quickly and
   // does not pay the cost of acquiring live API tokens when simply listing
   // tests.
-  const { setupTestEnvironment } = await import("./test-utils/testEnv");
+  const { setupTestEnvironment } = await import("./__tests__/helpers/testEnv");
   await setupTestEnvironment();
 
   // Verify tokens were acquired

@@ -1,6 +1,6 @@
 import { listDomains } from "@/app/lib/workflow/endpoints/admin/list-domains";
 import { ListDomainsResponse } from "@/app/lib/workflow/schemas/responses";
-import { createLiveApiContext } from "../../../test-utils/live-api-context";
+import { createLiveApiContext } from "../../helpers/live-api-context";
 
 describe("listDomains - Live API", () => {
   let apiContext: ReturnType<typeof createLiveApiContext>;

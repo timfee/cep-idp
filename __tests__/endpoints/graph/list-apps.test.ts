@@ -1,5 +1,5 @@
 import { appByTemplateProv, appByTemplateSSO } from '@/app/lib/workflow/endpoints/graph';
-import { createLiveApiContext } from '../../../test-utils/live-api-context';
+import { createLiveApiContext } from '../../helpers/live-api-context';
 
 describe('Applications by Template - Live API', () => {
   let apiContext: ReturnType<typeof createLiveApiContext>;

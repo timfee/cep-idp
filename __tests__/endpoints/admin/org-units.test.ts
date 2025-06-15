@@ -1,6 +1,6 @@
 import { getOU, postOU } from "@/app/lib/workflow/endpoints/admin";
-import { createLiveApiContext } from "../../../test-utils/live-api-context";
-import { sleep } from "../../../test-utils/sleep";
+import { createLiveApiContext } from "../../helpers/live-api-context";
+import { sleep } from "../../helpers/sleep";
 
 describe("Org Units - Live API", () => {
   // Google's Admin SDK can take several seconds to propagate newly created

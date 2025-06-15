@@ -2,7 +2,7 @@ import { GoogleAuth, JWT } from "google-auth-library";
 import {
   googleOAuthConfig,
   microsoftOAuthConfig
-} from "../app/lib/auth/oauth-server";
+} from "../../app/lib/auth/oauth-server";
 
 const googleScopes = googleOAuthConfig.scopes;
 

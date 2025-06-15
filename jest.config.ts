@@ -30,10 +30,10 @@ const createJestConfig = nextJest({ dir: "./" });
 const customConfig: Config = {
   testEnvironment: "node",
   moduleNameMapper: {
-    "^server-only$": "<rootDir>/test-utils/serverOnlyStub.ts",
-    "^@/app/env$": "<rootDir>/test-utils/envStub.ts",
-    "^app/env$": "<rootDir>/test-utils/envStub.ts",
-    "^.*env\.ts$": "<rootDir>/test-utils/envStub.ts",
+    "^server-only$": "<rootDir>/__tests__/stubs/server-only.ts",
+    "^@/app/env$": "<rootDir>/__tests__/stubs/env.ts",
+    "^app/env$": "<rootDir>/__tests__/stubs/env.ts",
+    "^.*env\.ts$": "<rootDir>/__tests__/stubs/env.ts",
     ...pathsToModuleNameMapper(compilerOptions.paths, {
       prefix: "<rootDir>/",
     }),
@@ -41,6 +41,7 @@ const customConfig: Config = {
   globalSetup: "<rootDir>/jest.globalSetup.ts",
   globalTeardown: "<rootDir>/jest.globalTeardown.ts",
   setupFilesAfterEnv: ["<rootDir>/jest.setup.ts"],
+  testMatch: ["**/?(*.)+(test).[tj]s?(x)"],
   transform: {
     "^.+\\.(ts|tsx)$": ["ts-jest", { tsconfig: "tsconfig.spec.json" }],
   },

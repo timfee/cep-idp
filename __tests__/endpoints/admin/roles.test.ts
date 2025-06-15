@@ -1,5 +1,5 @@
 import { listRoles, postRole } from "@/app/lib/workflow/endpoints/admin";
-import { createLiveApiContext } from "../../../test-utils/live-api-context";
+import { createLiveApiContext } from "../../helpers/live-api-context";
 
 describe("Roles - Live API", () => {
   let apiContext: ReturnType<typeof createLiveApiContext>;

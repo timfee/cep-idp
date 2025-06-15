@@ -1,5 +1,5 @@
 import { getUser } from "@/app/lib/workflow/endpoints/admin";
-import { createLiveApiContext } from "../../../test-utils/live-api-context";
+import { createLiveApiContext } from "../../helpers/live-api-context";
 
 describe("Users - Live API", () => {
 

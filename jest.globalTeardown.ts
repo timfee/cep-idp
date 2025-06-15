@@ -1,19 +1,8 @@
-import { ProxyAgent, setGlobalDispatcher } from "undici";
-import { globalTracker } from "./test-utils/test-resource-tracker";
+import { setupProxyFetch } from "./__tests__/helpers/proxyFetch";
+import { globalTracker } from "./__tests__/helpers/test-resource-tracker";
 
 const globalTeardown = async () => {
-  const proxy = process.env.https_proxy || process.env.HTTPS_PROXY;
-  if (proxy) {
-    const agent = new ProxyAgent(proxy);
-    setGlobalDispatcher(agent);
-    const origFetch: typeof fetch = globalThis.fetch;
-    type FetchInitWithDispatcher = RequestInit & { dispatcher: typeof agent };
-
-    globalThis.fetch = ((
-      input: RequestInfo | URL,
-      init?: RequestInit,
-    ) => origFetch(input, { ...init, dispatcher: agent } as FetchInitWithDispatcher)) as typeof fetch;
-  }
+  setupProxyFetch();
   console.log("[TEARDOWN] Starting cleanup...");
 
   const googleToken = process.env.GOOGLE_ACCESS_TOKEN;

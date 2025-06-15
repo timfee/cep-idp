@@ -20,7 +20,7 @@ export async function instantiateSSO(
 ): Promise<InstantiateSSOResponse> {
   return callEndpoint({
     ctx,
-    connection: "graphGA",
+    connection: "graphBeta",
     method: "POST",
     pathTemplate: API_PATHS.APP_BY_SSO_TEMPLATE,
     params,

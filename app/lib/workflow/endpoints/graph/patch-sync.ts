@@ -25,7 +25,7 @@ export async function patchSync(
   const { body, ...pathParams } = params;
   return callEndpoint({
     ctx,
-    connection: "graphGA",
+    connection: "graphBeta",
     method: "PATCH",
     pathTemplate: API_PATHS.SYNC,
     params: pathParams,

@@ -20,7 +20,7 @@ export async function getSync(
 ): Promise<GetSyncResponse> {
   return callEndpoint({
     ctx,
-    connection: "graphGA",
+    connection: "graphBeta",
     method: "GET",
     pathTemplate: API_PATHS.SYNC,
     params,

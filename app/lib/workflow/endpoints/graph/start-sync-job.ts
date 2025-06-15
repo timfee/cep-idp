@@ -20,7 +20,7 @@ export async function startSyncJob(
 ): Promise<StartSyncJobResponse> {
   return callEndpoint({
     ctx,
-    connection: "graphGA",
+    connection: "graphBeta",
     method: "POST",
     pathTemplate: API_PATHS.START_SYNC,
     params,

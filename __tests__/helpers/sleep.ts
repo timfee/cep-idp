@@ -3,7 +3,7 @@
  *
  * Usage: `await sleep(2000)` – pauses execution for ~2 seconds.
  *
- * Note: we keep this utility in the `test-utils` folder so it is only
+ * Note: this helper lives under `__tests__/helpers` so it is only
  * bundled for the test suite and tree-shaken from production builds.
  */
 

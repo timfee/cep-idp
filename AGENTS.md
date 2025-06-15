@@ -5,7 +5,7 @@ This repository runs integration tests against live Google and Microsoft APIs. J
 Each directory may include its own `AGENTS.md` describing local conventions. Add or update these docs whenever special setup or troubleshooting notes are required.
 
 ## Proxy-aware fetch
-Node's `fetch` ignores `HTTPS_PROXY` by default. The test setup installs `undici`'s `ProxyAgent` in `jest.setup.ts`, `jest.globalSetup.ts` and `jest.globalTeardown.ts` so test requests use the proxy. If network errors show `ENETUNREACH`, ensure the `undici` package is installed and the `HTTPS_PROXY` variable is set.
+Node's `fetch` ignores `HTTPS_PROXY` by default. A shared helper (`__tests__/helpers/proxyFetch.ts`) installs `undici`'s `ProxyAgent` for Jest so test requests use the proxy. Import this helper from `jest.setup.ts`, `jest.globalSetup.ts` and `jest.globalTeardown.ts`. If network errors show `ENETUNREACH`, ensure the `undici` package is installed and the `HTTPS_PROXY` variable is set.
 
 Google APIs are reachable once the proxy agent is configured. Running
 `node -e "require('undici'); fetch('https://admin.googleapis.com')"`

@@ -1,5 +1,5 @@
 import { listSsoAssignments } from "@/app/lib/workflow/endpoints/ci";
-import { createLiveApiContext } from "../../../test-utils/live-api-context";
+import { createLiveApiContext } from "../../helpers/live-api-context";
 
 describe("SSO Assignments - Live API", () => {
   let apiContext: ReturnType<typeof createLiveApiContext>;

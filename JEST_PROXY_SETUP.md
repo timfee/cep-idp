@@ -19,20 +19,14 @@ all requests from the tests (and from the global setup/teardown scripts) are rou
 the proxy automatically.
 
 ```ts
-import { ProxyAgent, setGlobalDispatcher } from "undici";
+import { setupProxyFetch } from "./__tests__/helpers/proxyFetch";
 
-const proxy = process.env.https_proxy || process.env.HTTPS_PROXY;
-if (proxy) {
-  const agent = new ProxyAgent(proxy);
-  setGlobalDispatcher(agent);
-  const origFetch: typeof fetch = globalThis.fetch;
-  globalThis.fetch = ((input, init) =>
-    origFetch(input, { dispatcher: agent, ...init })) as typeof fetch;
-}
+setupProxyFetch();
 ```
 
-This snippet is included in `jest.setup.ts`, `jest.globalSetup.ts` and
-`jest.globalTeardown.ts` so that every phase of the test lifecycle uses the proxy.
+`setupProxyFetch` applies the same `ProxyAgent` logic and is imported by
+`jest.setup.ts`, `jest.globalSetup.ts` and `jest.globalTeardown.ts` so every
+phase of the test lifecycle uses the proxy.
 
 ## Minimal Changes
 

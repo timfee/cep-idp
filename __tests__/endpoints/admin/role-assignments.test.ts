@@ -1,5 +1,5 @@
 import { postRoleAssign } from "@/app/lib/workflow/endpoints/admin";
-import { createLiveApiContext } from "../../../test-utils/live-api-context";
+import { createLiveApiContext } from "../../helpers/live-api-context";
 
 describe("Role Assignments - Live API", () => {
   let apiContext: ReturnType<typeof createLiveApiContext>;

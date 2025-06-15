@@ -1,7 +1,9 @@
 import { z } from "zod";
 
 import { listSsoAssignments, postSsoAssignment } from "../endpoints/ci";
+import { GOOGLE_GROUPS, SAML_CONFIG } from "../constants";
 import { StepDefinition, StepResultSchema } from "../types";
+import { handleStepError } from "./utils";
 
 const InputSchema = z.object({ samlProfileId: z.string() });
 
@@ -15,30 +17,30 @@ export const assignUsersToSSO: StepDefinition = {
       samlProfileId: ctx.vars.samlProfileId
     });
 
-    const assignments = (await listSsoAssignments(ctx.api, {})) as {
-      inboundSsoAssignments?: {
-        targetGroup?: { id?: string };
-        samlSsoInfo?: { inboundSamlSsoProfile?: string };
-      }[];
-    };
+    try {
+      const assignments = await listSsoAssignments(ctx.api, {});
+      const exists = assignments.inboundSsoAssignments?.some(
+        a => a.targetGroup?.id === GOOGLE_GROUPS.ALL_USERS &&
+             a.samlSsoInfo?.inboundSamlSsoProfile === samlProfileId
+      );
 
-    const exists = assignments.inboundSsoAssignments?.some(
-      (a) =>
-        a.targetGroup?.id === "allUsers"
-        && a.samlSsoInfo?.inboundSamlSsoProfile === samlProfileId
-    );
-
-    if (exists) {
-      return StepResultSchema.parse({ success: true, mode: "verified" });
-    }
-
-    await postSsoAssignment(ctx.api, {
-      body: {
-        targetGroup: { id: "allUsers" },
-        samlSsoInfo: { inboundSamlSsoProfile: samlProfileId }
+      if (exists) {
+        return StepResultSchema.parse({ success: true, mode: "verified" });
       }
-    });
 
-    return StepResultSchema.parse({ success: true, mode: "executed" });
+      await postSsoAssignment(ctx.api, {
+        body: {
+          targetGroup: { id: GOOGLE_GROUPS.ALL_USERS },
+          samlSsoInfo: { 
+            inboundSamlSsoProfile: samlProfileId 
+          },
+          ssoMode: SAML_CONFIG.SSO_MODE_SAML
+        }
+      });
+
+      return StepResultSchema.parse({ success: true, mode: "executed" });
+    } catch (err: unknown) {
+      return handleStepError(err, this.name, ctx);
+    }
   }
 };

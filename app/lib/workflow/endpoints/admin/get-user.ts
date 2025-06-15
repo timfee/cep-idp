@@ -1,18 +1,13 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { UserSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z
-  .object({ userEmail: z.string().email() })
-  .describe("Path parameter identifying the user by primary email");
-
-const ResponseSchema = z
-  .unknown()
-  .describe("Google Admin get user API response");
+const ParamsSchema = z.object({ userEmail: z.string().email() });
 
 export type GetUserParams = z.infer<typeof ParamsSchema>;
-export type GetUserResponse = z.infer<typeof ResponseSchema>;
+export type GetUserResponse = z.infer<typeof UserSchema>;
 
 export async function getUser(
   ctx: ApiContext,
@@ -25,6 +20,6 @@ export async function getUser(
     pathTemplate: API_PATHS.USER_BY_EMAIL,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema
+    responseSchema: UserSchema
   });
 }

@@ -3,6 +3,7 @@ import { z } from "zod";
 import { getUser, postUser } from "../endpoints/admin";
 import { generatePassword } from "../generators";
 import { StepDefinition, StepResultSchema } from "../types";
+import { handleStepError } from "./utils";
 
 const InputSchema = z.object({ primaryDomain: z.string() });
 
@@ -10,6 +11,8 @@ const OutputSchema = z.object({
   provisioningUserId: z.string(),
   provisioningUserEmail: z.string()
 });
+
+const PASSWORD_LENGTH = 16;
 
 export const createServiceAccount: StepDefinition = {
   name: "Create Service Account for Microsoft",
@@ -26,40 +29,49 @@ export const createServiceAccount: StepDefinition = {
 
     // Try fetch existing user
     try {
-      const user = (await getUser(ctx.api, {
-        userEmail: targetEmail
-      })) as Record<string, unknown>;
+      const user = await getUser(ctx.api, { userEmail: targetEmail });
+      
       const outputs = OutputSchema.parse({
-        provisioningUserId: String(user.id),
-        provisioningUserEmail: String(user.primaryEmail)
+        provisioningUserId: user.id,
+        provisioningUserEmail: user.primaryEmail
       });
+      
       ctx.setVars(outputs);
+      
       return StepResultSchema.parse({
         success: true,
         mode: "verified",
         outputs
       });
     } catch {
-      // proceed to create
+      // User doesn't exist, proceed to create
     }
 
-    const PASSWORD_LENGTH = 16;
-    const password = generatePassword(PASSWORD_LENGTH);
-    const createResp = (await postUser(ctx.api, {
-      body: {
-        primaryEmail: targetEmail,
-        name: { givenName: "Microsoft", familyName: "Provisioning" },
-        password,
-        orgUnitPath: "/Automation"
-      }
-    })) as Record<string, unknown>;
+    try {
+      const password = generatePassword(PASSWORD_LENGTH);
+      const createResp = await postUser(ctx.api, {
+        body: {
+          primaryEmail: targetEmail,
+          name: { givenName: "Microsoft", familyName: "Provisioning" },
+          password,
+          orgUnitPath: "/Automation"
+        }
+      });
 
-    const outputs = OutputSchema.parse({
-      provisioningUserId: String(createResp.id),
-      provisioningUserEmail: String(createResp.primaryEmail)
-    });
-    ctx.setVars({ ...outputs, generatedPassword: password });
+      const outputs = OutputSchema.parse({
+        provisioningUserId: createResp.id,
+        provisioningUserEmail: createResp.primaryEmail
+      });
+      
+      ctx.setVars({ ...outputs, generatedPassword: password });
 
-    return StepResultSchema.parse({ success: true, mode: "executed", outputs });
+      return StepResultSchema.parse({ 
+        success: true, 
+        mode: "executed", 
+        outputs 
+      });
+    } catch (err: unknown) {
+      return handleStepError(err, this.name, ctx);
+    }
   }
 };

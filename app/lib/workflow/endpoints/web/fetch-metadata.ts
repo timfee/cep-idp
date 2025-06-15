@@ -1,36 +1,32 @@
 import { z } from "zod";
-
+import { API_PATHS } from "../../constants";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ResponseSchema = z
-  .string()
-  .describe("Raw FederationMetadata.xml document returned by Azure AD");
+const ParamsSchema = z.object({
+  tenantId: z.string(),
+  ssoAppId: z.string()
+});
 
-export interface FetchMetadataParams {
-  tenantId: string;
-  ssoAppId: string;
-}
+const ResponseSchema = z.string().describe("Raw FederationMetadata.xml document");
+
+export type FetchMetadataParams = z.infer<typeof ParamsSchema>;
 export type FetchMetadataResponse = z.infer<typeof ResponseSchema>;
 
 export async function fetchMetadata(
   ctx: ApiContext,
   params: FetchMetadataParams
 ): Promise<FetchMetadataResponse> {
-  const { tenantId, ssoAppId } = params;
-  const path = `/login.microsoftonline.com/${tenantId}/federationmetadata/2007-06/federationmetadata.xml?appid=${encodeURIComponent(
-    ssoAppId
-  )}`;
-
+  const query = {
+    appid: params.ssoAppId
+  };
   return callEndpoint({
     ctx,
     connection: "public",
     method: "GET",
-    pathTemplate: path,
+    pathTemplate: `/login.microsoftonline.com/${params.tenantId}/federationmetadata/2007-06/federationmetadata.xml`,
     params: {},
-    paramsSchema: z
-      .object({})
-      .strict()
-      .describe("No additional path parameters; URL constructed inline"),
-    responseSchema: ResponseSchema
+    paramsSchema: z.object({}),
+    responseSchema: ResponseSchema,
+    query
   });
 }

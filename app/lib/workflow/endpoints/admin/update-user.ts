@@ -1,22 +1,15 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { UserSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
-const BodySchema = z
-  .record(z.unknown())
-  .describe("Partial user update payload");
+const BodySchema = z.record(z.unknown());
 
-const ParamsSchema = z
-  .object({ userEmail: z.string().email(), body: BodySchema })
-  .describe("User email path param plus update body");
-
-const ResponseSchema = z
-  .unknown()
-  .describe("Google Admin update user response");
+const ParamsSchema = z.object({ userEmail: z.string().email(), body: BodySchema });
 
 export type UpdateUserParams = z.infer<typeof ParamsSchema>;
-export type UpdateUserResponse = z.infer<typeof ResponseSchema>;
+export type UpdateUserResponse = z.infer<typeof UserSchema>;
 
 export async function updateUser(
   ctx: ApiContext,
@@ -30,7 +23,7 @@ export async function updateUser(
     pathTemplate: API_PATHS.USER_BY_EMAIL,
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ userEmail: true }),
-    responseSchema: ResponseSchema,
+    responseSchema: UserSchema,
     body
   });
 }

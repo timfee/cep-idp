@@ -1,18 +1,15 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { ListPoliciesResponseSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z
-  .object({ servicePrincipalId: z.string() })
-  .describe("Path parameter for servicePrincipal to list linked policies");
+const ParamsSchema = z.object({ servicePrincipalId: z.string() });
 
-const ResponseSchema = z
-  .unknown()
-  .describe("Microsoft Graph list token policies response payload");
+const ResponseSchema = ListPoliciesResponseSchema;
 
 export type ListPoliciesParams = z.infer<typeof ParamsSchema>;
-export type ListPoliciesResponse = z.infer<typeof ResponseSchema>;
+export type ListPoliciesResponse = z.infer<typeof ListPoliciesResponseSchema>;
 
 export async function listPolicies(
   ctx: ApiContext,
@@ -25,6 +22,6 @@ export async function listPolicies(
     pathTemplate: API_PATHS.TOKEN_POLICIES,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema
+    responseSchema: ListPoliciesResponseSchema
   });
 }

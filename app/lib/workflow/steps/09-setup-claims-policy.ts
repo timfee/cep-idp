@@ -1,7 +1,9 @@
 import { z } from "zod";
 
 import { createPolicy, linkPolicy, listPolicies } from "../endpoints/graph";
+import { MS_GRAPH_CONFIG } from "../constants";
 import { StepDefinition, StepResultSchema } from "../types";
+import { handleStepError } from "./utils";
 
 const InputSchema = z.object({ ssoServicePrincipalId: z.string() });
 
@@ -18,43 +20,53 @@ export const setupClaimsPolicy: StepDefinition = {
       ssoServicePrincipalId: ctx.vars.ssoServicePrincipalId
     });
 
-    // Check existing policies
-    const policies = (await listPolicies(ctx.api, {
-      servicePrincipalId: ssoServicePrincipalId
-    })) as { value?: { id?: string }[] };
-
-    const existing = policies.value?.[0];
-    if (existing) {
-      const outputs = OutputSchema.parse({ claimsPolicyId: existing.id });
-      ctx.setVars(outputs);
-      return StepResultSchema.parse({
-        success: true,
-        mode: "verified",
-        outputs
+    try {
+      // Check existing policies
+      const policies = await listPolicies(ctx.api, {
+        servicePrincipalId: ssoServicePrincipalId
       });
+
+      const existing = policies.value?.[0];
+      if (existing && existing.id) {
+        const outputs = OutputSchema.parse({ claimsPolicyId: existing.id });
+        ctx.setVars(outputs);
+        return StepResultSchema.parse({
+          success: true,
+          mode: "verified",
+          outputs
+        });
+      }
+
+      // Create minimal policy
+      const policyDefinition = {
+        ClaimsMappingPolicy: {
+          Version: MS_GRAPH_CONFIG.CLAIMS_POLICY_VERSION,
+          IncludeBasicClaimSet: true,
+          ClaimsSchema: []
+        }
+      };
+
+      const newPolicy = await createPolicy(ctx.api, {
+        body: {
+          definition: [JSON.stringify(policyDefinition)],
+          displayName: MS_GRAPH_CONFIG.CLAIMS_POLICY_NAME,
+          isOrganizationDefault: false
+        }
+      });
+
+      await linkPolicy(ctx.api, {
+        servicePrincipalId: ssoServicePrincipalId,
+        body: {
+          "@odata.id": `${MS_GRAPH_CONFIG.GRAPH_BETA_BASE}/policies/claimsMappingPolicies/${newPolicy.id}`
+        }
+      });
+
+      const outputs = OutputSchema.parse({ claimsPolicyId: newPolicy.id });
+      ctx.setVars(outputs);
+
+      return StepResultSchema.parse({ success: true, mode: "executed", outputs });
+    } catch (err: unknown) {
+      return handleStepError(err, this.name, ctx);
     }
-
-    // Create minimal policy
-    const newPolicy = (await createPolicy(ctx.api, {
-      body: {
-        definition: [],
-        displayName: "Google Claims",
-        isOrganizationDefault: false
-      }
-    })) as { id?: string };
-
-    const policyId = newPolicy.id ?? "";
-
-    await linkPolicy(ctx.api, {
-      servicePrincipalId: ssoServicePrincipalId,
-      body: {
-        "@odata.id": `https://graph.microsoft.com/beta/policies/claimsMappingPolicies/${policyId}`
-      }
-    });
-
-    const outputs = OutputSchema.parse({ claimsPolicyId: policyId });
-    ctx.setVars(outputs);
-
-    return StepResultSchema.parse({ success: true, mode: "executed", outputs });
   }
 };

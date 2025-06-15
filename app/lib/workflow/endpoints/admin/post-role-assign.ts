@@ -1,22 +1,15 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { RoleAssignmentSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
-const BodySchema = z
-  .record(z.unknown())
-  .describe("JSON payload to create a role assignment");
+const BodySchema = z.record(z.unknown());
 
-const ParamsSchema = z
-  .object({ customerId: z.string(), body: BodySchema })
-  .describe("Customer ID path parameter and request body");
-
-const ResponseSchema = z
-  .unknown()
-  .describe("Google Admin create role assignment operation response");
+const ParamsSchema = z.object({ customerId: z.string(), body: BodySchema });
 
 export type PostRoleAssignParams = z.infer<typeof ParamsSchema>;
-export type PostRoleAssignResponse = z.infer<typeof ResponseSchema>;
+export type PostRoleAssignResponse = z.infer<typeof RoleAssignmentSchema>;
 
 export async function postRoleAssign(
   ctx: ApiContext,
@@ -30,7 +23,7 @@ export async function postRoleAssign(
     pathTemplate: API_PATHS.ROLE_ASSIGNMENTS,
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ customerId: true }),
-    responseSchema: ResponseSchema,
+    responseSchema: RoleAssignmentSchema,
     body
   });
 }

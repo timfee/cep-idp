@@ -18,6 +18,7 @@ import {
   StepStatus,
   Token
 } from "@/app/lib/workflow/types";
+import { serverLogger } from "@/app/lib/workflow/logger";
 import { setStoredVariables } from "@/app/lib/workflow/variables-store";
 import { revalidatePath } from "next/cache";
 
@@ -251,9 +252,9 @@ export async function executeWorkflowStep(
       return { success: false, error: "Step not found" };
     }
 
-    // Track logs and variables – simply console.log server-side
+    // Track logs and variables – use serverLogger on the server
     const onLog = (log: LogEntry) => {
-      console.log(`[LOG] ${log.level.toUpperCase()}: ${log.message}`, log.data);
+      serverLogger.info(`[LOG] ${log.level.toUpperCase()}: ${log.message}`, log.data);
     };
 
     const status = await processStepExecution(
@@ -275,7 +276,7 @@ export async function executeWorkflowStep(
       variables: updatedVariables
     };
   } catch (error) {
-    console.error("Step execution failed:", error);
+    serverLogger.error("Step execution failed:", error);
 
     return {
       success: false,
@@ -301,7 +302,7 @@ export async function skipWorkflowStep(): Promise<{
     revalidatePath("/");
     return { success: true };
   } catch (error) {
-    console.error("Failed to skip step:", error);
+    serverLogger.error("Failed to skip step:", error);
     return {
       success: false,
       error: error instanceof Error ? error.message : "Unknown error"

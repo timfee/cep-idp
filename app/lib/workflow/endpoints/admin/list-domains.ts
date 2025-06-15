@@ -1,19 +1,13 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { ListDomainsResponseSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z
-  .object({ customerId: z.string() })
-  .describe("Path parameter identifying the customer");
-
-const ResponseSchema = z
-  .unknown()
-  .describe("Google Admin list domains API response");
+const ParamsSchema = z.object({ customerId: z.string() });
 
 export type ListDomainsParams = z.infer<typeof ParamsSchema>;
-export type ListDomainsResponse = z.infer<typeof ResponseSchema>;
-
+export type ListDomainsResponse = z.infer<typeof ListDomainsResponseSchema>;
 export async function listDomains(
   ctx: ApiContext,
   params: ListDomainsParams
@@ -25,6 +19,6 @@ export async function listDomains(
     pathTemplate: API_PATHS.DOMAINS,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema
+    responseSchema: ListDomainsResponseSchema
   });
 }

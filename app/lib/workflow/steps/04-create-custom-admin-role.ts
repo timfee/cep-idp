@@ -1,6 +1,7 @@
 import { z } from "zod";
 
 import { listPrivileges, listRoles, postRole } from "../endpoints/admin";
+import { GOOGLE_PRIVILEGES, ROLE_NAMES } from "../constants";
 import { StepDefinition, StepResultSchema } from "../types";
 import { handleStepError } from "./utils";
 
@@ -23,18 +24,12 @@ export const createCustomAdminRole: StepDefinition = {
     });
 
     try {
-      const rolesResp = (await listRoles(ctx.api, { customerId })) as unknown;
-
-      interface RoleItem {
-        roleName?: string;
-        roleId?: string;
-        rolePrivileges?: { serviceId?: string }[];
-      }
-
-      const existing = (rolesResp as { items?: RoleItem[] }).items?.find(
-        (r) => r.roleName === "Microsoft Entra Provisioning"
+      const rolesResp = await listRoles(ctx.api, { customerId });
+      const existing = rolesResp.items?.find(
+        r => r.roleName === ROLE_NAMES.MS_ENTRA_PROVISIONING
       );
-      if (existing) {
+      
+      if (existing && existing.roleId) {
         const outputs = OutputSchema.parse({
           adminRoleId: existing.roleId,
           directoryServiceId: existing.rolePrivileges?.[0]?.serviceId ?? ""
@@ -48,36 +43,32 @@ export const createCustomAdminRole: StepDefinition = {
       }
 
       // Need directory serviceId – fetch from privileges
-      const privResp = (await listPrivileges(ctx.api, {
-        customerId
-      })) as unknown;
-
-      interface PrivItem {
-        privilegeName?: string;
-        serviceId?: string;
-      }
-
-      const dirServiceId = (privResp as { items?: PrivItem[] }).items?.find(
-        (p) => p.privilegeName === "USERS_RETRIEVE"
+      const privResp = await listPrivileges(ctx.api, { customerId });
+      const dirServiceId = privResp.items?.find(
+        p => p.privilegeName === GOOGLE_PRIVILEGES.USERS_RETRIEVE
       )?.serviceId;
 
-      const roleBody = {
-        roleName: "Microsoft Entra Provisioning",
-        roleDescription: "Custom role for Microsoft Entra provisioning service",
-        rolePrivileges: [
-          { serviceId: dirServiceId, privilegeName: "USERS_RETRIEVE" },
-          { serviceId: dirServiceId, privilegeName: "USERS_CREATE" },
-          { serviceId: dirServiceId, privilegeName: "USERS_UPDATE" }
-        ]
-      } as Record<string, unknown>;
+      if (!dirServiceId) {
+        throw new Error("Could not find directory service ID");
+      }
 
-      const createResp = (await postRole(ctx.api, {
+      const roleBody = {
+        roleName: ROLE_NAMES.MS_ENTRA_PROVISIONING,
+        roleDescription: ROLE_NAMES.MS_ENTRA_DESC,
+        rolePrivileges: [
+          { serviceId: dirServiceId, privilegeName: GOOGLE_PRIVILEGES.USERS_RETRIEVE },
+          { serviceId: dirServiceId, privilegeName: GOOGLE_PRIVILEGES.USERS_CREATE },
+          { serviceId: dirServiceId, privilegeName: GOOGLE_PRIVILEGES.USERS_UPDATE }
+        ]
+      };
+
+      const createResp = await postRole(ctx.api, {
         customerId,
         body: roleBody
-      })) as Record<string, unknown>;
+      });
 
       const outputs = OutputSchema.parse({
-        adminRoleId: createResp.roleId ?? createResp.id ?? "",
+        adminRoleId: createResp.roleId,
         directoryServiceId: dirServiceId
       });
       ctx.setVars(outputs);

@@ -7,6 +7,7 @@ import {
   instantiateSSO
 } from "../endpoints/graph";
 import { StepDefinition, StepResultSchema } from "../types";
+import { handleStepError } from "./utils";
 
 const InputSchema = z.object({
   provisioningTemplateId: z.string(),
@@ -35,51 +36,44 @@ export const createMicrosoftApps: StepDefinition = {
       ssoTemplateId: ctx.vars.ssoTemplateId
     });
 
-    // Check if provisioning app exists already
-    const provisioningApps = (await appByTemplateProv(ctx.api, {
-      provisioningTemplateId
-    })) as { value?: { servicePrincipalId?: string }[] };
-
-    const existingProvisioning = provisioningApps.value?.[0];
-
-    let provisioningSpId = existingProvisioning?.servicePrincipalId as
-      | string
-      | undefined;
-
-    if (!provisioningSpId) {
-      const inst = (await instantiateProv(ctx.api, {
+    try {
+      // Check if provisioning app exists already
+      const provisioningApps = await appByTemplateProv(ctx.api, {
         provisioningTemplateId
-      })) as { servicePrincipal?: { id?: string } };
+      });
 
-      provisioningSpId = inst.servicePrincipal?.id;
+      const existingProvisioning = provisioningApps.value?.[0];
+      let provisioningSpId = existingProvisioning?.servicePrincipalId;
+
+      if (!provisioningSpId) {
+        const inst = await instantiateProv(ctx.api, {
+          provisioningTemplateId
+        });
+        provisioningSpId = inst.servicePrincipal?.id;
+      }
+
+      // Same for SSO
+      const ssoApps = await appByTemplateSSO(ctx.api, { ssoTemplateId });
+      const existingSso = ssoApps.value?.[0];
+      let ssoSpId = existingSso?.servicePrincipalId;
+      let ssoAppId = existingSso?.appId;
+
+      if (!ssoSpId) {
+        const inst = await instantiateSSO(ctx.api, { ssoTemplateId });
+        ssoSpId = inst.servicePrincipal?.id;
+        ssoAppId = inst.application?.appId;
+      }
+
+      const outputs = OutputSchema.parse({
+        provisioningServicePrincipalId: provisioningSpId,
+        ssoServicePrincipalId: ssoSpId,
+        ssoAppId
+      });
+      ctx.setVars(outputs);
+
+      return StepResultSchema.parse({ success: true, mode: "executed", outputs });
+    } catch (err: unknown) {
+      return handleStepError(err, this.name, ctx);
     }
-
-    // Same for SSO
-    const ssoApps = (await appByTemplateSSO(ctx.api, { ssoTemplateId })) as {
-      value?: { servicePrincipalId?: string; appId?: string }[];
-    };
-
-    const existingSso = ssoApps.value?.[0];
-    let ssoSpId = existingSso?.servicePrincipalId as string | undefined;
-    let ssoAppId = existingSso?.appId as string | undefined;
-
-    if (!ssoSpId) {
-      const inst = (await instantiateSSO(ctx.api, { ssoTemplateId })) as {
-        servicePrincipal?: { id?: string };
-        application?: { appId?: string };
-      };
-
-      ssoSpId = inst.servicePrincipal?.id;
-      ssoAppId = inst.application?.appId;
-    }
-
-    const outputs = OutputSchema.parse({
-      provisioningServicePrincipalId: provisioningSpId,
-      ssoServicePrincipalId: ssoSpId,
-      ssoAppId
-    });
-    ctx.setVars(outputs);
-
-    return StepResultSchema.parse({ success: true, mode: "executed", outputs });
   }
 };

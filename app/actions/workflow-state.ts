@@ -3,7 +3,7 @@ import "server-only";
 
 import { refreshAccessToken } from "@/app/lib/auth/oauth";
 import { getToken, setToken } from "@/app/lib/auth/tokens";
-import { parseWorkflow } from "@/app/lib/workflow";
+import { assembleWorkflow } from "@/app/lib/workflow";
 import { Provider } from "@/app/lib/workflow/constants";
 import type { LogEntry } from "@/app/lib/workflow/types";
 import {
@@ -43,7 +43,7 @@ export async function setWorkflowVariable(
     // action is executed so that the default Edge bundle remains small and the
     // module graph stays free of circular dependencies.
     const { validateVariable } = await import("@/app/lib/workflow");
-    const workflow = parseWorkflow();
+  const workflow = assembleWorkflow();
 
     // Check if variable exists in workflow
     const varNames = Object.keys(workflow.variables);

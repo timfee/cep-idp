@@ -1,18 +1,13 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { ListRolesResponseSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z
-  .object({ customerId: z.string() })
-  .describe("Customer ID path parameter for roles list");
-
-const ResponseSchema = z
-  .unknown()
-  .describe("Google Admin list roles API response");
+const ParamsSchema = z.object({ customerId: z.string() });
 
 export type ListRolesParams = z.infer<typeof ParamsSchema>;
-export type ListRolesResponse = z.infer<typeof ResponseSchema>;
+export type ListRolesResponse = z.infer<typeof ListRolesResponseSchema>;
 
 export async function listRoles(
   ctx: ApiContext,
@@ -25,6 +20,6 @@ export async function listRoles(
     pathTemplate: API_PATHS.ROLES,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema
+    responseSchema: ListRolesResponseSchema
   });
 }

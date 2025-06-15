@@ -6,8 +6,6 @@ import { handleStepError } from "./utils";
 
 const InputSchema = z.object({ customerId: z.string() });
 
-// Removed OutputSchema – no runtime usage
-
 export const verifyPrimaryDomain: StepDefinition = {
   name: "Verify Primary Domain",
   role: "dirDomainRW",
@@ -20,21 +18,13 @@ export const verifyPrimaryDomain: StepDefinition = {
 
     try {
       const domainsResp = await listDomains(ctx.api, { customerId });
-      // naive extraction; assumes domainsResp has domains array
-      type DomainItem = {
-        domainName?: string;
-        isPrimary?: boolean;
-        verified?: boolean;
-      };
-
-      const primary = (domainsResp as { domains?: DomainItem[] }).domains?.find(
-        (d) => d.isPrimary === true
-      );
-      if (!primary) {
+      
+      const primary = domainsResp.domains?.find(d => d.isPrimary === true);
+      if (!primary || !primary.domainName) {
         throw new Error("Primary domain not found");
       }
 
-      const primaryDomain = primary.domainName as string;
+      const primaryDomain = primary.domainName;
       ctx.setVars({ primaryDomain });
 
       // Check verification status

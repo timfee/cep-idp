@@ -1,17 +1,16 @@
 import { z } from "zod";
 import { API_PATHS } from "../../constants";
+import { CreatePolicyResponseSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
 type RequestBody = Record<string, unknown>;
 
-const ResponseSchema = z
-  .unknown()
-  .describe("Microsoft Graph create claimsMappingPolicy response");
+const ResponseSchema = CreatePolicyResponseSchema;
 
 export interface CreatePolicyParams {
   body: RequestBody;
 }
-export type CreatePolicyResponse = z.infer<typeof ResponseSchema>;
+export type CreatePolicyResponse = z.infer<typeof CreatePolicyResponseSchema>;
 
 export async function createPolicy(
   ctx: ApiContext,
@@ -24,8 +23,8 @@ export async function createPolicy(
     method: "POST",
     pathTemplate: API_PATHS.CREATE_TOKEN_POLICY,
     params: {},
-    paramsSchema: z.object({}).strict().describe("No path parameters"),
-    responseSchema: ResponseSchema,
+    paramsSchema: z.object({}).strict(),
+    responseSchema: CreatePolicyResponseSchema,
     body
   });
 }

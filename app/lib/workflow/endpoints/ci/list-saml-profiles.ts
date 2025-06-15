@@ -1,18 +1,13 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { ListSamlProfilesResponseSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z
-  .object({})
-  .describe("No parameters required for list inbound SAML profiles");
-
-const ResponseSchema = z
-  .unknown()
-  .describe("Cloud Identity listInboundSamlSsoProfiles API response payload");
+const ParamsSchema = z.object({});
 
 export type ListSamlProfilesParams = z.infer<typeof ParamsSchema>;
-export type ListSamlProfilesResponse = z.infer<typeof ResponseSchema>;
+export type ListSamlProfilesResponse = z.infer<typeof ListSamlProfilesResponseSchema>;
 
 export async function listSamlProfiles(
   ctx: ApiContext,
@@ -25,6 +20,6 @@ export async function listSamlProfiles(
     pathTemplate: API_PATHS.SAML_PROFILES,
     params: {},
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema
+    responseSchema: ListSamlProfilesResponseSchema
   });
 }

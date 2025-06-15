@@ -12,7 +12,7 @@ describe("Roles - Live API", () => {
     apiContext = createLiveApiContext({
       googleToken,
       microsoftToken,
-      trackCreatedResources: true
+      trackCreatedResources: true,
     });
   });
 
@@ -22,9 +22,9 @@ describe("Roles - Live API", () => {
       body: {
         roleName: testRoleName,
         rolePrivileges: [
-          { privilegeName: "GROUPS_ALL", serviceId: "00haapch16h1ysv" }
-        ]
-      }
+          { privilegeName: "GROUPS_ALL", serviceId: "00haapch16h1ysv" },
+        ],
+      },
     });
 
     expect(createRes.roleId).toBeDefined();
@@ -44,9 +44,9 @@ describe("Roles - Live API", () => {
       body: {
         roleName: dupeName,
         rolePrivileges: [
-          { privilegeName: "GROUPS_ALL", serviceId: "00haapch16h1ysv" }
-        ]
-      }
+          { privilegeName: "GROUPS_ALL", serviceId: "00haapch16h1ysv" },
+        ],
+      },
     });
 
     await expect(
@@ -55,9 +55,9 @@ describe("Roles - Live API", () => {
         body: {
           roleName: dupeName,
           rolePrivileges: [
-            { privilegeName: "GROUPS_ALL", serviceId: "00haapch16h1ysv" }
-          ]
-        }
+            { privilegeName: "GROUPS_ALL", serviceId: "00haapch16h1ysv" },
+          ],
+        },
       })
     ).rejects.toThrow();
   });
@@ -70,7 +70,10 @@ describe("Roles - Live API", () => {
 
   it("should validate role body", async () => {
     await expect(
-      postRole(apiContext, { customerId: "my_customer", body: {} })
+      postRole(apiContext, {
+        customerId: "my_customer",
+        body: { roleName: "InvalidRole", rolePrivileges: [] },
+      })
     ).rejects.toThrow();
   });
 });

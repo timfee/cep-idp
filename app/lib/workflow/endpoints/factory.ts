@@ -1,12 +1,14 @@
 import { z } from "zod";
+import { HttpMethod } from "../constants";
 import { ApiContext, callEndpoint } from "./utils";
-import { API_PATHS } from "../constants";
-import { HttpMethod } from "./constants";
 
-export function createEndpoint<TParams extends Record<string, unknown>, TResponse>(config: {
+export function createEndpoint<
+  TParams extends Record<string, unknown>,
+  TResponse,
+>(config: {
   connection: string;
   method: HttpMethod;
-  pathTemplate: keyof typeof API_PATHS | string;
+  pathTemplate: string;
   paramsSchema: z.ZodType<TParams>;
   responseSchema: z.ZodType<TResponse>;
   queryParams?: (params: TParams) => Record<string, string | undefined>;
@@ -26,7 +28,7 @@ export function createEndpoint<TParams extends Record<string, unknown>, TRespons
       paramsSchema: config.paramsSchema,
       responseSchema: config.responseSchema,
       query,
-      body
+      body,
     });
   };
 }

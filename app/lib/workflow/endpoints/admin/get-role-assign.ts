@@ -21,4 +21,5 @@ export const getRoleAssign = createEndpoint({
   pathTemplate: API_PATHS.ROLE_ASSIGNMENTS,
   paramsSchema: ParamsSchema,
   responseSchema: ListRoleAssignmentsResponseSchema,
+  queryParams: (params) => ({ roleId: params.roleId, userKey: params.userKey }),
 });

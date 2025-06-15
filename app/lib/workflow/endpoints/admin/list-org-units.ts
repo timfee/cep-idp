@@ -19,4 +19,8 @@ export const listOrgUnits = createEndpoint({
   pathTemplate: API_PATHS.ORG_UNITS,
   paramsSchema: ParamsSchema,
   responseSchema: ListOrgUnitsResponseSchema,
+  queryParams: (params) => ({
+    orgUnitPath: params.orgUnitPath,
+    type: params.type,
+  }),
 });

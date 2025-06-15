@@ -16,8 +16,8 @@ import {
 export function handleStepError(
   error: unknown,
   stepName: string,
-  ctx: { log: (level: string, message: string, data?: unknown) => void }
-) {
+  ctx: StepContext
+): StepResult {
   const message = error instanceof Error ? error.message : String(error);
   ctx.log("error", `Failed in ${stepName}`, error);
   return StepResultSchema.parse({
@@ -26,7 +26,6 @@ export function handleStepError(
     error: message,
   });
 }
-
 export function defineStepHandler<
   TInput extends Record<string, unknown>,
   TOutput extends Record<string, unknown>,
@@ -45,7 +44,7 @@ export function defineStepHandler<
       }
       return result;
     } catch (err) {
-      return handleStepError(err, ctx);
+      return handleStepError(err, "Step", ctx);
     }
   };
 }

@@ -1,7 +1,5 @@
 import { z } from "zod";
 import { API_PATHS } from "../../workflow/constants";
-import { HttpMethod } from "../constants";
-import { Token } from "../types";
 
 /**
  * Lightweight API context passed into endpoint wrappers.
@@ -11,13 +9,11 @@ import { Token } from "../types";
 export interface ApiContext {
   request: <T = unknown>(
     connection: string,
-    method: HttpMethod,
-    url: string,
+    method: string,
+    path: string,
     options?: { query?: Record<string, string | undefined>; body?: unknown }
   ) => Promise<T>;
-  tokens?: { google?: Token; microsoft?: Token };
 }
-
 /** Extract `{var}` placeholders from a template path. */
 const VAR_REGEX = /\{(\w+)}/g;
 
@@ -42,11 +38,11 @@ export function buildPath(
  */
 export async function callEndpoint<
   P extends Record<string, unknown>,
-  R
+  R,
 >(options: {
   ctx: ApiContext;
   connection: string;
-  method: HttpMethod;
+  method: string;
   pathTemplate: keyof typeof API_PATHS | string;
   params: P;
   paramsSchema: z.ZodType<P>;
@@ -64,7 +60,7 @@ export async function callEndpoint<
 
   const response = await ctx.request(connection, method, path, {
     query: options.query,
-    body: options.body
+    body: options.body,
   });
 
   return options.responseSchema.parse(response);

@@ -1,22 +1,22 @@
+import { z } from "zod";
+import { API_PATHS } from "../../constants";
+import { RoleAssignmentBodySchema } from "../../schemas/requests";
+import { RoleAssignmentSchema } from "../../schemas/responses";
 import { createEndpoint } from "../factory";
+
 const ParamsSchema = z.object({
   customerId: z.string(),
-  body: z.record(z.unknown())
+  body: RoleAssignmentBodySchema,
 });
+
+export type PostRoleAssignParams = z.infer<typeof ParamsSchema>;
+export type PostRoleAssignResponse = z.infer<typeof RoleAssignmentSchema>;
+
 export const postRoleAssign = createEndpoint({
   connection: "googleAdmin",
   method: "POST",
   pathTemplate: API_PATHS.ROLE_ASSIGNMENTS,
   paramsSchema: ParamsSchema,
   responseSchema: RoleAssignmentSchema,
-  bodyExtractor: (params) => params.body
+  bodyExtractor: (params) => params.body,
 });
-    connection: "googleAdmin",
-    method: "POST",
-    pathTemplate: API_PATHS.ROLE_ASSIGNMENTS,
-    params: pathParams,
-    paramsSchema: ParamsSchema.pick({ customerId: true }),
-    responseSchema: RoleAssignmentSchema,
-    body
-  });
-}

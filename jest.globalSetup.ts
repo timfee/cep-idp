@@ -8,10 +8,7 @@ const globalSetup = async () => {
     setGlobalDispatcher(agent);
     const origFetch: typeof fetch = globalThis.fetch;
     globalThis.fetch = ((input: RequestInfo | URL, init?: RequestInit) =>
-      origFetch(input, {
-        ...init,
-        dispatcher: agent
-      } as RequestInit)) as typeof fetch;
+      origFetch(input, { ...init, dispatcher: agent } as any)) as typeof fetch;
   }
   await globalTracker.load();
   const existingResources = globalTracker.getResources();

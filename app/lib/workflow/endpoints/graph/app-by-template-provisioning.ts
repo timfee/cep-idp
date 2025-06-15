@@ -2,6 +2,7 @@ import { z } from "zod";
 import { API_PATHS } from "../../constants";
 import { ListApplicationsResponseSchema } from "../../schemas/responses";
 import { createEndpoint } from "../factory";
+
 const ParamsSchema = z.object({ provisioningTemplateId: z.string() });
 
 export type AppByTemplateProvParams = z.infer<typeof ParamsSchema>;
@@ -15,6 +16,6 @@ export const appByTemplateProv = createEndpoint({
   paramsSchema: ParamsSchema,
   responseSchema: ListApplicationsResponseSchema,
   queryParams: (params) => ({
-    filter: `applicationTemplateId eq '${params.provisioningTemplateId}'`
-  })
+    filter: `applicationTemplateId eq '${params.provisioningTemplateId}'`,
+  }),
 });

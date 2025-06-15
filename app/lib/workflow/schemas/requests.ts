@@ -34,7 +34,7 @@ export const UpdateUserBodySchema = z.object({
       familyName: z.string().optional(),
     })
     .optional(),
-  password: z.string().min(8).optional(),
+  password: z.string().optional(),
   suspended: z.boolean().optional(),
   orgUnitPath: z.string().optional(),
 });
@@ -91,7 +91,7 @@ export type PatchSyncBody = z.infer<typeof PatchSyncBodySchema>;
 export const CreateUserBodySchema = z.object({
   primaryEmail: z.string().email(),
   name: z.object({ givenName: z.string(), familyName: z.string() }),
-  password: z.string().min(8),
+  password: z.string(),
   orgUnitPath: z.string().optional(),
 });
 

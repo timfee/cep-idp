@@ -1,22 +1,22 @@
+import { z } from "zod";
+import { API_PATHS } from "../../constants";
+import { AddIdpCertBodySchema } from "../../schemas/requests";
+import { OperationResponseSchema } from "../../schemas/responses";
 import { createEndpoint } from "../factory";
+
 const ParamsSchema = z.object({
   samlProfileId: z.string(),
-  body: z.record(z.unknown())
+  body: AddIdpCertBodySchema,
 });
+
+export type AddIdpCertParams = z.infer<typeof ParamsSchema>;
+export type AddIdpCertResponse = z.infer<typeof OperationResponseSchema>;
+
 export const addIdpCert = createEndpoint({
   connection: "googleCI",
   method: "POST",
   pathTemplate: API_PATHS.ADD_IDP_CREDENTIALS,
   paramsSchema: ParamsSchema,
   responseSchema: OperationResponseSchema,
-  bodyExtractor: (params) => params.body
+  bodyExtractor: (params) => params.body,
 });
-    connection: "googleCI",
-    method: "POST",
-    pathTemplate: API_PATHS.ADD_IDP_CREDENTIALS,
-    params: pathParams,
-    paramsSchema: ParamsSchema.pick({ samlProfileId: true }),
-    responseSchema: OperationResponseSchema,
-    body
-  });
-}

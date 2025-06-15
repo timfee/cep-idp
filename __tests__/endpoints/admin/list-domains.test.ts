@@ -30,13 +30,12 @@ describe("listDomains - Live API", () => {
     expect(Array.isArray(result.domains)).toBe(true);
 
     // Should have at least the primary domain
-    expect(result.domains.length).toBeGreaterThan(0);
+    expect(result.domains).toBeDefined();
+    expect(result.domains!.length).toBeGreaterThan(0);
 
-    const primaryDomain = (
-      result.domains as Array<{ isPrimary?: boolean; verified?: boolean }>
-    ).find((d) => d.isPrimary);
+    const primaryDomain = result.domains?.find((d) => d.isPrimary);
     expect(primaryDomain).toBeDefined();
-    expect(primaryDomain.verified).toBe(true);
+    expect(primaryDomain!.verified).toBe(true);
   });
 
   it("should handle invalid customer ID", async () => {

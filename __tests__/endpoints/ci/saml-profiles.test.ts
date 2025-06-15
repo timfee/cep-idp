@@ -34,7 +34,7 @@ describe("SAML Profiles - Live API", () => {
 
     expect(createResult.done).toBe(true);
     expect(createResult.response).toBeDefined();
-    testProfileId = createResult.response.name;
+    testProfileId = (createResult.response as any).name;
 
     // List profiles
     const listResult = await listSamlProfiles(apiContext, {});

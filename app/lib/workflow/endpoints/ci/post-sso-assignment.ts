@@ -1,27 +1,15 @@
 import { createEndpoint } from "../factory";
-import { PostSsoAssignmentBodySchema } from "../../schemas/requests";
-import { z } from "zod";
-import { API_PATHS } from "../../constants";
-import { OperationResponseSchema } from "../../schemas/responses";
+const ParamsSchema = z.object({ body: z.record(z.unknown()) });
+export type PostSsoAssignmentParams = z.infer<typeof ParamsSchema>;
 
-type RequestBody = Record<string, unknown>;
-
-
-
-export interface PostSsoAssignmentParams {
-  body: RequestBody;
-}
-export type PostSsoAssignmentResponse = z.infer<typeof OperationResponseSchema>;
-
-export async function postSsoAssignment(
-  ctx: ApiContext,
-  params: PostSsoAssignmentParams
-): Promise<PostSsoAssignmentResponse> {
-  const { body } = params;
-  return callEndpoint({
-    ctx,
-    connection: "googleCI",
-    method: "POST",
+export const postSsoAssignment = createEndpoint({
+  connection: "googleCI",
+  method: "POST",
+  pathTemplate: API_PATHS.SSO_ASSIGNMENTS,
+  paramsSchema: ParamsSchema,
+  responseSchema: OperationResponseSchema,
+  bodyExtractor: (params) => params.body
+});
     pathTemplate: API_PATHS.SSO_ASSIGNMENTS,
     params: {},
     paramsSchema: z.object({}).strict(),

@@ -1,25 +1,22 @@
 import { createEndpoint } from "../factory";
-import { z } from "zod";
+const ParamsSchema = z.object({
+  provisioningTemplateId: z.string(),
+  body: z.object({ displayName: z.string() }).optional()
+});
 
-import { API_PATHS } from "../../constants";
-import { InstantiateAppResponseSchema } from "../../schemas/responses";
+export type InstantiateProvResponse = z.infer<
+  typeof InstantiateAppResponseSchema
+>;
 
-const ParamsSchema = z.object({ provisioningTemplateId: z.string() });
-
-const ResponseSchema = InstantiateAppResponseSchema;
-
-export type InstantiateProvParams = z.infer<typeof ParamsSchema>;
-export type InstantiateProvResponse = z.infer<typeof InstantiateAppResponseSchema>;
-
-export async function instantiateProv(
-  ctx: ApiContext,
-  params: InstantiateProvParams
-): Promise<InstantiateProvResponse> {
-  return callEndpoint({
-    ctx,
-    connection: "graphBeta",
-    method: "POST",
-    pathTemplate: API_PATHS.APP_BY_PROV_TEMPLATE,
+export const instantiateProv = createEndpoint({
+  connection: "graphBeta",
+  method: "POST",
+  pathTemplate: API_PATHS.APP_BY_PROV_TEMPLATE,
+  paramsSchema: ParamsSchema,
+  responseSchema: InstantiateAppResponseSchema,
+  bodyExtractor: (params) =>
+    params.body || { displayName: "Google Workspace Provisioning" }
+});
     params,
     paramsSchema: ParamsSchema,
     responseSchema: InstantiateAppResponseSchema

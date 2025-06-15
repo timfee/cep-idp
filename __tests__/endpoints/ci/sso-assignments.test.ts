@@ -1,14 +1,13 @@
-// eslint-disable-next-line @typescript-eslint/no-unused-vars, sonarjs/unused-import
-import { listSsoAssignments, postSsoAssignment } from '@/app/lib/workflow/endpoints/ci';
-import { createLiveApiContext } from '../../setup/live-api-context';
+import { listSsoAssignments } from "@/app/lib/workflow/endpoints/ci";
+import { createLiveApiContext } from "../../../test-utils/live-api-context";
 
-describe('SSO Assignments - Live API', () => {
+describe("SSO Assignments - Live API", () => {
   let apiContext: ReturnType<typeof createLiveApiContext>;
-  
+
   beforeAll(() => {
     const googleToken = process.env.GOOGLE_ACCESS_TOKEN!;
     const microsoftToken = process.env.MICROSOFT_ACCESS_TOKEN!;
-    
+
     apiContext = createLiveApiContext({
       googleToken,
       microsoftToken,
@@ -16,9 +15,9 @@ describe('SSO Assignments - Live API', () => {
     });
   });
 
-  it('should list SSO assignments', async () => {
+  it("should list SSO assignments", async () => {
     const result = await listSsoAssignments(apiContext, {});
-    
+
     expect(result).toBeDefined();
     // May or may not have assignments
     if (result.inboundSsoAssignments) {

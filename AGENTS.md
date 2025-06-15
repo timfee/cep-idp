@@ -23,3 +23,13 @@ Initial runs returned 4xx responses because endpoints used incorrect parameters.
 
 When encountering new 4xx errors, cross-check the API documentation and adjust either the endpoint helper or the test data.
 Some integration tests deliberately trigger 4xx responses (e.g. invalid role or duplicate creation) to verify error handling. In those cases a 4xx status indicates success.
+
+## Test Fixtures
+Test fixtures in `__tests__/fixtures/` represent real API responses. The `_metadata` field is added by the test harness for debugging and should be ignored by schemas using `.passthrough()`.
+
+## Type Safety in Tests
+All endpoints return typed responses. Tests can leverage these types:
+
+```ts
+const result: ListDomainsResponse = await listDomains(ctx, params);
+```

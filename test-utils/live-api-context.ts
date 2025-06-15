@@ -13,7 +13,12 @@ export function createLiveApiContext(options: LiveApiOptions): ApiContext {
   const { googleToken, microsoftToken, trackCreatedResources = true } = options;
 
   return {
-    request: async (connection, method, path, opts) => {
+    request: async <T = unknown>(
+      connection: string,
+      method: string,
+      path: string,
+      opts?: { query?: Record<string, string | undefined>; body?: unknown }
+    ): Promise<T> => {
       // Determine which token to use
       let token = "";
       if (connection.startsWith("graph")) {
@@ -86,7 +91,7 @@ export function createLiveApiContext(options: LiveApiOptions): ApiContext {
         await trackResourceFromResponse(connection, path, responseData);
       }
 
-      return responseData;
+      return responseData as T;
     }
   };
 }

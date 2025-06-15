@@ -1,5 +1,5 @@
 import { createPolicy, linkPolicy, listPolicies } from '@/app/lib/workflow/endpoints/graph';
-import { createLiveApiContext } from '../../setup/live-api-context';
+import { createLiveApiContext } from '../../../test-utils/live-api-context';
 
 describe('Policies - Live API', () => {
   let apiContext: ReturnType<typeof createLiveApiContext>;

@@ -1,4 +1,5 @@
 import { listDomains } from "@/app/lib/workflow/endpoints/admin/list-domains";
+import { ListDomainsResponse } from "@/app/lib/workflow/schemas/responses";
 import { createLiveApiContext } from "../../../test-utils/live-api-context";
 
 describe("listDomains - Live API", () => {
@@ -20,7 +21,9 @@ describe("listDomains - Live API", () => {
   });
 
   it("should list domains successfully", async () => {
-    const result = await listDomains(apiContext, { customerId: "my_customer" });
+    const result: ListDomainsResponse = await listDomains(apiContext, {
+      customerId: "my_customer"
+    });
 
     expect(result).toBeDefined();
     expect(result).toHaveProperty("domains");

@@ -1,30 +1,19 @@
 import { z } from "zod";
 import { API_PATHS } from "../../constants";
 import { UserSchema } from "../../schemas/responses";
-import { ApiContext, callEndpoint } from "../utils";
+import { CreateUserBodySchema } from "../../schemas/requests";
+import { createEndpoint } from "../factory";
 
-type RequestBody = Record<string, unknown>;
+const ParamsSchema = z.object({ body: CreateUserBodySchema });
 
-
-
-export interface PostUserParams {
-  body: RequestBody;
-}
+export type PostUserParams = z.infer<typeof ParamsSchema>;
 export type PostUserResponse = z.infer<typeof UserSchema>;
 
-export async function postUser(
-  ctx: ApiContext,
-  params: PostUserParams
-): Promise<PostUserResponse> {
-  const { body } = params;
-  return callEndpoint({
-    ctx,
-    connection: "googleAdmin",
-    method: "POST",
-    pathTemplate: API_PATHS.USERS_ROOT,
-    params: {},
-    paramsSchema: z.object({}).strict(),
-    responseSchema: UserSchema,
-    body
-  });
-}
+export const postUser = createEndpoint({
+  connection: "googleAdmin",
+  method: "POST",
+  pathTemplate: API_PATHS.USERS_ROOT,
+  paramsSchema: ParamsSchema,
+  responseSchema: UserSchema,
+  bodyExtractor: (params) => params.body
+});

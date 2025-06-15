@@ -1,5 +1,5 @@
 import { getSamlSettings, patchSamlSettings } from '@/app/lib/workflow/endpoints/graph';
-import { createLiveApiContext } from '../../setup/live-api-context';
+import { createLiveApiContext } from '../../../test-utils/live-api-context';
 
 describe('SAML Settings - Live API', () => {
   let apiContext: ReturnType<typeof createLiveApiContext>;

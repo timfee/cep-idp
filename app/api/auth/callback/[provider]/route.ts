@@ -3,6 +3,7 @@ import { exchangeCodeForToken } from "@/app/lib/auth/oauth";
 import { validateOAuthState } from "@/app/lib/auth/tokens";
 import { setChunkedCookieOnResponse } from "@/app/lib/cookies/server";
 import { Provider, WORKFLOW_CONSTANTS } from "@/app/lib/workflow/constants";
+import { serverLogger } from "@/app/lib/workflow/logger";
 import { NextResponse } from "next/server";
 
 export async function GET(request: Request) {
@@ -53,10 +54,10 @@ export async function GET(request: Request) {
     // Use chunked cookie setter to handle large tokens
     setChunkedCookieOnResponse(response, cookieName, encrypted, cookieOptions);
 
-    console.log("[OAuth Callback] Cookie(s) set for", provider);
+    serverLogger.info(`OAuth Callback: Cookie(s) set for ${provider}`);
     return response;
   } catch (error) {
-    console.error("Token exchange failed:", error);
+    serverLogger.error("Token exchange failed:", error);
     return NextResponse.redirect(`${baseUrl}/?error=token_exchange_failed`);
   }
 }

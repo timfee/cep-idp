@@ -3,7 +3,7 @@ import {
   StepContext,
   StepDefinition,
   StepResult,
-  StepResultSchema,
+  StepResultSchema
 } from "../types";
 
 /**
@@ -20,15 +20,16 @@ export function handleStepError(
 ): StepResult {
   const message = error instanceof Error ? error.message : String(error);
   ctx.log("error", `Failed in ${stepName}`, error);
+  console.error(`Error in ${stepName}`, error, ctx);
   return StepResultSchema.parse({
     success: false,
     mode: "skipped",
-    error: message,
+    error: message
   });
 }
 export function defineStepHandler<
   TInput extends Record<string, unknown>,
-  TOutput extends Record<string, unknown>,
+  TOutput extends Record<string, unknown>
 >(
   inputSchema: z.ZodType<TInput>,
   outputSchema: z.ZodType<TOutput>,

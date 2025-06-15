@@ -1,4 +1,5 @@
 "use server";
+
 import "server-only";
 
 import { isTokenExpired } from "@/app/lib/auth/oauth";
@@ -288,7 +289,29 @@ export async function getWorkflowData(
   };
 
   serverLogger.info("Tokens loaded", tokens);
-  const workflow = assembleWorkflow();
+  // Build the full workflow definition which contains executable handler
+  // functions. These handler functions **cannot** be sent to the browser –
+  // Next.js will throw "Functions cannot be passed directly to Client
+  // Components" if we include them in the serialized props of a Client
+  // component.  To avoid this runtime error we deep-clone the workflow using
+  // `JSON.parse(JSON.stringify(...))`, which strips out all function
+  // properties.  The UI layer only requires descriptive metadata (name,
+  // role, inputs, etc.) so removing the handlers is safe and keeps type
+  // information intact server-side.
+  const fullWorkflow = assembleWorkflow();
+
+  // Create a serialisable clone for the browser by JSON-stringifying and
+  // parsing the object.  This strips out any function references (e.g. the
+  // `handler` on each step) while keeping simple data like strings, numbers &
+  // arrays intact.
+  //
+  // The heavy `fullWorkflow` with executable code continues to be used on the
+  // server below, whereas `workflow` is returned to the client purely for
+  // rendering.
+  // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+  const workflow = JSON.parse(JSON.stringify(fullWorkflow)) as ReturnType<
+    typeof assembleWorkflow
+  >;
   const variables = await initializeVariables(workflow);
   const storedVars = await getStoredVariables();
   Object.assign(variables, storedVars);
@@ -299,7 +322,7 @@ export async function getWorkflowData(
   }
 
   const { stepStatuses: stepStatusesMap, variables: reconstructedVariables } =
-    await reconstituteStepStatuses(workflow, variables, tokens);
+    await reconstituteStepStatuses(fullWorkflow, variables, tokens);
 
   // Persist variables reconstructed from verification so they are available
   // during subsequent executions. This acts as a central variable store

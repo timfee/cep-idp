@@ -8,7 +8,7 @@ if (proxy) {
   setGlobalDispatcher(agent);
   const origFetch: typeof fetch = globalThis.fetch;
   globalThis.fetch = ((input: RequestInfo | URL, init?: RequestInit) =>
-    origFetch(input, { dispatcher: agent, ...init })) as typeof fetch;
+    origFetch(input, { ...init, dispatcher: agent } as any)) as typeof fetch;
 }
 
 beforeAll(async () => {
@@ -23,7 +23,7 @@ beforeAll(async () => {
     "GOOGLE_ADMIN_EMAIL",
     "MS_TENANT_ID",
     "MS_CLIENT_ID",
-    "MS_CLIENT_SECRET"
+    "MS_CLIENT_SECRET",
   ] as const;
 
   const missingVars = requiredEnvVars.filter((key) => !process.env[key]);

@@ -8,7 +8,7 @@ import { Provider } from "@/app/lib/workflow/constants";
 import type { LogEntry } from "@/app/lib/workflow/types";
 import {
   getStoredVariables,
-  setStoredVariables
+  setStoredVariables,
 } from "@/app/lib/workflow/variables-store";
 import { timingSafeEqual } from "crypto";
 import { revalidatePath } from "next/cache";
@@ -43,7 +43,7 @@ export async function setWorkflowVariable(
     // action is executed so that the default Edge bundle remains small and the
     // module graph stays free of circular dependencies.
     const { validateVariable } = await import("@/app/lib/workflow");
-  const workflow = assembleWorkflow();
+    const workflow = assembleWorkflow();
 
     // Check if variable exists in workflow
     const varNames = Object.keys(workflow.variables);
@@ -58,18 +58,21 @@ export async function setWorkflowVariable(
     if (!isValid) {
       return {
         success: false,
-        error: `Variable '${name}' is not defined in the workflow`
+        error: `Variable '${name}' is not defined in the workflow`,
       };
     }
     const varDef = workflow.variables[name];
 
     // Validate the value if validator is defined
     if (varDef.validator) {
-      const isValid = validateVariable(value, varDef.validator);
+      const isValid = validateVariable(
+        value,
+        varDef.validator as RegExp | undefined
+      );
       if (!isValid) {
         return {
           success: false,
-          error: `Value '${value}' does not match the required format for '${name}'`
+          error: `Value '${value}' does not match the required format for '${name}'`,
         };
       }
     }
@@ -87,11 +90,11 @@ export async function setWorkflowVariable(
       timestamp: Date.now(),
       level: "error",
       message: "Failed to set variable",
-      data: error
+      data: error,
     });
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error"
+      error: error instanceof Error ? error.message : "Unknown error",
     };
   }
 }
@@ -130,11 +133,11 @@ export async function refreshAuthToken(
       timestamp: Date.now(),
       level: "error",
       message: `Failed to refresh ${provider} token`,
-      data: error
+      data: error,
     });
     return {
       success: false,
-      error: error instanceof Error ? error.message : "Unknown error"
+      error: error instanceof Error ? error.message : "Unknown error",
     };
   }
 }

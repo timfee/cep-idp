@@ -1,8 +1,4 @@
 {
-  "_metadata": {
-    "url": "https://admin.googleapis.com/admin/directory/v1/customer/my_customer/orgunits?orgUnitPath=/Automation&type=children",
-    "headers": { "Content-Type": "application/json" }
-  },
   "kind": "admin#directory#orgUnits",
   "etag": "\"gxO1bXSFNeWqC3FiQQ6XLAXOpbF19C45texsy8ljSPo/0iSHtt4oos9CACiQXeedk3Tw43o\""
 }

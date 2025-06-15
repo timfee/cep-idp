@@ -45,6 +45,9 @@ Open <http://localhost:3000> and follow the on-screen prompts.
 
 - **Typed building blocks** – Endpoint builders, Zod-validated connections, and
   per-step files keep the configuration type-safe and discoverable.
+- **Type-safe API calls** – All endpoints return validated, typed responses.
+- **Endpoint factory** – A single helper generates every API call for
+  consistency and logging.
 - **Live progress** – Each step declares `verify` actions so the app can detect
   pre-existing resources and mark them complete automatically.
 - **Variables Store** – Engine-populated key/value cache (persisted in

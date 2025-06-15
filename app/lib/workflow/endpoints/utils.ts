@@ -9,12 +9,12 @@ import { Token } from "../types";
  * the shared makeApiRequest helper.
  */
 export interface ApiContext {
-  request: (
+  request: <T = unknown>(
     connection: string,
     method: HttpMethod,
     url: string,
     options?: { query?: Record<string, string | undefined>; body?: unknown }
-  ) => Promise<unknown>;
+  ) => Promise<T>;
   tokens?: { google?: Token; microsoft?: Token };
 }
 

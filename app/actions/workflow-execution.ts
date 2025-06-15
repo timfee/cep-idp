@@ -10,6 +10,7 @@ import {
   STEP_NAMES,
   VARIABLE_KEYS
 } from "@/app/lib/workflow/constants";
+import { serverLogger } from "@/app/lib/workflow/logger";
 import {
   LogEntry,
   StepContext,
@@ -18,7 +19,6 @@ import {
   StepStatus,
   Token
 } from "@/app/lib/workflow/types";
-import { serverLogger } from "@/app/lib/workflow/logger";
 import { setStoredVariables } from "@/app/lib/workflow/variables-store";
 import { revalidatePath } from "next/cache";
 
@@ -60,15 +60,21 @@ export async function runStepActions(
 
   // Lightweight API wrapper passed to step handlers
   const apiWrapper: StepContext["api"] = {
-    request: (connection, method, path, options) =>
-      makeApiRequest({
+    request: async <T = unknown>(
+      connection: string,
+      method: string,
+      path: string,
+      options?: { query?: Record<string, string | undefined>; body?: unknown }
+    ): Promise<T> => {
+      return makeApiRequest<T>({
         connection,
         method,
         path,
         query: options?.query,
         body: options?.body,
         tokens
-      })
+      });
+    }
   };
 
   const ctx: StepContext = {
@@ -254,7 +260,10 @@ export async function executeWorkflowStep(
 
     // Track logs and variables – use serverLogger on the server
     const onLog = (log: LogEntry) => {
-      serverLogger.info(`[LOG] ${log.level.toUpperCase()}: ${log.message}`, log.data);
+      serverLogger.info(
+        `[LOG] ${log.level.toUpperCase()}: ${log.message}`,
+        log.data
+      );
     };
 
     const status = await processStepExecution(

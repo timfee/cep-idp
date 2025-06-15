@@ -1,7 +1,7 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
-import { ApiContext, callEndpoint } from "../utils";
+import { createEndpoint } from "../factory";
 
 const ParamsSchema = z.object({ samlProfileId: z.string() });
 const ResponseSchema = z.object({ idpCredentials: z.array(z.unknown()).optional() });
@@ -9,17 +9,10 @@ const ResponseSchema = z.object({ idpCredentials: z.array(z.unknown()).optional(
 export type GetIdpCredsParams = z.infer<typeof ParamsSchema>;
 export type GetIdpCredsResponse = z.infer<typeof ResponseSchema>;
 
-export async function getIdpCreds(
-  ctx: ApiContext,
-  params: GetIdpCredsParams
-): Promise<GetIdpCredsResponse> {
-  return callEndpoint({
-    ctx,
-    connection: "googleCI",
-    method: "GET",
-    pathTemplate: API_PATHS.IDP_CREDENTIALS,
-    params,
-    paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema
-  });
-}
+export const getIdpCreds = createEndpoint({
+  connection: "googleCI",
+  method: "GET",
+  pathTemplate: API_PATHS.IDP_CREDENTIALS,
+  paramsSchema: ParamsSchema,
+  responseSchema: ResponseSchema
+});

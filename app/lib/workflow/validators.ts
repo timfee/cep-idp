@@ -1,4 +1,3 @@
-import { VALIDATION_PATTERNS } from "./constants";
 
 /**
  * Validate a variable value against a pattern.

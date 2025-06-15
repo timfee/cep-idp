@@ -82,6 +82,7 @@ endpoints/
   graph/
     start-sync.ts
   index.ts             // central barrel re-export
+  factory.ts           // single helper used to build endpoints
 ```
 
 Each file lives next to the official API docs so copy-pasting is trivial. The
@@ -107,7 +108,14 @@ At compile time you get:
 - Type-checked payload against the Zod schema.
 - Required path params enforced (because `API_PATHS` uses `{param}` tokens).
 
-### 2.4 steps/
+### 2.4 schemas/
+```
+schemas/
+  requests.ts   // Request body schemas
+  responses.ts  // Response schemas
+```
+
+### 2.5 steps/
 
 Each step exports a plain object of type `WorkflowStep`. The name is inferred
 from the filename so duplicates cannot exist. A trimmed example:

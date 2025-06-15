@@ -1,4 +1,10 @@
-import { StepResultSchema } from "../types";
+import z from "zod";
+import {
+  StepContext,
+  StepDefinition,
+  StepResult,
+  StepResultSchema,
+} from "../types";
 
 /**
  * Shared error handler for workflow steps.
@@ -17,6 +23,29 @@ export function handleStepError(
   return StepResultSchema.parse({
     success: false,
     mode: "skipped",
-    error: message
+    error: message,
   });
+}
+
+export function defineStepHandler<
+  TInput extends Record<string, unknown>,
+  TOutput extends Record<string, unknown>,
+>(
+  inputSchema: z.ZodType<TInput>,
+  outputSchema: z.ZodType<TOutput>,
+  handler: (ctx: StepContext, input: TInput) => Promise<StepResult>
+): StepDefinition["handler"] {
+  return async (ctx) => {
+    try {
+      const input = inputSchema.parse(ctx.vars);
+      const result = await handler(ctx, input);
+      if (result.outputs) {
+        const validated = outputSchema.parse(result.outputs);
+        ctx.setVars(validated);
+      }
+      return result;
+    } catch (err) {
+      return handleStepError(err, ctx);
+    }
+  };
 }

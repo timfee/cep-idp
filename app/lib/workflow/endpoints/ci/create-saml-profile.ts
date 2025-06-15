@@ -1,31 +1,19 @@
 import { z } from "zod";
 import { API_PATHS } from "../../constants";
+import { CreateSamlProfileBodySchema } from "../../schemas/requests";
 import { OperationResponseSchema } from "../../schemas/responses";
-import { ApiContext, callEndpoint } from "../utils";
+import { createEndpoint } from "../factory";
 
-// Type returned by the UI when constructing the SAML profile payload.
-type RequestBody = Record<string, unknown>;
+const ParamsSchema = z.object({ body: CreateSamlProfileBodySchema });
 
-
-
-export interface CreateSamlProfileParams {
-  body: RequestBody;
-}
+export type CreateSamlProfileParams = z.infer<typeof ParamsSchema>;
 export type CreateSamlProfileResponse = z.infer<typeof OperationResponseSchema>;
 
-export async function createSamlProfile(
-  ctx: ApiContext,
-  params: CreateSamlProfileParams
-): Promise<CreateSamlProfileResponse> {
-  const { body } = params;
-  return callEndpoint({
-    ctx,
-    connection: "googleCI",
-    method: "POST",
-    pathTemplate: API_PATHS.SAML_PROFILES,
-    params: {},
-    paramsSchema: z.object({}).strict(),
-    responseSchema: OperationResponseSchema,
-    body
-  });
-}
+export const createSamlProfile = createEndpoint({
+  connection: "googleCI",
+  method: "POST",
+  pathTemplate: API_PATHS.SAML_PROFILES,
+  paramsSchema: ParamsSchema,
+  responseSchema: OperationResponseSchema,
+  bodyExtractor: (params) => params.body,
+});

@@ -1,8 +1,4 @@
 {
-  "_metadata": {
-    "url": "https://graph.microsoft.com/beta/servicePrincipals/f66a20b0-7634-4b7f-bd17-ab8491ad65b7/samlSingleSignOnSettings",
-    "headers": { "Content-Type": "application/json" }
-  },
   "@odata.context": "https://graph.microsoft.com/beta/$metadata#servicePrincipals('f66a20b0-7634-4b7f-bd17-ab8491ad65b7')/samlSingleSignOnSettings",
   "relayState": "https://example.com/start"
 }

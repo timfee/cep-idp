@@ -1,4 +1,5 @@
 import { listDomains } from "@/app/lib/workflow/endpoints/admin/list-domains";
+import { ListDomainsResponse } from "@/app/lib/workflow/schemas/responses";
 import { createLiveApiContext } from "../../../test-utils/live-api-context";
 
 describe("listDomains - Live API", () => {
@@ -20,20 +21,21 @@ describe("listDomains - Live API", () => {
   });
 
   it("should list domains successfully", async () => {
-    const result = await listDomains(apiContext, { customerId: "my_customer" });
+    const result: ListDomainsResponse = await listDomains(apiContext, {
+      customerId: "my_customer"
+    });
 
     expect(result).toBeDefined();
     expect(result).toHaveProperty("domains");
     expect(Array.isArray(result.domains)).toBe(true);
 
     // Should have at least the primary domain
-    expect(result.domains.length).toBeGreaterThan(0);
+    expect(result.domains).toBeDefined();
+    expect(result.domains!.length).toBeGreaterThan(0);
 
-    const primaryDomain = (
-      result.domains as Array<{ isPrimary?: boolean; verified?: boolean }>
-    ).find((d) => d.isPrimary);
+    const primaryDomain = result.domains?.find((d) => d.isPrimary);
     expect(primaryDomain).toBeDefined();
-    expect(primaryDomain.verified).toBe(true);
+    expect(primaryDomain!.verified).toBe(true);
   });
 
   it("should handle invalid customer ID", async () => {

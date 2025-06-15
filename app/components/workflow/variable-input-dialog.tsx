@@ -13,7 +13,7 @@ import {
   DialogDescription,
   DialogFooter,
   DialogHeader,
-  DialogTitle
+  DialogTitle,
 } from "../ui/dialog";
 import { Input } from "../ui/input";
 import { Label } from "../ui/label";
@@ -45,7 +45,7 @@ export function VariableInputDialog({
   placeholder,
   validator,
   isOpen,
-  onComplete
+  onComplete,
 }: VariableInputDialogProps) {
   const [value, setValue] = useState("");
   const [error, setError] = useState("");
@@ -57,7 +57,10 @@ export function VariableInputDialog({
       return;
     }
 
-    if (validator && !validateVariable(value, validator)) {
+    const regex =
+      typeof validator === "string" ? new RegExp(validator) : validator;
+
+    if (regex && !validateVariable(value, regex)) {
       setError("Invalid format");
       return;
     }

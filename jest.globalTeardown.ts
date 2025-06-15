@@ -8,7 +8,7 @@ const globalTeardown = async () => {
     setGlobalDispatcher(agent);
     const origFetch: typeof fetch = globalThis.fetch;
     globalThis.fetch = ((input: RequestInfo | URL, init?: RequestInit) =>
-      origFetch(input, { dispatcher: agent, ...init })) as typeof fetch;
+      origFetch(input, { ...init, dispatcher: agent } as any)) as typeof fetch;
   }
   console.log("[TEARDOWN] Starting cleanup...");
 

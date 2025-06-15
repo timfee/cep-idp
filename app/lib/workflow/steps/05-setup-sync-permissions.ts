@@ -2,6 +2,7 @@ import { z } from "zod";
 
 import { getRoleAssign, postRoleAssign } from "../endpoints/admin";
 import { StepDefinition, StepResultSchema } from "../types";
+import { handleStepError } from "./utils";
 
 const InputSchema = z.object({
   customerId: z.string(),
@@ -21,21 +22,30 @@ export const setupSyncPermissions: StepDefinition = {
       provisioningUserId: ctx.vars.provisioningUserId
     });
 
-    // Check if assignment exists
-    const assignResp = (await getRoleAssign(ctx.api, {
-      customerId,
-      roleId: adminRoleId,
-      assignedTo: provisioningUserId
-    })) as { items?: unknown[] };
+    try {
+      // Check if assignment exists
+      const assignResp = await getRoleAssign(ctx.api, {
+        customerId,
+        roleId: adminRoleId,
+        userKey: provisioningUserId
+      });
 
-    if ((assignResp.items?.length ?? 0) > 0) {
-      return StepResultSchema.parse({ success: true, mode: "verified" });
+      if ((assignResp.items?.length ?? 0) > 0) {
+        return StepResultSchema.parse({ success: true, mode: "verified" });
+      }
+
+      await postRoleAssign(ctx.api, {
+        customerId,
+        body: { 
+          roleId: adminRoleId, 
+          assignedTo: provisioningUserId,
+          scopeType: "CUSTOMER"
+        }
+      });
+      
+      return StepResultSchema.parse({ success: true, mode: "executed" });
+    } catch (err: unknown) {
+      return handleStepError(err, this.name, ctx);
     }
-
-    await postRoleAssign(ctx.api, {
-      customerId,
-      body: { roleId: adminRoleId, assignedTo: provisioningUserId }
-    });
-    return StepResultSchema.parse({ success: true, mode: "executed" });
   }
 };

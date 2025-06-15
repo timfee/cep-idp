@@ -1,22 +1,17 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { ListOrgUnitsResponseSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z
-  .object({
-    customerId: z.string(),
-    orgUnitPath: z.string().optional(),
-    type: z.string().optional()
-  })
-  .describe("Customer ID plus optional filters for org units list");
-
-const ResponseSchema = z
-  .unknown()
-  .describe("Google Admin list organizationUnits response");
+const ParamsSchema = z.object({
+  customerId: z.string(),
+  orgUnitPath: z.string().optional(),
+  type: z.string().optional()
+});
 
 export type ListOrgUnitsParams = z.infer<typeof ParamsSchema>;
-export type ListOrgUnitsResponse = z.infer<typeof ResponseSchema>;
+export type ListOrgUnitsResponse = z.infer<typeof ListOrgUnitsResponseSchema>;
 
 export async function listOrgUnits(
   ctx: ApiContext,
@@ -34,7 +29,7 @@ export async function listOrgUnits(
     pathTemplate: API_PATHS.ORG_UNITS,
     params: pathParams as { customerId: string },
     paramsSchema: ParamsSchema.pick({ customerId: true }),
-    responseSchema: ResponseSchema,
+    responseSchema: ListOrgUnitsResponseSchema,
     query
   });
 }

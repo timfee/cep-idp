@@ -165,13 +165,7 @@ export const WORKFLOW_CONSTANTS = {
 
   VARIABLES_COOKIE_NAME: "workflow_vars",
   VARIABLES_COOKIE_MAX_AGE:
-    DAYS_IN_MONTH * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE,
-
-  // Retained for backwards compatibility. Prefer SYNC_CONFIG.SYNC_INTERVAL
-  SYNC_INTERVAL: "PT40M"
-
-  // Legacy aliases – prefer TEMPLATE_IDS / TEMPLATE_NAMES going forward.
-  // (Deprecated keys removed in cleanup.)
+    DAYS_IN_MONTH * HOURS_IN_DAY * MINUTES_IN_HOUR * SECONDS_IN_MINUTE
 };
 
 export const DETERMINISTIC_PASSWORD_BASE_LENGTH = 12;

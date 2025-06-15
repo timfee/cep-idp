@@ -1,18 +1,15 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { DomainSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
-const BodySchema = z.record(z.unknown()).describe("JSON payload to add domain");
+const BodySchema = z.record(z.unknown());
 
-const ParamsSchema = z
-  .object({ customerId: z.string(), body: BodySchema })
-  .describe("Customer ID path parameter and request body");
-
-const ResponseSchema = z.unknown().describe("Google Admin add domain response");
+const ParamsSchema = z.object({ customerId: z.string(), body: BodySchema });
 
 export type PostDomainParams = z.infer<typeof ParamsSchema>;
-export type PostDomainResponse = z.infer<typeof ResponseSchema>;
+export type PostDomainResponse = z.infer<typeof DomainSchema>;
 
 export async function postDomain(
   ctx: ApiContext,
@@ -26,7 +23,7 @@ export async function postDomain(
     pathTemplate: API_PATHS.DOMAINS,
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ customerId: true }),
-    responseSchema: ResponseSchema,
+    responseSchema: DomainSchema,
     body
   });
 }

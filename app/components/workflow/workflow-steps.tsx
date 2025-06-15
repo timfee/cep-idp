@@ -2,13 +2,13 @@
 import "client-only";
 
 import { isTokenExpired } from "@/app/lib/auth/oauth-client";
-import { parseWorkflow } from "@/app/lib/workflow";
+import { assembleWorkflow } from "@/app/lib/workflow";
 import { ROLE_PREFIXES, STATUS_VALUES } from "@/app/lib/workflow/constants";
 import type { StepDefinition, StepStatus } from "@/app/lib/workflow/types";
 import { StepCard } from "./step-card";
 
 interface WorkflowStepsProps {
-  workflow: ReturnType<typeof parseWorkflow>;
+  workflow: ReturnType<typeof assembleWorkflow>;
   stepStatuses: Record<string, StepStatus>;
   authStatus: {
     google: { authenticated: boolean; scopes: string[]; expiresAt?: number };

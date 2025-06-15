@@ -1,18 +1,15 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { GraphSyncResponseSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z
-  .object({ servicePrincipalId: z.string() })
-  .describe("Path parameter identifying the Service Principal");
+const ParamsSchema = z.object({ servicePrincipalId: z.string() });
 
-const ResponseSchema = z
-  .unknown()
-  .describe("Microsoft Graph synchronization status response payload");
+const ResponseSchema = GraphSyncResponseSchema;
 
 export type GetSyncParams = z.infer<typeof ParamsSchema>;
-export type GetSyncResponse = z.infer<typeof ResponseSchema>;
+export type GetSyncResponse = z.infer<typeof GraphSyncResponseSchema>;
 
 export async function getSync(
   ctx: ApiContext,
@@ -25,6 +22,6 @@ export async function getSync(
     pathTemplate: API_PATHS.SYNC,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema
+    responseSchema: GraphSyncResponseSchema
   });
 }

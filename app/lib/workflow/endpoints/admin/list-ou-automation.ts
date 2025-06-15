@@ -1,18 +1,13 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { ListOrgUnitsResponseSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z
-  .object({ customerId: z.string() })
-  .describe("Customer ID path parameter for Automation OU list");
-
-const ResponseSchema = z
-  .unknown()
-  .describe("Google Admin list Automation orgUnits response");
+const ParamsSchema = z.object({ customerId: z.string() });
 
 export type ListOUAutomationParams = z.infer<typeof ParamsSchema>;
-export type ListOUAutomationResponse = z.infer<typeof ResponseSchema>;
+export type ListOUAutomationResponse = z.infer<typeof ListOrgUnitsResponseSchema>;
 
 export async function listOUAutomation(
   ctx: ApiContext,
@@ -25,7 +20,7 @@ export async function listOUAutomation(
     pathTemplate: API_PATHS.ORG_UNITS,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema,
+    responseSchema: ListOrgUnitsResponseSchema,
     query: { orgUnitPath: "/Automation", type: "children" }
   });
 }

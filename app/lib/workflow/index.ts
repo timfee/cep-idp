@@ -1,4 +1,4 @@
 export * from "./constants";
-export * from "./parser";
+export * from "./assembly";
 export * from "./types";
 export * from "./variables";

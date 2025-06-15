@@ -44,7 +44,7 @@ export const connections: Record<string, ConnectionConfig> = {
     base: BASE_URLS.GRAPH_BETA,
     getAuthHeader: (tokens) => `Bearer ${tokens.microsoft?.accessToken ?? ""}`
   },
-  public: { base: "", getAuthHeader: () => "" }
+  public: { base: "https://login.microsoftonline.com", getAuthHeader: () => "" }
 };
 
 // Validate configuration at module load

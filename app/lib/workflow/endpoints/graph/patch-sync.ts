@@ -1,22 +1,17 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { GraphNoContentResponseSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
-const BodySchema = z
-  .record(z.unknown())
-  .describe("Synchronization payload for PATCH sync settings");
+const BodySchema = z.record(z.unknown());
 
-const ParamsSchema = z
-  .object({ servicePrincipalId: z.string(), body: BodySchema })
-  .describe("Path parameter identifying ServicePrincipal plus request body");
+const ParamsSchema = z.object({ servicePrincipalId: z.string(), body: BodySchema });
 
-const ResponseSchema = z
-  .unknown()
-  .describe("Microsoft Graph synchronization PATCH response (no content)");
+const ResponseSchema = GraphNoContentResponseSchema;
 
 export type PatchSyncParams = z.infer<typeof ParamsSchema>;
-export type PatchSyncResponse = z.infer<typeof ResponseSchema>;
+export type PatchSyncResponse = z.infer<typeof GraphNoContentResponseSchema>;
 
 export async function patchSync(
   ctx: ApiContext,
@@ -30,7 +25,7 @@ export async function patchSync(
     pathTemplate: API_PATHS.SYNC,
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ servicePrincipalId: true }),
-    responseSchema: ResponseSchema,
+    responseSchema: GraphNoContentResponseSchema,
     body
   });
 }

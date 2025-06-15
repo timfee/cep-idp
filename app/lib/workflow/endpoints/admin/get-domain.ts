@@ -1,21 +1,15 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { DomainSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
 // Schema definitions
 
-const ParamsSchema = z
-  .object({ customerId: z.string(), domainName: z.string() })
-  .describe("Path parameters identifying customer and domain name");
-
-// The Admin SDK returns a complex object we don't fully model yet. Accept any.
-const ResponseSchema = z
-  .unknown()
-  .describe("Google Admin Directory domain get API response");
+const ParamsSchema = z.object({ customerId: z.string(), domainName: z.string() });
 
 export type GetDomainParams = z.infer<typeof ParamsSchema>;
-export type GetDomainResponse = z.infer<typeof ResponseSchema>;
+export type GetDomainResponse = z.infer<typeof DomainSchema>;
 
 // GET https://admin.googleapis.com/admin/directory/v1/customer/{customerId}/domains/{domainName}
 export async function getDomain(
@@ -29,6 +23,6 @@ export async function getDomain(
     pathTemplate: API_PATHS.DOMAIN_BY_NAME,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema
+    responseSchema: DomainSchema
   });
 }

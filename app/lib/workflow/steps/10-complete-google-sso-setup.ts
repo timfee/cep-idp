@@ -3,14 +3,15 @@ import { z } from "zod";
 import { StepDefinition, StepResultSchema } from "../types";
 
 const InputSchema = z.object({
-  samlProfileId: z.string().optional(),
+  samlProfileId: z.string(),
   entityId: z.string().optional(),
   acsUrl: z.string().optional()
 });
 
 export const completeGoogleSsoSetup: StepDefinition = {
   name: "Complete Google SSO Setup",
-  inputs: ["samlProfileId"],
+  manual: true,
+  inputs: ["samlProfileId", "entityId", "acsUrl"],
 
   async handler(ctx) {
     InputSchema.parse({
@@ -19,7 +20,7 @@ export const completeGoogleSsoSetup: StepDefinition = {
       acsUrl: ctx.vars.acsUrl
     });
 
-    // Placeholder – in full implementation we would update Google configs.
+    // Manual step - user must configure in Google Admin Console
     return StepResultSchema.parse({ success: true, mode: "skipped" });
   }
 };

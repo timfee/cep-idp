@@ -1,18 +1,15 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { GraphNoContentResponseSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z
-  .object({ servicePrincipalId: z.string(), jobId: z.string() })
-  .describe("Path parameters to start a Graph sync job");
+const ParamsSchema = z.object({ servicePrincipalId: z.string(), jobId: z.string() });
 
-const ResponseSchema = z
-  .unknown()
-  .describe("Graph /start synchronizationJob operation response");
+const ResponseSchema = GraphNoContentResponseSchema;
 
 export type StartSyncJobParams = z.infer<typeof ParamsSchema>;
-export type StartSyncJobResponse = z.infer<typeof ResponseSchema>;
+export type StartSyncJobResponse = z.infer<typeof GraphNoContentResponseSchema>;
 
 export async function startSyncJob(
   ctx: ApiContext,
@@ -25,6 +22,6 @@ export async function startSyncJob(
     pathTemplate: API_PATHS.START_SYNC,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema
+    responseSchema: GraphNoContentResponseSchema
   });
 }

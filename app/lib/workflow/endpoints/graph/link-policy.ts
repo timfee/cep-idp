@@ -1,22 +1,17 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { GraphNoContentResponseSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
-const BodySchema = z
-  .record(z.unknown())
-  .describe("Graph body to link claimsMappingPolicy to servicePrincipal");
+const BodySchema = z.record(z.unknown());
 
-const ParamsSchema = z
-  .object({ servicePrincipalId: z.string(), body: BodySchema })
-  .describe("Path parameter for servicePrincipal plus request body");
+const ParamsSchema = z.object({ servicePrincipalId: z.string(), body: BodySchema });
 
-const ResponseSchema = z
-  .unknown()
-  .describe("Microsoft Graph response for policy link operation");
+const ResponseSchema = GraphNoContentResponseSchema;
 
 export type LinkPolicyParams = z.infer<typeof ParamsSchema>;
-export type LinkPolicyResponse = z.infer<typeof ResponseSchema>;
+export type LinkPolicyResponse = z.infer<typeof GraphNoContentResponseSchema>;
 
 export async function linkPolicy(
   ctx: ApiContext,
@@ -30,7 +25,7 @@ export async function linkPolicy(
     pathTemplate: API_PATHS.LINK_POLICY,
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ servicePrincipalId: true }),
-    responseSchema: ResponseSchema,
+    responseSchema: GraphNoContentResponseSchema,
     body
   });
 }

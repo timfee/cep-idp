@@ -1,18 +1,15 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { InstantiateAppResponseSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
-const ParamsSchema = z
-  .object({ provisioningTemplateId: z.string() })
-  .describe("Path parameter for provisioning applicationTemplateId");
+const ParamsSchema = z.object({ provisioningTemplateId: z.string() });
 
-const ResponseSchema = z
-  .unknown()
-  .describe("Response from instantiate application provisioning template");
+const ResponseSchema = InstantiateAppResponseSchema;
 
 export type InstantiateProvParams = z.infer<typeof ParamsSchema>;
-export type InstantiateProvResponse = z.infer<typeof ResponseSchema>;
+export type InstantiateProvResponse = z.infer<typeof InstantiateAppResponseSchema>;
 
 export async function instantiateProv(
   ctx: ApiContext,
@@ -25,6 +22,6 @@ export async function instantiateProv(
     pathTemplate: API_PATHS.APP_BY_PROV_TEMPLATE,
     params,
     paramsSchema: ParamsSchema,
-    responseSchema: ResponseSchema
+    responseSchema: InstantiateAppResponseSchema
   });
 }

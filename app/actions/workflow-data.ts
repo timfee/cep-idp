@@ -4,6 +4,7 @@ import "server-only";
 import { isTokenExpired } from "@/app/lib/auth/oauth";
 import { getToken } from "@/app/lib/auth/tokens";
 import { hasOwnProperty } from "@/app/lib/utils";
+import { serverLogger } from "@/app/lib/workflow/logger";
 
 // Import types only to assist consumers while avoiding runtime impact.
 // Bring in for future type adjustments – disable sonar unused import for now
@@ -11,7 +12,7 @@ import { hasOwnProperty } from "@/app/lib/utils";
 import {
   evaluateGenerator,
   LogEntry,
-  parseWorkflow,
+  assembleWorkflow,
   StepStatus,
   Token
 } from "@/app/lib/workflow";
@@ -60,7 +61,7 @@ export interface AuthState {
  * provider.
  */
 export interface WorkflowData {
-  workflow: ReturnType<typeof parseWorkflow>;
+  workflow: ReturnType<typeof assembleWorkflow>;
   variables: Record<string, string>;
   stepStatuses: Record<string, StepStatus>;
   auth: AuthState;
@@ -73,7 +74,7 @@ export interface WorkflowData {
  * @returns Initial variable map
  */
 async function initializeVariables(
-  workflow: ReturnType<typeof parseWorkflow>
+  workflow: ReturnType<typeof assembleWorkflow>
 ): Promise<Record<string, string>> {
   const vars: Record<string, string> = {} as Record<string, string>;
   for (const name of Object.keys(workflow.variables)) {
@@ -129,7 +130,7 @@ function extractTenantId(
  * @returns Map of step statuses and updated variables
  */
 async function reconstituteStepStatuses(
-  workflow: ReturnType<typeof parseWorkflow>,
+  workflow: ReturnType<typeof assembleWorkflow>,
   variables: Record<string, string>,
   tokens: { google?: Token; microsoft?: Token }
 ): Promise<{
@@ -144,7 +145,7 @@ async function reconstituteStepStatuses(
     try {
       manualData = JSON.parse(workingVariables.manualStepsState);
     } catch (error) {
-      console.warn("Failed to parse manualStepsState", error);
+      serverLogger.warn("Failed to parse manualStepsState", error);
     }
   }
   const manualCompleted = manualData.completed;
@@ -270,7 +271,7 @@ async function reconstituteStepStatuses(
 export async function getWorkflowData(
   forceRefresh = false
 ): Promise<WorkflowData> {
-  console.log(
+  serverLogger.info(
     `[Initial Load] Starting getWorkflowData (forceRefresh: ${forceRefresh})`
   );
 
@@ -286,8 +287,8 @@ export async function getWorkflowData(
     microsoft: microsoftToken ?? undefined
   };
 
-  console.log(tokens);
-  const workflow = parseWorkflow();
+  serverLogger.info(tokens);
+  const workflow = assembleWorkflow();
   const variables = await initializeVariables(workflow);
   const storedVars = await getStoredVariables();
   Object.assign(variables, storedVars);
@@ -306,7 +307,7 @@ export async function getWorkflowData(
   if (forceRefresh) {
     await setStoredVariables(reconstructedVariables);
   }
-  console.log(
+  serverLogger.info(
     `[Initial Load] Final step statuses:`,
     Object.fromEntries(
       Array.from(stepStatusesMap.entries()).map(([name, status]) => [

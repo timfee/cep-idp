@@ -18,10 +18,8 @@ export const createAutomationOU: StepDefinition = {
 
     try {
       const resp = await listOUAutomation(ctx.api, { customerId });
-      type OrgUnitsResponse = { organizationUnits?: unknown[] };
-
-      const { organizationUnits } = resp as OrgUnitsResponse;
-      const exists = (organizationUnits?.length ?? 0) > 0;
+      const exists = (resp.organizationUnits?.length ?? 0) > 0;
+      
       if (exists) {
         return StepResultSchema.parse({ success: true, mode: "verified" });
       }
@@ -30,6 +28,7 @@ export const createAutomationOU: StepDefinition = {
         customerId,
         body: { name: "Automation", parentOrgUnitPath: "/" }
       });
+      
       return StepResultSchema.parse({ success: true, mode: "executed" });
     } catch (err: unknown) {
       return handleStepError(err, this.name, ctx);

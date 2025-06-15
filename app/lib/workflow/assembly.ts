@@ -47,7 +47,7 @@ const StepArraySchema = z.array(
  *
  * @returns A fully validated, typed `WorkflowDefinition` ready for execution
  */
-export function parseWorkflow() {
+export function assembleWorkflow() {
   const workflow = {
     connections,
     roles,

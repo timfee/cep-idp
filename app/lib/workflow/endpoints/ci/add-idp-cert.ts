@@ -1,22 +1,15 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
+import { OperationResponseSchema } from "../../schemas/responses";
 import { ApiContext, callEndpoint } from "../utils";
 
-const BodySchema = z
-  .record(z.unknown())
-  .describe("JSON body containing the PEM certificate to add to IdP profile");
+const BodySchema = z.record(z.unknown());
 
-const ParamsSchema = z
-  .object({ samlProfileId: z.string(), body: BodySchema })
-  .describe("Path parameters and body for add IdP certificate API call");
-
-const ResponseSchema = z
-  .unknown()
-  .describe("Cloud Identity Operation response for addIdpCert");
+const ParamsSchema = z.object({ samlProfileId: z.string(), body: BodySchema });
 
 export type AddIdpCertParams = z.infer<typeof ParamsSchema>;
-export type AddIdpCertResponse = z.infer<typeof ResponseSchema>;
+export type AddIdpCertResponse = z.infer<typeof OperationResponseSchema>;
 
 export async function addIdpCert(
   ctx: ApiContext,
@@ -30,7 +23,7 @@ export async function addIdpCert(
     pathTemplate: API_PATHS.ADD_IDP_CREDENTIALS,
     params: pathParams,
     paramsSchema: ParamsSchema.pick({ samlProfileId: true }),
-    responseSchema: ResponseSchema,
+    responseSchema: OperationResponseSchema,
     body
   });
 }

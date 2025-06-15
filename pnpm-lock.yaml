@@ -87,6 +87,9 @@ importers:
       '@headlessui/react':
         specifier: ^2.2.4
         version: 2.2.4(react-dom@19.1.0(react@19.1.0))(react@19.1.0)
+      '@jest/globals':
+        specifier: ^30.0.0
+        version: 30.0.0
       '@next/eslint-plugin-next':
         specifier: ^15.3.3
         version: 15.3.3

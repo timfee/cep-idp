@@ -40,6 +40,7 @@
   "devDependencies": {
     "@eslint/eslintrc": "^3.3.1",
     "@headlessui/react": "^2.2.4",
+    "@jest/globals": "^30.0.0",
     "@next/eslint-plugin-next": "^15.3.3",
     "@t3-oss/env-nextjs": "^0.13.8",
     "@tailwindcss/postcss": "^4.1.10",

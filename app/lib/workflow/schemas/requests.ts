@@ -1,15 +1,10 @@
 import { z } from "zod";
 
-  name: z.object({ givenName: z.string(), familyName: z.string() }),
-});
-
-
 export const CreateOrgUnitBodySchema = z.object({
   name: z.string(),
-  parentOrgUnitPath: z.string()
+  parentOrgUnitPath: z.string(),
 });
 
-export type CreateOrgUnitBody = z.infer<typeof CreateOrgUnitBodySchema>;
 export const CreateRoleBodySchema = z.object({
   roleName: z.string(),
   roleDescription: z.string().optional(),

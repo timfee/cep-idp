@@ -1,24 +1,20 @@
 import { z } from "zod";
+
 import { API_PATHS } from "../../constants";
-import { PatchSamlSettingsBodySchema } from "../../schemas/requests";
-import { GraphNoContentResponseSchema } from "../../schemas/responses";
+import { ListApplicationsResponseSchema } from "../../schemas/responses";
 import { createEndpoint } from "../factory";
 
-const ParamsSchema = z.object({
-  servicePrincipalId: z.string(),
-  body: PatchSamlSettingsBodySchema,
-});
+const ParamsSchema = z.object({});
 
-export type PatchSamlSettingsParams = z.infer<typeof ParamsSchema>;
-export type PatchSamlSettingsResponse = z.infer<
-  typeof GraphNoContentResponseSchema
+export type ListAppTemplatesParams = z.infer<typeof ParamsSchema>;
+export type ListAppTemplatesResponse = z.infer<
+  typeof ListApplicationsResponseSchema
 >;
 
-export const patchSamlSettings = createEndpoint({
+export const listAppTemplates = createEndpoint({
   connection: "graphBeta",
-  method: "PATCH",
-  pathTemplate: API_PATHS.SAML_SP_SETTINGS,
+  method: "GET",
+  pathTemplate: API_PATHS.APP_TEMPLATES,
   paramsSchema: ParamsSchema,
-  responseSchema: GraphNoContentResponseSchema,
-  bodyExtractor: (params) => params.body,
+  responseSchema: ListApplicationsResponseSchema,
 });

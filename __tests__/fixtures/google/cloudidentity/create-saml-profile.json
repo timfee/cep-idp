@@ -1,8 +1,4 @@
 {
-  "_metadata": {
-    "url": "https://cloudidentity.googleapis.com/v1/inboundSamlSsoProfiles",
-    "headers": { "Content-Type": "application/json" }
-  },
   "done": true,
   "response": {
     "@type": "type.googleapis.com/google.apps.cloudidentity.inboundsamlssoprofiles.v1.InboundSamlSsoProfile",

@@ -1,7 +1,3 @@
 {
-  "_metadata": {
-    "url": "https://graph.microsoft.com/beta/servicePrincipals/f66a20b0-7634-4b7f-bd17-ab8491ad65b7/tokenIssuancePolicies/",
-    "headers": { "Content-Type": "application/json" }
-  },
   "status": 204
 }

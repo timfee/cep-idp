@@ -1,8 +1,4 @@
 {
-  "_metadata": {
-    "url": "https://graph.microsoft.com/v1.0/servicePrincipals/d5bf8487-b04a-4ce5-ab6b-c84debf31506/synchronization",
-    "headers": { "Content-Type": "application/json" }
-  },
   "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#servicePrincipals('d5bf8487-b04a-4ce5-ab6b-c84debf31506')/synchronization",
   "jobs": [
     {
@@ -28,8 +24,14 @@
         "synchronizedEntryCountByType": []
       },
       "synchronizationJobSettings": [
-        { "name": "AzureIngestionAttributeOptimization", "value": "False" },
-        { "name": "LookaheadQueryEnabled", "value": "False" }
+        {
+          "name": "AzureIngestionAttributeOptimization",
+          "value": "False"
+        },
+        {
+          "name": "LookaheadQueryEnabled",
+          "value": "False"
+        }
       ]
     }
   ]

@@ -1,8 +1,4 @@
 {
-  "_metadata": {
-    "url": "https://cloudidentity.googleapis.com/v1/inboundSsoAssignments?parent=inboundSamlSsoProfiles/01flkqm54idu48w",
-    "headers": { "Content-Type": "application/json" }
-  },
   "inboundSsoAssignments": [
     {
       "name": "inboundSsoAssignments/aQzAzbHk4NmV3LU8wMGdqZGd4czJiMmM2bXk",

@@ -1,7 +1,8 @@
+import { createEndpoint } from "../factory";
+import { CreatePolicyBodySchema } from "../../schemas/requests";
 import { z } from "zod";
 import { API_PATHS } from "../../constants";
 import { CreatePolicyResponseSchema } from "../../schemas/responses";
-import { ApiContext, callEndpoint } from "../utils";
 
 type RequestBody = Record<string, unknown>;
 

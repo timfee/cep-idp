@@ -1,8 +1,8 @@
+import { createEndpoint } from "../factory";
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
 import { InstantiateAppResponseSchema } from "../../schemas/responses";
-import { ApiContext, callEndpoint } from "../utils";
 
 const ParamsSchema = z.object({ provisioningTemplateId: z.string() });
 

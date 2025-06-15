@@ -1,8 +1,4 @@
 {
-  "_metadata": {
-    "url": "https://admin.googleapis.com/admin/directory/v1/customer/my_customer/domains",
-    "headers": { "Content-Type": "application/json" }
-  },
   "kind": "admin#directory#domain",
   "etag": "\"sample-etag\"",
   "domainName": "test-automation.feeley.xyz",

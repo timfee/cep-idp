@@ -1,8 +1,4 @@
 {
-  "_metadata": {
-    "url": "https://cloudidentity.googleapis.com/v1/inboundSamlSsoProfiles?filter=customer=='customers/C03ly86ew'",
-    "headers": { "Content-Type": "application/json" }
-  },
   "inboundSamlSsoProfiles": [
     {
       "name": "inboundSamlSsoProfiles/02tixnqn2j98a2o",

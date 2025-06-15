@@ -1,5 +1,5 @@
+import { createEndpoint } from "../factory";
 import { z } from "zod";
-import { ApiContext, callEndpoint } from "../utils";
 
 const ParamsSchema = z.object({
   tenantId: z.string(),

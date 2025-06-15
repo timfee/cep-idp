@@ -1,7 +1,8 @@
+import { createEndpoint } from "../factory";
+import { CreateSamlProfileBodySchema } from "../../schemas/requests";
 import { z } from "zod";
 import { API_PATHS } from "../../constants";
 import { OperationResponseSchema } from "../../schemas/responses";
-import { ApiContext, callEndpoint } from "../utils";
 
 // Type returned by the UI when constructing the SAML profile payload.
 type RequestBody = Record<string, unknown>;

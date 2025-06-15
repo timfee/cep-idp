@@ -1,8 +1,8 @@
+import { createEndpoint } from "../factory";
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
 import { DomainSchema } from "../../schemas/responses";
-import { ApiContext, callEndpoint } from "../utils";
 
 const BodySchema = z.record(z.unknown());
 

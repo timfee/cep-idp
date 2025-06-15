@@ -1,8 +1,8 @@
+import { createEndpoint } from "../factory";
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
 import { GraphNoContentResponseSchema } from "../../schemas/responses";
-import { ApiContext, callEndpoint } from "../utils";
 
 const ParamsSchema = z.object({ servicePrincipalId: z.string(), jobId: z.string() });
 

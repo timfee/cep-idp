@@ -1,8 +1,4 @@
 {
-  "_metadata": {
-    "url": "https://graph.microsoft.com/v1.0/applicationTemplates/01303a13-8322-4e06-bee5-80d612907131/instantiate",
-    "headers": { "Content-Type": "application/json" }
-  },
   "@odata.context": "https://graph.microsoft.com/v1.0/$metadata#microsoft.graph.applicationServicePrincipal",
   "application": {
     "id": "6b4c2a1e-c0cb-4cdc-aed5-96f2be848495",
@@ -43,7 +39,9 @@
     },
     "appRoles": [
       {
-        "allowedMemberTypes": ["User"],
+        "allowedMemberTypes": [
+          "User"
+        ],
         "displayName": "msiam_access",
         "id": "8eea5c46-96fe-4398-b9c2-02ac04d931ca",
         "isEnabled": true,
@@ -52,7 +50,9 @@
         "origin": "Application"
       },
       {
-        "allowedMemberTypes": ["User"],
+        "allowedMemberTypes": [
+          "User"
+        ],
         "displayName": "Default Organization",
         "id": "9e79c739-f165-49e8-8745-fe08f1634b3b",
         "isEnabled": true,
@@ -74,7 +74,9 @@
       "legalAgeGroupRule": "Allow"
     },
     "passwordCredentials": [],
-    "publicClient": { "redirectUris": [] },
+    "publicClient": {
+      "redirectUris": []
+    },
     "requiredResourceAccess": [],
     "verifiedPublisher": {
       "displayName": null,
@@ -83,7 +85,10 @@
     },
     "web": {
       "homePageUrl": "https://www.google.com?metadata=googleapps|ISV9.1|primary|z",
-      "redirectUris": ["https://www.google.com/a/*", "https://www.google.com"],
+      "redirectUris": [
+        "https://www.google.com/a/*",
+        "https://www.google.com"
+      ],
       "logoutUrl": null
     }
   },
@@ -104,16 +109,24 @@
     "notificationEmailAddresses": [],
     "preferredSingleSignOnMode": null,
     "preferredTokenSigningKeyThumbprint": null,
-    "replyUrls": ["https://www.google.com"],
-    "servicePrincipalNames": ["544910c1-3299-46d3-b056-55290dc9c1fe"],
+    "replyUrls": [
+      "https://www.google.com"
+    ],
+    "servicePrincipalNames": [
+      "544910c1-3299-46d3-b056-55290dc9c1fe"
+    ],
     "servicePrincipalType": "Application",
-    "tags": ["WindowsAzureActiveDirectoryIntegratedApp"],
+    "tags": [
+      "WindowsAzureActiveDirectoryIntegratedApp"
+    ],
     "tokenEncryptionKeyId": null,
     "samlSingleSignOnSettings": null,
     "addIns": [],
     "appRoles": [
       {
-        "allowedMemberTypes": ["User"],
+        "allowedMemberTypes": [
+          "User"
+        ],
         "displayName": "msiam_access",
         "id": "8eea5c46-96fe-4398-b9c2-02ac04d931ca",
         "isEnabled": true,
@@ -122,7 +135,9 @@
         "origin": "Application"
       },
       {
-        "allowedMemberTypes": ["User"],
+        "allowedMemberTypes": [
+          "User"
+        ],
         "displayName": "Default Organization",
         "id": "9e79c739-f165-49e8-8745-fe08f1634b3b",
         "isEnabled": true,

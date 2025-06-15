@@ -1,8 +1,9 @@
+import { createEndpoint } from "../factory";
+import { PatchSyncBodySchema } from "../../schemas/requests";
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
 import { GraphNoContentResponseSchema } from "../../schemas/responses";
-import { ApiContext, callEndpoint } from "../utils";
 
 const BodySchema = z.record(z.unknown());
 

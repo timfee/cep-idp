@@ -13,5 +13,5 @@ export const listDomains = createEndpoint({
   method: "GET",
   pathTemplate: API_PATHS.DOMAINS,
   paramsSchema: ParamsSchema,
-  responseSchema: ListDomainsResponseSchema
+  responseSchema: ListDomainsResponseSchema,
 });

@@ -8,7 +8,10 @@ if (proxy) {
   setGlobalDispatcher(agent);
   const origFetch: typeof fetch = globalThis.fetch;
   globalThis.fetch = ((input: RequestInfo | URL, init?: RequestInit) =>
-    origFetch(input, { dispatcher: agent, ...init })) as typeof fetch;
+    origFetch(input, {
+      ...init,
+      dispatcher: agent
+    } as RequestInit)) as typeof fetch;
 }
 
 beforeAll(async () => {

@@ -57,7 +57,9 @@ export function VariableInputDialog({
       return;
     }
 
-    if (validator && !validateVariable(value, validator)) {
+    const regex =
+      typeof validator === "string" ? new RegExp(validator) : validator;
+    if (regex && !validateVariable(value, regex)) {
       setError("Invalid format");
       return;
     }

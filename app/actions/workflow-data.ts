@@ -10,9 +10,9 @@ import { serverLogger } from "@/app/lib/workflow/logger";
 // Bring in for future type adjustments – disable sonar unused import for now
 
 import {
+  assembleWorkflow,
   evaluateGenerator,
   LogEntry,
-  assembleWorkflow,
   StepStatus,
   Token
 } from "@/app/lib/workflow";
@@ -287,7 +287,7 @@ export async function getWorkflowData(
     microsoft: microsoftToken ?? undefined
   };
 
-  serverLogger.info(tokens);
+  serverLogger.info("Tokens loaded", tokens);
   const workflow = assembleWorkflow();
   const variables = await initializeVariables(workflow);
   const storedVars = await getStoredVariables();

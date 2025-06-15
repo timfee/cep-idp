@@ -1,24 +1,16 @@
 import { createEndpoint } from "../factory";
-import { RoleAssignmentBodySchema } from "../../schemas/requests";
-import { z } from "zod";
-
-import { API_PATHS } from "../../constants";
-import { RoleAssignmentSchema } from "../../schemas/responses";
-
-const BodySchema = z.record(z.unknown());
-
-const ParamsSchema = z.object({ customerId: z.string(), body: BodySchema });
-
-export type PostRoleAssignParams = z.infer<typeof ParamsSchema>;
-export type PostRoleAssignResponse = z.infer<typeof RoleAssignmentSchema>;
-
-export async function postRoleAssign(
-  ctx: ApiContext,
-  params: PostRoleAssignParams
-): Promise<PostRoleAssignResponse> {
-  const { body, ...pathParams } = params;
-  return callEndpoint({
-    ctx,
+const ParamsSchema = z.object({
+  customerId: z.string(),
+  body: z.record(z.unknown())
+});
+export const postRoleAssign = createEndpoint({
+  connection: "googleAdmin",
+  method: "POST",
+  pathTemplate: API_PATHS.ROLE_ASSIGNMENTS,
+  paramsSchema: ParamsSchema,
+  responseSchema: RoleAssignmentSchema,
+  bodyExtractor: (params) => params.body
+});
     connection: "googleAdmin",
     method: "POST",
     pathTemplate: API_PATHS.ROLE_ASSIGNMENTS,

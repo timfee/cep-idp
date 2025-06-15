@@ -43,7 +43,7 @@ export async function setWorkflowVariable(
     // action is executed so that the default Edge bundle remains small and the
     // module graph stays free of circular dependencies.
     const { validateVariable } = await import("@/app/lib/workflow");
-  const workflow = assembleWorkflow();
+    const workflow = assembleWorkflow();
 
     // Check if variable exists in workflow
     const varNames = Object.keys(workflow.variables);
@@ -65,7 +65,10 @@ export async function setWorkflowVariable(
 
     // Validate the value if validator is defined
     if (varDef.validator) {
-      const isValid = validateVariable(value, varDef.validator);
+      const isValid = validateVariable(
+        value,
+        varDef.validator as RegExp | undefined
+      );
       if (!isValid) {
         return {
           success: false,

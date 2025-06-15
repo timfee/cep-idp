@@ -18,8 +18,8 @@ describe("Privileges - Live API", () => {
   it("should list privileges", async () => {
     const res = await listPrivileges(apiContext, { customerId: "my_customer" });
     expect(res).toBeDefined();
-    expect(Array.isArray(res.items)).toBe(true);
-    expect(res.items.length).toBeGreaterThan(0);
+    expect(res.items).toBeDefined();
+    expect(res.items!.length).toBeGreaterThan(0);
   });
 
   it("should handle invalid customer ID", async () => {

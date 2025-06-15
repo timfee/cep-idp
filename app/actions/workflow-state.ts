@@ -65,7 +65,7 @@ export async function setWorkflowVariable(
 
     // Validate the value if validator is defined
     if (varDef.validator) {
-      const isValid = validateVariable(value, varDef.validator);
+      const isValid = validateVariable(value, varDef.validator as RegExp | undefined);
       if (!isValid) {
         return {
           success: false,

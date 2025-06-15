@@ -4,7 +4,7 @@ import { Token } from "@/app/lib/workflow/types";
 /**
  * Lightweight API request helper used by the new typed step handlers.
  */
-export async function makeApiRequest(options: {
+export async function makeApiRequest<T = unknown>(options: {
   connection: string;
   method: string;
   path: string; // Already interpolated / substituted
@@ -12,7 +12,7 @@ export async function makeApiRequest(options: {
   body?: unknown;
   headers?: Record<string, string>;
   tokens: { google?: Token; microsoft?: Token };
-}): Promise<unknown> {
+}): Promise<T> {
   const {
     connection: connName,
     method,
@@ -69,8 +69,8 @@ export async function makeApiRequest(options: {
 
   const contentType = response.headers.get("content-type");
   if (contentType?.includes("application/json")) {
-    return response.json();
+    return response.json() as Promise<T>;
   }
 
-  return response.text();
+  return response.text() as Promise<T>;
 }

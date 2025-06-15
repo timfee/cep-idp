@@ -1,30 +1,22 @@
-import { createEndpoint } from "../factory";
-import { AddIdpCertBodySchema } from "../../schemas/requests";
 import { z } from "zod";
-
 import { API_PATHS } from "../../constants";
 import { OperationResponseSchema } from "../../schemas/responses";
+import { AddIdpCertBodySchema } from "../../schemas/requests";
+import { createEndpoint } from "../factory";
 
-const BodySchema = z.record(z.unknown());
-
-const ParamsSchema = z.object({ samlProfileId: z.string(), body: BodySchema });
+const ParamsSchema = z.object({
+  samlProfileId: z.string(),
+  body: AddIdpCertBodySchema
+});
 
 export type AddIdpCertParams = z.infer<typeof ParamsSchema>;
 export type AddIdpCertResponse = z.infer<typeof OperationResponseSchema>;
 
-export async function addIdpCert(
-  ctx: ApiContext,
-  params: AddIdpCertParams
-): Promise<AddIdpCertResponse> {
-  const { body, ...pathParams } = params;
-  return callEndpoint({
-    ctx,
-    connection: "googleCI",
-    method: "POST",
-    pathTemplate: API_PATHS.ADD_IDP_CREDENTIALS,
-    params: pathParams,
-    paramsSchema: ParamsSchema.pick({ samlProfileId: true }),
-    responseSchema: OperationResponseSchema,
-    body
-  });
-}
+export const addIdpCert = createEndpoint({
+  connection: "googleCI",
+  method: "POST",
+  pathTemplate: API_PATHS.ADD_IDP_CREDENTIALS,
+  paramsSchema: ParamsSchema,
+  responseSchema: OperationResponseSchema,
+  bodyExtractor: (params) => params.body
+});

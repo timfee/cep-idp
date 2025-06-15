@@ -1,10 +1,10 @@
 import { z } from "zod";
 
 import { API_PATHS } from "../../constants";
-import { ResponseSchema } from "../../schemas/responses";
 import { createEndpoint } from "../factory";
 
 const ParamsSchema = z.object({ samlProfileId: z.string() });
+const ResponseSchema = z.object({ idpCredentials: z.array(z.unknown()).optional() });
 
 export type GetIdpCredsParams = z.infer<typeof ParamsSchema>;
 export type GetIdpCredsResponse = z.infer<typeof ResponseSchema>;

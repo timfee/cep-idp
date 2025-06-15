@@ -5,9 +5,7 @@ import { createEndpoint } from "../factory";
 
 const ParamsSchema = z.object({
   customerId: z.string(),
-  body: z.object({
-    domainName: z.string()
-  })
+  body: z.object({ domainName: z.string() }),
 });
 
 export type PostDomainParams = z.infer<typeof ParamsSchema>;
@@ -19,5 +17,5 @@ export const postDomain = createEndpoint({
   pathTemplate: API_PATHS.DOMAINS,
   paramsSchema: ParamsSchema,
   responseSchema: DomainSchema,
-  bodyExtractor: (params) => params.body
+  bodyExtractor: (params) => params.body,
 });

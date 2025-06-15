@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { API_PATHS } from "../../constants";
-import { GraphNoContentResponseSchema } from "../../schemas/responses";
 import { PatchSyncBodySchema } from "../../schemas/requests";
+import { GraphNoContentResponseSchema } from "../../schemas/responses";
 import { createEndpoint } from "../factory";
 
 const ParamsSchema = z.object({
   servicePrincipalId: z.string(),
-  body: PatchSyncBodySchema
+  body: PatchSyncBodySchema,
 });
 
 export type PatchSyncParams = z.infer<typeof ParamsSchema>;
@@ -18,5 +18,5 @@ export const patchSync = createEndpoint({
   pathTemplate: API_PATHS.SYNC,
   paramsSchema: ParamsSchema,
   responseSchema: GraphNoContentResponseSchema,
-  bodyExtractor: (params) => params.body
+  bodyExtractor: (params) => params.body,
 });

@@ -5,7 +5,7 @@ import { createEndpoint } from "../factory";
 
 const ParamsSchema = z.object({
   servicePrincipalId: z.string(),
-  jobId: z.string()
+  jobId: z.string(),
 });
 
 export type StartSyncJobParams = z.infer<typeof ParamsSchema>;
@@ -16,5 +16,5 @@ export const startSyncJob = createEndpoint({
   method: "POST",
   pathTemplate: API_PATHS.START_SYNC,
   paramsSchema: ParamsSchema,
-  responseSchema: GraphNoContentResponseSchema
+  responseSchema: GraphNoContentResponseSchema,
 });

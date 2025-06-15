@@ -10,6 +10,7 @@ import {
   STEP_NAMES,
   VARIABLE_KEYS
 } from "@/app/lib/workflow/constants";
+import { serverLogger } from "@/app/lib/workflow/logger";
 import {
   LogEntry,
   StepContext,
@@ -18,7 +19,6 @@ import {
   StepStatus,
   Token
 } from "@/app/lib/workflow/types";
-import { serverLogger } from "@/app/lib/workflow/logger";
 import { setStoredVariables } from "@/app/lib/workflow/variables-store";
 import { revalidatePath } from "next/cache";
 
@@ -260,7 +260,10 @@ export async function executeWorkflowStep(
 
     // Track logs and variables – use serverLogger on the server
     const onLog = (log: LogEntry) => {
-      serverLogger.info(`[LOG] ${log.level.toUpperCase()}: ${log.message}`, log.data);
+      serverLogger.info(
+        `[LOG] ${log.level.toUpperCase()}: ${log.message}`,
+        log.data
+      );
     };
 
     const status = await processStepExecution(

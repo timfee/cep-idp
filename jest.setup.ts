@@ -23,7 +23,7 @@ beforeAll(async () => {
     "GOOGLE_ADMIN_EMAIL",
     "MS_TENANT_ID",
     "MS_CLIENT_ID",
-    "MS_CLIENT_SECRET"
+    "MS_CLIENT_SECRET",
   ] as const;
 
   const missingVars = requiredEnvVars.filter((key) => !process.env[key]);

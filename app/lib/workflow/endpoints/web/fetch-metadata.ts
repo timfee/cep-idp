@@ -1,10 +1,7 @@
 import { z } from "zod";
 import { createEndpoint } from "../factory";
 
-const ParamsSchema = z.object({
-  tenantId: z.string(),
-  ssoAppId: z.string()
-});
+const ParamsSchema = z.object({ tenantId: z.string(), ssoAppId: z.string() });
 
 const ResponseSchema = z.string();
 
@@ -17,5 +14,5 @@ export const fetchMetadata = createEndpoint({
   pathTemplate: `/{tenantId}/federationmetadata/2007-06/federationmetadata.xml`,
   paramsSchema: ParamsSchema,
   responseSchema: ResponseSchema,
-  queryParams: (params) => ({ appid: params.ssoAppId })
+  queryParams: (params) => ({ appid: params.ssoAppId }),
 });

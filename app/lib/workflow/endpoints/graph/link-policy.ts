@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { API_PATHS } from "../../constants";
-import { GraphNoContentResponseSchema } from "../../schemas/responses";
 import { LinkPolicyBodySchema } from "../../schemas/requests";
+import { GraphNoContentResponseSchema } from "../../schemas/responses";
 import { createEndpoint } from "../factory";
 
 const ParamsSchema = z.object({
   servicePrincipalId: z.string(),
-  body: LinkPolicyBodySchema
+  body: LinkPolicyBodySchema,
 });
 
 export type LinkPolicyParams = z.infer<typeof ParamsSchema>;
@@ -18,5 +18,5 @@ export const linkPolicy = createEndpoint({
   pathTemplate: API_PATHS.LINK_POLICY,
   paramsSchema: ParamsSchema,
   responseSchema: GraphNoContentResponseSchema,
-  bodyExtractor: (params) => params.body
+  bodyExtractor: (params) => params.body,
 });

@@ -1,12 +1,12 @@
 import { z } from "zod";
 import { API_PATHS } from "../../constants";
-import { RoleSchema } from "../../schemas/responses";
 import { CreateRoleBodySchema } from "../../schemas/requests";
+import { RoleSchema } from "../../schemas/responses";
 import { createEndpoint } from "../factory";
 
 const ParamsSchema = z.object({
   customerId: z.string(),
-  body: CreateRoleBodySchema
+  body: CreateRoleBodySchema,
 });
 
 export type PostRoleParams = z.infer<typeof ParamsSchema>;
@@ -18,5 +18,5 @@ export const postRole = createEndpoint({
   pathTemplate: API_PATHS.ROLES,
   paramsSchema: ParamsSchema,
   responseSchema: RoleSchema,
-  bodyExtractor: (params) => params.body
+  bodyExtractor: (params) => params.body,
 });
